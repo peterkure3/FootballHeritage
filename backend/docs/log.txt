@@ -1,0 +1,3212 @@
+ Compiling football-heritage-backend v0.1.0 (D:\Github\FootballHeritgae\backend)
+error[E0255]: the name `middleware` is defined multiple times
+  --> src\main.rs:14:1
+   |
+ 2 | use actix_web::{middleware, web, App, HttpServer};
+   |                 ---------- previous import of the module `middleware` here
+...
+14 | mod middleware;
+   | ^^^^^^^^^^^^^^^ `middleware` redefined here
+   |
+   = note: `middleware` must be defined only once in the type namespace of this module
+help: you can use `as` to change the binding name of the import
+   |
+ 2 | use actix_web::{middleware as other_middleware, web, App, HttpServer};
+   |                            +++++++++++++++++++
+
+error: Unexpected type `string`
+   --> src\models.rs:245:25
+    |
+245 |     #[validate(custom = "validate_bet_type")]
+    |                         ^^^^^^^^^^^^^^^^^^^
+
+error: Unexpected type `string`
+   --> src\models.rs:248:25
+    |
+248 |     #[validate(custom = "validate_selection")]
+    |                         ^^^^^^^^^^^^^^^^^^^^
+
+error: cannot find attribute `validate` in this scope
+  --> src\models.rs:98:7
+   |
+98 |     #[validate(length(max = 500))]
+   |       ^^^^^^^^
+   |
+   = note: `validate` is an attribute that can be used by the derive macro `Validate`, you might be missing a `derive` attribute
+
+error: cannot find attribute `validate` in this scope
+  --> src\models.rs:95:7
+   |
+95 |     #[validate(length(max = 20))]
+   |       ^^^^^^^^
+   |
+   = note: `validate` is an attribute that can be used by the derive macro `Validate`, you might be missing a `derive` attribute
+
+error: cannot find attribute `validate` in this scope
+  --> src\models.rs:92:7
+   |
+92 |     #[validate(length(max = 100))]
+   |       ^^^^^^^^
+   |
+   = note: `validate` is an attribute that can be used by the derive macro `Validate`, you might be missing a `derive` attribute
+
+error: cannot find attribute `validate` in this scope
+  --> src\models.rs:89:7
+   |
+89 |     #[validate(length(max = 100))]
+   |       ^^^^^^^^
+   |
+   = note: `validate` is an attribute that can be used by the derive macro `Validate`, you might be missing a `derive` attribute
+
+error[E0425]: cannot find value `Certificate` in crate `rustls`
+  --> src\main.rs:92:34
+   |
+92 |                     .map(rustls::Certificate)
+   |                                  ^^^^^^^^^^^ not found in `rustls`
+   |
+help: consider importing one of these unit variants
+   |
+ 1 + use rustls::HandshakeType::Certificate;
+   |
+ 1 + use rustls::pki_types::pem::SectionKind::Certificate;
+   |
+help: if you import `Certificate`, refer to it directly
+   |
+92 -                     .map(rustls::Certificate)
+92 +                     .map(Certificate)
+   |
+
+error[E0425]: cannot find function, tuple struct or tuple variant `PrivateKey` in crate `rustls`
+  --> src\main.rs:94:29
+   |
+94 |                     rustls::PrivateKey(
+   |                             ^^^^^^^^^^ not found in `rustls`
+   |
+help: consider importing this unit variant
+   |
+ 1 + use rustls::pki_types::pem::SectionKind::PrivateKey;
+   |
+help: if you import `PrivateKey`, refer to it directly
+   |
+94 -                     rustls::PrivateKey(
+94 +                     PrivateKey(
+   |
+
+error[E0425]: cannot find value `PrivateKey` in crate `rustls`
+   --> src\main.rs:102:38
+    |
+102 |                         .map(rustls::PrivateKey)
+    |                                      ^^^^^^^^^^ not found in `rustls`
+    |
+help: consider importing this unit variant
+    |
+  1 + use rustls::pki_types::pem::SectionKind::PrivateKey;
+    |
+help: if you import `PrivateKey`, refer to it directly
+    |
+102 -                         .map(rustls::PrivateKey)
+102 +                         .map(PrivateKey)
+    |
+
+warning: unused import: `middleware`
+ --> src\main.rs:2:17
+  |
+2 | use actix_web::{middleware, web, App, HttpServer};
+  |                 ^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` on by default
+
+warning: unused import: `std::env`
+ --> src\main.rs:4:5
+  |
+4 | use std::env;
+  |     ^^^^^^^^
+
+warning: unused import: `std::collections::HashMap`
+ --> src\auth.rs:6:5
+  |
+6 | use std::collections::HashMap;
+  |     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `tokio::sync::RwLock`
+ --> src\auth.rs:9:5
+  |
+9 | use tokio::sync::RwLock;
+  |     ^^^^^^^^^^^^^^^^^^^
+
+warning: unused import: `User`
+ --> src\betting.rs:4:50
+  |
+4 | use crate::models::{Bet, Event, PlaceBetRequest, User};
+  |                                                  ^^^^
+
+warning: unused import: `std::fmt`
+ --> src\errors.rs:4:5
+  |
+4 | use std::fmt;
+  |     ^^^^^^^^
+
+warning: unused imports: `Claims` and `RegisterRequest`
+ --> src\handlers\auth.rs:5:35
+  |
+5 | use crate::models::{LoginRequest, RegisterRequest, User, Claims};
+  |                                   ^^^^^^^^^^^^^^^        ^^^^^^
+
+warning: unused import: `error`
+  --> src\handlers\betting.rs:11:15
+   |
+11 | use tracing::{error, info};
+   |               ^^^^^
+
+warning: unused import: `HttpMessage`
+ --> src\middleware\rate_limit.rs:3:12
+  |
+3 |     Error, HttpMessage, HttpResponse,
+  |            ^^^^^^^^^^^
+
+warning: unused import: `HttpMessage`
+ --> src\middleware\security_headers.rs:3:12
+  |
+3 |     Error, HttpMessage,
+  |            ^^^^^^^^^^^
+
+warning: unused import: `QuantaClock`
+ --> src\rates.rs:5:34
+  |
+5 |     clock::{Clock, DefaultClock, QuantaClock},
+  |                                  ^^^^^^^^^^^
+
+warning: unused import: `errors::AppError`
+  --> src\main.rs:21:5
+   |
+21 | use errors::AppError;
+   |     ^^^^^^^^^^^^^^^^
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Decode<'_, _>` is not satisfied
+   --> src\betting.rs:87:39
+    |
+ 87 |         let bet = sqlx::query_as::<_, Bet>(
+    |                                       ^^^ the trait `sqlx::Decode<'_, _>` is not implemented for `BigDecimal`
+    |
+    = help: the following other types implement trait `sqlx::Decode<'r, DB>`:
+              `&'a str` implements `sqlx::Decode<'a, sqlx::Any>`
+              `&'r JsonRawValue` implements `sqlx::Decode<'r, DB>`
+              `&'r [u8]` implements `sqlx::Decode<'r, Postgres>`
+              `&'r [u8]` implements `sqlx::Decode<'r, sqlx::Any>`
+              `&'r str` implements `sqlx::Decode<'r, Postgres>`
+              `()` implements `sqlx::Decode<'r, Postgres>`
+              `(T1, T2)` implements `sqlx::Decode<'r, Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Decode<'r, Postgres>`
+            and 49 others
+note: required for `Bet` to implement `for<'r> FromRow<'r, _>`
+   --> src\models.rs:225:41
+    |
+225 | #[derive(Debug, Serialize, Deserialize, FromRow)]
+    |                                         ^^^^^^^ unsatisfied trait bound introduced in this `derive` macro
+226 | pub struct Bet {
+    |            ^^^
+note: required by a bound in `sqlx::query_as`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_as.rs:345:8
+    |
+342 | pub fn query_as<'q, DB, O>(sql: &'q str) -> QueryAs<'q, DB, O, <DB as HasArguments<'q>>::Arguments>
+    |        -------- required by a bound in this function
+...
+345 |     O: for<'r> FromRow<'r, DB::Row>,
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `query_as`
+    = note: this error originates in the derive macro `FromRow` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Type<_>` is not satisfied
+   --> src\betting.rs:87:39
+    |
+ 87 |         let bet = sqlx::query_as::<_, Bet>(
+    |                                       ^^^ the trait `sqlx::Type<_>` is not implemented for `BigDecimal`
+    |
+    = help: the following other types implement trait `sqlx::Type<DB>`:
+              `&T` implements `sqlx::Type<DB>`
+              `()` implements `sqlx::Type<Postgres>`
+              `(T1, T2)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6, T7)` implements `sqlx::Type<Postgres>`
+            and 51 others
+note: required for `Bet` to implement `for<'r> FromRow<'r, _>`
+   --> src\models.rs:225:41
+    |
+225 | #[derive(Debug, Serialize, Deserialize, FromRow)]
+    |                                         ^^^^^^^ unsatisfied trait bound introduced in this `derive` macro
+226 | pub struct Bet {
+    |            ^^^
+note: required by a bound in `sqlx::query_as`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_as.rs:345:8
+    |
+342 | pub fn query_as<'q, DB, O>(sql: &'q str) -> QueryAs<'q, DB, O, <DB as HasArguments<'q>>::Arguments>
+    |        -------- required by a bound in this function
+...
+345 |     O: for<'r> FromRow<'r, DB::Row>,
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `query_as`
+    = note: this error originates in the derive macro `FromRow` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `BigDecimal: Encode<'_, Postgres>` is not satisfied
+  --> src\betting.rs:99:16
+   |
+99 |         .bind(&bet_request.odds)
+   |          ----  ^^^^^^^^^^^^^^^^ the trait `Encode<'_, Postgres>` is not implemented for `BigDecimal`
+   |          |
+   |          required by a bound introduced by this call
+   |
+   = help: the following other types implement trait `Encode<'q, DB>`:
+             `&'a str` implements `Encode<'a, sqlx::Any>`
+             `&'q [u8]` implements `Encode<'q, sqlx::Any>`
+             `&T` implements `Encode<'q, DB>`
+             `&[T]` implements `Encode<'q, Postgres>`
+             `&[u8]` implements `Encode<'_, Postgres>`
+             `&str` implements `Encode<'_, Postgres>`
+             `Box<[u8]>` implements `Encode<'_, Postgres>`
+             `Box<str>` implements `Encode<'_, Postgres>`
+           and 41 others
+   = note: required for `&BigDecimal` to implement `Encode<'_, Postgres>`
+note: required by a bound in `QueryAs::<'q, DB, O, <DB as HasArguments<'q>>::Arguments>::bind`
+  --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_as.rs:54:32
+   |
+54 |     pub fn bind<T: 'q + Send + Encode<'q, DB> + Type<DB>>(mut self, value: T) -> Self {
+   |                                ^^^^^^^^^^^^^^ required by this bound in `QueryAs::<'q, DB, O, <DB as HasArguments<'q>>::Arguments>::bind`
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Type<Postgres>` is not satisfied
+  --> src\betting.rs:99:16
+   |
+99 |         .bind(&bet_request.odds)
+   |          ----  ^^^^^^^^^^^^^^^^ the trait `sqlx::Type<Postgres>` is not implemented for `BigDecimal`
+   |          |
+   |          required by a bound introduced by this call
+   |
+   = help: the following other types implement trait `sqlx::Type<DB>`:
+             `&T` implements `sqlx::Type<DB>`
+             `()` implements `sqlx::Type<Postgres>`
+             `(T1, T2)` implements `sqlx::Type<Postgres>`
+             `(T1, T2, T3)` implements `sqlx::Type<Postgres>`
+             `(T1, T2, T3, T4)` implements `sqlx::Type<Postgres>`
+             `(T1, T2, T3, T4, T5)` implements `sqlx::Type<Postgres>`
+             `(T1, T2, T3, T4, T5, T6)` implements `sqlx::Type<Postgres>`
+             `(T1, T2, T3, T4, T5, T6, T7)` implements `sqlx::Type<Postgres>`
+           and 51 others
+   = note: required for `&BigDecimal` to implement `sqlx::Type<Postgres>`
+note: required by a bound in `QueryAs::<'q, DB, O, <DB as HasArguments<'q>>::Arguments>::bind`
+  --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_as.rs:54:49
+   |
+54 |     pub fn bind<T: 'q + Send + Encode<'q, DB> + Type<DB>>(mut self, value: T) -> Self {
+   |                                                 ^^^^^^^^ required by this bound in `QueryAs::<'q, DB, O, <DB as HasArguments<'q>>::Arguments>::bind`
+help: use a unary tuple instead
+   |
+99 |         .bind((&bet_request.odds,))
+   |               +                 ++
+
+error[E0277]: the trait bound `BigDecimal: Encode<'_, Postgres>` is not satisfied
+   --> src\betting.rs:100:16
+    |
+100 |         .bind(&bet_request.amount)
+    |          ----  ^^^^^^^^^^^^^^^^^^ the trait `Encode<'_, Postgres>` is not implemented for `BigDecimal`
+    |          |
+    |          required by a bound introduced by this call
+    |
+    = help: the following other types implement trait `Encode<'q, DB>`:
+              `&'a str` implements `Encode<'a, sqlx::Any>`
+              `&'q [u8]` implements `Encode<'q, sqlx::Any>`
+              `&T` implements `Encode<'q, DB>`
+              `&[T]` implements `Encode<'q, Postgres>`
+              `&[u8]` implements `Encode<'_, Postgres>`
+              `&str` implements `Encode<'_, Postgres>`
+              `Box<[u8]>` implements `Encode<'_, Postgres>`
+              `Box<str>` implements `Encode<'_, Postgres>`
+            and 41 others
+    = note: required for `&BigDecimal` to implement `Encode<'_, Postgres>`
+note: required by a bound in `QueryAs::<'q, DB, O, <DB as HasArguments<'q>>::Arguments>::bind`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_as.rs:54:32
+    |
+ 54 |     pub fn bind<T: 'q + Send + Encode<'q, DB> + Type<DB>>(mut self, value: T) -> Self {
+    |                                ^^^^^^^^^^^^^^ required by this bound in `QueryAs::<'q, DB, O, <DB as HasArguments<'q>>::Arguments>::bind`
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Type<Postgres>` is not satisfied
+   --> src\betting.rs:100:16
+    |
+100 |         .bind(&bet_request.amount)
+    |          ----  ^^^^^^^^^^^^^^^^^^ the trait `sqlx::Type<Postgres>` is not implemented for `BigDecimal`
+    |          |
+    |          required by a bound introduced by this call
+    |
+    = help: the following other types implement trait `sqlx::Type<DB>`:
+              `&T` implements `sqlx::Type<DB>`
+              `()` implements `sqlx::Type<Postgres>`
+              `(T1, T2)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6, T7)` implements `sqlx::Type<Postgres>`
+            and 51 others
+    = note: required for `&BigDecimal` to implement `sqlx::Type<Postgres>`
+note: required by a bound in `QueryAs::<'q, DB, O, <DB as HasArguments<'q>>::Arguments>::bind`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_as.rs:54:49
+    |
+ 54 |     pub fn bind<T: 'q + Send + Encode<'q, DB> + Type<DB>>(mut self, value: T) -> Self {
+    |                                                 ^^^^^^^^ required by this bound in `QueryAs::<'q, DB, O, <DB as HasArguments<'q>>::Arguments>::bind`
+help: use a unary tuple instead
+    |
+100 |         .bind((&bet_request.amount,))
+    |               +                   ++
+
+error[E0277]: the trait bound `BigDecimal: Encode<'_, Postgres>` is not satisfied
+   --> src\betting.rs:101:16
+    |
+101 |         .bind(&potential_win)
+    |          ----  ^^^^^^^^^^^^^ the trait `Encode<'_, Postgres>` is not implemented for `BigDecimal`
+    |          |
+    |          required by a bound introduced by this call
+    |
+    = help: the following other types implement trait `Encode<'q, DB>`:
+              `&'a str` implements `Encode<'a, sqlx::Any>`
+              `&'q [u8]` implements `Encode<'q, sqlx::Any>`
+              `&T` implements `Encode<'q, DB>`
+              `&[T]` implements `Encode<'q, Postgres>`
+              `&[u8]` implements `Encode<'_, Postgres>`
+              `&str` implements `Encode<'_, Postgres>`
+              `Box<[u8]>` implements `Encode<'_, Postgres>`
+              `Box<str>` implements `Encode<'_, Postgres>`
+            and 41 others
+    = note: required for `&BigDecimal` to implement `Encode<'_, Postgres>`
+note: required by a bound in `QueryAs::<'q, DB, O, <DB as HasArguments<'q>>::Arguments>::bind`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_as.rs:54:32
+    |
+ 54 |     pub fn bind<T: 'q + Send + Encode<'q, DB> + Type<DB>>(mut self, value: T) -> Self {
+    |                                ^^^^^^^^^^^^^^ required by this bound in `QueryAs::<'q, DB, O, <DB as HasArguments<'q>>::Arguments>::bind`
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Type<Postgres>` is not satisfied
+   --> src\betting.rs:101:16
+    |
+101 |         .bind(&potential_win)
+    |          ----  ^^^^^^^^^^^^^ the trait `sqlx::Type<Postgres>` is not implemented for `BigDecimal`
+    |          |
+    |          required by a bound introduced by this call
+    |
+    = help: the following other types implement trait `sqlx::Type<DB>`:
+              `&T` implements `sqlx::Type<DB>`
+              `()` implements `sqlx::Type<Postgres>`
+              `(T1, T2)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6, T7)` implements `sqlx::Type<Postgres>`
+            and 51 others
+    = note: required for `&BigDecimal` to implement `sqlx::Type<Postgres>`
+note: required by a bound in `QueryAs::<'q, DB, O, <DB as HasArguments<'q>>::Arguments>::bind`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_as.rs:54:49
+    |
+ 54 |     pub fn bind<T: 'q + Send + Encode<'q, DB> + Type<DB>>(mut self, value: T) -> Self {
+    |                                                 ^^^^^^^^ required by this bound in `QueryAs::<'q, DB, O, <DB as HasArguments<'q>>::Arguments>::bind`
+help: use a unary tuple instead
+    |
+101 |         .bind((&potential_win,))
+    |               +              ++
+
+error[E0599]: the method `fetch_one` exists for struct `QueryAs<'_, Postgres, Bet, PgArguments>`, but its trait bounds were not satisfied
+   --> src\betting.rs:102:10
+    |
+ 87 |           let bet = sqlx::query_as::<_, Bet>(
+    |  ___________________-
+ 88 | |             r#"
+ 89 | |             INSERT INTO bets (id, user_id, event_id, bet_type, selection, odds, amount, potential_win, statu...
+ 90 | |             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'pending', NOW(), NOW())
+...   |
+101 | |         .bind(&potential_win)
+102 | |         .fetch_one(&mut *tx)
+    | |         -^^^^^^^^^ method cannot be called on `QueryAs<'_, Postgres, Bet, PgArguments>` due to unsatisfied trait bounds
+    | |_________|
+    |
+    |
+   ::: src\models.rs:226:1
+    |
+226 |   pub struct Bet {
+    |   -------------- doesn't satisfy `Bet: FromRow<'r, PgRow>`
+    |
+   ::: C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\bigdecimal-0.4.8\src\lib.rs:206:1
+    |
+206 |   pub struct BigDecimal {
+    |   --------------------- doesn't satisfy `BigDecimal: sqlx::Decode<'_, Postgres>` or `BigDecimal: sqlx::Type<Postgres>`
+    |
+    = note: the following trait bounds were not satisfied:
+            `BigDecimal: sqlx::Decode<'_, Postgres>`
+            `BigDecimal: sqlx::Type<Postgres>`
+
+error[E0308]: mismatched types
+   --> src\betting.rs:111:73
+    |
+111 |         let encrypted_new_balance = self.crypto_service.encrypt_balance(&new_balance)?;
+    |                                                         --------------- ^^^^^^^^^^^^ expected `f64`, found `&BigDecimal`
+    |                                                         |
+    |                                                         arguments to this method are incorrect
+    |
+note: method defined here
+   --> src\crypto.rs:71:12
+    |
+ 71 |     pub fn encrypt_balance(&self, amount: f64) -> Result<(String, String), AppError> {
+    |            ^^^^^^^^^^^^^^^        -----------
+
+error[E0277]: the trait bound `(std::string::String, std::string::String): Encode<'_, Postgres>` is not satisfied
+   --> src\betting.rs:120:16
+    |
+120 |         .bind(&encrypted_new_balance)
+    |          ----  ^^^^^^^^^^^^^^^^^^^^^ the trait `Encode<'_, Postgres>` is not implemented for `(std::string::String, std::string::String)`
+    |          |
+    |          required by a bound introduced by this call
+    |
+    = help: the following other types implement trait `Encode<'q, DB>`:
+              `&'a str` implements `Encode<'a, sqlx::Any>`
+              `&'q [u8]` implements `Encode<'q, sqlx::Any>`
+              `&T` implements `Encode<'q, DB>`
+              `&[T]` implements `Encode<'q, Postgres>`
+              `&[u8]` implements `Encode<'_, Postgres>`
+              `&str` implements `Encode<'_, Postgres>`
+              `Box<[u8]>` implements `Encode<'_, Postgres>`
+              `Box<str>` implements `Encode<'_, Postgres>`
+            and 41 others
+    = note: required for `&(std::string::String, std::string::String)` to implement `Encode<'_, Postgres>`
+note: required by a bound in `sqlx::query::Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query.rs:81:32
+    |
+ 81 |     pub fn bind<T: 'q + Send + Encode<'q, DB> + Type<DB>>(mut self, value: T) -> Self {
+    |                                ^^^^^^^^^^^^^^ required by this bound in `Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+
+error[E0277]: the trait bound `BigDecimal: Encode<'_, Postgres>` is not satisfied
+   --> src\betting.rs:138:16
+    |
+138 |         .bind(&bet_request.amount)
+    |          ----  ^^^^^^^^^^^^^^^^^^ the trait `Encode<'_, Postgres>` is not implemented for `BigDecimal`
+    |          |
+    |          required by a bound introduced by this call
+    |
+    = help: the following other types implement trait `Encode<'q, DB>`:
+              `&'a str` implements `Encode<'a, sqlx::Any>`
+              `&'q [u8]` implements `Encode<'q, sqlx::Any>`
+              `&T` implements `Encode<'q, DB>`
+              `&[T]` implements `Encode<'q, Postgres>`
+              `&[u8]` implements `Encode<'_, Postgres>`
+              `&str` implements `Encode<'_, Postgres>`
+              `Box<[u8]>` implements `Encode<'_, Postgres>`
+              `Box<str>` implements `Encode<'_, Postgres>`
+            and 41 others
+    = note: required for `&BigDecimal` to implement `Encode<'_, Postgres>`
+note: required by a bound in `sqlx::query::Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query.rs:81:32
+    |
+ 81 |     pub fn bind<T: 'q + Send + Encode<'q, DB> + Type<DB>>(mut self, value: T) -> Self {
+    |                                ^^^^^^^^^^^^^^ required by this bound in `Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Type<Postgres>` is not satisfied
+   --> src\betting.rs:138:16
+    |
+138 |         .bind(&bet_request.amount)
+    |          ----  ^^^^^^^^^^^^^^^^^^ the trait `sqlx::Type<Postgres>` is not implemented for `BigDecimal`
+    |          |
+    |          required by a bound introduced by this call
+    |
+    = help: the following other types implement trait `sqlx::Type<DB>`:
+              `&T` implements `sqlx::Type<DB>`
+              `()` implements `sqlx::Type<Postgres>`
+              `(T1, T2)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6, T7)` implements `sqlx::Type<Postgres>`
+            and 51 others
+    = note: required for `&BigDecimal` to implement `sqlx::Type<Postgres>`
+note: required by a bound in `sqlx::query::Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query.rs:81:49
+    |
+ 81 |     pub fn bind<T: 'q + Send + Encode<'q, DB> + Type<DB>>(mut self, value: T) -> Self {
+    |                                                 ^^^^^^^^ required by this bound in `Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+help: use a unary tuple instead
+    |
+138 |         .bind((&bet_request.amount,))
+    |               +                   ++
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Decode<'_, _>` is not satisfied
+   --> src\betting.rs:166:29
+    |
+166 |         sqlx::query_as::<_, Event>(
+    |                             ^^^^^ the trait `sqlx::Decode<'_, _>` is not implemented for `BigDecimal`
+    |
+    = help: the following other types implement trait `sqlx::Decode<'r, DB>`:
+              `&'a str` implements `sqlx::Decode<'a, sqlx::Any>`
+              `&'r JsonRawValue` implements `sqlx::Decode<'r, DB>`
+              `&'r [u8]` implements `sqlx::Decode<'r, Postgres>`
+              `&'r [u8]` implements `sqlx::Decode<'r, sqlx::Any>`
+              `&'r str` implements `sqlx::Decode<'r, Postgres>`
+              `()` implements `sqlx::Decode<'r, Postgres>`
+              `(T1, T2)` implements `sqlx::Decode<'r, Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Decode<'r, Postgres>`
+            and 49 others
+    = note: required for `std::option::Option<BigDecimal>` to implement `sqlx::Decode<'_, _>`
+note: required for `models::Event` to implement `for<'r> FromRow<'r, _>`
+   --> src\models.rs:180:41
+    |
+180 | #[derive(Debug, Serialize, Deserialize, FromRow)]
+    |                                         ^^^^^^^ unsatisfied trait bound introduced in this `derive` macro
+181 | pub struct Event {
+    |            ^^^^^
+note: required by a bound in `sqlx::query_as`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_as.rs:345:8
+    |
+342 | pub fn query_as<'q, DB, O>(sql: &'q str) -> QueryAs<'q, DB, O, <DB as HasArguments<'q>>::Arguments>
+    |        -------- required by a bound in this function
+...
+345 |     O: for<'r> FromRow<'r, DB::Row>,
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `query_as`
+    = note: this error originates in the derive macro `FromRow` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Type<_>` is not satisfied
+   --> src\betting.rs:166:29
+    |
+166 |         sqlx::query_as::<_, Event>(
+    |                             ^^^^^ the trait `sqlx::Type<_>` is not implemented for `BigDecimal`
+    |
+    = help: the following other types implement trait `sqlx::Type<DB>`:
+              `&T` implements `sqlx::Type<DB>`
+              `()` implements `sqlx::Type<Postgres>`
+              `(T1, T2)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6, T7)` implements `sqlx::Type<Postgres>`
+            and 51 others
+    = note: required for `std::option::Option<BigDecimal>` to implement `sqlx::Type<_>`
+note: required for `models::Event` to implement `for<'r> FromRow<'r, _>`
+   --> src\models.rs:180:41
+    |
+180 | #[derive(Debug, Serialize, Deserialize, FromRow)]
+    |                                         ^^^^^^^ unsatisfied trait bound introduced in this `derive` macro
+181 | pub struct Event {
+    |            ^^^^^
+note: required by a bound in `sqlx::query_as`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_as.rs:345:8
+    |
+342 | pub fn query_as<'q, DB, O>(sql: &'q str) -> QueryAs<'q, DB, O, <DB as HasArguments<'q>>::Arguments>
+    |        -------- required by a bound in this function
+...
+345 |     O: for<'r> FromRow<'r, DB::Row>,
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `query_as`
+    = note: this error originates in the derive macro `FromRow` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0599]: the method `fetch_one` exists for struct `QueryAs<'_, Postgres, models::Event, PgArguments>`, but its trait bounds were not satisfied
+   --> src\betting.rs:172:10
+    |
+166 | /         sqlx::query_as::<_, Event>(
+167 | |             r#"
+168 | |             SELECT * FROM events WHERE id = $1
+169 | |             "#
+170 | |         )
+171 | |         .bind(event_id)
+172 | |         .fetch_one(executor)
+    | |         -^^^^^^^^^ method cannot be called on `QueryAs<'_, Postgres, models::Event, PgArguments>` due to unsatisfied trait bounds
+    | |_________|
+    |
+    |
+   ::: src\models.rs:181:1
+    |
+181 |   pub struct Event {
+    |   ---------------- doesn't satisfy `models::Event: FromRow<'r, PgRow>`
+    |
+   ::: C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\bigdecimal-0.4.8\src\lib.rs:206:1
+    |
+206 |   pub struct BigDecimal {
+    |   --------------------- doesn't satisfy `BigDecimal: sqlx::Decode<'_, Postgres>` or `BigDecimal: sqlx::Type<Postgres>`
+    |
+    = note: the following trait bounds were not satisfied:
+            `BigDecimal: sqlx::Decode<'_, Postgres>`
+            which is required by `models::Event: FromRow<'r, PgRow>`
+            `BigDecimal: sqlx::Type<Postgres>`
+            which is required by `models::Event: FromRow<'r, PgRow>`
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Decode<'_, _>` is not satisfied
+   --> src\betting.rs:235:42
+    |
+235 |         let limits = sqlx::query_as::<_, GamblingLimits>(
+    |                                          ^^^^^^^^^^^^^^ the trait `sqlx::Decode<'_, _>` is not implemented for `BigDecimal`
+    |
+    = help: the following other types implement trait `sqlx::Decode<'r, DB>`:
+              `&'a str` implements `sqlx::Decode<'a, sqlx::Any>`
+              `&'r JsonRawValue` implements `sqlx::Decode<'r, DB>`
+              `&'r [u8]` implements `sqlx::Decode<'r, Postgres>`
+              `&'r [u8]` implements `sqlx::Decode<'r, sqlx::Any>`
+              `&'r str` implements `sqlx::Decode<'r, Postgres>`
+              `()` implements `sqlx::Decode<'r, Postgres>`
+              `(T1, T2)` implements `sqlx::Decode<'r, Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Decode<'r, Postgres>`
+            and 49 others
+    = note: required for `std::option::Option<BigDecimal>` to implement `sqlx::Decode<'_, _>`
+note: required for `betting::GamblingLimits` to implement `for<'r> FromRow<'r, _>`
+   --> src\betting.rs:473:10
+    |
+473 | #[derive(sqlx::FromRow)]
+    |          ^^^^^^^^^^^^^ unsatisfied trait bound introduced in this `derive` macro
+474 | struct GamblingLimits {
+    |        ^^^^^^^^^^^^^^
+note: required by a bound in `sqlx::query_as`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_as.rs:345:8
+    |
+342 | pub fn query_as<'q, DB, O>(sql: &'q str) -> QueryAs<'q, DB, O, <DB as HasArguments<'q>>::Arguments>
+    |        -------- required by a bound in this function
+...
+345 |     O: for<'r> FromRow<'r, DB::Row>,
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `query_as`
+    = note: this error originates in the derive macro `sqlx::FromRow` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Type<_>` is not satisfied
+   --> src\betting.rs:235:42
+    |
+235 |         let limits = sqlx::query_as::<_, GamblingLimits>(
+    |                                          ^^^^^^^^^^^^^^ the trait `sqlx::Type<_>` is not implemented for `BigDecimal`
+    |
+    = help: the following other types implement trait `sqlx::Type<DB>`:
+              `&T` implements `sqlx::Type<DB>`
+              `()` implements `sqlx::Type<Postgres>`
+              `(T1, T2)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6, T7)` implements `sqlx::Type<Postgres>`
+            and 51 others
+    = note: required for `std::option::Option<BigDecimal>` to implement `sqlx::Type<_>`
+note: required for `betting::GamblingLimits` to implement `for<'r> FromRow<'r, _>`
+   --> src\betting.rs:473:10
+    |
+473 | #[derive(sqlx::FromRow)]
+    |          ^^^^^^^^^^^^^ unsatisfied trait bound introduced in this `derive` macro
+474 | struct GamblingLimits {
+    |        ^^^^^^^^^^^^^^
+note: required by a bound in `sqlx::query_as`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_as.rs:345:8
+    |
+342 | pub fn query_as<'q, DB, O>(sql: &'q str) -> QueryAs<'q, DB, O, <DB as HasArguments<'q>>::Arguments>
+    |        -------- required by a bound in this function
+...
+345 |     O: for<'r> FromRow<'r, DB::Row>,
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `query_as`
+    = note: this error originates in the derive macro `sqlx::FromRow` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0599]: the method `fetch_one` exists for struct `QueryAs<'_, Postgres, betting::GamblingLimits, PgArguments>`, but its trait bounds were not satisfied
+   --> src\betting.rs:241:10
+    |
+235 |           let limits = sqlx::query_as::<_, GamblingLimits>(
+    |  ______________________-
+236 | |             r#"
+237 | |             SELECT * FROM gambling_limits WHERE user_id = $1
+238 | |             "#
+239 | |         )
+240 | |         .bind(user_id)
+241 | |         .fetch_one(executor)
+    | |         -^^^^^^^^^ method cannot be called due to unsatisfied trait bounds
+    | |_________|
+    |
+...
+474 |   struct GamblingLimits {
+    |   --------------------- doesn't satisfy `betting::GamblingLimits: FromRow<'r, PgRow>`
+    |
+   ::: C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\bigdecimal-0.4.8\src\lib.rs:206:1
+    |
+206 |   pub struct BigDecimal {
+    |   --------------------- doesn't satisfy `BigDecimal: sqlx::Decode<'_, Postgres>` or `BigDecimal: sqlx::Type<Postgres>`
+    |
+    = note: the following trait bounds were not satisfied:
+            `BigDecimal: sqlx::Decode<'_, Postgres>`
+            which is required by `betting::GamblingLimits: FromRow<'r, PgRow>`
+            `BigDecimal: sqlx::Type<Postgres>`
+            which is required by `betting::GamblingLimits: FromRow<'r, PgRow>`
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Decode<'_, Postgres>` is not satisfied
+   --> src\betting.rs:314:10
+    |
+314 |         .fetch_one(executor)
+    |          ^^^^^^^^^ the trait `sqlx::Decode<'_, Postgres>` is not implemented for `BigDecimal`
+    |
+    = help: the following other types implement trait `sqlx::Decode<'r, DB>`:
+              `&'a str` implements `sqlx::Decode<'a, sqlx::Any>`
+              `&'r JsonRawValue` implements `sqlx::Decode<'r, DB>`
+              `&'r [u8]` implements `sqlx::Decode<'r, Postgres>`
+              `&'r [u8]` implements `sqlx::Decode<'r, sqlx::Any>`
+              `&'r str` implements `sqlx::Decode<'r, Postgres>`
+              `()` implements `sqlx::Decode<'r, Postgres>`
+              `(T1, T2)` implements `sqlx::Decode<'r, Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Decode<'r, Postgres>`
+            and 49 others
+    = note: required for `std::option::Option<BigDecimal>` to implement `sqlx::Decode<'_, Postgres>`
+    = note: required for `(std::option::Option<BigDecimal>,)` to implement `for<'r> FromRow<'r, PgRow>`
+note: required by a bound in `QueryScalar::<'q, DB, O, A>::fetch_one`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_scalar.rs:84:26
+    |
+ 84 |     (O,): Send + Unpin + for<'r> FromRow<'r, DB::Row>,
+    |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `QueryScalar::<'q, DB, O, A>::fetch_one`
+...
+157 |     pub async fn fetch_one<'e, 'c: 'e, E>(self, executor: E) -> Result<O, Error>
+    |                  --------- required by a bound in this associated function
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Type<Postgres>` is not satisfied
+   --> src\betting.rs:314:10
+    |
+314 |         .fetch_one(executor)
+    |          ^^^^^^^^^ the trait `sqlx::Type<Postgres>` is not implemented for `BigDecimal`
+    |
+    = help: the following other types implement trait `sqlx::Type<DB>`:
+              `&T` implements `sqlx::Type<DB>`
+              `()` implements `sqlx::Type<Postgres>`
+              `(T1, T2)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6, T7)` implements `sqlx::Type<Postgres>`
+            and 51 others
+    = note: required for `std::option::Option<BigDecimal>` to implement `sqlx::Type<Postgres>`
+    = note: required for `(std::option::Option<BigDecimal>,)` to implement `for<'r> FromRow<'r, PgRow>`
+note: required by a bound in `QueryScalar::<'q, DB, O, A>::fetch_one`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_scalar.rs:84:26
+    |
+ 84 |     (O,): Send + Unpin + for<'r> FromRow<'r, DB::Row>,
+    |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `QueryScalar::<'q, DB, O, A>::fetch_one`
+...
+157 |     pub async fn fetch_one<'e, 'c: 'e, E>(self, executor: E) -> Result<O, Error>
+    |                  --------- required by a bound in this associated function
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Decode<'_, Postgres>` is not satisfied
+   --> src\betting.rs:303:42
+    |
+303 |           let result: Option<BigDecimal> = sqlx::query_scalar(
+    |  __________________________________________^
+304 | |             &format!(
+305 | |                 r#"
+306 | |                 SELECT COALESCE(SUM(amount), 0)
+...   |
+313 | |         .bind(user_id)
+314 | |         .fetch_one(executor)
+    | |____________________________^ the trait `sqlx::Decode<'_, Postgres>` is not implemented for `BigDecimal`
+    |
+    = help: the following other types implement trait `sqlx::Decode<'r, DB>`:
+              `&'a str` implements `sqlx::Decode<'a, sqlx::Any>`
+              `&'r JsonRawValue` implements `sqlx::Decode<'r, DB>`
+              `&'r [u8]` implements `sqlx::Decode<'r, Postgres>`
+              `&'r [u8]` implements `sqlx::Decode<'r, sqlx::Any>`
+              `&'r str` implements `sqlx::Decode<'r, Postgres>`
+              `()` implements `sqlx::Decode<'r, Postgres>`
+              `(T1, T2)` implements `sqlx::Decode<'r, Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Decode<'r, Postgres>`
+            and 49 others
+    = note: required for `std::option::Option<BigDecimal>` to implement `sqlx::Decode<'_, Postgres>`
+    = note: required for `(std::option::Option<BigDecimal>,)` to implement `for<'r> FromRow<'r, PgRow>`
+note: required by a bound in `QueryScalar<'q, DB, O, A>`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_scalar.rs:84:26
+    |
+ 84 |     (O,): Send + Unpin + for<'r> FromRow<'r, DB::Row>,
+    |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `QueryScalar<'q, DB, O, A>`
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Decode<'_, Postgres>` is not satisfied
+   --> src\betting.rs:303:42
+    |
+303 |           let result: Option<BigDecimal> = sqlx::query_scalar(
+    |  __________________________________________^
+304 | |             &format!(
+305 | |                 r#"
+306 | |                 SELECT COALESCE(SUM(amount), 0)
+...   |
+312 | |         )
+    | |_________^ the trait `sqlx::Decode<'_, Postgres>` is not implemented for `BigDecimal`
+    |
+    = help: the following other types implement trait `sqlx::Decode<'r, DB>`:
+              `&'a str` implements `sqlx::Decode<'a, sqlx::Any>`
+              `&'r JsonRawValue` implements `sqlx::Decode<'r, DB>`
+              `&'r [u8]` implements `sqlx::Decode<'r, Postgres>`
+              `&'r [u8]` implements `sqlx::Decode<'r, sqlx::Any>`
+              `&'r str` implements `sqlx::Decode<'r, Postgres>`
+              `()` implements `sqlx::Decode<'r, Postgres>`
+              `(T1, T2)` implements `sqlx::Decode<'r, Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Decode<'r, Postgres>`
+            and 49 others
+    = note: required for `std::option::Option<BigDecimal>` to implement `sqlx::Decode<'_, Postgres>`
+    = note: required for `(std::option::Option<BigDecimal>,)` to implement `for<'r> FromRow<'r, PgRow>`
+note: required by a bound in `sqlx::query_scalar`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_scalar.rs:326:11
+    |
+321 | pub fn query_scalar<'q, DB, O>(
+    |        ------------ required by a bound in this function
+...
+326 |     (O,): for<'r> FromRow<'r, DB::Row>,
+    |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `query_scalar`
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Type<Postgres>` is not satisfied
+   --> src\betting.rs:303:42
+    |
+303 |           let result: Option<BigDecimal> = sqlx::query_scalar(
+    |  __________________________________________^
+304 | |             &format!(
+305 | |                 r#"
+306 | |                 SELECT COALESCE(SUM(amount), 0)
+...   |
+312 | |         )
+    | |_________^ the trait `sqlx::Type<Postgres>` is not implemented for `BigDecimal`
+    |
+    = help: the following other types implement trait `sqlx::Type<DB>`:
+              `&T` implements `sqlx::Type<DB>`
+              `()` implements `sqlx::Type<Postgres>`
+              `(T1, T2)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6, T7)` implements `sqlx::Type<Postgres>`
+            and 51 others
+    = note: required for `std::option::Option<BigDecimal>` to implement `sqlx::Type<Postgres>`
+    = note: required for `(std::option::Option<BigDecimal>,)` to implement `for<'r> FromRow<'r, PgRow>`
+note: required by a bound in `sqlx::query_scalar`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_scalar.rs:326:11
+    |
+321 | pub fn query_scalar<'q, DB, O>(
+    |        ------------ required by a bound in this function
+...
+326 |     (O,): for<'r> FromRow<'r, DB::Row>,
+    |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `query_scalar`
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Decode<'_, Postgres>` is not satisfied
+   --> src\betting.rs:355:10
+    |
+355 |         .fetch_one(pool)
+    |          ^^^^^^^^^ the trait `sqlx::Decode<'_, Postgres>` is not implemented for `BigDecimal`
+    |
+    = help: the following other types implement trait `sqlx::Decode<'r, DB>`:
+              `&'a str` implements `sqlx::Decode<'a, sqlx::Any>`
+              `&'r JsonRawValue` implements `sqlx::Decode<'r, DB>`
+              `&'r [u8]` implements `sqlx::Decode<'r, Postgres>`
+              `&'r [u8]` implements `sqlx::Decode<'r, sqlx::Any>`
+              `&'r str` implements `sqlx::Decode<'r, Postgres>`
+              `()` implements `sqlx::Decode<'r, Postgres>`
+              `(T1, T2)` implements `sqlx::Decode<'r, Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Decode<'r, Postgres>`
+            and 49 others
+    = note: required for `std::option::Option<BigDecimal>` to implement `sqlx::Decode<'_, Postgres>`
+    = note: required for `(std::option::Option<BigDecimal>,)` to implement `for<'r> FromRow<'r, PgRow>`
+note: required by a bound in `QueryScalar::<'q, DB, O, A>::fetch_one`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_scalar.rs:84:26
+    |
+ 84 |     (O,): Send + Unpin + for<'r> FromRow<'r, DB::Row>,
+    |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `QueryScalar::<'q, DB, O, A>::fetch_one`
+...
+157 |     pub async fn fetch_one<'e, 'c: 'e, E>(self, executor: E) -> Result<O, Error>
+    |                  --------- required by a bound in this associated function
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Type<Postgres>` is not satisfied
+   --> src\betting.rs:355:10
+    |
+355 |         .fetch_one(pool)
+    |          ^^^^^^^^^ the trait `sqlx::Type<Postgres>` is not implemented for `BigDecimal`
+    |
+    = help: the following other types implement trait `sqlx::Type<DB>`:
+              `&T` implements `sqlx::Type<DB>`
+              `()` implements `sqlx::Type<Postgres>`
+              `(T1, T2)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6, T7)` implements `sqlx::Type<Postgres>`
+            and 51 others
+    = note: required for `std::option::Option<BigDecimal>` to implement `sqlx::Type<Postgres>`
+    = note: required for `(std::option::Option<BigDecimal>,)` to implement `for<'r> FromRow<'r, PgRow>`
+note: required by a bound in `QueryScalar::<'q, DB, O, A>::fetch_one`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_scalar.rs:84:26
+    |
+ 84 |     (O,): Send + Unpin + for<'r> FromRow<'r, DB::Row>,
+    |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `QueryScalar::<'q, DB, O, A>::fetch_one`
+...
+157 |     pub async fn fetch_one<'e, 'c: 'e, E>(self, executor: E) -> Result<O, Error>
+    |                  --------- required by a bound in this associated function
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Decode<'_, Postgres>` is not satisfied
+   --> src\betting.rs:347:43
+    |
+347 |           let avg_bet: Option<BigDecimal> = sqlx::query_scalar(
+    |  ___________________________________________^
+348 | |             r#"
+349 | |             SELECT AVG(amount)
+350 | |             FROM bets
+...   |
+354 | |         .bind(user_id)
+355 | |         .fetch_one(pool)
+    | |________________________^ the trait `sqlx::Decode<'_, Postgres>` is not implemented for `BigDecimal`
+    |
+    = help: the following other types implement trait `sqlx::Decode<'r, DB>`:
+              `&'a str` implements `sqlx::Decode<'a, sqlx::Any>`
+              `&'r JsonRawValue` implements `sqlx::Decode<'r, DB>`
+              `&'r [u8]` implements `sqlx::Decode<'r, Postgres>`
+              `&'r [u8]` implements `sqlx::Decode<'r, sqlx::Any>`
+              `&'r str` implements `sqlx::Decode<'r, Postgres>`
+              `()` implements `sqlx::Decode<'r, Postgres>`
+              `(T1, T2)` implements `sqlx::Decode<'r, Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Decode<'r, Postgres>`
+            and 49 others
+    = note: required for `std::option::Option<BigDecimal>` to implement `sqlx::Decode<'_, Postgres>`
+    = note: required for `(std::option::Option<BigDecimal>,)` to implement `for<'r> FromRow<'r, PgRow>`
+note: required by a bound in `QueryScalar<'q, DB, O, A>`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_scalar.rs:84:26
+    |
+ 84 |     (O,): Send + Unpin + for<'r> FromRow<'r, DB::Row>,
+    |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `QueryScalar<'q, DB, O, A>`
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Type<Postgres>` is not satisfied
+   --> src\betting.rs:347:43
+    |
+347 |           let avg_bet: Option<BigDecimal> = sqlx::query_scalar(
+    |  ___________________________________________^
+348 | |             r#"
+349 | |             SELECT AVG(amount)
+350 | |             FROM bets
+...   |
+354 | |         .bind(user_id)
+355 | |         .fetch_one(pool)
+    | |________________________^ the trait `sqlx::Type<Postgres>` is not implemented for `BigDecimal`
+    |
+    = help: the following other types implement trait `sqlx::Type<DB>`:
+              `&T` implements `sqlx::Type<DB>`
+              `()` implements `sqlx::Type<Postgres>`
+              `(T1, T2)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6, T7)` implements `sqlx::Type<Postgres>`
+            and 51 others
+    = note: required for `std::option::Option<BigDecimal>` to implement `sqlx::Type<Postgres>`
+    = note: required for `(std::option::Option<BigDecimal>,)` to implement `for<'r> FromRow<'r, PgRow>`
+note: required by a bound in `QueryScalar<'q, DB, O, A>`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_scalar.rs:84:26
+    |
+ 84 |     (O,): Send + Unpin + for<'r> FromRow<'r, DB::Row>,
+    |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `QueryScalar<'q, DB, O, A>`
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Decode<'_, Postgres>` is not satisfied
+   --> src\betting.rs:347:43
+    |
+347 |           let avg_bet: Option<BigDecimal> = sqlx::query_scalar(
+    |  ___________________________________________^
+348 | |             r#"
+349 | |             SELECT AVG(amount)
+350 | |             FROM bets
+351 | |             WHERE user_id = $1
+352 | |             "#
+353 | |         )
+    | |_________^ the trait `sqlx::Decode<'_, Postgres>` is not implemented for `BigDecimal`
+    |
+    = help: the following other types implement trait `sqlx::Decode<'r, DB>`:
+              `&'a str` implements `sqlx::Decode<'a, sqlx::Any>`
+              `&'r JsonRawValue` implements `sqlx::Decode<'r, DB>`
+              `&'r [u8]` implements `sqlx::Decode<'r, Postgres>`
+              `&'r [u8]` implements `sqlx::Decode<'r, sqlx::Any>`
+              `&'r str` implements `sqlx::Decode<'r, Postgres>`
+              `()` implements `sqlx::Decode<'r, Postgres>`
+              `(T1, T2)` implements `sqlx::Decode<'r, Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Decode<'r, Postgres>`
+            and 49 others
+    = note: required for `std::option::Option<BigDecimal>` to implement `sqlx::Decode<'_, Postgres>`
+    = note: required for `(std::option::Option<BigDecimal>,)` to implement `for<'r> FromRow<'r, PgRow>`
+note: required by a bound in `sqlx::query_scalar`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_scalar.rs:326:11
+    |
+321 | pub fn query_scalar<'q, DB, O>(
+    |        ------------ required by a bound in this function
+...
+326 |     (O,): for<'r> FromRow<'r, DB::Row>,
+    |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `query_scalar`
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Type<Postgres>` is not satisfied
+   --> src\betting.rs:347:43
+    |
+347 |           let avg_bet: Option<BigDecimal> = sqlx::query_scalar(
+    |  ___________________________________________^
+348 | |             r#"
+349 | |             SELECT AVG(amount)
+350 | |             FROM bets
+351 | |             WHERE user_id = $1
+352 | |             "#
+353 | |         )
+    | |_________^ the trait `sqlx::Type<Postgres>` is not implemented for `BigDecimal`
+    |
+    = help: the following other types implement trait `sqlx::Type<DB>`:
+              `&T` implements `sqlx::Type<DB>`
+              `()` implements `sqlx::Type<Postgres>`
+              `(T1, T2)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6, T7)` implements `sqlx::Type<Postgres>`
+            and 51 others
+    = note: required for `std::option::Option<BigDecimal>` to implement `sqlx::Type<Postgres>`
+    = note: required for `(std::option::Option<BigDecimal>,)` to implement `for<'r> FromRow<'r, PgRow>`
+note: required by a bound in `sqlx::query_scalar`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_scalar.rs:326:11
+    |
+321 | pub fn query_scalar<'q, DB, O>(
+    |        ------------ required by a bound in this function
+...
+326 |     (O,): for<'r> FromRow<'r, DB::Row>,
+    |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `query_scalar`
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Decode<'_, _>` is not satisfied
+   --> src\betting.rs:372:29
+    |
+372 |         sqlx::query_as::<_, Bet>(
+    |                             ^^^ the trait `sqlx::Decode<'_, _>` is not implemented for `BigDecimal`
+    |
+    = help: the following other types implement trait `sqlx::Decode<'r, DB>`:
+              `&'a str` implements `sqlx::Decode<'a, sqlx::Any>`
+              `&'r JsonRawValue` implements `sqlx::Decode<'r, DB>`
+              `&'r [u8]` implements `sqlx::Decode<'r, Postgres>`
+              `&'r [u8]` implements `sqlx::Decode<'r, sqlx::Any>`
+              `&'r str` implements `sqlx::Decode<'r, Postgres>`
+              `()` implements `sqlx::Decode<'r, Postgres>`
+              `(T1, T2)` implements `sqlx::Decode<'r, Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Decode<'r, Postgres>`
+            and 49 others
+note: required for `Bet` to implement `for<'r> FromRow<'r, _>`
+   --> src\models.rs:225:41
+    |
+225 | #[derive(Debug, Serialize, Deserialize, FromRow)]
+    |                                         ^^^^^^^ unsatisfied trait bound introduced in this `derive` macro
+226 | pub struct Bet {
+    |            ^^^
+note: required by a bound in `sqlx::query_as`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_as.rs:345:8
+    |
+342 | pub fn query_as<'q, DB, O>(sql: &'q str) -> QueryAs<'q, DB, O, <DB as HasArguments<'q>>::Arguments>
+    |        -------- required by a bound in this function
+...
+345 |     O: for<'r> FromRow<'r, DB::Row>,
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `query_as`
+    = note: this error originates in the derive macro `FromRow` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Type<_>` is not satisfied
+   --> src\betting.rs:372:29
+    |
+372 |         sqlx::query_as::<_, Bet>(
+    |                             ^^^ the trait `sqlx::Type<_>` is not implemented for `BigDecimal`
+    |
+    = help: the following other types implement trait `sqlx::Type<DB>`:
+              `&T` implements `sqlx::Type<DB>`
+              `()` implements `sqlx::Type<Postgres>`
+              `(T1, T2)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6, T7)` implements `sqlx::Type<Postgres>`
+            and 51 others
+note: required for `Bet` to implement `for<'r> FromRow<'r, _>`
+   --> src\models.rs:225:41
+    |
+225 | #[derive(Debug, Serialize, Deserialize, FromRow)]
+    |                                         ^^^^^^^ unsatisfied trait bound introduced in this `derive` macro
+226 | pub struct Bet {
+    |            ^^^
+note: required by a bound in `sqlx::query_as`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_as.rs:345:8
+    |
+342 | pub fn query_as<'q, DB, O>(sql: &'q str) -> QueryAs<'q, DB, O, <DB as HasArguments<'q>>::Arguments>
+    |        -------- required by a bound in this function
+...
+345 |     O: for<'r> FromRow<'r, DB::Row>,
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `query_as`
+    = note: this error originates in the derive macro `FromRow` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0599]: the method `fetch_all` exists for struct `QueryAs<'_, Postgres, Bet, PgArguments>`, but its trait bounds were not satisfied
+   --> src\betting.rs:383:10
+    |
+372 | /         sqlx::query_as::<_, Bet>(
+373 | |             r#"
+374 | |             SELECT * FROM bets
+375 | |             WHERE user_id = $1
+...   |
+382 | |         .bind(offset)
+383 | |         .fetch_all(pool)
+    | |         -^^^^^^^^^ method cannot be called on `QueryAs<'_, Postgres, Bet, PgArguments>` due to unsatisfied trait bounds
+    | |_________|
+    |
+    |
+   ::: src\models.rs:226:1
+    |
+226 |   pub struct Bet {
+    |   -------------- doesn't satisfy `Bet: FromRow<'r, PgRow>`
+    |
+   ::: C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\bigdecimal-0.4.8\src\lib.rs:206:1
+    |
+206 |   pub struct BigDecimal {
+    |   --------------------- doesn't satisfy `BigDecimal: sqlx::Decode<'_, Postgres>` or `BigDecimal: sqlx::Type<Postgres>`
+    |
+    = note: the following trait bounds were not satisfied:
+            `BigDecimal: sqlx::Decode<'_, Postgres>`
+            `BigDecimal: sqlx::Type<Postgres>`
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Decode<'_, _>` is not satisfied
+   --> src\betting.rs:393:29
+    |
+393 |         sqlx::query_as::<_, Bet>(
+    |                             ^^^ the trait `sqlx::Decode<'_, _>` is not implemented for `BigDecimal`
+    |
+    = help: the following other types implement trait `sqlx::Decode<'r, DB>`:
+              `&'a str` implements `sqlx::Decode<'a, sqlx::Any>`
+              `&'r JsonRawValue` implements `sqlx::Decode<'r, DB>`
+              `&'r [u8]` implements `sqlx::Decode<'r, Postgres>`
+              `&'r [u8]` implements `sqlx::Decode<'r, sqlx::Any>`
+              `&'r str` implements `sqlx::Decode<'r, Postgres>`
+              `()` implements `sqlx::Decode<'r, Postgres>`
+              `(T1, T2)` implements `sqlx::Decode<'r, Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Decode<'r, Postgres>`
+            and 49 others
+note: required for `Bet` to implement `for<'r> FromRow<'r, _>`
+   --> src\models.rs:225:41
+    |
+225 | #[derive(Debug, Serialize, Deserialize, FromRow)]
+    |                                         ^^^^^^^ unsatisfied trait bound introduced in this `derive` macro
+226 | pub struct Bet {
+    |            ^^^
+note: required by a bound in `sqlx::query_as`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_as.rs:345:8
+    |
+342 | pub fn query_as<'q, DB, O>(sql: &'q str) -> QueryAs<'q, DB, O, <DB as HasArguments<'q>>::Arguments>
+    |        -------- required by a bound in this function
+...
+345 |     O: for<'r> FromRow<'r, DB::Row>,
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `query_as`
+    = note: this error originates in the derive macro `FromRow` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Type<_>` is not satisfied
+   --> src\betting.rs:393:29
+    |
+393 |         sqlx::query_as::<_, Bet>(
+    |                             ^^^ the trait `sqlx::Type<_>` is not implemented for `BigDecimal`
+    |
+    = help: the following other types implement trait `sqlx::Type<DB>`:
+              `&T` implements `sqlx::Type<DB>`
+              `()` implements `sqlx::Type<Postgres>`
+              `(T1, T2)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6, T7)` implements `sqlx::Type<Postgres>`
+            and 51 others
+note: required for `Bet` to implement `for<'r> FromRow<'r, _>`
+   --> src\models.rs:225:41
+    |
+225 | #[derive(Debug, Serialize, Deserialize, FromRow)]
+    |                                         ^^^^^^^ unsatisfied trait bound introduced in this `derive` macro
+226 | pub struct Bet {
+    |            ^^^
+note: required by a bound in `sqlx::query_as`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_as.rs:345:8
+    |
+342 | pub fn query_as<'q, DB, O>(sql: &'q str) -> QueryAs<'q, DB, O, <DB as HasArguments<'q>>::Arguments>
+    |        -------- required by a bound in this function
+...
+345 |     O: for<'r> FromRow<'r, DB::Row>,
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `query_as`
+    = note: this error originates in the derive macro `FromRow` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0599]: the method `fetch_one` exists for struct `QueryAs<'_, Postgres, Bet, PgArguments>`, but its trait bounds were not satisfied
+   --> src\betting.rs:401:10
+    |
+393 | /         sqlx::query_as::<_, Bet>(
+394 | |             r#"
+395 | |             SELECT * FROM bets
+396 | |             WHERE id = $1 AND user_id = $2
+...   |
+400 | |         .bind(user_id)
+401 | |         .fetch_one(pool)
+    | |         -^^^^^^^^^ method cannot be called on `QueryAs<'_, Postgres, Bet, PgArguments>` due to unsatisfied trait bounds
+    | |_________|
+    |
+    |
+   ::: src\models.rs:226:1
+    |
+226 |   pub struct Bet {
+    |   -------------- doesn't satisfy `Bet: FromRow<'r, PgRow>`
+    |
+   ::: C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\bigdecimal-0.4.8\src\lib.rs:206:1
+    |
+206 |   pub struct BigDecimal {
+    |   --------------------- doesn't satisfy `BigDecimal: sqlx::Decode<'_, Postgres>` or `BigDecimal: sqlx::Type<Postgres>`
+    |
+    = note: the following trait bounds were not satisfied:
+            `BigDecimal: sqlx::Decode<'_, Postgres>`
+            `BigDecimal: sqlx::Type<Postgres>`
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Decode<'_, _>` is not satisfied
+   --> src\betting.rs:426:49
+    |
+426 |         let mut sql_query = sqlx::query_as::<_, Event>(&query);
+    |                                                 ^^^^^ the trait `sqlx::Decode<'_, _>` is not implemented for `BigDecimal`
+    |
+    = help: the following other types implement trait `sqlx::Decode<'r, DB>`:
+              `&'a str` implements `sqlx::Decode<'a, sqlx::Any>`
+              `&'r JsonRawValue` implements `sqlx::Decode<'r, DB>`
+              `&'r [u8]` implements `sqlx::Decode<'r, Postgres>`
+              `&'r [u8]` implements `sqlx::Decode<'r, sqlx::Any>`
+              `&'r str` implements `sqlx::Decode<'r, Postgres>`
+              `()` implements `sqlx::Decode<'r, Postgres>`
+              `(T1, T2)` implements `sqlx::Decode<'r, Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Decode<'r, Postgres>`
+            and 49 others
+    = note: required for `std::option::Option<BigDecimal>` to implement `sqlx::Decode<'_, _>`
+note: required for `models::Event` to implement `for<'r> FromRow<'r, _>`
+   --> src\models.rs:180:41
+    |
+180 | #[derive(Debug, Serialize, Deserialize, FromRow)]
+    |                                         ^^^^^^^ unsatisfied trait bound introduced in this `derive` macro
+181 | pub struct Event {
+    |            ^^^^^
+note: required by a bound in `sqlx::query_as`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_as.rs:345:8
+    |
+342 | pub fn query_as<'q, DB, O>(sql: &'q str) -> QueryAs<'q, DB, O, <DB as HasArguments<'q>>::Arguments>
+    |        -------- required by a bound in this function
+...
+345 |     O: for<'r> FromRow<'r, DB::Row>,
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `query_as`
+    = note: this error originates in the derive macro `FromRow` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Type<_>` is not satisfied
+   --> src\betting.rs:426:49
+    |
+426 |         let mut sql_query = sqlx::query_as::<_, Event>(&query);
+    |                                                 ^^^^^ the trait `sqlx::Type<_>` is not implemented for `BigDecimal`
+    |
+    = help: the following other types implement trait `sqlx::Type<DB>`:
+              `&T` implements `sqlx::Type<DB>`
+              `()` implements `sqlx::Type<Postgres>`
+              `(T1, T2)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6, T7)` implements `sqlx::Type<Postgres>`
+            and 51 others
+    = note: required for `std::option::Option<BigDecimal>` to implement `sqlx::Type<_>`
+note: required for `models::Event` to implement `for<'r> FromRow<'r, _>`
+   --> src\models.rs:180:41
+    |
+180 | #[derive(Debug, Serialize, Deserialize, FromRow)]
+    |                                         ^^^^^^^ unsatisfied trait bound introduced in this `derive` macro
+181 | pub struct Event {
+    |            ^^^^^
+note: required by a bound in `sqlx::query_as`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_as.rs:345:8
+    |
+342 | pub fn query_as<'q, DB, O>(sql: &'q str) -> QueryAs<'q, DB, O, <DB as HasArguments<'q>>::Arguments>
+    |        -------- required by a bound in this function
+...
+345 |     O: for<'r> FromRow<'r, DB::Row>,
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `query_as`
+    = note: this error originates in the derive macro `FromRow` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0599]: the method `fetch_all` exists for struct `QueryAs<'_, _, models::Event, _>`, but its trait bounds were not satisfied
+   --> src\betting.rs:437:14
+    |
+436 | /         sql_query
+437 | |             .fetch_all(pool)
+    | |             -^^^^^^^^^ method cannot be called on `QueryAs<'_, _, models::Event, _>` due to unsatisfied trait bounds
+    | |_____________|
+    |
+    |
+   ::: src\models.rs:181:1
+    |
+181 |   pub struct Event {
+    |   ---------------- doesn't satisfy `models::Event: FromRow<'r, _>`
+    |
+   ::: C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\bigdecimal-0.4.8\src\lib.rs:206:1
+    |
+206 |   pub struct BigDecimal {
+    |   --------------------- doesn't satisfy `BigDecimal: sqlx::Decode<'_, _>` or `BigDecimal: sqlx::Type<_>`
+    |
+    = note: the following trait bounds were not satisfied:
+            `BigDecimal: sqlx::Decode<'_, _>`
+            which is required by `models::Event: FromRow<'r, _>`
+            `BigDecimal: sqlx::Type<_>`
+            which is required by `models::Event: FromRow<'r, _>`
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Decode<'_, _>` is not satisfied
+   --> src\betting.rs:447:29
+    |
+447 |         sqlx::query_as::<_, Event>(
+    |                             ^^^^^ the trait `sqlx::Decode<'_, _>` is not implemented for `BigDecimal`
+    |
+    = help: the following other types implement trait `sqlx::Decode<'r, DB>`:
+              `&'a str` implements `sqlx::Decode<'a, sqlx::Any>`
+              `&'r JsonRawValue` implements `sqlx::Decode<'r, DB>`
+              `&'r [u8]` implements `sqlx::Decode<'r, Postgres>`
+              `&'r [u8]` implements `sqlx::Decode<'r, sqlx::Any>`
+              `&'r str` implements `sqlx::Decode<'r, Postgres>`
+              `()` implements `sqlx::Decode<'r, Postgres>`
+              `(T1, T2)` implements `sqlx::Decode<'r, Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Decode<'r, Postgres>`
+            and 49 others
+    = note: required for `std::option::Option<BigDecimal>` to implement `sqlx::Decode<'_, _>`
+note: required for `models::Event` to implement `for<'r> FromRow<'r, _>`
+   --> src\models.rs:180:41
+    |
+180 | #[derive(Debug, Serialize, Deserialize, FromRow)]
+    |                                         ^^^^^^^ unsatisfied trait bound introduced in this `derive` macro
+181 | pub struct Event {
+    |            ^^^^^
+note: required by a bound in `sqlx::query_as`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_as.rs:345:8
+    |
+342 | pub fn query_as<'q, DB, O>(sql: &'q str) -> QueryAs<'q, DB, O, <DB as HasArguments<'q>>::Arguments>
+    |        -------- required by a bound in this function
+...
+345 |     O: for<'r> FromRow<'r, DB::Row>,
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `query_as`
+    = note: this error originates in the derive macro `FromRow` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Type<_>` is not satisfied
+   --> src\betting.rs:447:29
+    |
+447 |         sqlx::query_as::<_, Event>(
+    |                             ^^^^^ the trait `sqlx::Type<_>` is not implemented for `BigDecimal`
+    |
+    = help: the following other types implement trait `sqlx::Type<DB>`:
+              `&T` implements `sqlx::Type<DB>`
+              `()` implements `sqlx::Type<Postgres>`
+              `(T1, T2)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6, T7)` implements `sqlx::Type<Postgres>`
+            and 51 others
+    = note: required for `std::option::Option<BigDecimal>` to implement `sqlx::Type<_>`
+note: required for `models::Event` to implement `for<'r> FromRow<'r, _>`
+   --> src\models.rs:180:41
+    |
+180 | #[derive(Debug, Serialize, Deserialize, FromRow)]
+    |                                         ^^^^^^^ unsatisfied trait bound introduced in this `derive` macro
+181 | pub struct Event {
+    |            ^^^^^
+note: required by a bound in `sqlx::query_as`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_as.rs:345:8
+    |
+342 | pub fn query_as<'q, DB, O>(sql: &'q str) -> QueryAs<'q, DB, O, <DB as HasArguments<'q>>::Arguments>
+    |        -------- required by a bound in this function
+...
+345 |     O: for<'r> FromRow<'r, DB::Row>,
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `query_as`
+    = note: this error originates in the derive macro `FromRow` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0599]: the method `fetch_one` exists for struct `QueryAs<'_, Postgres, models::Event, PgArguments>`, but its trait bounds were not satisfied
+   --> src\betting.rs:453:10
+    |
+447 | /         sqlx::query_as::<_, Event>(
+448 | |             r#"
+449 | |             SELECT * FROM events WHERE id = $1
+450 | |             "#
+451 | |         )
+452 | |         .bind(event_id)
+453 | |         .fetch_one(pool)
+    | |         -^^^^^^^^^ method cannot be called on `QueryAs<'_, Postgres, models::Event, PgArguments>` due to unsatisfied trait bounds
+    | |_________|
+    |
+    |
+   ::: src\models.rs:181:1
+    |
+181 |   pub struct Event {
+    |   ---------------- doesn't satisfy `models::Event: FromRow<'r, PgRow>`
+    |
+   ::: C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\bigdecimal-0.4.8\src\lib.rs:206:1
+    |
+206 |   pub struct BigDecimal {
+    |   --------------------- doesn't satisfy `BigDecimal: sqlx::Decode<'_, Postgres>` or `BigDecimal: sqlx::Type<Postgres>`
+    |
+    = note: the following trait bounds were not satisfied:
+            `BigDecimal: sqlx::Decode<'_, Postgres>`
+            which is required by `models::Event: FromRow<'r, PgRow>`
+            `BigDecimal: sqlx::Type<Postgres>`
+            which is required by `models::Event: FromRow<'r, PgRow>`
+
+error[E0308]: mismatched types
+   --> src\handlers\auth.rs:116:45
+    |
+116 |     let crypto_service = CryptoService::new(&config.encryption_key)?;
+    |                          ------------------ ^^^^^^^^^^^^^^^^^^^^^^ expected `&AppConfig`, found `&String`
+    |                          |
+    |                          arguments to this function are incorrect
+    |
+    = note: expected reference `&config::AppConfig`
+               found reference `&std::string::String`
+note: associated function defined here
+   --> src\crypto.rs:18:12
+    |
+ 18 |     pub fn new(config: &AppConfig) -> Result<Self, Box<dyn Error>> {
+    |            ^^^ ------------------
+
+error[E0277]: `?` couldn't convert the error to `AppError`
+   --> src\handlers\auth.rs:116:68
+    |
+116 |     let crypto_service = CryptoService::new(&config.encryption_key)?;
+    |                          ------------------------------------------^ the trait `std::convert::From<Box<dyn StdError>>` is not implemented for `AppError`
+    |                          |
+    |                          this can't be annotated with `?` because it has type `Result<_, Box<(dyn StdError + 'static)>>`
+    |
+note: `AppError` needs to implement `From<Box<dyn StdError>>`
+   --> src\errors.rs:8:1
+    |
+  8 | pub enum AppError {
+    | ^^^^^^^^^^^^^^^^^
+    = note: the question mark operation (`?`) implicitly performs a conversion on the error value using the `From` trait
+    = help: the following other types implement trait `std::convert::From<T>`:
+              `AppError` implements `std::convert::From<jsonwebtoken::errors::Error>`
+              `AppError` implements `std::convert::From<sqlx::Error>`
+              `AppError` implements `std::convert::From<std::io::Error>`
+
+error[E0308]: mismatched types
+   --> src\handlers\auth.rs:118:60
+    |
+118 |     let encrypted_balance = crypto_service.encrypt_balance(&zero_balance)?;
+    |                                            --------------- ^^^^^^^^^^^^^ expected `f64`, found `&BigDecimal`
+    |                                            |
+    |                                            arguments to this method are incorrect
+    |
+note: method defined here
+   --> src\crypto.rs:71:12
+    |
+ 71 |     pub fn encrypt_balance(&self, amount: f64) -> Result<(String, String), AppError> {
+    |            ^^^^^^^^^^^^^^^        -----------
+
+error[E0277]: the trait bound `(std::string::String, std::string::String): Encode<'_, Postgres>` is not satisfied
+   --> src\handlers\auth.rs:128:12
+    |
+128 |     .bind(&encrypted_balance)
+    |      ----  ^^^^^^^^^^^^^^^^^ the trait `Encode<'_, Postgres>` is not implemented for `(std::string::String, std::string::String)`
+    |      |
+    |      required by a bound introduced by this call
+    |
+    = help: the following other types implement trait `Encode<'q, DB>`:
+              `&'a str` implements `Encode<'a, sqlx::Any>`
+              `&'q [u8]` implements `Encode<'q, sqlx::Any>`
+              `&T` implements `Encode<'q, DB>`
+              `&[T]` implements `Encode<'q, Postgres>`
+              `&[u8]` implements `Encode<'_, Postgres>`
+              `&str` implements `Encode<'_, Postgres>`
+              `Box<[u8]>` implements `Encode<'_, Postgres>`
+              `Box<str>` implements `Encode<'_, Postgres>`
+            and 41 others
+    = note: required for `&(std::string::String, std::string::String)` to implement `Encode<'_, Postgres>`
+note: required by a bound in `sqlx::query::Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query.rs:81:32
+    |
+ 81 |     pub fn bind<T: 'q + Send + Encode<'q, DB> + Type<DB>>(mut self, value: T) -> Self {
+    |                                ^^^^^^^^^^^^^^ required by this bound in `Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+
+error[E0308]: mismatched types
+  --> src\handlers\betting.rs:26:54
+   |
+26 |     let crypto_service = Arc::new(CryptoService::new(&config.encryption_key)?);
+   |                                   ------------------ ^^^^^^^^^^^^^^^^^^^^^^ expected `&AppConfig`, found `&String`
+   |                                   |
+   |                                   arguments to this function are incorrect
+   |
+   = note: expected reference `&config::AppConfig`
+              found reference `&std::string::String`
+note: associated function defined here
+  --> src\crypto.rs:18:12
+   |
+18 |     pub fn new(config: &AppConfig) -> Result<Self, Box<dyn Error>> {
+   |            ^^^ ------------------
+
+error[E0277]: `?` couldn't convert the error to `AppError`
+  --> src\handlers\betting.rs:26:77
+   |
+26 |     let crypto_service = Arc::new(CryptoService::new(&config.encryption_key)?);
+   |                                   ------------------------------------------^ the trait `std::convert::From<Box<dyn StdError>>` is not implemented for `AppError`
+   |                                   |
+   |                                   this can't be annotated with `?` because it has type `Result<_, Box<(dyn StdError + 'static)>>`
+   |
+note: `AppError` needs to implement `From<Box<dyn StdError>>`
+  --> src\errors.rs:8:1
+   |
+ 8 | pub enum AppError {
+   | ^^^^^^^^^^^^^^^^^
+   = note: the question mark operation (`?`) implicitly performs a conversion on the error value using the `From` trait
+   = help: the following other types implement trait `std::convert::From<T>`:
+             `AppError` implements `std::convert::From<jsonwebtoken::errors::Error>`
+             `AppError` implements `std::convert::From<sqlx::Error>`
+             `AppError` implements `std::convert::From<std::io::Error>`
+
+error[E0308]: mismatched types
+  --> src\handlers\betting.rs:64:54
+   |
+64 |     let crypto_service = Arc::new(CryptoService::new(&config.encryption_key)?);
+   |                                   ------------------ ^^^^^^^^^^^^^^^^^^^^^^ expected `&AppConfig`, found `&String`
+   |                                   |
+   |                                   arguments to this function are incorrect
+   |
+   = note: expected reference `&config::AppConfig`
+              found reference `&std::string::String`
+note: associated function defined here
+  --> src\crypto.rs:18:12
+   |
+18 |     pub fn new(config: &AppConfig) -> Result<Self, Box<dyn Error>> {
+   |            ^^^ ------------------
+
+error[E0277]: `?` couldn't convert the error to `AppError`
+  --> src\handlers\betting.rs:64:77
+   |
+64 |     let crypto_service = Arc::new(CryptoService::new(&config.encryption_key)?);
+   |                                   ------------------------------------------^ the trait `std::convert::From<Box<dyn StdError>>` is not implemented for `AppError`
+   |                                   |
+   |                                   this can't be annotated with `?` because it has type `Result<_, Box<(dyn StdError + 'static)>>`
+   |
+note: `AppError` needs to implement `From<Box<dyn StdError>>`
+  --> src\errors.rs:8:1
+   |
+ 8 | pub enum AppError {
+   | ^^^^^^^^^^^^^^^^^
+   = note: the question mark operation (`?`) implicitly performs a conversion on the error value using the `From` trait
+   = help: the following other types implement trait `std::convert::From<T>`:
+             `AppError` implements `std::convert::From<jsonwebtoken::errors::Error>`
+             `AppError` implements `std::convert::From<sqlx::Error>`
+             `AppError` implements `std::convert::From<std::io::Error>`
+
+error[E0599]: no method named `validate` found for struct `actix_web::web::Json<PlaceBetRequest>` in the current scope
+   --> src\handlers\betting.rs:100:10
+    |
+100 |     body.validate().map_err(|e| AppError::Validation(e.to_string()))?;
+    |          ^^^^^^^^ method not found in `actix_web::web::Json<PlaceBetRequest>`
+    |
+    = help: items from traits can only be used if the trait is implemented and in scope
+    = note: the following traits define an item `validate`, perhaps you need to implement one of them:
+            candidate #1: `Validate`
+            candidate #2: `webpki::verify_cert::ExtendedKeyUsageValidator`
+
+error[E0308]: mismatched types
+   --> src\handlers\betting.rs:109:54
+    |
+109 |     let crypto_service = Arc::new(CryptoService::new(&config.encryption_key)?);
+    |                                   ------------------ ^^^^^^^^^^^^^^^^^^^^^^ expected `&AppConfig`, found `&String`
+    |                                   |
+    |                                   arguments to this function are incorrect
+    |
+    = note: expected reference `&config::AppConfig`
+               found reference `&std::string::String`
+note: associated function defined here
+   --> src\crypto.rs:18:12
+    |
+ 18 |     pub fn new(config: &AppConfig) -> Result<Self, Box<dyn Error>> {
+    |            ^^^ ------------------
+
+error[E0277]: `?` couldn't convert the error to `AppError`
+   --> src\handlers\betting.rs:109:77
+    |
+109 |     let crypto_service = Arc::new(CryptoService::new(&config.encryption_key)?);
+    |                                   ------------------------------------------^ the trait `std::convert::From<Box<dyn StdError>>` is not implemented for `AppError`
+    |                                   |
+    |                                   this can't be annotated with `?` because it has type `Result<_, Box<(dyn StdError + 'static)>>`
+    |
+note: `AppError` needs to implement `From<Box<dyn StdError>>`
+   --> src\errors.rs:8:1
+    |
+  8 | pub enum AppError {
+    | ^^^^^^^^^^^^^^^^^
+    = note: the question mark operation (`?`) implicitly performs a conversion on the error value using the `From` trait
+    = help: the following other types implement trait `std::convert::From<T>`:
+              `AppError` implements `std::convert::From<jsonwebtoken::errors::Error>`
+              `AppError` implements `std::convert::From<sqlx::Error>`
+              `AppError` implements `std::convert::From<std::io::Error>`
+
+error[E0308]: mismatched types
+   --> src\handlers\betting.rs:142:54
+    |
+142 |     let crypto_service = Arc::new(CryptoService::new(&config.encryption_key)?);
+    |                                   ------------------ ^^^^^^^^^^^^^^^^^^^^^^ expected `&AppConfig`, found `&String`
+    |                                   |
+    |                                   arguments to this function are incorrect
+    |
+    = note: expected reference `&config::AppConfig`
+               found reference `&std::string::String`
+note: associated function defined here
+   --> src\crypto.rs:18:12
+    |
+ 18 |     pub fn new(config: &AppConfig) -> Result<Self, Box<dyn Error>> {
+    |            ^^^ ------------------
+
+error[E0277]: `?` couldn't convert the error to `AppError`
+   --> src\handlers\betting.rs:142:77
+    |
+142 |     let crypto_service = Arc::new(CryptoService::new(&config.encryption_key)?);
+    |                                   ------------------------------------------^ the trait `std::convert::From<Box<dyn StdError>>` is not implemented for `AppError`
+    |                                   |
+    |                                   this can't be annotated with `?` because it has type `Result<_, Box<(dyn StdError + 'static)>>`
+    |
+note: `AppError` needs to implement `From<Box<dyn StdError>>`
+   --> src\errors.rs:8:1
+    |
+  8 | pub enum AppError {
+    | ^^^^^^^^^^^^^^^^^
+    = note: the question mark operation (`?`) implicitly performs a conversion on the error value using the `From` trait
+    = help: the following other types implement trait `std::convert::From<T>`:
+              `AppError` implements `std::convert::From<jsonwebtoken::errors::Error>`
+              `AppError` implements `std::convert::From<sqlx::Error>`
+              `AppError` implements `std::convert::From<std::io::Error>`
+
+error[E0308]: mismatched types
+   --> src\handlers\betting.rs:177:54
+    |
+177 |     let crypto_service = Arc::new(CryptoService::new(&config.encryption_key)?);
+    |                                   ------------------ ^^^^^^^^^^^^^^^^^^^^^^ expected `&AppConfig`, found `&String`
+    |                                   |
+    |                                   arguments to this function are incorrect
+    |
+    = note: expected reference `&config::AppConfig`
+               found reference `&std::string::String`
+note: associated function defined here
+   --> src\crypto.rs:18:12
+    |
+ 18 |     pub fn new(config: &AppConfig) -> Result<Self, Box<dyn Error>> {
+    |            ^^^ ------------------
+
+error[E0277]: `?` couldn't convert the error to `AppError`
+   --> src\handlers\betting.rs:177:77
+    |
+177 |     let crypto_service = Arc::new(CryptoService::new(&config.encryption_key)?);
+    |                                   ------------------------------------------^ the trait `std::convert::From<Box<dyn StdError>>` is not implemented for `AppError`
+    |                                   |
+    |                                   this can't be annotated with `?` because it has type `Result<_, Box<(dyn StdError + 'static)>>`
+    |
+note: `AppError` needs to implement `From<Box<dyn StdError>>`
+   --> src\errors.rs:8:1
+    |
+  8 | pub enum AppError {
+    | ^^^^^^^^^^^^^^^^^
+    = note: the question mark operation (`?`) implicitly performs a conversion on the error value using the `From` trait
+    = help: the following other types implement trait `std::convert::From<T>`:
+              `AppError` implements `std::convert::From<jsonwebtoken::errors::Error>`
+              `AppError` implements `std::convert::From<sqlx::Error>`
+              `AppError` implements `std::convert::From<std::io::Error>`
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Decode<'_, Postgres>` is not satisfied
+   --> src\handlers\limits.rs:64:6
+    |
+ 64 |     .fetch_one(pool.as_ref())
+    |      ^^^^^^^^^ the trait `sqlx::Decode<'_, Postgres>` is not implemented for `BigDecimal`
+    |
+    = help: the following other types implement trait `sqlx::Decode<'r, DB>`:
+              `&'a str` implements `sqlx::Decode<'a, sqlx::Any>`
+              `&'r JsonRawValue` implements `sqlx::Decode<'r, DB>`
+              `&'r [u8]` implements `sqlx::Decode<'r, Postgres>`
+              `&'r [u8]` implements `sqlx::Decode<'r, sqlx::Any>`
+              `&'r str` implements `sqlx::Decode<'r, Postgres>`
+              `()` implements `sqlx::Decode<'r, Postgres>`
+              `(T1, T2)` implements `sqlx::Decode<'r, Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Decode<'r, Postgres>`
+            and 49 others
+    = note: required for `std::option::Option<BigDecimal>` to implement `sqlx::Decode<'_, Postgres>`
+    = note: required for `(Option<BigDecimal>, ..., ..., ..., ..., ..., ..., ...)` to implement `for<'r> FromRow<'r, PgRow>`
+note: required by a bound in `QueryAs::<'q, DB, O, A>::fetch_one`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_as.rs:86:23
+    |
+ 86 |     O: Send + Unpin + for<'r> FromRow<'r, DB::Row>,
+    |                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `QueryAs::<'q, DB, O, A>::fetch_one`
+...
+160 |     pub async fn fetch_one<'e, 'c: 'e, E>(self, executor: E) -> Result<O, Error>
+    |                  --------- required by a bound in this associated function
+    = note: the full name for the type has been written to 'D:\Github\FootballHeritgae\backend\target\debug\deps\football_heritage_backend.long-type-4295746298181776242.txt'
+    = note: consider using `--verbose` to print the full type name to the console
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Type<Postgres>` is not satisfied
+   --> src\handlers\limits.rs:64:6
+    |
+ 64 |     .fetch_one(pool.as_ref())
+    |      ^^^^^^^^^ the trait `sqlx::Type<Postgres>` is not implemented for `BigDecimal`
+    |
+    = help: the following other types implement trait `sqlx::Type<DB>`:
+              `&T` implements `sqlx::Type<DB>`
+              `()` implements `sqlx::Type<Postgres>`
+              `(T1, T2)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6, T7)` implements `sqlx::Type<Postgres>`
+            and 51 others
+    = note: required for `std::option::Option<BigDecimal>` to implement `sqlx::Type<Postgres>`
+    = note: required for `(Option<BigDecimal>, ..., ..., ..., ..., ..., ..., ...)` to implement `for<'r> FromRow<'r, PgRow>`
+note: required by a bound in `QueryAs::<'q, DB, O, A>::fetch_one`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_as.rs:86:23
+    |
+ 86 |     O: Send + Unpin + for<'r> FromRow<'r, DB::Row>,
+    |                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `QueryAs::<'q, DB, O, A>::fetch_one`
+...
+160 |     pub async fn fetch_one<'e, 'c: 'e, E>(self, executor: E) -> Result<O, Error>
+    |                  --------- required by a bound in this associated function
+    = note: the full name for the type has been written to 'D:\Github\FootballHeritgae\backend\target\debug\deps\football_heritage_backend.long-type-4295746298181776242.txt'
+    = note: consider using `--verbose` to print the full type name to the console
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Decode<'_, Postgres>` is not satisfied
+   --> src\handlers\limits.rs:54:9
+    |
+ 54 |       ) = sqlx::query_as(
+    |  _________^
+ 55 | |         r#"
+ 56 | |         SELECT daily_bet_limit, weekly_bet_limit, monthly_bet_limit,
+ 57 | |                daily_loss_limit, weekly_loss_limit, monthly_loss_limit,
+...   |
+ 61 | |         "#
+ 62 | |     )
+    | |_____^ the trait `sqlx::Decode<'_, Postgres>` is not implemented for `BigDecimal`
+    |
+    = help: the following other types implement trait `sqlx::Decode<'r, DB>`:
+              `&'a str` implements `sqlx::Decode<'a, sqlx::Any>`
+              `&'r JsonRawValue` implements `sqlx::Decode<'r, DB>`
+              `&'r [u8]` implements `sqlx::Decode<'r, Postgres>`
+              `&'r [u8]` implements `sqlx::Decode<'r, sqlx::Any>`
+              `&'r str` implements `sqlx::Decode<'r, Postgres>`
+              `()` implements `sqlx::Decode<'r, Postgres>`
+              `(T1, T2)` implements `sqlx::Decode<'r, Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Decode<'r, Postgres>`
+            and 49 others
+    = note: required for `std::option::Option<BigDecimal>` to implement `sqlx::Decode<'_, Postgres>`
+    = note: required for `(Option<BigDecimal>, ..., ..., ..., ..., ..., ..., ...)` to implement `for<'r> FromRow<'r, PgRow>`
+note: required by a bound in `sqlx::query_as`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_as.rs:345:8
+    |
+342 | pub fn query_as<'q, DB, O>(sql: &'q str) -> QueryAs<'q, DB, O, <DB as HasArguments<'q>>::Arguments>
+    |        -------- required by a bound in this function
+...
+345 |     O: for<'r> FromRow<'r, DB::Row>,
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `query_as`
+    = note: the full name for the type has been written to 'D:\Github\FootballHeritgae\backend\target\debug\deps\football_heritage_backend.long-type-4295746298181776242.txt'
+    = note: consider using `--verbose` to print the full type name to the console
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Type<Postgres>` is not satisfied
+   --> src\handlers\limits.rs:54:9
+    |
+ 54 |       ) = sqlx::query_as(
+    |  _________^
+ 55 | |         r#"
+ 56 | |         SELECT daily_bet_limit, weekly_bet_limit, monthly_bet_limit,
+ 57 | |                daily_loss_limit, weekly_loss_limit, monthly_loss_limit,
+...   |
+ 61 | |         "#
+ 62 | |     )
+    | |_____^ the trait `sqlx::Type<Postgres>` is not implemented for `BigDecimal`
+    |
+    = help: the following other types implement trait `sqlx::Type<DB>`:
+              `&T` implements `sqlx::Type<DB>`
+              `()` implements `sqlx::Type<Postgres>`
+              `(T1, T2)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6, T7)` implements `sqlx::Type<Postgres>`
+            and 51 others
+    = note: required for `std::option::Option<BigDecimal>` to implement `sqlx::Type<Postgres>`
+    = note: required for `(Option<BigDecimal>, ..., ..., ..., ..., ..., ..., ...)` to implement `for<'r> FromRow<'r, PgRow>`
+note: required by a bound in `sqlx::query_as`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_as.rs:345:8
+    |
+342 | pub fn query_as<'q, DB, O>(sql: &'q str) -> QueryAs<'q, DB, O, <DB as HasArguments<'q>>::Arguments>
+    |        -------- required by a bound in this function
+...
+345 |     O: for<'r> FromRow<'r, DB::Row>,
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `query_as`
+    = note: the full name for the type has been written to 'D:\Github\FootballHeritgae\backend\target\debug\deps\football_heritage_backend.long-type-4295746298181776242.txt'
+    = note: consider using `--verbose` to print the full type name to the console
+
+error[E0277]: the trait bound `std::option::Option<BigDecimal>: Encode<'_, _>` is not satisfied
+   --> src\handlers\limits.rs:105:12
+    |
+105 |     .bind(&body.daily_bet_limit)
+    |      ----  ^^^^^^^^^^^^^^^^^^^^ the trait `Encode<'_, _>` is not implemented for `std::option::Option<BigDecimal>`
+    |      |
+    |      required by a bound introduced by this call
+    |
+    = help: the following other types implement trait `Encode<'q, DB>`:
+              `std::option::Option<T>` implements `Encode<'_, Postgres>`
+              `std::option::Option<T>` implements `Encode<'_, sqlx::Any>`
+    = note: required for `&std::option::Option<BigDecimal>` to implement `Encode<'_, _>`
+note: required by a bound in `sqlx::query::Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query.rs:81:32
+    |
+ 81 |     pub fn bind<T: 'q + Send + Encode<'q, DB> + Type<DB>>(mut self, value: T) -> Self {
+    |                                ^^^^^^^^^^^^^^ required by this bound in `Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Type<_>` is not satisfied
+   --> src\handlers\limits.rs:105:12
+    |
+105 |     .bind(&body.daily_bet_limit)
+    |      ----  ^^^^^^^^^^^^^^^^^^^^ the trait `sqlx::Type<_>` is not implemented for `BigDecimal`
+    |      |
+    |      required by a bound introduced by this call
+    |
+    = help: the following other types implement trait `sqlx::Type<DB>`:
+              `&T` implements `sqlx::Type<DB>`
+              `()` implements `sqlx::Type<Postgres>`
+              `(T1, T2)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6, T7)` implements `sqlx::Type<Postgres>`
+            and 51 others
+    = note: required for `std::option::Option<BigDecimal>` to implement `sqlx::Type<_>`
+    = note: 1 redundant requirement hidden
+    = note: required for `&std::option::Option<BigDecimal>` to implement `sqlx::Type<_>`
+note: required by a bound in `sqlx::query::Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query.rs:81:49
+    |
+ 81 |     pub fn bind<T: 'q + Send + Encode<'q, DB> + Type<DB>>(mut self, value: T) -> Self {
+    |                                                 ^^^^^^^^ required by this bound in `Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+help: use a unary tuple instead
+    |
+105 |     .bind((&body.daily_bet_limit,))
+    |           +                     ++
+
+error[E0277]: the trait bound `std::option::Option<BigDecimal>: Encode<'_, _>` is not satisfied
+   --> src\handlers\limits.rs:106:12
+    |
+106 |     .bind(&body.weekly_bet_limit)
+    |      ----  ^^^^^^^^^^^^^^^^^^^^^ the trait `Encode<'_, _>` is not implemented for `std::option::Option<BigDecimal>`
+    |      |
+    |      required by a bound introduced by this call
+    |
+    = help: the following other types implement trait `Encode<'q, DB>`:
+              `std::option::Option<T>` implements `Encode<'_, Postgres>`
+              `std::option::Option<T>` implements `Encode<'_, sqlx::Any>`
+    = note: required for `&std::option::Option<BigDecimal>` to implement `Encode<'_, _>`
+note: required by a bound in `sqlx::query::Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query.rs:81:32
+    |
+ 81 |     pub fn bind<T: 'q + Send + Encode<'q, DB> + Type<DB>>(mut self, value: T) -> Self {
+    |                                ^^^^^^^^^^^^^^ required by this bound in `Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Type<_>` is not satisfied
+   --> src\handlers\limits.rs:106:12
+    |
+106 |     .bind(&body.weekly_bet_limit)
+    |      ----  ^^^^^^^^^^^^^^^^^^^^^ the trait `sqlx::Type<_>` is not implemented for `BigDecimal`
+    |      |
+    |      required by a bound introduced by this call
+    |
+    = help: the following other types implement trait `sqlx::Type<DB>`:
+              `&T` implements `sqlx::Type<DB>`
+              `()` implements `sqlx::Type<Postgres>`
+              `(T1, T2)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6, T7)` implements `sqlx::Type<Postgres>`
+            and 51 others
+    = note: required for `std::option::Option<BigDecimal>` to implement `sqlx::Type<_>`
+    = note: 1 redundant requirement hidden
+    = note: required for `&std::option::Option<BigDecimal>` to implement `sqlx::Type<_>`
+note: required by a bound in `sqlx::query::Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query.rs:81:49
+    |
+ 81 |     pub fn bind<T: 'q + Send + Encode<'q, DB> + Type<DB>>(mut self, value: T) -> Self {
+    |                                                 ^^^^^^^^ required by this bound in `Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+help: use a unary tuple instead
+    |
+106 |     .bind((&body.weekly_bet_limit,))
+    |           +                      ++
+
+error[E0277]: the trait bound `std::option::Option<BigDecimal>: Encode<'_, _>` is not satisfied
+   --> src\handlers\limits.rs:107:12
+    |
+107 |     .bind(&body.monthly_bet_limit)
+    |      ----  ^^^^^^^^^^^^^^^^^^^^^^ the trait `Encode<'_, _>` is not implemented for `std::option::Option<BigDecimal>`
+    |      |
+    |      required by a bound introduced by this call
+    |
+    = help: the following other types implement trait `Encode<'q, DB>`:
+              `std::option::Option<T>` implements `Encode<'_, Postgres>`
+              `std::option::Option<T>` implements `Encode<'_, sqlx::Any>`
+    = note: required for `&std::option::Option<BigDecimal>` to implement `Encode<'_, _>`
+note: required by a bound in `sqlx::query::Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query.rs:81:32
+    |
+ 81 |     pub fn bind<T: 'q + Send + Encode<'q, DB> + Type<DB>>(mut self, value: T) -> Self {
+    |                                ^^^^^^^^^^^^^^ required by this bound in `Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Type<_>` is not satisfied
+   --> src\handlers\limits.rs:107:12
+    |
+107 |     .bind(&body.monthly_bet_limit)
+    |      ----  ^^^^^^^^^^^^^^^^^^^^^^ the trait `sqlx::Type<_>` is not implemented for `BigDecimal`
+    |      |
+    |      required by a bound introduced by this call
+    |
+    = help: the following other types implement trait `sqlx::Type<DB>`:
+              `&T` implements `sqlx::Type<DB>`
+              `()` implements `sqlx::Type<Postgres>`
+              `(T1, T2)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6, T7)` implements `sqlx::Type<Postgres>`
+            and 51 others
+    = note: required for `std::option::Option<BigDecimal>` to implement `sqlx::Type<_>`
+    = note: 1 redundant requirement hidden
+    = note: required for `&std::option::Option<BigDecimal>` to implement `sqlx::Type<_>`
+note: required by a bound in `sqlx::query::Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query.rs:81:49
+    |
+ 81 |     pub fn bind<T: 'q + Send + Encode<'q, DB> + Type<DB>>(mut self, value: T) -> Self {
+    |                                                 ^^^^^^^^ required by this bound in `Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+help: use a unary tuple instead
+    |
+107 |     .bind((&body.monthly_bet_limit,))
+    |           +                       ++
+
+error[E0277]: the trait bound `std::option::Option<BigDecimal>: Encode<'_, _>` is not satisfied
+   --> src\handlers\limits.rs:108:12
+    |
+108 |     .bind(&body.daily_loss_limit)
+    |      ----  ^^^^^^^^^^^^^^^^^^^^^ the trait `Encode<'_, _>` is not implemented for `std::option::Option<BigDecimal>`
+    |      |
+    |      required by a bound introduced by this call
+    |
+    = help: the following other types implement trait `Encode<'q, DB>`:
+              `std::option::Option<T>` implements `Encode<'_, Postgres>`
+              `std::option::Option<T>` implements `Encode<'_, sqlx::Any>`
+    = note: required for `&std::option::Option<BigDecimal>` to implement `Encode<'_, _>`
+note: required by a bound in `sqlx::query::Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query.rs:81:32
+    |
+ 81 |     pub fn bind<T: 'q + Send + Encode<'q, DB> + Type<DB>>(mut self, value: T) -> Self {
+    |                                ^^^^^^^^^^^^^^ required by this bound in `Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Type<_>` is not satisfied
+   --> src\handlers\limits.rs:108:12
+    |
+108 |     .bind(&body.daily_loss_limit)
+    |      ----  ^^^^^^^^^^^^^^^^^^^^^ the trait `sqlx::Type<_>` is not implemented for `BigDecimal`
+    |      |
+    |      required by a bound introduced by this call
+    |
+    = help: the following other types implement trait `sqlx::Type<DB>`:
+              `&T` implements `sqlx::Type<DB>`
+              `()` implements `sqlx::Type<Postgres>`
+              `(T1, T2)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6, T7)` implements `sqlx::Type<Postgres>`
+            and 51 others
+    = note: required for `std::option::Option<BigDecimal>` to implement `sqlx::Type<_>`
+    = note: 1 redundant requirement hidden
+    = note: required for `&std::option::Option<BigDecimal>` to implement `sqlx::Type<_>`
+note: required by a bound in `sqlx::query::Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query.rs:81:49
+    |
+ 81 |     pub fn bind<T: 'q + Send + Encode<'q, DB> + Type<DB>>(mut self, value: T) -> Self {
+    |                                                 ^^^^^^^^ required by this bound in `Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+help: use a unary tuple instead
+    |
+108 |     .bind((&body.daily_loss_limit,))
+    |           +                      ++
+
+error[E0277]: the trait bound `std::option::Option<BigDecimal>: Encode<'_, _>` is not satisfied
+   --> src\handlers\limits.rs:109:12
+    |
+109 |     .bind(&body.weekly_loss_limit)
+    |      ----  ^^^^^^^^^^^^^^^^^^^^^^ the trait `Encode<'_, _>` is not implemented for `std::option::Option<BigDecimal>`
+    |      |
+    |      required by a bound introduced by this call
+    |
+    = help: the following other types implement trait `Encode<'q, DB>`:
+              `std::option::Option<T>` implements `Encode<'_, Postgres>`
+              `std::option::Option<T>` implements `Encode<'_, sqlx::Any>`
+    = note: required for `&std::option::Option<BigDecimal>` to implement `Encode<'_, _>`
+note: required by a bound in `sqlx::query::Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query.rs:81:32
+    |
+ 81 |     pub fn bind<T: 'q + Send + Encode<'q, DB> + Type<DB>>(mut self, value: T) -> Self {
+    |                                ^^^^^^^^^^^^^^ required by this bound in `Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Type<_>` is not satisfied
+   --> src\handlers\limits.rs:109:12
+    |
+109 |     .bind(&body.weekly_loss_limit)
+    |      ----  ^^^^^^^^^^^^^^^^^^^^^^ the trait `sqlx::Type<_>` is not implemented for `BigDecimal`
+    |      |
+    |      required by a bound introduced by this call
+    |
+    = help: the following other types implement trait `sqlx::Type<DB>`:
+              `&T` implements `sqlx::Type<DB>`
+              `()` implements `sqlx::Type<Postgres>`
+              `(T1, T2)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6, T7)` implements `sqlx::Type<Postgres>`
+            and 51 others
+    = note: required for `std::option::Option<BigDecimal>` to implement `sqlx::Type<_>`
+    = note: 1 redundant requirement hidden
+    = note: required for `&std::option::Option<BigDecimal>` to implement `sqlx::Type<_>`
+note: required by a bound in `sqlx::query::Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query.rs:81:49
+    |
+ 81 |     pub fn bind<T: 'q + Send + Encode<'q, DB> + Type<DB>>(mut self, value: T) -> Self {
+    |                                                 ^^^^^^^^ required by this bound in `Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+help: use a unary tuple instead
+    |
+109 |     .bind((&body.weekly_loss_limit,))
+    |           +                       ++
+
+error[E0277]: the trait bound `std::option::Option<BigDecimal>: Encode<'_, _>` is not satisfied
+   --> src\handlers\limits.rs:110:12
+    |
+110 |     .bind(&body.monthly_loss_limit)
+    |      ----  ^^^^^^^^^^^^^^^^^^^^^^^ the trait `Encode<'_, _>` is not implemented for `std::option::Option<BigDecimal>`
+    |      |
+    |      required by a bound introduced by this call
+    |
+    = help: the following other types implement trait `Encode<'q, DB>`:
+              `std::option::Option<T>` implements `Encode<'_, Postgres>`
+              `std::option::Option<T>` implements `Encode<'_, sqlx::Any>`
+    = note: required for `&std::option::Option<BigDecimal>` to implement `Encode<'_, _>`
+note: required by a bound in `sqlx::query::Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query.rs:81:32
+    |
+ 81 |     pub fn bind<T: 'q + Send + Encode<'q, DB> + Type<DB>>(mut self, value: T) -> Self {
+    |                                ^^^^^^^^^^^^^^ required by this bound in `Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Type<_>` is not satisfied
+   --> src\handlers\limits.rs:110:12
+    |
+110 |     .bind(&body.monthly_loss_limit)
+    |      ----  ^^^^^^^^^^^^^^^^^^^^^^^ the trait `sqlx::Type<_>` is not implemented for `BigDecimal`
+    |      |
+    |      required by a bound introduced by this call
+    |
+    = help: the following other types implement trait `sqlx::Type<DB>`:
+              `&T` implements `sqlx::Type<DB>`
+              `()` implements `sqlx::Type<Postgres>`
+              `(T1, T2)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6, T7)` implements `sqlx::Type<Postgres>`
+            and 51 others
+    = note: required for `std::option::Option<BigDecimal>` to implement `sqlx::Type<_>`
+    = note: 1 redundant requirement hidden
+    = note: required for `&std::option::Option<BigDecimal>` to implement `sqlx::Type<_>`
+note: required by a bound in `sqlx::query::Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query.rs:81:49
+    |
+ 81 |     pub fn bind<T: 'q + Send + Encode<'q, DB> + Type<DB>>(mut self, value: T) -> Self {
+    |                                                 ^^^^^^^^ required by this bound in `Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+help: use a unary tuple instead
+    |
+110 |     .bind((&body.monthly_loss_limit,))
+    |           +                        ++
+
+error[E0277]: the trait bound `std::option::Option<BigDecimal>: Encode<'_, _>` is not satisfied
+   --> src\handlers\limits.rs:111:12
+    |
+111 |     .bind(&body.max_single_bet)
+    |      ----  ^^^^^^^^^^^^^^^^^^^ the trait `Encode<'_, _>` is not implemented for `std::option::Option<BigDecimal>`
+    |      |
+    |      required by a bound introduced by this call
+    |
+    = help: the following other types implement trait `Encode<'q, DB>`:
+              `std::option::Option<T>` implements `Encode<'_, Postgres>`
+              `std::option::Option<T>` implements `Encode<'_, sqlx::Any>`
+    = note: required for `&std::option::Option<BigDecimal>` to implement `Encode<'_, _>`
+note: required by a bound in `sqlx::query::Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query.rs:81:32
+    |
+ 81 |     pub fn bind<T: 'q + Send + Encode<'q, DB> + Type<DB>>(mut self, value: T) -> Self {
+    |                                ^^^^^^^^^^^^^^ required by this bound in `Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Type<_>` is not satisfied
+   --> src\handlers\limits.rs:111:12
+    |
+111 |     .bind(&body.max_single_bet)
+    |      ----  ^^^^^^^^^^^^^^^^^^^ the trait `sqlx::Type<_>` is not implemented for `BigDecimal`
+    |      |
+    |      required by a bound introduced by this call
+    |
+    = help: the following other types implement trait `sqlx::Type<DB>`:
+              `&T` implements `sqlx::Type<DB>`
+              `()` implements `sqlx::Type<Postgres>`
+              `(T1, T2)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6, T7)` implements `sqlx::Type<Postgres>`
+            and 51 others
+    = note: required for `std::option::Option<BigDecimal>` to implement `sqlx::Type<_>`
+    = note: 1 redundant requirement hidden
+    = note: required for `&std::option::Option<BigDecimal>` to implement `sqlx::Type<_>`
+note: required by a bound in `sqlx::query::Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query.rs:81:49
+    |
+ 81 |     pub fn bind<T: 'q + Send + Encode<'q, DB> + Type<DB>>(mut self, value: T) -> Self {
+    |                                                 ^^^^^^^^ required by this bound in `Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+help: use a unary tuple instead
+    |
+111 |     .bind((&body.max_single_bet,))
+    |           +                    ++
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Decode<'_, Postgres>` is not satisfied
+   --> src\handlers\user.rs:124:6
+    |
+124 |     .fetch_one(pool.as_ref())
+    |      ^^^^^^^^^ the trait `sqlx::Decode<'_, Postgres>` is not implemented for `BigDecimal`
+    |
+    = help: the following other types implement trait `sqlx::Decode<'r, DB>`:
+              `&'a str` implements `sqlx::Decode<'a, sqlx::Any>`
+              `&'r JsonRawValue` implements `sqlx::Decode<'r, DB>`
+              `&'r [u8]` implements `sqlx::Decode<'r, Postgres>`
+              `&'r [u8]` implements `sqlx::Decode<'r, sqlx::Any>`
+              `&'r str` implements `sqlx::Decode<'r, Postgres>`
+              `()` implements `sqlx::Decode<'r, Postgres>`
+              `(T1, T2)` implements `sqlx::Decode<'r, Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Decode<'r, Postgres>`
+            and 49 others
+    = note: required for `std::option::Option<BigDecimal>` to implement `sqlx::Decode<'_, Postgres>`
+    = note: required for `(i64, std::option::Option<BigDecimal>)` to implement `for<'r> FromRow<'r, PgRow>`
+note: required by a bound in `QueryAs::<'q, DB, O, A>::fetch_one`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_as.rs:86:23
+    |
+ 86 |     O: Send + Unpin + for<'r> FromRow<'r, DB::Row>,
+    |                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `QueryAs::<'q, DB, O, A>::fetch_one`
+...
+160 |     pub async fn fetch_one<'e, 'c: 'e, E>(self, executor: E) -> Result<O, Error>
+    |                  --------- required by a bound in this associated function
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Type<Postgres>` is not satisfied
+   --> src\handlers\user.rs:124:6
+    |
+124 |     .fetch_one(pool.as_ref())
+    |      ^^^^^^^^^ the trait `sqlx::Type<Postgres>` is not implemented for `BigDecimal`
+    |
+    = help: the following other types implement trait `sqlx::Type<DB>`:
+              `&T` implements `sqlx::Type<DB>`
+              `()` implements `sqlx::Type<Postgres>`
+              `(T1, T2)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6, T7)` implements `sqlx::Type<Postgres>`
+            and 51 others
+    = note: required for `std::option::Option<BigDecimal>` to implement `sqlx::Type<Postgres>`
+    = note: required for `(i64, std::option::Option<BigDecimal>)` to implement `for<'r> FromRow<'r, PgRow>`
+note: required by a bound in `QueryAs::<'q, DB, O, A>::fetch_one`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_as.rs:86:23
+    |
+ 86 |     O: Send + Unpin + for<'r> FromRow<'r, DB::Row>,
+    |                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `QueryAs::<'q, DB, O, A>::fetch_one`
+...
+160 |     pub async fn fetch_one<'e, 'c: 'e, E>(self, executor: E) -> Result<O, Error>
+    |                  --------- required by a bound in this associated function
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Decode<'_, Postgres>` is not satisfied
+   --> src\handlers\user.rs:116:59
+    |
+116 |       let activity: (i64, Option<bigdecimal::BigDecimal>) = sqlx::query_as(
+    |  ___________________________________________________________^
+117 | |         r#"
+118 | |         SELECT COUNT(*), COALESCE(SUM(amount), 0)
+119 | |         FROM bets
+120 | |         WHERE user_id = $1
+121 | |         "#
+122 | |     )
+    | |_____^ the trait `sqlx::Decode<'_, Postgres>` is not implemented for `BigDecimal`
+    |
+    = help: the following other types implement trait `sqlx::Decode<'r, DB>`:
+              `&'a str` implements `sqlx::Decode<'a, sqlx::Any>`
+              `&'r JsonRawValue` implements `sqlx::Decode<'r, DB>`
+              `&'r [u8]` implements `sqlx::Decode<'r, Postgres>`
+              `&'r [u8]` implements `sqlx::Decode<'r, sqlx::Any>`
+              `&'r str` implements `sqlx::Decode<'r, Postgres>`
+              `()` implements `sqlx::Decode<'r, Postgres>`
+              `(T1, T2)` implements `sqlx::Decode<'r, Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Decode<'r, Postgres>`
+            and 49 others
+    = note: required for `std::option::Option<BigDecimal>` to implement `sqlx::Decode<'_, Postgres>`
+    = note: required for `(i64, std::option::Option<BigDecimal>)` to implement `for<'r> FromRow<'r, PgRow>`
+note: required by a bound in `sqlx::query_as`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_as.rs:345:8
+    |
+342 | pub fn query_as<'q, DB, O>(sql: &'q str) -> QueryAs<'q, DB, O, <DB as HasArguments<'q>>::Arguments>
+    |        -------- required by a bound in this function
+...
+345 |     O: for<'r> FromRow<'r, DB::Row>,
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `query_as`
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Type<Postgres>` is not satisfied
+   --> src\handlers\user.rs:116:59
+    |
+116 |       let activity: (i64, Option<bigdecimal::BigDecimal>) = sqlx::query_as(
+    |  ___________________________________________________________^
+117 | |         r#"
+118 | |         SELECT COUNT(*), COALESCE(SUM(amount), 0)
+119 | |         FROM bets
+120 | |         WHERE user_id = $1
+121 | |         "#
+122 | |     )
+    | |_____^ the trait `sqlx::Type<Postgres>` is not implemented for `BigDecimal`
+    |
+    = help: the following other types implement trait `sqlx::Type<DB>`:
+              `&T` implements `sqlx::Type<DB>`
+              `()` implements `sqlx::Type<Postgres>`
+              `(T1, T2)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6, T7)` implements `sqlx::Type<Postgres>`
+            and 51 others
+    = note: required for `std::option::Option<BigDecimal>` to implement `sqlx::Type<Postgres>`
+    = note: required for `(i64, std::option::Option<BigDecimal>)` to implement `for<'r> FromRow<'r, PgRow>`
+note: required by a bound in `sqlx::query_as`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_as.rs:345:8
+    |
+342 | pub fn query_as<'q, DB, O>(sql: &'q str) -> QueryAs<'q, DB, O, <DB as HasArguments<'q>>::Arguments>
+    |        -------- required by a bound in this function
+...
+345 |     O: for<'r> FromRow<'r, DB::Row>,
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `query_as`
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Decode<'_, Postgres>` is not satisfied
+   --> src\handlers\user.rs:139:6
+    |
+139 |     .fetch_one(pool.as_ref())
+    |      ^^^^^^^^^ the trait `sqlx::Decode<'_, Postgres>` is not implemented for `BigDecimal`
+    |
+    = help: the following other types implement trait `sqlx::Decode<'r, DB>`:
+              `&'a str` implements `sqlx::Decode<'a, sqlx::Any>`
+              `&'r JsonRawValue` implements `sqlx::Decode<'r, DB>`
+              `&'r [u8]` implements `sqlx::Decode<'r, Postgres>`
+              `&'r [u8]` implements `sqlx::Decode<'r, sqlx::Any>`
+              `&'r str` implements `sqlx::Decode<'r, Postgres>`
+              `()` implements `sqlx::Decode<'r, Postgres>`
+              `(T1, T2)` implements `sqlx::Decode<'r, Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Decode<'r, Postgres>`
+            and 49 others
+    = note: required for `std::option::Option<BigDecimal>` to implement `sqlx::Decode<'_, Postgres>`
+    = note: required for `(std::option::Option<BigDecimal>,)` to implement `for<'r> FromRow<'r, PgRow>`
+note: required by a bound in `QueryScalar::<'q, DB, O, A>::fetch_one`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_scalar.rs:84:26
+    |
+ 84 |     (O,): Send + Unpin + for<'r> FromRow<'r, DB::Row>,
+    |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `QueryScalar::<'q, DB, O, A>::fetch_one`
+...
+157 |     pub async fn fetch_one<'e, 'c: 'e, E>(self, executor: E) -> Result<O, Error>
+    |                  --------- required by a bound in this associated function
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Type<Postgres>` is not satisfied
+   --> src\handlers\user.rs:139:6
+    |
+139 |     .fetch_one(pool.as_ref())
+    |      ^^^^^^^^^ the trait `sqlx::Type<Postgres>` is not implemented for `BigDecimal`
+    |
+    = help: the following other types implement trait `sqlx::Type<DB>`:
+              `&T` implements `sqlx::Type<DB>`
+              `()` implements `sqlx::Type<Postgres>`
+              `(T1, T2)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6, T7)` implements `sqlx::Type<Postgres>`
+            and 51 others
+    = note: required for `std::option::Option<BigDecimal>` to implement `sqlx::Type<Postgres>`
+    = note: required for `(std::option::Option<BigDecimal>,)` to implement `for<'r> FromRow<'r, PgRow>`
+note: required by a bound in `QueryScalar::<'q, DB, O, A>::fetch_one`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_scalar.rs:84:26
+    |
+ 84 |     (O,): Send + Unpin + for<'r> FromRow<'r, DB::Row>,
+    |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `QueryScalar::<'q, DB, O, A>::fetch_one`
+...
+157 |     pub async fn fetch_one<'e, 'c: 'e, E>(self, executor: E) -> Result<O, Error>
+    |                  --------- required by a bound in this associated function
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Decode<'_, Postgres>` is not satisfied
+   --> src\handlers\user.rs:131:53
+    |
+131 |       let total_won: Option<bigdecimal::BigDecimal> = sqlx::query_scalar(
+    |  _____________________________________________________^
+132 | |         r#"
+133 | |         SELECT COALESCE(SUM(potential_win), 0)
+134 | |         FROM bets
+...   |
+138 | |     .bind(user_id)
+139 | |     .fetch_one(pool.as_ref())
+    | |_____________________________^ the trait `sqlx::Decode<'_, Postgres>` is not implemented for `BigDecimal`
+    |
+    = help: the following other types implement trait `sqlx::Decode<'r, DB>`:
+              `&'a str` implements `sqlx::Decode<'a, sqlx::Any>`
+              `&'r JsonRawValue` implements `sqlx::Decode<'r, DB>`
+              `&'r [u8]` implements `sqlx::Decode<'r, Postgres>`
+              `&'r [u8]` implements `sqlx::Decode<'r, sqlx::Any>`
+              `&'r str` implements `sqlx::Decode<'r, Postgres>`
+              `()` implements `sqlx::Decode<'r, Postgres>`
+              `(T1, T2)` implements `sqlx::Decode<'r, Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Decode<'r, Postgres>`
+            and 49 others
+    = note: required for `std::option::Option<BigDecimal>` to implement `sqlx::Decode<'_, Postgres>`
+    = note: required for `(std::option::Option<BigDecimal>,)` to implement `for<'r> FromRow<'r, PgRow>`
+note: required by a bound in `QueryScalar<'q, DB, O, A>`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_scalar.rs:84:26
+    |
+ 84 |     (O,): Send + Unpin + for<'r> FromRow<'r, DB::Row>,
+    |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `QueryScalar<'q, DB, O, A>`
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Decode<'_, Postgres>` is not satisfied
+   --> src\handlers\user.rs:131:53
+    |
+131 |       let total_won: Option<bigdecimal::BigDecimal> = sqlx::query_scalar(
+    |  _____________________________________________________^
+132 | |         r#"
+133 | |         SELECT COALESCE(SUM(potential_win), 0)
+134 | |         FROM bets
+135 | |         WHERE user_id = $1 AND status = 'won'
+136 | |         "#
+137 | |     )
+    | |_____^ the trait `sqlx::Decode<'_, Postgres>` is not implemented for `BigDecimal`
+    |
+    = help: the following other types implement trait `sqlx::Decode<'r, DB>`:
+              `&'a str` implements `sqlx::Decode<'a, sqlx::Any>`
+              `&'r JsonRawValue` implements `sqlx::Decode<'r, DB>`
+              `&'r [u8]` implements `sqlx::Decode<'r, Postgres>`
+              `&'r [u8]` implements `sqlx::Decode<'r, sqlx::Any>`
+              `&'r str` implements `sqlx::Decode<'r, Postgres>`
+              `()` implements `sqlx::Decode<'r, Postgres>`
+              `(T1, T2)` implements `sqlx::Decode<'r, Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Decode<'r, Postgres>`
+            and 49 others
+    = note: required for `std::option::Option<BigDecimal>` to implement `sqlx::Decode<'_, Postgres>`
+    = note: required for `(std::option::Option<BigDecimal>,)` to implement `for<'r> FromRow<'r, PgRow>`
+note: required by a bound in `sqlx::query_scalar`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_scalar.rs:326:11
+    |
+321 | pub fn query_scalar<'q, DB, O>(
+    |        ------------ required by a bound in this function
+...
+326 |     (O,): for<'r> FromRow<'r, DB::Row>,
+    |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `query_scalar`
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Type<Postgres>` is not satisfied
+   --> src\handlers\user.rs:131:53
+    |
+131 |       let total_won: Option<bigdecimal::BigDecimal> = sqlx::query_scalar(
+    |  _____________________________________________________^
+132 | |         r#"
+133 | |         SELECT COALESCE(SUM(potential_win), 0)
+134 | |         FROM bets
+135 | |         WHERE user_id = $1 AND status = 'won'
+136 | |         "#
+137 | |     )
+    | |_____^ the trait `sqlx::Type<Postgres>` is not implemented for `BigDecimal`
+    |
+    = help: the following other types implement trait `sqlx::Type<DB>`:
+              `&T` implements `sqlx::Type<DB>`
+              `()` implements `sqlx::Type<Postgres>`
+              `(T1, T2)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6, T7)` implements `sqlx::Type<Postgres>`
+            and 51 others
+    = note: required for `std::option::Option<BigDecimal>` to implement `sqlx::Type<Postgres>`
+    = note: required for `(std::option::Option<BigDecimal>,)` to implement `for<'r> FromRow<'r, PgRow>`
+note: required by a bound in `sqlx::query_scalar`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_scalar.rs:326:11
+    |
+321 | pub fn query_scalar<'q, DB, O>(
+    |        ------------ required by a bound in this function
+...
+326 |     (O,): for<'r> FromRow<'r, DB::Row>,
+    |           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `query_scalar`
+
+error[E0308]: mismatched types
+  --> src\handlers\wallet.rs:49:45
+   |
+49 |     let crypto_service = CryptoService::new(&config.encryption_key)?;
+   |                          ------------------ ^^^^^^^^^^^^^^^^^^^^^^ expected `&AppConfig`, found `&String`
+   |                          |
+   |                          arguments to this function are incorrect
+   |
+   = note: expected reference `&config::AppConfig`
+              found reference `&std::string::String`
+note: associated function defined here
+  --> src\crypto.rs:18:12
+   |
+18 |     pub fn new(config: &AppConfig) -> Result<Self, Box<dyn Error>> {
+   |            ^^^ ------------------
+
+error[E0277]: `?` couldn't convert the error to `AppError`
+  --> src\handlers\wallet.rs:49:68
+   |
+49 |     let crypto_service = CryptoService::new(&config.encryption_key)?;
+   |                          ------------------------------------------^ the trait `std::convert::From<Box<dyn StdError>>` is not implemented for `AppError`
+   |                          |
+   |                          this can't be annotated with `?` because it has type `Result<_, Box<(dyn StdError + 'static)>>`
+   |
+note: `AppError` needs to implement `From<Box<dyn StdError>>`
+  --> src\errors.rs:8:1
+   |
+ 8 | pub enum AppError {
+   | ^^^^^^^^^^^^^^^^^
+   = note: the question mark operation (`?`) implicitly performs a conversion on the error value using the `From` trait
+   = help: the following other types implement trait `std::convert::From<T>`:
+             `AppError` implements `std::convert::From<jsonwebtoken::errors::Error>`
+             `AppError` implements `std::convert::From<sqlx::Error>`
+             `AppError` implements `std::convert::From<std::io::Error>`
+
+error[E0061]: this method takes 2 arguments but 1 argument was supplied
+  --> src\handlers\wallet.rs:62:34
+   |
+62 |     let balance = crypto_service.decrypt_balance(&wallet.0)?;
+   |                                  ^^^^^^^^^^^^^^^----------- argument #2 of type `&str` is missing
+   |
+note: method defined here
+  --> src\crypto.rs:92:12
+   |
+92 |     pub fn decrypt_balance(&self, encrypted_balance: &str, iv: &str) -> Result<f64, AppError> {
+   |            ^^^^^^^^^^^^^^^                                 --------
+help: provide the argument
+   |
+62 |     let balance = crypto_service.decrypt_balance(&wallet.0, /* &str */)?;
+   |                                                           ++++++++++++
+
+error[E0308]: mismatched types
+  --> src\handlers\wallet.rs:65:9
+   |
+65 |         balance,
+   |         ^^^^^^^ expected `BigDecimal`, found `f64`
+
+error[E0308]: mismatched types
+  --> src\handlers\wallet.rs:85:45
+   |
+85 |     let crypto_service = CryptoService::new(&config.encryption_key)?;
+   |                          ------------------ ^^^^^^^^^^^^^^^^^^^^^^ expected `&AppConfig`, found `&String`
+   |                          |
+   |                          arguments to this function are incorrect
+   |
+   = note: expected reference `&config::AppConfig`
+              found reference `&std::string::String`
+note: associated function defined here
+  --> src\crypto.rs:18:12
+   |
+18 |     pub fn new(config: &AppConfig) -> Result<Self, Box<dyn Error>> {
+   |            ^^^ ------------------
+
+error[E0277]: `?` couldn't convert the error to `AppError`
+  --> src\handlers\wallet.rs:85:68
+   |
+85 |     let crypto_service = CryptoService::new(&config.encryption_key)?;
+   |                          ------------------------------------------^ the trait `std::convert::From<Box<dyn StdError>>` is not implemented for `AppError`
+   |                          |
+   |                          this can't be annotated with `?` because it has type `Result<_, Box<(dyn StdError + 'static)>>`
+   |
+note: `AppError` needs to implement `From<Box<dyn StdError>>`
+  --> src\errors.rs:8:1
+   |
+ 8 | pub enum AppError {
+   | ^^^^^^^^^^^^^^^^^
+   = note: the question mark operation (`?`) implicitly performs a conversion on the error value using the `From` trait
+   = help: the following other types implement trait `std::convert::From<T>`:
+             `AppError` implements `std::convert::From<jsonwebtoken::errors::Error>`
+             `AppError` implements `std::convert::From<sqlx::Error>`
+             `AppError` implements `std::convert::From<std::io::Error>`
+
+error[E0061]: this method takes 2 arguments but 1 argument was supplied
+   --> src\handlers\wallet.rs:106:42
+    |
+106 |     let current_balance = crypto_service.decrypt_balance(&wallet.0)?;
+    |                                          ^^^^^^^^^^^^^^^----------- argument #2 of type `&str` is missing
+    |
+note: method defined here
+   --> src\crypto.rs:92:12
+    |
+ 92 |     pub fn decrypt_balance(&self, encrypted_balance: &str, iv: &str) -> Result<f64, AppError> {
+    |            ^^^^^^^^^^^^^^^                                 --------
+help: provide the argument
+    |
+106 |     let current_balance = crypto_service.decrypt_balance(&wallet.0, /* &str */)?;
+    |                                                                   ++++++++++++
+
+error[E0277]: cannot add `&BigDecimal` to `f64`
+   --> src\handlers\wallet.rs:107:39
+    |
+107 |     let new_balance = current_balance + &amount;
+    |                                       ^ no implementation for `f64 + &BigDecimal`
+    |
+    = help: the trait `Add<&BigDecimal>` is not implemented for `f64`
+    = help: the following other types implement trait `Add<Rhs>`:
+              `&f64` implements `Add<f64>`
+              `&f64` implements `Add`
+              `f64` implements `Add<&f64>`
+              `f64` implements `Add<zerocopy::byteorder::F64<O>>`
+              `f64` implements `Add`
+
+error[E0308]: mismatched types
+   --> src\handlers\wallet.rs:108:60
+    |
+108 |     let encrypted_balance = crypto_service.encrypt_balance(&new_balance)?;
+    |                                            --------------- ^^^^^^^^^^^^ expected `f64`, found `&_`
+    |                                            |
+    |                                            arguments to this method are incorrect
+    |
+    = note:   expected type `f64`
+            found reference `&_`
+note: method defined here
+   --> src\crypto.rs:71:12
+    |
+ 71 |     pub fn encrypt_balance(&self, amount: f64) -> Result<(String, String), AppError> {
+    |            ^^^^^^^^^^^^^^^        -----------
+help: consider removing the borrow
+    |
+108 -     let encrypted_balance = crypto_service.encrypt_balance(&new_balance)?;
+108 +     let encrypted_balance = crypto_service.encrypt_balance(new_balance)?;
+    |
+
+error[E0277]: the trait bound `(std::string::String, std::string::String): Encode<'_, Postgres>` is not satisfied
+   --> src\handlers\wallet.rs:114:12
+    |
+114 |     .bind(&encrypted_balance)
+    |      ----  ^^^^^^^^^^^^^^^^^ the trait `Encode<'_, Postgres>` is not implemented for `(std::string::String, std::string::String)`
+    |      |
+    |      required by a bound introduced by this call
+    |
+    = help: the following other types implement trait `Encode<'q, DB>`:
+              `&'a str` implements `Encode<'a, sqlx::Any>`
+              `&'q [u8]` implements `Encode<'q, sqlx::Any>`
+              `&T` implements `Encode<'q, DB>`
+              `&[T]` implements `Encode<'q, Postgres>`
+              `&[u8]` implements `Encode<'_, Postgres>`
+              `&str` implements `Encode<'_, Postgres>`
+              `Box<[u8]>` implements `Encode<'_, Postgres>`
+              `Box<str>` implements `Encode<'_, Postgres>`
+            and 41 others
+    = note: required for `&(std::string::String, std::string::String)` to implement `Encode<'_, Postgres>`
+note: required by a bound in `sqlx::query::Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query.rs:81:32
+    |
+ 81 |     pub fn bind<T: 'q + Send + Encode<'q, DB> + Type<DB>>(mut self, value: T) -> Self {
+    |                                ^^^^^^^^^^^^^^ required by this bound in `Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+
+error[E0277]: the trait bound `BigDecimal: Encode<'_, Postgres>` is not satisfied
+   --> src\handlers\wallet.rs:133:12
+    |
+133 |     .bind(&amount)
+    |      ----  ^^^^^^ the trait `Encode<'_, Postgres>` is not implemented for `BigDecimal`
+    |      |
+    |      required by a bound introduced by this call
+    |
+    = help: the following other types implement trait `Encode<'q, DB>`:
+              `&'a str` implements `Encode<'a, sqlx::Any>`
+              `&'q [u8]` implements `Encode<'q, sqlx::Any>`
+              `&T` implements `Encode<'q, DB>`
+              `&[T]` implements `Encode<'q, Postgres>`
+              `&[u8]` implements `Encode<'_, Postgres>`
+              `&str` implements `Encode<'_, Postgres>`
+              `Box<[u8]>` implements `Encode<'_, Postgres>`
+              `Box<str>` implements `Encode<'_, Postgres>`
+            and 41 others
+    = note: required for `&BigDecimal` to implement `Encode<'_, Postgres>`
+note: required by a bound in `sqlx::query::Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query.rs:81:32
+    |
+ 81 |     pub fn bind<T: 'q + Send + Encode<'q, DB> + Type<DB>>(mut self, value: T) -> Self {
+    |                                ^^^^^^^^^^^^^^ required by this bound in `Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Type<Postgres>` is not satisfied
+   --> src\handlers\wallet.rs:133:12
+    |
+133 |     .bind(&amount)
+    |      ----  ^^^^^^ the trait `sqlx::Type<Postgres>` is not implemented for `BigDecimal`
+    |      |
+    |      required by a bound introduced by this call
+    |
+    = help: the following other types implement trait `sqlx::Type<DB>`:
+              `&T` implements `sqlx::Type<DB>`
+              `()` implements `sqlx::Type<Postgres>`
+              `(T1, T2)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6, T7)` implements `sqlx::Type<Postgres>`
+            and 51 others
+    = note: required for `&BigDecimal` to implement `sqlx::Type<Postgres>`
+note: required by a bound in `sqlx::query::Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query.rs:81:49
+    |
+ 81 |     pub fn bind<T: 'q + Send + Encode<'q, DB> + Type<DB>>(mut self, value: T) -> Self {
+    |                                                 ^^^^^^^^ required by this bound in `Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+help: use a unary tuple instead
+    |
+133 |     .bind((&amount,))
+    |           +       ++
+
+error[E0308]: mismatched types
+   --> src\handlers\wallet.rs:169:45
+    |
+169 |     let crypto_service = CryptoService::new(&config.encryption_key)?;
+    |                          ------------------ ^^^^^^^^^^^^^^^^^^^^^^ expected `&AppConfig`, found `&String`
+    |                          |
+    |                          arguments to this function are incorrect
+    |
+    = note: expected reference `&config::AppConfig`
+               found reference `&std::string::String`
+note: associated function defined here
+   --> src\crypto.rs:18:12
+    |
+ 18 |     pub fn new(config: &AppConfig) -> Result<Self, Box<dyn Error>> {
+    |            ^^^ ------------------
+
+error[E0277]: `?` couldn't convert the error to `AppError`
+   --> src\handlers\wallet.rs:169:68
+    |
+169 |     let crypto_service = CryptoService::new(&config.encryption_key)?;
+    |                          ------------------------------------------^ the trait `std::convert::From<Box<dyn StdError>>` is not implemented for `AppError`
+    |                          |
+    |                          this can't be annotated with `?` because it has type `Result<_, Box<(dyn StdError + 'static)>>`
+    |
+note: `AppError` needs to implement `From<Box<dyn StdError>>`
+   --> src\errors.rs:8:1
+    |
+  8 | pub enum AppError {
+    | ^^^^^^^^^^^^^^^^^
+    = note: the question mark operation (`?`) implicitly performs a conversion on the error value using the `From` trait
+    = help: the following other types implement trait `std::convert::From<T>`:
+              `AppError` implements `std::convert::From<jsonwebtoken::errors::Error>`
+              `AppError` implements `std::convert::From<sqlx::Error>`
+              `AppError` implements `std::convert::From<std::io::Error>`
+
+error[E0061]: this method takes 2 arguments but 1 argument was supplied
+   --> src\handlers\wallet.rs:190:42
+    |
+190 |     let current_balance = crypto_service.decrypt_balance(&wallet.0)?;
+    |                                          ^^^^^^^^^^^^^^^----------- argument #2 of type `&str` is missing
+    |
+note: method defined here
+   --> src\crypto.rs:92:12
+    |
+ 92 |     pub fn decrypt_balance(&self, encrypted_balance: &str, iv: &str) -> Result<f64, AppError> {
+    |            ^^^^^^^^^^^^^^^                                 --------
+help: provide the argument
+    |
+190 |     let current_balance = crypto_service.decrypt_balance(&wallet.0, /* &str */)?;
+    |                                                                   ++++++++++++
+
+error[E0308]: mismatched types
+   --> src\handlers\wallet.rs:192:26
+    |
+192 |     if current_balance < amount {
+    |        ---------------   ^^^^^^ expected `f64`, found `BigDecimal`
+    |        |
+    |        expected because this is `f64`
+
+error[E0277]: cannot subtract `&BigDecimal` from `f64`
+   --> src\handlers\wallet.rs:196:39
+    |
+196 |     let new_balance = current_balance - &amount;
+    |                                       ^ no implementation for `f64 - &BigDecimal`
+    |
+    = help: the trait `Sub<&BigDecimal>` is not implemented for `f64`
+    = help: the following other types implement trait `Sub<Rhs>`:
+              `&f64` implements `Sub<f64>`
+              `&f64` implements `Sub`
+              `f64` implements `Sub<&f64>`
+              `f64` implements `Sub<zerocopy::byteorder::F64<O>>`
+              `f64` implements `Sub`
+
+error[E0308]: mismatched types
+   --> src\handlers\wallet.rs:197:60
+    |
+197 |     let encrypted_balance = crypto_service.encrypt_balance(&new_balance)?;
+    |                                            --------------- ^^^^^^^^^^^^ expected `f64`, found `&_`
+    |                                            |
+    |                                            arguments to this method are incorrect
+    |
+    = note:   expected type `f64`
+            found reference `&_`
+note: method defined here
+   --> src\crypto.rs:71:12
+    |
+ 71 |     pub fn encrypt_balance(&self, amount: f64) -> Result<(String, String), AppError> {
+    |            ^^^^^^^^^^^^^^^        -----------
+help: consider removing the borrow
+    |
+197 -     let encrypted_balance = crypto_service.encrypt_balance(&new_balance)?;
+197 +     let encrypted_balance = crypto_service.encrypt_balance(new_balance)?;
+    |
+
+error[E0277]: the trait bound `(std::string::String, std::string::String): Encode<'_, Postgres>` is not satisfied
+   --> src\handlers\wallet.rs:203:12
+    |
+203 |     .bind(&encrypted_balance)
+    |      ----  ^^^^^^^^^^^^^^^^^ the trait `Encode<'_, Postgres>` is not implemented for `(std::string::String, std::string::String)`
+    |      |
+    |      required by a bound introduced by this call
+    |
+    = help: the following other types implement trait `Encode<'q, DB>`:
+              `&'a str` implements `Encode<'a, sqlx::Any>`
+              `&'q [u8]` implements `Encode<'q, sqlx::Any>`
+              `&T` implements `Encode<'q, DB>`
+              `&[T]` implements `Encode<'q, Postgres>`
+              `&[u8]` implements `Encode<'_, Postgres>`
+              `&str` implements `Encode<'_, Postgres>`
+              `Box<[u8]>` implements `Encode<'_, Postgres>`
+              `Box<str>` implements `Encode<'_, Postgres>`
+            and 41 others
+    = note: required for `&(std::string::String, std::string::String)` to implement `Encode<'_, Postgres>`
+note: required by a bound in `sqlx::query::Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query.rs:81:32
+    |
+ 81 |     pub fn bind<T: 'q + Send + Encode<'q, DB> + Type<DB>>(mut self, value: T) -> Self {
+    |                                ^^^^^^^^^^^^^^ required by this bound in `Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+
+error[E0277]: the trait bound `BigDecimal: Encode<'_, Postgres>` is not satisfied
+   --> src\handlers\wallet.rs:222:12
+    |
+222 |     .bind(&amount)
+    |      ----  ^^^^^^ the trait `Encode<'_, Postgres>` is not implemented for `BigDecimal`
+    |      |
+    |      required by a bound introduced by this call
+    |
+    = help: the following other types implement trait `Encode<'q, DB>`:
+              `&'a str` implements `Encode<'a, sqlx::Any>`
+              `&'q [u8]` implements `Encode<'q, sqlx::Any>`
+              `&T` implements `Encode<'q, DB>`
+              `&[T]` implements `Encode<'q, Postgres>`
+              `&[u8]` implements `Encode<'_, Postgres>`
+              `&str` implements `Encode<'_, Postgres>`
+              `Box<[u8]>` implements `Encode<'_, Postgres>`
+              `Box<str>` implements `Encode<'_, Postgres>`
+            and 41 others
+    = note: required for `&BigDecimal` to implement `Encode<'_, Postgres>`
+note: required by a bound in `sqlx::query::Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query.rs:81:32
+    |
+ 81 |     pub fn bind<T: 'q + Send + Encode<'q, DB> + Type<DB>>(mut self, value: T) -> Self {
+    |                                ^^^^^^^^^^^^^^ required by this bound in `Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Type<Postgres>` is not satisfied
+   --> src\handlers\wallet.rs:222:12
+    |
+222 |     .bind(&amount)
+    |      ----  ^^^^^^ the trait `sqlx::Type<Postgres>` is not implemented for `BigDecimal`
+    |      |
+    |      required by a bound introduced by this call
+    |
+    = help: the following other types implement trait `sqlx::Type<DB>`:
+              `&T` implements `sqlx::Type<DB>`
+              `()` implements `sqlx::Type<Postgres>`
+              `(T1, T2)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6, T7)` implements `sqlx::Type<Postgres>`
+            and 51 others
+    = note: required for `&BigDecimal` to implement `sqlx::Type<Postgres>`
+note: required by a bound in `sqlx::query::Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query.rs:81:49
+    |
+ 81 |     pub fn bind<T: 'q + Send + Encode<'q, DB> + Type<DB>>(mut self, value: T) -> Self {
+    |                                                 ^^^^^^^^ required by this bound in `Query::<'q, DB, <DB as HasArguments<'q>>::Arguments>::bind`
+help: use a unary tuple instead
+    |
+222 |     .bind((&amount,))
+    |           +       ++
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Decode<'_, Postgres>` is not satisfied
+   --> src\handlers\wallet.rs:260:6
+    |
+260 |     .fetch_all(pool.as_ref())
+    |      ^^^^^^^^^ the trait `sqlx::Decode<'_, Postgres>` is not implemented for `BigDecimal`
+    |
+    = help: the following other types implement trait `sqlx::Decode<'r, DB>`:
+              `&'a str` implements `sqlx::Decode<'a, sqlx::Any>`
+              `&'r JsonRawValue` implements `sqlx::Decode<'r, DB>`
+              `&'r [u8]` implements `sqlx::Decode<'r, Postgres>`
+              `&'r [u8]` implements `sqlx::Decode<'r, sqlx::Any>`
+              `&'r str` implements `sqlx::Decode<'r, Postgres>`
+              `()` implements `sqlx::Decode<'r, Postgres>`
+              `(T1, T2)` implements `sqlx::Decode<'r, Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Decode<'r, Postgres>`
+            and 49 others
+    = note: required for `(Uuid, String, BigDecimal, String, DateTime<Utc>)` to implement `for<'r> FromRow<'r, PgRow>`
+note: required by a bound in `QueryAs::<'q, DB, O, A>::fetch_all`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_as.rs:86:23
+    |
+ 86 |     O: Send + Unpin + for<'r> FromRow<'r, DB::Row>,
+    |                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `QueryAs::<'q, DB, O, A>::fetch_all`
+...
+137 |     pub async fn fetch_all<'e, 'c: 'e, E>(self, executor: E) -> Result<Vec<O>, Error>
+    |                  --------- required by a bound in this associated function
+    = note: the full name for the type has been written to 'D:\Github\FootballHeritgae\backend\target\debug\deps\football_heritage_backend.long-type-13984510480741031220.txt'
+    = note: consider using `--verbose` to print the full type name to the console
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Type<Postgres>` is not satisfied
+   --> src\handlers\wallet.rs:260:6
+    |
+260 |     .fetch_all(pool.as_ref())
+    |      ^^^^^^^^^ the trait `sqlx::Type<Postgres>` is not implemented for `BigDecimal`
+    |
+    = help: the following other types implement trait `sqlx::Type<DB>`:
+              `&T` implements `sqlx::Type<DB>`
+              `()` implements `sqlx::Type<Postgres>`
+              `(T1, T2)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6, T7)` implements `sqlx::Type<Postgres>`
+            and 51 others
+    = note: required for `(Uuid, String, BigDecimal, String, DateTime<Utc>)` to implement `for<'r> FromRow<'r, PgRow>`
+note: required by a bound in `QueryAs::<'q, DB, O, A>::fetch_all`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_as.rs:86:23
+    |
+ 86 |     O: Send + Unpin + for<'r> FromRow<'r, DB::Row>,
+    |                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `QueryAs::<'q, DB, O, A>::fetch_all`
+...
+137 |     pub async fn fetch_all<'e, 'c: 'e, E>(self, executor: E) -> Result<Vec<O>, Error>
+    |                  --------- required by a bound in this associated function
+    = note: the full name for the type has been written to 'D:\Github\FootballHeritgae\backend\target\debug\deps\football_heritage_backend.long-type-13984510480741031220.txt'
+    = note: consider using `--verbose` to print the full type name to the console
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Decode<'_, Postgres>` is not satisfied
+   --> src\handlers\wallet.rs:250:96
+    |
+250 |       let transactions: Vec<(Uuid, String, BigDecimal, String, chrono::DateTime<chrono::Utc>)> = sqlx::query_as(
+    |  ________________________________________________________________________________________________^
+251 | |         r#"
+252 | |         SELECT id, transaction_type, amount, status, created_at
+253 | |         FROM transactions
+...   |
+257 | |         "#
+258 | |     )
+    | |_____^ the trait `sqlx::Decode<'_, Postgres>` is not implemented for `BigDecimal`
+    |
+    = help: the following other types implement trait `sqlx::Decode<'r, DB>`:
+              `&'a str` implements `sqlx::Decode<'a, sqlx::Any>`
+              `&'r JsonRawValue` implements `sqlx::Decode<'r, DB>`
+              `&'r [u8]` implements `sqlx::Decode<'r, Postgres>`
+              `&'r [u8]` implements `sqlx::Decode<'r, sqlx::Any>`
+              `&'r str` implements `sqlx::Decode<'r, Postgres>`
+              `()` implements `sqlx::Decode<'r, Postgres>`
+              `(T1, T2)` implements `sqlx::Decode<'r, Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Decode<'r, Postgres>`
+            and 49 others
+    = note: required for `(Uuid, String, BigDecimal, String, DateTime<Utc>)` to implement `for<'r> FromRow<'r, PgRow>`
+note: required by a bound in `sqlx::query_as`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_as.rs:345:8
+    |
+342 | pub fn query_as<'q, DB, O>(sql: &'q str) -> QueryAs<'q, DB, O, <DB as HasArguments<'q>>::Arguments>
+    |        -------- required by a bound in this function
+...
+345 |     O: for<'r> FromRow<'r, DB::Row>,
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `query_as`
+    = note: the full name for the type has been written to 'D:\Github\FootballHeritgae\backend\target\debug\deps\football_heritage_backend.long-type-13984510480741031220.txt'
+    = note: consider using `--verbose` to print the full type name to the console
+
+error[E0277]: the trait bound `BigDecimal: sqlx::Type<Postgres>` is not satisfied
+   --> src\handlers\wallet.rs:250:96
+    |
+250 |       let transactions: Vec<(Uuid, String, BigDecimal, String, chrono::DateTime<chrono::Utc>)> = sqlx::query_as(
+    |  ________________________________________________________________________________________________^
+251 | |         r#"
+252 | |         SELECT id, transaction_type, amount, status, created_at
+253 | |         FROM transactions
+...   |
+257 | |         "#
+258 | |     )
+    | |_____^ the trait `sqlx::Type<Postgres>` is not implemented for `BigDecimal`
+    |
+    = help: the following other types implement trait `sqlx::Type<DB>`:
+              `&T` implements `sqlx::Type<DB>`
+              `()` implements `sqlx::Type<Postgres>`
+              `(T1, T2)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6)` implements `sqlx::Type<Postgres>`
+              `(T1, T2, T3, T4, T5, T6, T7)` implements `sqlx::Type<Postgres>`
+            and 51 others
+    = note: required for `(Uuid, String, BigDecimal, String, DateTime<Utc>)` to implement `for<'r> FromRow<'r, PgRow>`
+note: required by a bound in `sqlx::query_as`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\sqlx-core-0.7.4\src\query_as.rs:345:8
+    |
+342 | pub fn query_as<'q, DB, O>(sql: &'q str) -> QueryAs<'q, DB, O, <DB as HasArguments<'q>>::Arguments>
+    |        -------- required by a bound in this function
+...
+345 |     O: for<'r> FromRow<'r, DB::Row>,
+    |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ required by this bound in `query_as`
+    = note: the full name for the type has been written to 'D:\Github\FootballHeritgae\backend\target\debug\deps\football_heritage_backend.long-type-13984510480741031220.txt'
+    = note: consider using `--verbose` to print the full type name to the console
+
+warning: use of deprecated associated function `aes_gcm::aead::generic_array::GenericArray::<T, N>::from_slice`: please upgrade to generic-array 1.x
+  --> src\crypto.rs:79:28
+   |
+79 |         let nonce = Nonce::from_slice(&nonce_bytes);
+   |                            ^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+
+warning: use of deprecated associated function `aes_gcm::aead::generic_array::GenericArray::<T, N>::from_slice`: please upgrade to generic-array 1.x
+   --> src\crypto.rs:108:28
+    |
+108 |         let nonce = Nonce::from_slice(&nonce_bytes);
+    |                            ^^^^^^^^^^
+
+error[E0308]: mismatched types
+   --> src\crypto.rs:199:13
+    |
+197 |         pbkdf2::derive(
+    |         -------------- arguments to this function are incorrect
+198 |             pbkdf2::PBKDF2_HMAC_SHA256,
+199 |             iterations,
+    |             ^^^^^^^^^^ expected `NonZero<u32>`, found `u32`
+    |
+    = note: expected struct `std::num::NonZero<u32>`
+                 found type `u32`
+note: function defined here
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\ring-0.17.14\src\pbkdf2.rs:166:8
+    |
+166 | pub fn derive(
+    |        ^^^^^^
+help: consider calling `NonZero::new`
+    |
+199 |             NonZero::new(iterations).unwrap(),
+    |             +++++++++++++          ++++++++++
+
+error[E0308]: mismatched types
+   --> src\errors.rs:259:16
+    |
+259 |         if let Some(pg_error) = db_error.downcast_ref::<PgDatabaseError>() {
+    |                ^^^^^^^^^^^^^^   ------------------------------------------ this expression has type `&PgDatabaseError`
+    |                |
+    |                expected `PgDatabaseError`, found `Option<_>`
+    |
+    = note: expected struct `PgDatabaseError`
+                 found enum `std::option::Option<_>`
+
+error[E0308]: mismatched types
+   --> src\errors.rs:265:41
+    |
+265 |                 _ => AppError::Database(err.clone()),
+    |                      ------------------ ^^^^^^^^^^^ expected `Error`, found `&Error`
+    |                      |
+    |                      arguments to this enum variant are incorrect
+    |
+note: `sqlx::Error` does not implement `Clone`, so `&sqlx::Error` was cloned instead
+   --> src\errors.rs:265:41
+    |
+265 |                 _ => AppError::Database(err.clone()),
+    |                                         ^^^
+note: tuple variant defined here
+   --> src\errors.rs:10:5
+    |
+ 10 |     Database(#[from] sqlx::Error),
+    |     ^^^^^^^^
+
+error[E0308]: mismatched types
+   --> src\errors.rs:268:32
+    |
+268 |             AppError::Database(err.clone())
+    |             ------------------ ^^^^^^^^^^^ expected `Error`, found `&Error`
+    |             |
+    |             arguments to this enum variant are incorrect
+    |
+note: `sqlx::Error` does not implement `Clone`, so `&sqlx::Error` was cloned instead
+   --> src\errors.rs:268:32
+    |
+268 |             AppError::Database(err.clone())
+    |                                ^^^
+note: tuple variant defined here
+   --> src\errors.rs:10:5
+    |
+ 10 |     Database(#[from] sqlx::Error),
+    |     ^^^^^^^^
+
+error[E0308]: mismatched types
+   --> src\errors.rs:271:28
+    |
+271 |         AppError::Database(err.clone())
+    |         ------------------ ^^^^^^^^^^^ expected `Error`, found `&Error`
+    |         |
+    |         arguments to this enum variant are incorrect
+    |
+note: `sqlx::Error` does not implement `Clone`, so `&sqlx::Error` was cloned instead
+   --> src\errors.rs:271:28
+    |
+271 |         AppError::Database(err.clone())
+    |                            ^^^
+note: tuple variant defined here
+   --> src\errors.rs:10:5
+    |
+ 10 |     Database(#[from] sqlx::Error),
+    |     ^^^^^^^^
+
+error[E0277]: the trait bound `actix_web::dev::Response<_>: std::convert::From<BoxBody>` is not satisfied
+   --> src\middleware\rate_limit.rs:71:25
+    |
+ 70 |                       return Ok(req.into_response(
+    |                                     ------------- required by a bound introduced by this call
+ 71 | /                         HttpResponse::TooManyRequests()
+ 72 | |                             .json(serde_json::json!({
+ 73 | |                                 "error": "Rate limit exceeded",
+ 74 | |                                 "message": e.to_string()
+ 75 | |                             }))
+ 76 | |                             .into_body()
+    | |________________________________________^ the trait `std::convert::From<BoxBody>` is not implemented for `actix_web::dev::Response<_>`
+    |
+    = help: the following other types implement trait `std::convert::From<T>`:
+              `actix_web::dev::Response<&[u8]>` implements `std::convert::From<&[u8]>`
+              `actix_web::dev::Response<&str>` implements `std::convert::From<&str>`
+              `actix_web::dev::Response<B>` implements `std::convert::From<HttpResponse<B>>`
+              `actix_web::dev::Response<B>` implements `std::convert::From<ServiceResponse<B>>`
+              `actix_web::dev::Response<BoxBody>` implements `std::convert::From<&actix_http::ws::HandshakeError>`
+              `actix_web::dev::Response<BoxBody>` implements `std::convert::From<HttpResponseBuilder>`
+              `actix_web::dev::Response<BoxBody>` implements `std::convert::From<Infallible>`
+              `actix_web::dev::Response<BoxBody>` implements `std::convert::From<Result<I, E>>`
+            and 13 others
+    = note: required for `BoxBody` to implement `Into<actix_web::dev::Response<_>>`
+note: required by a bound in `ServiceRequest::into_response`
+   --> C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\actix-web-4.11.0\src\service.rs:156:32
+    |
+156 |     pub fn into_response<B, R: Into<Response<B>>>(self, res: R) -> ServiceResponse<B> {
+    |                                ^^^^^^^^^^^^^^^^^ required by this bound in `ServiceRequest::into_response`
+
+error[E0599]: the method `validate_range` exists for struct `BigDecimal`, but its trait bounds were not satisfied
+   --> src\models.rs:127:30
+    |
+127 | #[derive(Debug, Deserialize, Validate)]
+    |                              ^^^^^^^^
+    |
+   ::: C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\bigdecimal-0.4.8\src\lib.rs:206:1
+    |
+206 | pub struct BigDecimal {
+    | --------------------- doesn't satisfy `BigDecimal: ValidateRange<BigDecimal>` or `_: ValidateRangeType`
+    |
+    = note: the following trait bounds were not satisfied:
+            `BigDecimal: validator::validation::range::ValidateRangeType`
+            which is required by `BigDecimal: ValidateRange<BigDecimal>`
+    = note: this error originates in the derive macro `Validate` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0599]: the method `validate_range` exists for struct `BigDecimal`, but its trait bounds were not satisfied
+   --> src\models.rs:139:30
+    |
+139 | #[derive(Debug, Deserialize, Validate)]
+    |                              ^^^^^^^^
+    |
+   ::: C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\bigdecimal-0.4.8\src\lib.rs:206:1
+    |
+206 | pub struct BigDecimal {
+    | --------------------- doesn't satisfy `BigDecimal: ValidateRange<BigDecimal>` or `_: ValidateRangeType`
+    |
+    = note: the following trait bounds were not satisfied:
+            `BigDecimal: validator::validation::range::ValidateRangeType`
+            which is required by `BigDecimal: ValidateRange<BigDecimal>`
+    = note: this error originates in the derive macro `Validate` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0599]: the method `validate_range` exists for reference `&BigDecimal`, but its trait bounds were not satisfied
+   --> src\models.rs:289:30
+    |
+289 | #[derive(Debug, Deserialize, Validate)]
+    |                              ^^^^^^^^
+    |
+   ::: C:\Users\Peter\.cargo\registry\src\index.crates.io-1949cf8c6b5b557f\bigdecimal-0.4.8\src\lib.rs:206:1
+    |
+206 | pub struct BigDecimal {
+    | --------------------- doesn't satisfy `BigDecimal: ValidateRange<BigDecimal>` or `_: ValidateRangeType`
+    |
+    = note: the following trait bounds were not satisfied:
+            `BigDecimal: validator::validation::range::ValidateRangeType`
+            which is required by `BigDecimal: ValidateRange<BigDecimal>`
+            `&BigDecimal: validator::validation::range::ValidateRangeType`
+            which is required by `&BigDecimal: ValidateRange<&BigDecimal>`
+    = note: this error originates in the derive macro `Validate` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0599]: no method named `with_safe_defaults` found for struct `rustls::ConfigBuilder` in the current scope
+  --> src\main.rs:82:18
+   |
+81 | /             rustls::ServerConfig::builder()
+82 | |                 .with_safe_defaults()
+   | |                 -^^^^^^^^^^^^^^^^^^ method not found in `rustls::ConfigBuilder<ServerConfig, WantsVerifier>`
+   | |_________________|
+   |
+
+error[E0599]: no method named `bind_rustls` found for struct `HttpServer` in the current scope
+   --> src\main.rs:198:14
+    |
+197 | /         server
+198 | |             .bind_rustls(bind_addr, tls)?
+    | |             -^^^^^^^^^^^ method not found in `HttpServer<{closure@main.rs:129:34}, App<...>, ..., ...>`
+    | |_____________|
+    |
+
+error[E0507]: cannot move out of a shared reference
+   --> src\auth.rs:225:29
+    |
+225 |     pub fn is_user_verified(&user: &User) -> bool {
+    |                             ^----
+    |                              |
+    |                              data moved here
+    |                              move occurs because `user` has type `User`, which does not implement the `Copy` trait
+    |
+help: consider removing the borrow
+    |
+225 -     pub fn is_user_verified(&user: &User) -> bool {
+225 +     pub fn is_user_verified(user: &User) -> bool {
+    |
+
+warning: unused variable: `now`
+   --> src\rates.rs:130:13
+    |
+130 |         let now = DefaultClock::default().now();
+    |             ^^^ help: if this is intentional, prefix it with an underscore: `_now`
+    |
+    = note: `#[warn(unused_variables)]` on by default
+
+warning: unused variable: `cleanup_threshold`
+   --> src\rates.rs:131:13
+    |
+131 |         let cleanup_threshold = Duration::from_secs(self.window_seconds * 10);
+    |             ^^^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_cleanup_threshold`
+
+warning: unused variable: `limiter`
+   --> src\rates.rs:133:39
+    |
+133 |         self.user_limiters.retain(|_, limiter| {
+    |                                       ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_limiter`
+
+Some errors have detailed explanations: E0061, E0255, E0277, E0308, E0425, E0507, E0599.
+For more information about an error, try `rustc --explain E0061`.
+warning: `football-heritage-backend` (bin "football-heritage-backend") generated 17 warnings
+error: could not compile `football-heritage-backend` (bin "football-heritage-backend") due to 131 previous errors; 17 warnings emitted

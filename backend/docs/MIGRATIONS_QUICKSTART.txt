@@ -1,0 +1,241 @@
+╔═══════════════════════════════════════════════════════════════════════════╗
+║                                                                           ║
+║              SQLx MIGRATIONS - QUICK START GUIDE                         ║
+║                                                                           ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+
+
+🚀 EASIEST WAY - LET THE APP RUN MIGRATIONS
+═══════════════════════════════════════════════════════════════════════════
+
+1. Make sure PostgreSQL is running
+2. Create database (if not exists):
+   psql -U postgres -c "CREATE DATABASE football_heritage;"
+
+3. Run the application:
+   .\run.ps1
+
+That's it! Migrations run automatically on startup! ✨
+
+
+📋 WHAT GETS CREATED
+═══════════════════════════════════════════════════════════════════════════
+
+✓ users              - User accounts (21+ age check)
+✓ wallets            - Encrypted wallet balances
+✓ transactions       - Transaction audit trail
+✓ events             - Sports betting events
+✓ bets               - User bets
+✓ gambling_limits    - Responsible gambling limits
+✓ user_activity      - Activity tracking
+✓ betting_patterns   - Fraud detection
+
+Plus:
+✓ Indexes for performance
+✓ Triggers for auto-updating timestamps
+✓ 10 sample NFL events with realistic odds
+
+
+🛠️ MANUAL METHOD - USING SQLx CLI
+═══════════════════════════════════════════════════════════════════════════
+
+Install SQLx CLI:
+  cargo install sqlx-cli --no-default-features --features postgres
+
+Set database URL:
+  set DATABASE_URL=postgresql://postgres:jumpman13@localhost:5432/football_heritage
+
+Create database:
+  sqlx database create
+
+Run migrations:
+  sqlx migrate run
+
+Check status:
+  sqlx migrate info
+
+
+⚡ QUICK SCRIPTS
+═══════════════════════════════════════════════════════════════════════════
+
+Option 1: PowerShell (Recommended)
+  .\run_migrations.ps1
+
+Option 2: Batch
+  run_migrations.bat
+
+Both scripts:
+  ✓ Check PostgreSQL connection
+  ✓ Create database if needed
+  ✓ Install SQLx CLI if needed
+  ✓ Run migrations
+  ✓ Verify tables created
+  ✓ Show sample data count
+
+
+📁 MIGRATION FILES
+═══════════════════════════════════════════════════════════════════════════
+
+Location: backend/migrations/
+
+Current migration:
+  20241019000001_initial_schema.sql
+
+File naming format:
+  {timestamp}_{description}.sql
+  Example: 20241019120000_add_notifications.sql
+
+
+🔧 SQLx COMMANDS
+═══════════════════════════════════════════════════════════════════════════
+
+Create new migration:
+  sqlx migrate add <description>
+  Example: sqlx migrate add add_user_preferences
+
+Run migrations:
+  sqlx migrate run
+
+Check migration status:
+  sqlx migrate info
+
+Revert last migration:
+  sqlx migrate revert
+
+Create database:
+  sqlx database create
+
+Drop database (careful!):
+  sqlx database drop
+
+
+✅ VERIFY MIGRATIONS WORKED
+═══════════════════════════════════════════════════════════════════════════
+
+List tables:
+  psql -U postgres -d football_heritage -c "\dt"
+
+Count events (should be 10):
+  psql -U postgres -d football_heritage -c "SELECT COUNT(*) FROM events;"
+
+Check migration history:
+  psql -U postgres -d football_heritage -c "SELECT * FROM _sqlx_migrations;"
+
+
+🔍 TROUBLESHOOTING
+═══════════════════════════════════════════════════════════════════════════
+
+Error: "database does not exist"
+  Solution: sqlx database create
+  Or: psql -U postgres -c "CREATE DATABASE football_heritage;"
+
+Error: "Failed to connect"
+  Check:
+  - PostgreSQL is running: sc query postgresql-x64-14
+  - Credentials are correct in .env
+  - Port 5432 is not blocked
+
+Error: "migration already applied"
+  This is normal! SQLx skips already-applied migrations.
+  Check status: sqlx migrate info
+
+Error: "syntax error in migration"
+  Check the SQL file for errors:
+  psql -U postgres -d football_heritage -f migrations/20241019000001_initial_schema.sql
+
+
+📚 HOW IT WORKS
+═══════════════════════════════════════════════════════════════════════════
+
+In main.rs, the application automatically runs:
+
+  sqlx::migrate!("./migrations")
+      .run(&db_pool)
+      .await
+
+This:
+  1. Checks _sqlx_migrations table
+  2. Runs any pending migrations
+  3. Records applied migrations
+  4. Continues app startup
+
+
+💡 BEST PRACTICES
+═══════════════════════════════════════════════════════════════════════════
+
+✓ Never edit applied migrations (create new ones instead)
+✓ Test migrations locally before production
+✓ Keep migrations small and focused
+✓ Use transactions (automatic in SQLx)
+✓ Add descriptive migration names
+✓ Commit migrations with code changes
+
+
+🎯 CREATING NEW MIGRATIONS
+═══════════════════════════════════════════════════════════════════════════
+
+1. Create migration file:
+   sqlx migrate add add_user_preferences
+
+2. Edit the generated file:
+   migrations/20241019120000_add_user_preferences.sql
+
+3. Add your SQL:
+   CREATE TABLE user_preferences (
+       id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+       user_id UUID NOT NULL REFERENCES users(id),
+       theme VARCHAR(20) DEFAULT 'light',
+       notifications_enabled BOOLEAN DEFAULT TRUE
+   );
+
+4. Run migration:
+   sqlx migrate run
+   Or just restart the app!
+
+
+🚀 PRODUCTION DEPLOYMENT
+═══════════════════════════════════════════════════════════════════════════
+
+Option A: Automatic (on app startup)
+  - Application runs migrations automatically
+  - Simple but causes brief downtime
+
+Option B: Manual (before deployment)
+  - Run: sqlx migrate run (on production server)
+  - Then deploy new application version
+  - More control over timing
+
+
+📊 CURRENT STATUS
+═══════════════════════════════════════════════════════════════════════════
+
+✓ Migration file created: migrations/20241019000001_initial_schema.sql
+✓ Contains complete database schema
+✓ Includes sample data (10 NFL events)
+✓ Application configured to run migrations automatically
+
+Ready to use! Just run: .\run.ps1
+
+
+═══════════════════════════════════════════════════════════════════════════
+
+                    QUICK REFERENCE CARD
+
+CREATE DATABASE:     sqlx database create
+RUN MIGRATIONS:      sqlx migrate run
+CHECK STATUS:        sqlx migrate info
+NEW MIGRATION:       sqlx migrate add <name>
+VERIFY TABLES:       psql -U postgres -d football_heritage -c "\dt"
+
+OR JUST RUN:         .\run.ps1 (migrations run automatically!)
+
+═══════════════════════════════════════════════════════════════════════════
+
+
+For detailed documentation, see:
+• SQLX_MIGRATIONS_GUIDE.md (704 lines - comprehensive)
+• run_migrations.ps1 (automated PowerShell script)
+• run_migrations.bat (automated batch script)
+
+
+Last Updated: October 19, 2024

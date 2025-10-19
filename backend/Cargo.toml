@@ -1,0 +1,91 @@
+[package]
+name = "football-heritage-backend"
+version = "0.1.0"
+edition = "2021"
+
+[profile.release]
+opt-level = "z"     # Optimize for size
+lto = true          # Enable Link Time Optimization
+codegen-units = 1   # Better optimization at cost of compile time
+strip = true        # Strip symbols from binary
+panic = "abort"     # Smaller panic handler
+
+[profile.dev]
+opt-level = 0
+debug = true
+
+[dependencies]
+# Web framework - minimal features
+actix-web = { version = "4.4.0", default-features = false, features = ["macros", "compress-gzip", "rustls-0_23"] }
+actix-cors = { version = "0.7.0", default-features = false }
+actix-rt = "2.9.0"
+
+# Async runtime - only needed features
+tokio = { version = "1.35.0", default-features = false, features = ["rt-multi-thread", "macros", "sync", "time"] }
+
+# Database - minimal features
+sqlx = { version = "0.7.4", default-features = false, features = ["runtime-tokio-rustls", "postgres", "uuid", "chrono", "bigdecimal", "migrate", "macros"] }
+
+# Serialization
+serde = { version = "1.0.195", default-features = false, features = ["derive"] }
+serde_json = { version = "1.0.111", default-features = false, features = ["std"] }
+
+# Authentication & Security
+jsonwebtoken = { version = "9.2.0", default-features = false }
+argon2 = { version = "0.5.2", default-features = false, features = ["std"] }
+rustls = { version = "0.23.0", default-features = false, features = ["std", "tls12", "ring"] }
+rustls-pemfile = "2.0.0"
+validator = { version = "0.18.1", default-features = false, features = ["derive"] }
+aes-gcm = { version = "0.10.3", default-features = false, features = ["aes", "alloc"] }
+rand = { version = "0.8.5", default-features = false, features = ["std", "std_rng"] }
+uuid = { version = "1.6.1", default-features = false, features = ["v4", "serde"] }
+
+# Time handling
+chrono = { version = "0.4.31", default-features = false, features = ["clock", "serde", "std"] }
+time = { version = "0.3.30", default-features = false, features = ["std", "macros"] }
+
+# Rate limiting
+governor = "0.6.3"
+dashmap = "5.5.3"
+
+# Logging & Monitoring - minimal features
+tracing = { version = "0.1.40", default-features = false, features = ["std"] }
+tracing-subscriber = { version = "0.3.18", default-features = false, features = ["env-filter", "fmt", "ansi"] }
+
+# Environment
+dotenvy = "0.15.7"
+
+# Password strength checking
+zxcvbn = "2.2.2"
+
+# Cryptographic utilities
+ring = { version = "0.17.8", default-features = false }
+base64 = "0.22.0"
+hex = "0.4.3"
+
+# Error handling
+anyhow = "1.0.79"
+thiserror = "1.0.56"
+
+# HTTP client - minimal features, only for odds validation
+reqwest = { version = "0.11.24", default-features = false, features = ["json", "rustls-tls"] }
+
+# Configuration
+config = { version = "0.14.0", default-features = false, features = ["toml"] }
+
+# Decimal numbers
+bigdecimal = { version = "0.3.1", default-features = false, features = ["serde"] }
+
+# CPU count
+num_cpus = "1.16.0"
+
+# Futures
+futures-util = { version = "0.3.30", default-features = false }
+
+[dev-dependencies]
+tempfile = "3.9.0"
+
+# Optimize all dependencies
+[profile.release.package."*"]
+opt-level = "z"
+codegen-units = 1

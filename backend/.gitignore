@@ -1,0 +1,299 @@
+# Rust / Cargo
+/target/
+**/*.rs.bk
+*.pdb
+Cargo.lock
+
+# Environment files (CRITICAL - Contains secrets)
+.env
+.env.local
+.env.*.local
+.env.production
+.env.development
+.env.staging
+*.env
+
+# Database
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+logs/
+*.log.*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# TLS/SSL Certificates and Keys (SECURITY CRITICAL)
+*.pem
+*.key
+*.crt
+*.cer
+*.p12
+*.pfx
+certs/
+ssl/
+tls/
+
+# IDE / Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.iml
+.project
+.classpath
+.settings/
+
+# SQLx offline mode (generated)
+.sqlx/
+sqlx-data.json
+
+# Backup files
+*.bak
+*.backup
+*.old
+*.orig
+*.tmp
+
+# OS files
+Thumbs.db
+.DS_Store
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Desktop.ini
+
+# Test coverage
+tarpaulin-report.html
+cobertura.xml
+lcov.info
+coverage/
+
+# Documentation build artifacts
+/book/
+/doc/
+
+# Profiling data
+perf.data
+perf.data.old
+flamegraph.svg
+*.profdata
+
+# Build artifacts
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+*.exe
+
+# Rust-specific
+**/*.rs.bk
+**/*.rs.bk
+*.orig
+
+# Local configuration
+config.local.toml
+config.local.json
+
+# Migration temporary files
+migrations/*.pending
+migrations/*.rollback
+
+# JWT secret keys (SECURITY CRITICAL)
+jwt_secret.txt
+*.jwt
+private_key.*
+public_key.*
+
+# Encryption keys (SECURITY CRITICAL)
+encryption_key.txt
+master.key
+*.key
+
+# Docker
+docker-compose.override.yml
+.dockerignore
+
+# Node modules (if any frontend tools)
+node_modules/
+
+# Compiled output
+dist/
+build/
+out/
+
+# Temporary files
+tmp/
+temp/
+.cache/
+
+# Load testing results
+artillery_report_*.json
+k6_results_*.json
+*.jmeter
+
+# Benchmark results
+criterion/
+benchmarks/output/
+
+# Audit logs (may contain sensitive data)
+audit_*.log
+security_*.log
+
+# Database dumps (may contain sensitive data)
+*.sql.gz
+*.dump
+backup_*.sql
+database_backup_*
+
+# API keys and secrets (SECURITY CRITICAL)
+*_api_key.txt
+*_secret.txt
+credentials.json
+secrets.json
+service_account.json
+
+# Local development databases
+dev.db
+development.db
+local.db
+
+# Rust analyzer cache
+rust-analyzer/
+
+# CI/CD local files
+.gitlab-ci-local/
+.github-local/
+
+# macOS
+.AppleDouble
+.LSOverride
+
+# Windows
+$RECYCLE.BIN/
+*.stackdump
+
+# Linux
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# JetBrains IDEs
+.idea/
+*.iml
+.idea_modules/
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+[._]s[a-rt-v][a-z]
+[._]ss[a-gi-z]
+[._]sw[a-p]
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# Tags
+TAGS
+tags
+.tags
+.tags1
+
+# Rust doc comments
+rust-doc/
+
+# Custom ignore patterns for this project
+/data/
+/uploads/
+/static/uploads/
+user_data/
+
+# Testing artifacts
+.hypothesis/
+.pytest_cache/
+__pycache__/
+
+# Performance profiling
+*.trace
+*.perf
+
+# Memory profiling
+massif.out.*
+*.memprof
+
+# Fuzzing
+fuzz/corpus/
+fuzz/artifacts/
+
+# Local scripts (may contain credentials)
+local_*.sh
+dev_*.sh
+*.local.sh
+
+# Kubernetes secrets
+secrets.yaml
+*-secret.yaml
+
+# Terraform (if used for infrastructure)
+*.tfstate
+*.tfstate.backup
+.terraform/
+*.tfvars
+
+# AWS credentials
+.aws/
+credentials
+
+# GCP credentials
+.gcloud/
+gcloud-credentials.json
+
+# Azure credentials
+.azure/
+
+# Session data
+sessions/
+*.session
+
+# Redis dump
+dump.rdb
+
+# Monitoring and metrics (may contain sensitive data)
+prometheus_data/
+grafana_data/
+
+# Generated documentation
+/target/doc/
+
+# Sccache
+.sccache/
+
+# Personal notes
+NOTES.md
+TODO.personal.md
