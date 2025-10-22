@@ -276,3 +276,45 @@ pub type AppResult<T> = Result<T, AppError>;
 pub fn validation_error(field: &str, message: &str) -> AppError {
     AppError::Validation(format!("{}: {}", field, message))
 }
+
+// API Error type for chat handler and other API endpoints
+#[derive(Debug, Error)]
+pub enum ApiError {
+    #[error("Bad request: {0}")]
+    BadRequest(String),
+
+    #[error("Unauthorized: {0}")]
+    Unauthorized(String),
+
+    #[error("Internal server error: {0}")]
+    InternalServerError(String),
+
+    #[error("Service unavailable: {0}")]
+    ServiceUnavailable(String),
+}
+
+impl ResponseError for ApiError {
+    fn error_response(&self) -> HttpResponse {
+        let status_code = self.status_code();
+        let error_response = json!({
+            "error": match self {
+                ApiError::BadRequest(_) => "BAD_REQUEST",
+                ApiError::Unauthorized(_) => "UNAUTHORIZED",
+                ApiError::InternalServerError(_) => "INTERNAL_SERVER_ERROR",
+                ApiError::ServiceUnavailable(_) => "SERVICE_UNAVAILABLE",
+            },
+            "message": self.to_string(),
+        });
+
+        HttpResponse::build(status_code).json(error_response)
+    }
+
+    fn status_code(&self) -> StatusCode {
+        match self {
+            ApiError::BadRequest(_) => StatusCode::BAD_REQUEST,
+            ApiError::Unauthorized(_) => StatusCode::UNAUTHORIZED,
+            ApiError::InternalServerError(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            ApiError::ServiceUnavailable(_) => StatusCode::SERVICE_UNAVAILABLE,
+        }
+    }
+}

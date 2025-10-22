@@ -73,6 +73,12 @@ const Navbar = memo(() => {
               >
                 My Bets
               </Link>
+              <Link
+                to="/chat"
+                className="text-gray-300 hover:text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors flex items-center gap-1"
+              >
+                <span>🤖</span> AI Chat
+              </Link>
             </div>
 
             {/* User Menu */}
@@ -190,6 +196,12 @@ const Navbar = memo(() => {
                 className="w-full text-left text-gray-300 hover:text-white hover:bg-gray-800 block px-3 py-2 rounded-lg text-base font-medium transition-colors"
               >
                 My Bets
+              </button>
+              <button
+                onClick={() => handleNavigation('/chat')}
+                className="w-full text-left text-gray-300 hover:text-white hover:bg-gray-800 block px-3 py-2 rounded-lg text-base font-medium transition-colors"
+              >
+                🤖 AI Chat
               </button>
               <button
                 onClick={() => openWallet('deposit')}

@@ -438,3 +438,15 @@ mod tests {
         assert!(auth_service.get_session(session_id).is_none());
     }
 }
+
+/// Standalone JWT verification function for use in handlers
+/// This is a convenience function that doesn't require AuthService
+pub fn verify_jwt(token: &str, secret: &str) -> AppResult<Claims> {
+    let key = DecodingKey::from_secret(secret.as_ref());
+    let validation = Validation::default();
+
+    let token_data = decode::<Claims>(token, &key, &validation)
+        .map_err(|e| AppError::JWT(e))?;
+
+    Ok(token_data.claims)
+}
