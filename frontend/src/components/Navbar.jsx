@@ -62,6 +62,12 @@ const Navbar = memo(() => {
                 Dashboard
               </Link>
               <Link
+                to="/sports"
+                className="text-gray-300 hover:text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
+              >
+                Sports
+              </Link>
+              <Link
                 to="/odds"
                 className="text-gray-300 hover:text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
               >
@@ -190,6 +196,12 @@ const Navbar = memo(() => {
                 className="w-full text-left text-gray-300 hover:text-white hover:bg-gray-800 block px-3 py-2 rounded-lg text-base font-medium transition-colors"
               >
                 Odds
+              </button>
+              <button
+                onClick={() => handleNavigation('/sports')}
+                className="w-full text-left text-gray-300 hover:text-white hover:bg-gray-800 block px-3 py-2 rounded-lg text-base font-medium transition-colors"
+              >
+                Sports
               </button>
               <button
                 onClick={() => handleNavigation('/bets')}

@@ -206,6 +206,12 @@ async fn main() -> std::io::Result<()> {
                             .route("", web::post().to(handlers::chat::chat))
                             .route("/health", web::get().to(handlers::chat::chat_health))
                     )
+                    .service(
+                        web::scope("/sports")
+                            .route("", web::get().to(handlers::sports::get_sports))
+                            .route("/categories", web::get().to(handlers::sports::get_bet_categories))
+                            .route("/{sport}/leagues", web::get().to(handlers::sports::get_sport_leagues))
+                    )
             )
             .route("/health", web::get().to(handlers::health::health_check))
             .route("/metrics", web::get().to(handlers::monitoring::metrics))
