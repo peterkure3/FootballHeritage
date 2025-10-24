@@ -150,7 +150,13 @@ const RecentActivity = () => {
       </div>
 
       {/* Activity Feed */}
-      <div className="max-h-[400px] overflow-y-auto">
+      <div 
+        className="max-h-[400px] overflow-y-auto"
+        style={{
+          scrollbarWidth: 'thin',
+          scrollbarColor: '#374151 #1f2937'
+        }}
+      >
         <div className="divide-y divide-gray-700">
           {activities.map((activity) => {
             const Icon = activity.icon;
