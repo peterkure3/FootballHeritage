@@ -1,9 +1,12 @@
 use crate::errors::{AppError, AppResult};
-use actix_web::{web, HttpRequest, HttpResponse};
+use crate::models::Claims;
+use actix_web::{web, HttpMessage, HttpRequest, HttpResponse};
+use argon2::{Argon2, PasswordHash, PasswordHasher, PasswordVerifier};
+use argon2::password_hash::{rand_core::OsRng, SaltString};
 use chrono::{DateTime, NaiveDate, Utc};
 use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
-use tracing::error;
+use tracing::{debug, error};
 use uuid::Uuid;
 
 #[derive(Debug, Serialize)]
@@ -27,6 +30,12 @@ pub struct UpdateProfileRequest {
     pub address: Option<String>,
 }
 
+#[derive(Debug, Deserialize)]
+pub struct ChangePasswordRequest {
+    pub current_password: String,
+    pub new_password: String,
+}
+
 #[derive(Debug, Serialize)]
 pub struct UserActivity {
     pub total_bets: i64,
@@ -36,11 +45,14 @@ pub struct UserActivity {
 }
 
 pub async fn get_profile(
-    _req: HttpRequest,
+    req: HttpRequest,
     pool: web::Data<PgPool>,
 ) -> AppResult<HttpResponse> {
-    // TODO: Extract user_id from JWT token
-    let user_id = Uuid::new_v4();
+    let claims = get_user_claims(&req)
+        .ok_or_else(|| AppError::Authentication("Unauthorized".to_string()))?;
+    
+    let user_id = Uuid::parse_str(&claims.sub)
+        .map_err(|_| AppError::Authentication("Invalid user ID".to_string()))?;
 
     let user: (Uuid, String, String, String, NaiveDate, Option<String>, Option<String>, bool, DateTime<Utc>) = sqlx::query_as(
         r#"
@@ -53,7 +65,7 @@ pub async fn get_profile(
     .fetch_one(pool.as_ref())
     .await
     .map_err(|e| {
-        error!("Failed to fetch user profile: {}", e);
+        debug!("User profile fetch failed (likely logged out or invalid token): {}", e);
         AppError::Database(e)
     })?;
 
@@ -71,12 +83,15 @@ pub async fn get_profile(
 }
 
 pub async fn update_profile(
-    _req: HttpRequest,
+    req: HttpRequest,
     pool: web::Data<PgPool>,
     body: web::Json<UpdateProfileRequest>,
 ) -> AppResult<HttpResponse> {
-    // TODO: Extract user_id from JWT token
-    let user_id = Uuid::new_v4();
+    let claims = get_user_claims(&req)
+        .ok_or_else(|| AppError::Authentication("Unauthorized".to_string()))?;
+    
+    let user_id = Uuid::parse_str(&claims.sub)
+        .map_err(|_| AppError::Authentication("Invalid user ID".to_string()))?;
 
     sqlx::query(
         r#"
@@ -107,11 +122,14 @@ pub async fn update_profile(
 }
 
 pub async fn get_activity(
-    _req: HttpRequest,
+    req: HttpRequest,
     pool: web::Data<PgPool>,
 ) -> AppResult<HttpResponse> {
-    // TODO: Extract user_id from JWT token
-    let user_id = Uuid::new_v4();
+    let claims = get_user_claims(&req)
+        .ok_or_else(|| AppError::Authentication("Unauthorized".to_string()))?;
+    
+    let user_id = Uuid::parse_str(&claims.sub)
+        .map_err(|_| AppError::Authentication("Invalid user ID".to_string()))?;
 
     let activity: (i64, Option<bigdecimal::BigDecimal>) = sqlx::query_as(
         r#"
@@ -170,4 +188,77 @@ pub async fn get_activity(
         total_won: total_won.unwrap_or_else(|| bigdecimal::BigDecimal::from(0)),
         win_rate,
     }))
+}
+
+pub async fn change_password(
+    req: HttpRequest,
+    pool: web::Data<PgPool>,
+    body: web::Json<ChangePasswordRequest>,
+) -> AppResult<HttpResponse> {
+    let claims = get_user_claims(&req)
+        .ok_or_else(|| AppError::Authentication("Unauthorized".to_string()))?;
+    
+    let user_id = Uuid::parse_str(&claims.sub)
+        .map_err(|_| AppError::Authentication("Invalid user ID".to_string()))?;
+
+    // Validate password strength
+    if body.new_password.len() < 8 {
+        return Err(AppError::Validation("Password must be at least 8 characters".to_string()));
+    }
+
+    // Get current password hash
+    let current_hash: String = sqlx::query_scalar(
+        "SELECT password_hash FROM users WHERE id = $1"
+    )
+    .bind(user_id)
+    .fetch_one(pool.as_ref())
+    .await
+    .map_err(|e| {
+        error!("Failed to fetch user password: {}", e);
+        AppError::Database(e)
+    })?;
+
+    // Verify current password
+    let parsed_hash = PasswordHash::new(&current_hash)
+        .map_err(|e| {
+            error!("Failed to parse password hash: {}", e);
+            AppError::Internal("Authentication error".to_string())
+        })?;
+
+    let argon2 = Argon2::default();
+    if argon2.verify_password(body.current_password.as_bytes(), &parsed_hash).is_err() {
+        return Err(AppError::Authentication("Current password is incorrect".to_string()));
+    }
+
+    // Hash new password
+    let salt = SaltString::generate(&mut OsRng);
+    let new_hash = argon2
+        .hash_password(body.new_password.as_bytes(), &salt)
+        .map_err(|e| {
+            error!("Failed to hash password: {}", e);
+            AppError::Internal("Failed to update password".to_string())
+        })?
+        .to_string();
+
+    // Update password
+    sqlx::query(
+        "UPDATE users SET password_hash = $1, updated_at = NOW() WHERE id = $2"
+    )
+    .bind(&new_hash)
+    .bind(user_id)
+    .execute(pool.as_ref())
+    .await
+    .map_err(|e| {
+        error!("Failed to update password: {}", e);
+        AppError::Database(e)
+    })?;
+
+    Ok(HttpResponse::Ok().json(serde_json::json!({
+        "message": "Password changed successfully"
+    })))
+}
+
+// Helper function to extract user claims from request
+fn get_user_claims(req: &HttpRequest) -> Option<Claims> {
+    req.extensions().get::<Claims>().cloned()
 }

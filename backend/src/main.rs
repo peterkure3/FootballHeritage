@@ -200,6 +200,7 @@ async fn main() -> std::io::Result<()> {
                             .route("/profile", web::get().to(handlers::user::get_profile))
                             .route("/profile", web::put().to(handlers::user::update_profile))
                             .route("/activity", web::get().to(handlers::user::get_activity))
+                            .route("/password", web::put().to(handlers::user::change_password))
                     )
                     .service(
                         web::scope("/chat")

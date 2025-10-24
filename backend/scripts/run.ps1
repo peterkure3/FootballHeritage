@@ -6,9 +6,10 @@ Write-Host "  Football Heritage Backend" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
 
-# Set working directory to script location
+# Set working directory to backend root (parent of scripts folder)
 $scriptPath = Split-Path -Parent $MyInvocation.MyCommand.Path
-Set-Location $scriptPath
+$backendRoot = Split-Path -Parent $scriptPath
+Set-Location $backendRoot
 
 # Check if .env exists
 if (-not (Test-Path ".env")) {
