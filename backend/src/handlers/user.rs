@@ -19,6 +19,8 @@ pub struct UserProfile {
     pub phone: Option<String>,
     pub address: Option<String>,
     pub is_verified: bool,
+    pub is_admin: bool,
+    pub is_super_admin: bool,
     pub created_at: DateTime<Utc>,
 }
 
@@ -54,9 +56,9 @@ pub async fn get_profile(
     let user_id = Uuid::parse_str(&claims.sub)
         .map_err(|_| AppError::Authentication("Invalid user ID".to_string()))?;
 
-    let user: (Uuid, String, String, String, NaiveDate, Option<String>, Option<String>, bool, DateTime<Utc>) = sqlx::query_as(
+    let user: (Uuid, String, String, String, NaiveDate, Option<String>, Option<String>, bool, Option<String>, DateTime<Utc>) = sqlx::query_as(
         r#"
-        SELECT id, email, first_name, last_name, date_of_birth, phone, address, is_verified, created_at
+        SELECT id, email, first_name, last_name, date_of_birth, phone, address, is_verified, role, created_at
         FROM users
         WHERE id = $1
         "#
@@ -69,6 +71,10 @@ pub async fn get_profile(
         AppError::Database(e)
     })?;
 
+    let role = user.8.as_deref();
+    let is_admin = matches!(role, Some("admin") | Some("superadmin"));
+    let is_super_admin = matches!(role, Some("superadmin"));
+
     Ok(HttpResponse::Ok().json(UserProfile {
         id: user.0,
         email: user.1,
@@ -78,7 +84,9 @@ pub async fn get_profile(
         phone: user.5,
         address: user.6,
         is_verified: user.7,
-        created_at: user.8,
+        is_admin,
+        is_super_admin,
+        created_at: user.9,
     }))
 }
 

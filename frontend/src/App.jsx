@@ -17,6 +17,7 @@ import Odds from "./pages/Odds";
 import BetHistory from "./pages/BetHistory";
 import Chat from "./pages/Chat";
 import Sports from './pages/Sports';
+import AdminDashboard from './pages/AdminDashboard';
 
 // Create React Query client with optimized settings
 const queryClient = new QueryClient({
@@ -126,6 +127,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Profile />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute>
+                  <AdminDashboard />
                 </ProtectedRoute>
               }
             />

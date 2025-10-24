@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import useAuthStore from '../stores/authStore';
 import { useLogout } from '../hooks/useAuth';
 import WalletModal from './WalletModal';
+import RoleSwitcher from './RoleSwitcher';
 
 const Navbar = memo(() => {
   const navigate = useNavigate();
@@ -98,6 +99,9 @@ const Navbar = memo(() => {
 
             {/* User Menu */}
             <div className="flex items-center space-x-3">
+              {/* Role Switcher (Admin Only) */}
+              <RoleSwitcher />
+              
               {/* Balance Display */}
               <div className="hidden sm:flex items-center bg-gray-800 rounded-lg px-4 py-2 border border-gray-700">
                 <span className="text-gray-400 text-sm mr-2">Balance:</span>

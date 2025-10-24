@@ -50,6 +50,9 @@ const useAuthStore = create((set, get) => {
     },
 
     login: (token, user) => {
+      console.log('AuthStore login - User data:', user);
+      console.log('AuthStore login - is_admin:', user?.is_admin);
+      console.log('AuthStore login - is_super_admin:', user?.is_super_admin);
       tokenManager.setToken(token);
       set({
         user,

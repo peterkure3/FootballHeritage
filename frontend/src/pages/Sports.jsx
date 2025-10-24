@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import Navbar from '../components/Navbar';
 import useAuthStore from '../stores/authStore';
+import { tokenManager } from '../utils/api';
 
 /**
  * Sports Page Component
@@ -28,8 +29,8 @@ const Sports = () => {
    */
   const fetchSportsData = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('https://localhost:8080/api/v1/sports', {
+      const token = tokenManager.getToken();
+      const response = await fetch('http://localhost:8080/api/v1/sports', {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -54,8 +55,8 @@ const Sports = () => {
    */
   const fetchCategories = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('https://localhost:8080/api/v1/sports/categories', {
+      const token = tokenManager.getToken();
+      const response = await fetch('http://localhost:8080/api/v1/sports/categories', {
         headers: {
           'Authorization': `Bearer ${token}`,
         },

@@ -41,6 +41,8 @@ pub struct UserResponse {
     pub first_name: String,
     pub last_name: String,
     pub is_verified: bool,
+    pub is_admin: bool,
+    pub is_super_admin: bool,
 }
 
 pub async fn register(
@@ -170,10 +172,12 @@ pub async fn register(
         token,
         user: UserResponse {
             id: user.id,
-            email: user.email,
-            first_name: user.first_name,
-            last_name: user.last_name,
+            email: user.email.clone(),
+            first_name: user.first_name.clone(),
+            last_name: user.last_name.clone(),
             is_verified: user.is_verified,
+            is_admin: user.is_admin(),
+            is_super_admin: user.is_super_admin(),
         },
     }))
 }
@@ -269,10 +273,12 @@ pub async fn login(
         token,
         user: UserResponse {
             id: user.id,
-            email: user.email,
-            first_name: user.first_name,
-            last_name: user.last_name,
+            email: user.email.clone(),
+            first_name: user.first_name.clone(),
+            last_name: user.last_name.clone(),
             is_verified: user.is_verified,
+            is_admin: user.is_admin(),
+            is_super_admin: user.is_super_admin(),
         },
     }))
 }

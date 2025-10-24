@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 import useAuthStore from '../stores/authStore';
+import { tokenManager } from '../utils/api';
 import Navbar from '../components/Navbar';
 
 /**
@@ -66,13 +67,13 @@ const Chat = () => {
 
     try {
       // Get auth token
-      const token = localStorage.getItem('token');
+      const token = tokenManager.getToken();
       if (!token) {
         throw new Error('Not authenticated');
       }
 
       // Call chat API
-      const response = await fetch('https://localhost:8080/api/v1/chat', {
+      const response = await fetch('http://localhost:8080/api/v1/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -20,12 +20,23 @@ pub struct User {
     pub address: Option<String>,
     pub is_verified: bool,
     pub is_active: bool,
+    pub role: Option<String>,  // 'user', 'admin', 'superadmin'
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
     pub last_login: Option<DateTime<Utc>>,
     pub login_count: i32,
     pub failed_login_attempts: i32,
     pub locked_until: Option<DateTime<Utc>>,
+}
+
+impl User {
+    pub fn is_admin(&self) -> bool {
+        matches!(self.role.as_deref(), Some("admin") | Some("superadmin"))
+    }
+
+    pub fn is_super_admin(&self) -> bool {
+        matches!(self.role.as_deref(), Some("superadmin"))
+    }
 }
 
 #[derive(Debug, Deserialize, Validate)]
