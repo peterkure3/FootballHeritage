@@ -212,6 +212,22 @@ async fn main() -> std::io::Result<()> {
                             .route("/categories", web::get().to(handlers::sports::get_bet_categories))
                             .route("/{sport}/leagues", web::get().to(handlers::sports::get_sport_leagues))
                     )
+                    .service(
+                        web::scope("/admin")
+                            // User management
+                            .route("/users", web::get().to(handlers::admin::users::list_users))
+                            .route("/users/{id}", web::get().to(handlers::admin::users::get_user_details))
+                            .route("/users/{id}/status", web::put().to(handlers::admin::users::update_user_status))
+                            .route("/users/{id}/verify", web::put().to(handlers::admin::users::verify_user))
+                            // Event management
+                            .route("/events", web::post().to(handlers::admin::events::create_event))
+                            .route("/events/{id}/status", web::put().to(handlers::admin::events::update_event_status))
+                            // Analytics
+                            .route("/analytics/dashboard", web::get().to(handlers::admin::analytics::get_dashboard_metrics))
+                            // Monitoring
+                            .route("/monitoring/fraud-alerts", web::get().to(handlers::admin::monitoring::get_fraud_alerts))
+                            .route("/monitoring/audit-logs", web::get().to(handlers::admin::monitoring::get_audit_logs))
+                    )
             )
             .route("/health", web::get().to(handlers::health::health_check))
             .route("/metrics", web::get().to(handlers::monitoring::metrics))

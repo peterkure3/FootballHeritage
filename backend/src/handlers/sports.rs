@@ -1,5 +1,5 @@
 use actix_web::{web, HttpResponse};
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 use sqlx::PgPool;
 use std::collections::HashMap;
 
@@ -23,7 +23,7 @@ pub struct SportInfo {
     pub active: bool,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Clone)]
 pub struct LeagueInfo {
     pub name: String,
     pub sport: String,
