@@ -11,7 +11,6 @@ use argon2::password_hash::{rand_core::OsRng, SaltString};
 use chrono::Utc;
 use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
-use std::sync::Arc;
 use tracing::{error, info};
 use uuid::Uuid;
 use validator::Validate;
@@ -48,6 +47,7 @@ pub async fn register(
     req: HttpRequest,
     pool: web::Data<PgPool>,
     config: web::Data<AppConfig>,
+    auth_service: web::Data<AuthService>,
     rate_limiters: web::Data<RateLimiters>,
     body: web::Json<RegisterRequestHandler>,
 ) -> AppResult<HttpResponse> {
@@ -160,7 +160,6 @@ pub async fn register(
     info!("User registered successfully: {}", user.email);
 
     // Generate JWT token
-    let auth_service = AuthService::new(Arc::new(config.as_ref().clone()));
     let session_id = generate_session_id();
     let user_agent = extract_user_agent(&req);
 
@@ -183,6 +182,7 @@ pub async fn login(
     req: HttpRequest,
     pool: web::Data<PgPool>,
     config: web::Data<AppConfig>,
+    auth_service: web::Data<AuthService>,
     rate_limiters: web::Data<RateLimiters>,
     body: web::Json<LoginRequest>,
 ) -> AppResult<HttpResponse> {
@@ -259,7 +259,6 @@ pub async fn login(
     info!("User logged in successfully: {}", user.email);
 
     // Generate JWT token
-    let auth_service = AuthService::new(Arc::new(config.as_ref().clone()));
     let session_id = generate_session_id();
     let user_agent = extract_user_agent(&req);
 

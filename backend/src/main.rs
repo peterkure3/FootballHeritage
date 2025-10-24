@@ -77,6 +77,10 @@ async fn main() -> std::io::Result<()> {
     // Start monitoring service
     let monitoring_service = web::Data::new(monitoring::MonitoringService::new(&config));
 
+    // Initialize auth service (Clone-able, shared across all handlers and middleware)
+    let config_arc = std::sync::Arc::new(config.clone());
+    let auth_service = auth::AuthService::new(config_arc);
+
     // Initialize TLS configuration if HTTPS is enabled
     let tls_config = if config.https_enabled {
         Some({
@@ -132,6 +136,7 @@ async fn main() -> std::io::Result<()> {
 
     // Create HTTP server
     let allowed_origins = config.allowed_origins.clone();
+    let auth_service_for_app = auth_service.clone();
     let server = HttpServer::new(move || {
         // Configure CORS
         let allowed_origins_clone = allowed_origins.clone();
@@ -153,10 +158,11 @@ async fn main() -> std::io::Result<()> {
             ])
             .supports_credentials()
             .max_age(3600);
-
+        
         App::new()
             .app_data(web::Data::new(config.clone()))
             .app_data(web::Data::new(db_pool.clone()))
+            .app_data(web::Data::new(auth_service_for_app.clone()))
             .app_data(rate_limiters.clone())
             .app_data(monitoring_service.clone())
             .wrap(cors)
@@ -197,6 +203,7 @@ async fn main() -> std::io::Result<()> {
                     )
                     .service(
                         web::scope("/user")
+                            .wrap(middleware::jwt_auth::RequireAuth::new(auth_service_for_app.clone()))
                             .route("/profile", web::get().to(handlers::user::get_profile))
                             .route("/profile", web::put().to(handlers::user::update_profile))
                             .route("/activity", web::get().to(handlers::user::get_activity))

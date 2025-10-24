@@ -7,6 +7,7 @@ use uuid::Uuid;
 use std::sync::Arc;
 use dashmap::DashMap;
 
+#[derive(Clone)]
 pub struct AuthService {
     config: Arc<AppConfig>,
     jwt_secret: String,
@@ -60,7 +61,10 @@ impl AuthService {
     /// Validate and decode JWT token
     pub fn validate_token(&self, token: &str) -> AppResult<Claims> {
         let key = DecodingKey::from_secret(self.jwt_secret.as_ref());
-        let validation = Validation::default();
+        let mut validation = Validation::default();
+        // Don't validate aud/iss since we set custom values
+        validation.validate_aud = false;
+        validation.set_required_spec_claims(&["exp", "sub"]);
 
         let token_data = decode::<Claims>(token, &key, &validation)
             .map_err(|e| AppError::JWT(e))?;
