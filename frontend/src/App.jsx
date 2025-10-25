@@ -7,6 +7,7 @@ import {
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
 import useAuthStore from "./stores/authStore";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 // Pages
 import Login from "./pages/Login";
@@ -59,9 +60,10 @@ const PublicRoute = ({ children }) => {
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <Router>
-        <div className="min-h-screen bg-gray-900">
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <Router>
+          <div className="min-h-screen bg-gray-900">
           <Routes>
             {/* Public Routes */}
             <Route
@@ -198,6 +200,7 @@ function App() {
         />
       </Router>
     </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
 

@@ -188,6 +188,12 @@ const Register = () => {
                     onChange={handleChange}
                     placeholder="John"
                     disabled={registerMutation.isPending}
+                    autoComplete="given-name"
+                    autoFocus
+                    required
+                    aria-label="First name"
+                    aria-invalid={!!errors.firstName}
+                    aria-describedby={errors.firstName ? 'firstName-error' : undefined}
                     className={`w-full pl-12 pr-4 py-3 bg-gray-900 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                       errors.firstName
                         ? "border-red-500 focus:ring-red-500"
@@ -196,7 +202,7 @@ const Register = () => {
                   />
                 </div>
                 {errors.firstName && (
-                  <p className="text-red-400 text-xs mt-2 flex items-center">
+                  <p id="firstName-error" className="text-red-400 text-xs mt-2 flex items-center" role="alert">
                     <svg
                       className="w-4 h-4 mr-1"
                       fill="currentColor"
@@ -245,6 +251,11 @@ const Register = () => {
                     onChange={handleChange}
                     placeholder="Doe"
                     disabled={registerMutation.isPending}
+                    autoComplete="family-name"
+                    required
+                    aria-label="Last name"
+                    aria-invalid={!!errors.lastName}
+                    aria-describedby={errors.lastName ? 'lastName-error' : undefined}
                     className={`w-full pl-12 pr-4 py-3 bg-gray-900 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                       errors.lastName
                         ? "border-red-500 focus:ring-red-500"
@@ -253,7 +264,7 @@ const Register = () => {
                   />
                 </div>
                 {errors.lastName && (
-                  <p className="text-red-400 text-xs mt-2 flex items-center">
+                  <p id="lastName-error" className="text-red-400 text-xs mt-2 flex items-center" role="alert">
                     <svg
                       className="w-4 h-4 mr-1"
                       fill="currentColor"
@@ -302,6 +313,11 @@ const Register = () => {
                     onChange={handleChange}
                     placeholder="your@email.com"
                     disabled={registerMutation.isPending}
+                    autoComplete="email"
+                    required
+                    aria-label="Email address"
+                    aria-invalid={!!errors.email}
+                    aria-describedby={errors.email ? 'email-error' : undefined}
                     className={`w-full pl-12 pr-4 py-3 bg-gray-900 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                       errors.email
                         ? "border-red-500 focus:ring-red-500"

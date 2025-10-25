@@ -135,6 +135,12 @@ const Login = () => {
                   onChange={handleChange}
                   placeholder="your@email.com"
                   disabled={loginMutation.isPending}
+                  autoComplete="email"
+                  autoFocus
+                  required
+                  aria-label="Email address"
+                  aria-invalid={!!errors.email}
+                  aria-describedby={errors.email ? 'email-error' : undefined}
                   className={`w-full pl-12 pr-4 py-3 bg-gray-900 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                     errors.email
                       ? 'border-red-500 focus:ring-red-500'
@@ -143,7 +149,7 @@ const Login = () => {
                 />
               </div>
               {errors.email && (
-                <p className="text-red-400 text-xs mt-2 flex items-center">
+                <p id="email-error" className="text-red-400 text-xs mt-2 flex items-center" role="alert">
                   <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
@@ -185,6 +191,11 @@ const Login = () => {
                   onChange={handleChange}
                   placeholder="Enter your password"
                   disabled={loginMutation.isPending}
+                  autoComplete="current-password"
+                  required
+                  aria-label="Password"
+                  aria-invalid={!!errors.password}
+                  aria-describedby={errors.password ? 'password-error' : undefined}
                   className={`w-full pl-12 pr-12 py-3 bg-gray-900 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                     errors.password
                       ? 'border-red-500 focus:ring-red-500'
@@ -194,6 +205,7 @@ const Login = () => {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
                   className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-white transition-colors"
                 >
                   {showPassword ? (
@@ -224,7 +236,7 @@ const Login = () => {
                 </button>
               </div>
               {errors.password && (
-                <p className="text-red-400 text-xs mt-2 flex items-center">
+                <p id="password-error" className="text-red-400 text-xs mt-2 flex items-center" role="alert">
                   <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"

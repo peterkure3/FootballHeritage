@@ -129,8 +129,8 @@ const BetConfirmationModal = memo(({ isOpen, onClose, betDetails }) => {
           <button
             onClick={handleClose}
             disabled={isLoading}
+            aria-label="Close bet confirmation modal"
             className="absolute top-4 right-4 text-white hover:text-gray-200 transition-colors disabled:opacity-50"
-            aria-label="Close modal"
           >
             <svg
               className="w-6 h-6"

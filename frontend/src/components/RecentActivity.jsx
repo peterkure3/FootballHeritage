@@ -10,6 +10,7 @@ import {
   Activity,
   Clock
 } from 'lucide-react';
+import EmptyState from './EmptyState';
 
 /**
  * Recent Activity Feed Component
@@ -157,8 +158,13 @@ const RecentActivity = () => {
           scrollbarColor: '#374151 #1f2937'
         }}
       >
-        <div className="divide-y divide-gray-700">
-          {activities.map((activity) => {
+        {activities.length === 0 ? (
+          <EmptyState
+            type="activity"
+          />
+        ) : (
+          <div className="divide-y divide-gray-700">
+            {activities.map((activity) => {
             const Icon = activity.icon;
             return (
               <div
@@ -198,6 +204,7 @@ const RecentActivity = () => {
             );
           })}
         </div>
+        )}
       </div>
 
       {/* Footer */}

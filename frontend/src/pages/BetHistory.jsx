@@ -5,6 +5,7 @@ import useAuthStore from '../stores/authStore';
 import Navbar from '../components/Navbar';
 import BetCard from '../components/BetCard';
 import LoadingSkeleton from '../components/LoadingSkeleton';
+import EmptyState from '../components/EmptyState';
 
 const BetHistory = () => {
   const navigate = useNavigate();
@@ -266,49 +267,33 @@ const BetHistory = () => {
             <p className="text-red-300">Unable to fetch your betting history. Please try again.</p>
           </div>
         ) : filteredBets.length === 0 ? (
-          <div className="bg-gray-800 border border-gray-700 rounded-xl p-12 text-center">
-            <svg
-              className="w-16 h-16 text-gray-600 mx-auto mb-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-              />
-            </svg>
-            <h3 className="text-white text-xl font-bold mb-2">
-              {searchTerm || filter !== 'all' ? 'No Matching Bets' : 'No Bets Yet'}
-            </h3>
-            <p className="text-gray-400 mb-6">
-              {searchTerm
-                ? 'Try adjusting your search or filters'
-                : filter !== 'all'
-                ? `No ${filter} bets found. Try a different filter.`
-                : 'Start betting on NFL games to see your history here'}
-            </p>
-            {(searchTerm || filter !== 'all') ? (
-              <button
-                onClick={() => {
-                  setSearchTerm('');
-                  setFilter('all');
-                  setDisplayCount(10);
-                }}
-                className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
-              >
-                Clear Filters
-              </button>
-            ) : (
-              <button
-                onClick={() => navigate('/odds')}
-                className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors shadow-lg shadow-green-500/30"
-              >
-                Browse Odds
-              </button>
-            )}
+          <div className="bg-gray-800 border border-gray-700 rounded-xl">
+            <EmptyState
+              type={searchTerm || filter !== 'all' ? 'search' : 'bets'}
+              title={searchTerm || filter !== 'all' ? 'No Matching Bets' : undefined}
+              description={
+                searchTerm
+                  ? 'Try adjusting your search or filters to find what you\'re looking for.'
+                  : filter !== 'all'
+                  ? `No ${filter} bets found. Try selecting a different filter.`
+                  : undefined
+              }
+              action={
+                (searchTerm || filter !== 'all')
+                  ? {
+                      label: 'Clear Filters',
+                      onClick: () => {
+                        setSearchTerm('');
+                        setFilter('all');
+                        setDisplayCount(10);
+                      },
+                    }
+                  : {
+                      label: 'Browse Odds',
+                      onClick: () => navigate('/odds'),
+                    }
+              }
+            />
           </div>
         ) : (
           <>

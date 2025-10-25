@@ -6,6 +6,7 @@ import Navbar from '../components/Navbar';
 import OddsRow from '../components/OddsRow';
 import BetConfirmationModal from '../components/BetConfirmationModal';
 import LoadingSkeleton from '../components/LoadingSkeleton';
+import EmptyState from '../components/EmptyState';
 
 const Odds = () => {
   const navigate = useNavigate();
@@ -161,34 +162,23 @@ const Odds = () => {
               </button>
             </div>
           ) : filteredOdds.length === 0 ? (
-            <div className="bg-gray-800 border border-gray-700 rounded-xl p-12 text-center">
-              <svg
-                className="w-16 h-16 text-gray-600 mx-auto mb-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <h3 className="text-white text-xl font-bold mb-2">No Games Available</h3>
-              <p className="text-gray-400 mb-6">
-                {filter === 'all'
-                  ? 'No betting odds available at the moment.'
-                  : `No ${filter} games available. Try a different filter.`}
-              </p>
-              {filter !== 'all' && (
-                <button
-                  onClick={() => setFilter('all')}
-                  className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
-                >
-                  View All Games
-                </button>
-              )}
+            <div className="bg-gray-800 border border-gray-700 rounded-xl">
+              <EmptyState
+                type="odds"
+                description={
+                  filter === 'all'
+                    ? undefined
+                    : `No ${filter} games available. Try selecting a different filter.`
+                }
+                action={
+                  filter !== 'all'
+                    ? {
+                        label: 'View All Games',
+                        onClick: () => setFilter('all'),
+                      }
+                    : undefined
+                }
+              />
             </div>
           ) : (
             <div className="space-y-4">

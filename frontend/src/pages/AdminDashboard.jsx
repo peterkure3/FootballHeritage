@@ -9,6 +9,7 @@ import WithdrawalQueue from '../components/WithdrawalQueue';
 import FraudAlerts from '../components/FraudAlerts';
 import KPIDashboard from '../components/KPIDashboard';
 import RecentActivity from '../components/RecentActivity';
+import EmptyState from '../components/EmptyState';
 import { 
   Users, 
   DollarSign, 
@@ -252,7 +253,18 @@ const AdminDashboard = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-700">
-                    {recentUsers.map((userItem) => (
+                    {recentUsers.length === 0 ? (
+                      <tr>
+                        <td colSpan="6" className="px-4 py-8">
+                          <EmptyState
+                            type="users"
+                            title="No Users Found"
+                            description="No users match your current search or filter criteria."
+                          />
+                        </td>
+                      </tr>
+                    ) : (
+                      recentUsers.map((userItem) => (
                       <tr 
                         key={userItem.id} 
                         className="hover:bg-gray-700/50 transition-colors cursor-pointer"
@@ -292,12 +304,15 @@ const AdminDashboard = () => {
                           </span>
                         </td>
                         <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
-                          <button className="p-1 hover:bg-gray-600 rounded transition-colors">
+                          <button 
+                            aria-label="User actions menu"
+                            className="p-1 hover:bg-gray-600 rounded transition-colors"
+                          >
                             <MoreVertical className="w-4 h-4 text-gray-400" />
                           </button>
                         </td>
                       </tr>
-                    ))}
+                    )))}
                   </tbody>
                 </table>
               </div>
