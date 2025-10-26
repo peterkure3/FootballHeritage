@@ -9,7 +9,8 @@ import {
   Settings,
   FileText,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Sparkles
 } from 'lucide-react';
 import './AdminSidebar.css';
 
@@ -39,6 +40,12 @@ const AdminSidebar = ({ isOpen, onToggle }) => {
       items: [
         { path: '/admin/analytics', icon: BarChart3, label: 'Statistics' },
         { path: '/admin/revenue', icon: DollarSign, label: 'Revenue' },
+      ]
+    },
+    {
+      title: 'AI TOOLS',
+      items: [
+        { path: '/admin/sportsgpt', icon: Sparkles, label: 'SportsGPT' },
       ]
     },
     {

@@ -256,23 +256,22 @@ const AdminChatbot = () => {
 
           {/* Input */}
           <div className="p-4 border-t border-gray-700">
-            <div className="flex items-end space-x-2">
+            <div className="flex items-center space-x-2">
               <div className="flex-1 relative">
-                <textarea
+                <input
                   ref={inputRef}
+                  type="text"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyPress={handleKeyPress}
                   placeholder="Ask me anything..."
-                  rows="1"
-                  className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 resize-none text-sm"
-                  style={{ maxHeight: '100px' }}
+                  className="w-full h-12 px-4 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 text-sm"
                 />
               </div>
               <button
                 onClick={handleSend}
                 disabled={!input.trim() || isLoading}
-                className="p-3 bg-green-500 hover:bg-green-600 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-xl transition-colors"
+                className="h-12 w-12 bg-green-500 hover:bg-green-600 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-xl transition-colors flex-shrink-0 flex items-center justify-center"
                 aria-label="Send message"
               >
                 <Send className="w-5 h-5" />

@@ -26,6 +26,7 @@ import AdminAnalytics from './pages/AdminAnalytics';
 import AdminRevenue from './pages/AdminRevenue';
 import AdminSettings from './pages/AdminSettings';
 import AdminLogs from './pages/AdminLogs';
+import AdminSportsGPT from './pages/AdminSportsGPT';
 import AdminLayout from './components/admin/AdminLayout';
 
 // Create React Query client with optimized settings
@@ -156,6 +157,7 @@ function App() {
               <Route path="users" element={<AdminUsers />} />
               <Route path="analytics" element={<AdminAnalytics />} />
               <Route path="revenue" element={<AdminRevenue />} />
+              <Route path="sportsgpt" element={<AdminSportsGPT />} />
               <Route path="settings" element={<AdminSettings />} />
               <Route path="logs" element={<AdminLogs />} />
             </Route>
