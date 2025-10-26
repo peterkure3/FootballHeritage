@@ -11,7 +11,7 @@ import {
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
-import { useState } from 'react';
+import './AdminSidebar.css';
 
 /**
  * Admin Sidebar Navigation
@@ -87,7 +87,13 @@ const AdminSidebar = ({ isOpen, onToggle }) => {
           </div>
 
           {/* Navigation Menu */}
-          <nav className="flex-1 overflow-y-auto py-4 px-2">
+          <nav 
+            className="admin-sidebar-nav flex-1 overflow-y-auto py-4 px-2"
+            style={{
+              scrollbarWidth: 'thin',
+              scrollbarColor: '#475569 #1e293b'
+            }}
+          >
             {menuSections.map((section, idx) => (
               <div key={idx} className="mb-6">
                 {isOpen && (

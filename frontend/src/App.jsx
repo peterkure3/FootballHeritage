@@ -21,6 +21,11 @@ import Sports from './pages/Sports';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminBets from './pages/AdminBets';
 import AdminEvents from './pages/AdminEvents';
+import AdminUsers from './pages/AdminUsers';
+import AdminAnalytics from './pages/AdminAnalytics';
+import AdminRevenue from './pages/AdminRevenue';
+import AdminSettings from './pages/AdminSettings';
+import AdminLogs from './pages/AdminLogs';
 import AdminLayout from './components/admin/AdminLayout';
 
 // Create React Query client with optimized settings
@@ -148,6 +153,11 @@ function App() {
               <Route path="dashboard" element={<AdminDashboard />} />
               <Route path="events" element={<AdminEvents />} />
               <Route path="bets" element={<AdminBets />} />
+              <Route path="users" element={<AdminUsers />} />
+              <Route path="analytics" element={<AdminAnalytics />} />
+              <Route path="revenue" element={<AdminRevenue />} />
+              <Route path="settings" element={<AdminSettings />} />
+              <Route path="logs" element={<AdminLogs />} />
             </Route>
 
             {/* Default Route */}

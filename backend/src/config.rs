@@ -6,6 +6,7 @@ use anyhow::Result;
 #[derive(Debug, Clone, Deserialize)]
 pub struct AppConfig {
     pub database_url: String,
+    pub pipeline_database_url: String,  // New: Pipeline DB connection
     pub jwt_secret: String,
     pub jwt_expiration_hours: u64,
     pub encryption_key: String,
@@ -46,6 +47,13 @@ impl AppConfig {
         Ok(Self {
             database_url: env::var("DATABASE_URL")
                 .map_err(|_| anyhow::anyhow!("DATABASE_URL must be set"))?,
+            pipeline_database_url: env::var("PIPELINE_DATABASE_URL")
+                .unwrap_or_else(|_| format!("postgresql://{}:{}@{}:{}/football_betting",
+                    env::var("DB_USER").unwrap_or_else(|_| "postgres".to_string()),
+                    env::var("DB_PASSWORD").unwrap_or_else(|_| "jumpman13".to_string()),
+                    env::var("DB_HOST").unwrap_or_else(|_| "localhost".to_string()),
+                    env::var("DB_PORT").unwrap_or_else(|_| "5432".to_string())
+                )),
             jwt_secret: env::var("JWT_SECRET")
                 .map_err(|_| anyhow::anyhow!("JWT_SECRET must be set"))?,
             jwt_expiration_hours: env::var("JWT_EXPIRATION_HOURS")

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import AdminNavbar from './AdminNavbar';
 import AdminSidebar from './AdminSidebar';
+import AdminChatbot from './AdminChatbot';
 
 /**
  * Admin Layout Wrapper
@@ -35,6 +36,9 @@ const AdminLayout = () => {
           </div>
         </main>
       </div>
+
+      {/* AI Chatbot - Floating */}
+      <AdminChatbot />
     </div>
   );
 };
