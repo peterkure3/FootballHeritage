@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import useAuthStore from '../stores/authStore';
 import { tokenManager } from '../utils/api';
-import Navbar from '../components/Navbar';
 import UserDetailsModal from '../components/UserDetailsModal';
 import WithdrawalQueue from '../components/WithdrawalQueue';
 import FraudAlerts from '../components/FraudAlerts';
@@ -21,13 +20,20 @@ import {
   Filter,
   MoreVertical,
   ArrowUp,
-  ArrowDown
+  ArrowDown,
+  Dice3,
+  Download,
+  RefreshCw,
+  Calendar
 } from 'lucide-react';
 
 /**
- * Admin Dashboard Component
- * Modern dark theme with lime-green accents
- * Layout: Left side - data table, Right side - summary cards
+ * Admin Dashboard Component - Reorganized Layout
+ * 
+ * Layout: 
+ * - Top: Quick Stats Cards (4 cards in a row)
+ * - Main: Users Table (2/3 width) + Right Sidebar (1/3 width)
+ * - Right Sidebar: Action Items, Quick Charts, Recent Activity
  */
 
 const AdminDashboard = () => {
@@ -132,44 +138,100 @@ const AdminDashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900">
-        <Navbar />
-        <div className="flex items-center justify-center h-[calc(100vh-64px)]">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-400"></div>
-        </div>
+      <div className="flex items-center justify-center h-96">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-400"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-900">
-      <Navbar />
-      
-      <div className="max-w-[1800px] mx-auto px-6 py-6">
+    <div>
+      <div className="max-w-[1800px] mx-auto">
         {/* Header */}
         <div className="mb-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-white">Admin Dashboard</h1>
+              <h1 className="text-2xl font-bold text-white">Dashboard Overview</h1>
               <p className="text-gray-400 mt-1 text-sm">
                 {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
               </p>
             </div>
-            <div className="flex items-center space-x-2 px-4 py-2 bg-gray-800 rounded-lg border border-gray-700">
-              <Shield className="w-4 h-4 text-green-400" />
-              <span className="text-sm font-medium text-gray-300">
-                {user?.is_super_admin ? 'Super Admin' : 'Admin'}
-              </span>
+            <div className="flex items-center space-x-3">
+              <button className="flex items-center space-x-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg border border-gray-700 transition-colors">
+                <Download className="w-4 h-4 text-gray-400" />
+                <span className="text-sm font-medium text-gray-300">Export</span>
+              </button>
+              <button className="flex items-center space-x-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg border border-gray-700 transition-colors">
+                <RefreshCw className="w-4 h-4 text-gray-400" />
+              </button>
             </div>
           </div>
         </div>
 
-        {/* Main Layout: Left (KPIs) + Middle (Table) + Right (Cards) */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Left Side - KPI Dashboard */}
-          <div className="lg:col-span-1">
-            <KPIDashboard />
+        {/* Quick Stats Cards - Top Row */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          {/* Total Users Card */}
+          <div className="bg-gray-800 rounded-xl border border-gray-700 p-5 hover:border-green-500/50 transition-colors">
+            <div className="flex items-center justify-between mb-3">
+              <div className="w-12 h-12 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                <Users className="w-6 h-6 text-blue-400" />
+              </div>
+              <div className="flex items-center space-x-1 px-2 py-1 bg-green-400/10 rounded-full">
+                <ArrowUp className="w-3 h-3 text-green-400" />
+                <span className="text-xs font-medium text-green-400">12%</span>
+              </div>
+            </div>
+            <p className="text-2xl font-bold text-white mb-1">{stats.totalUsers.toLocaleString()}</p>
+            <p className="text-sm text-gray-400">Total Users</p>
           </div>
+
+          {/* Revenue Card */}
+          <div className="bg-gray-800 rounded-xl border border-gray-700 p-5 hover:border-green-500/50 transition-colors">
+            <div className="flex items-center justify-between mb-3">
+              <div className="w-12 h-12 rounded-lg bg-green-500/10 flex items-center justify-center">
+                <DollarSign className="w-6 h-6 text-green-400" />
+              </div>
+              <div className="flex items-center space-x-1 px-2 py-1 bg-green-400/10 rounded-full">
+                <ArrowUp className="w-3 h-3 text-green-400" />
+                <span className="text-xs font-medium text-green-400">26%</span>
+              </div>
+            </div>
+            <p className="text-2xl font-bold text-white mb-1">${stats.totalRevenue.toLocaleString()}</p>
+            <p className="text-sm text-gray-400">Total Revenue</p>
+          </div>
+
+          {/* Total Bets Card */}
+          <div className="bg-gray-800 rounded-xl border border-gray-700 p-5 hover:border-green-500/50 transition-colors">
+            <div className="flex items-center justify-between mb-3">
+              <div className="w-12 h-12 rounded-lg bg-purple-500/10 flex items-center justify-center">
+                <Dice3 className="w-6 h-6 text-purple-400" />
+              </div>
+              <div className="flex items-center space-x-1 px-2 py-1 bg-green-400/10 rounded-full">
+                <ArrowUp className="w-3 h-3 text-green-400" />
+                <span className="text-xs font-medium text-green-400">24%</span>
+              </div>
+            </div>
+            <p className="text-2xl font-bold text-white mb-1">{stats.totalBets.toLocaleString()}</p>
+            <p className="text-sm text-gray-400">Total Bets</p>
+          </div>
+
+          {/* Alerts Card */}
+          <div className="bg-gray-800 rounded-xl border border-gray-700 p-5 hover:border-red-500/50 transition-colors">
+            <div className="flex items-center justify-between mb-3">
+              <div className="w-12 h-12 rounded-lg bg-red-500/10 flex items-center justify-center">
+                <AlertTriangle className="w-6 h-6 text-red-400" />
+              </div>
+              <div className="flex items-center space-x-1 px-2 py-1 bg-red-400/10 rounded-full">
+                <span className="text-xs font-medium text-red-400">{stats.fraudAlerts + stats.pendingWithdrawals}</span>
+              </div>
+            </div>
+            <p className="text-2xl font-bold text-white mb-1">{stats.fraudAlerts + stats.pendingWithdrawals}</p>
+            <p className="text-sm text-gray-400">Pending Actions</p>
+          </div>
+        </div>
+
+        {/* Main Content: Users Table (2/3) + Right Sidebar (1/3) */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
           {/* Middle - Users Table & Activity Feed */}
           <div className="lg:col-span-2 space-y-6">
@@ -339,145 +401,123 @@ const AdminDashboard = () => {
               </div>
             </div>
 
+          </div>
+
+          {/* Right Sidebar - Action Items & Charts */}
+          <div className="lg:col-span-1 space-y-6">
+            {/* Action Items Card */}
+            <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
+              <h3 className="text-sm font-medium text-gray-400 mb-4">⚡ Action Items</h3>
+              <div className="space-y-3">
+                <button 
+                  onClick={() => navigate('/admin/bets')}
+                  className="w-full flex items-center justify-between p-3 bg-yellow-500/10 hover:bg-yellow-500/20 rounded-lg border border-yellow-500/20 transition-colors group"
+                >
+                  <div className="flex items-center space-x-3">
+                    <DollarSign className="w-5 h-5 text-yellow-400" />
+                    <div className="text-left">
+                      <p className="text-sm font-medium text-yellow-400">Pending Withdrawals</p>
+                      <p className="text-xs text-gray-400">{stats.pendingWithdrawals} awaiting approval</p>
+                    </div>
+                  </div>
+                  <ArrowUp className="w-4 h-4 text-yellow-400 transform rotate-90 group-hover:translate-x-1 transition-transform" />
+                </button>
+
+                <button 
+                  onClick={() => navigate('/admin/users')}
+                  className="w-full flex items-center justify-between p-3 bg-red-500/10 hover:bg-red-500/20 rounded-lg border border-red-500/20 transition-colors group"
+                >
+                  <div className="flex items-center space-x-3">
+                    <AlertTriangle className="w-5 h-5 text-red-400" />
+                    <div className="text-left">
+                      <p className="text-sm font-medium text-red-400">Fraud Alerts</p>
+                      <p className="text-xs text-gray-400">{stats.fraudAlerts} suspicious activities</p>
+                    </div>
+                  </div>
+                  <ArrowUp className="w-4 h-4 text-red-400 transform rotate-90 group-hover:translate-x-1 transition-transform" />
+                </button>
+
+                <button 
+                  onClick={() => navigate('/admin/users')}
+                  className="w-full flex items-center justify-between p-3 bg-blue-500/10 hover:bg-blue-500/20 rounded-lg border border-blue-500/20 transition-colors group"
+                >
+                  <div className="flex items-center space-x-3">
+                    <Users className="w-5 h-5 text-blue-400" />
+                    <div className="text-left">
+                      <p className="text-sm font-medium text-blue-400">Unverified Users</p>
+                      <p className="text-xs text-gray-400">15 pending verification</p>
+                    </div>
+                  </div>
+                  <ArrowUp className="w-4 h-4 text-blue-400 transform rotate-90 group-hover:translate-x-1 transition-transform" />
+                </button>
+              </div>
+            </div>
+
+            {/* Revenue Chart Card */}
+            <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-medium text-gray-400">📈 Revenue (7 Days)</h3>
+                <div className="flex items-center space-x-1 px-2 py-1 bg-green-400/10 rounded-full">
+                  <ArrowUp className="w-3 h-3 text-green-400" />
+                  <span className="text-xs font-medium text-green-400">+26%</span>
+                </div>
+              </div>
+              <p className="text-2xl font-bold text-white mb-4">${stats.totalRevenue.toLocaleString()}</p>
+              
+              {/* Mini Bar Chart */}
+              <div className="bg-gray-900 rounded-lg p-3">
+                <div className="flex items-end justify-between gap-2 h-32">
+                  {[40, 60, 45, 80, 55, 90, 70].map((height, i) => (
+                    <div key={i} className="flex flex-col items-center flex-1 group">
+                      <div className="w-full flex flex-col justify-end h-full">
+                        <div
+                          className="w-full bg-gradient-to-t from-green-500 to-green-400 hover:from-green-400 hover:to-green-300 rounded-t-lg transition-all duration-300 cursor-pointer shadow-lg shadow-green-500/20 group-hover:shadow-green-500/40"
+                          style={{ height: `${height}%`, minHeight: '8px' }}
+                        />
+                      </div>
+                      <span className="text-[10px] text-gray-500 mt-2 font-medium">
+                        {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][i]}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* User Growth Chart */}
+            <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-medium text-gray-400">👥 User Growth</h3>
+                <div className="flex items-center space-x-1 px-2 py-1 bg-blue-400/10 rounded-full">
+                  <ArrowUp className="w-3 h-3 text-blue-400" />
+                  <span className="text-xs font-medium text-blue-400">+12%</span>
+                </div>
+              </div>
+              <p className="text-2xl font-bold text-white mb-4">{stats.activeUsers}</p>
+              
+              {/* Mini Bar Chart */}
+              <div className="bg-gray-900 rounded-lg p-3">
+                <div className="flex items-end justify-between gap-2 h-32">
+                  {[30, 45, 40, 60, 55, 75, 70].map((height, i) => (
+                    <div key={i} className="flex flex-col items-center flex-1 group">
+                      <div className="w-full flex flex-col justify-end h-full">
+                        <div
+                          className="w-full bg-gradient-to-t from-blue-500 to-blue-400 hover:from-blue-400 hover:to-blue-300 rounded-t-lg transition-all duration-300 cursor-pointer shadow-lg shadow-blue-500/20 group-hover:shadow-blue-500/40"
+                          style={{ height: `${height}%`, minHeight: '8px' }}
+                        />
+                      </div>
+                      <span className="text-[10px] text-gray-500 mt-2 font-medium">
+                        {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][i]}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
             {/* Recent Activity Feed */}
             <RecentActivity />
           </div>
-
-          {/* Right Side - Summary Cards (1/3 width) */}
-          <div className="space-y-6">
-            {/* Quick Stats Card */}
-            <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
-              <h3 className="text-sm font-medium text-gray-400 mb-4">Platform Overview</h3>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                      <Users className="w-5 h-5 text-blue-400" />
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-400">Total Users</p>
-                      <p className="text-lg font-bold text-white">{stats.totalUsers.toLocaleString()}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-1 text-green-400 text-sm">
-                    <ArrowUp className="w-4 h-4" />
-                    <span>12%</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center">
-                      <Activity className="w-5 h-5 text-green-400" />
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-400">Active Today</p>
-                      <p className="text-lg font-bold text-white">{stats.activeUsers}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-1 text-green-400 text-sm">
-                    <ArrowUp className="w-4 h-4" />
-                    <span>8%</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center">
-                      <TrendingUp className="w-5 h-5 text-purple-400" />
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-400">Total Bets</p>
-                      <p className="text-lg font-bold text-white">{stats.totalBets.toLocaleString()}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-1 text-green-400 text-sm">
-                    <ArrowUp className="w-4 h-4" />
-                    <span>24%</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Revenue Card */}
-            <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-medium text-gray-400">Revenue</h3>
-                <div className="flex items-center space-x-1 px-2 py-1 bg-green-400/10 rounded-full">
-                  <ArrowUp className="w-3 h-3 text-green-400" />
-                  <span className="text-xs font-medium text-green-400">26%</span>
-                </div>
-              </div>
-              <div className="mb-4">
-                <p className="text-3xl font-bold text-white">${stats.totalRevenue.toLocaleString()}</p>
-                <p className="text-xs text-gray-400 mt-1">Last 30 days</p>
-              </div>
-              
-              {/* Mini Bar Chart */}
-              <div className="flex items-end space-x-1 h-20">
-                {[40, 60, 45, 80, 55, 90, 70, 85, 95, 75, 88, 100].map((height, i) => (
-                  <div
-                    key={i}
-                    className="flex-1 bg-green-400/20 hover:bg-green-400/40 rounded-t transition-colors cursor-pointer"
-                    style={{ height: `${height}%` }}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* Alerts Card */}
-            <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
-              <h3 className="text-sm font-medium text-gray-400 mb-4">Alerts</h3>
-              <div className="space-y-3">
-                <div className="flex items-start space-x-3 p-3 bg-red-500/10 rounded-lg border border-red-500/20">
-                  <AlertTriangle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-medium text-red-400">Fraud Alerts</p>
-                    <p className="text-xs text-gray-400 mt-1">{stats.fraudAlerts} suspicious activities detected</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start space-x-3 p-3 bg-yellow-500/10 rounded-lg border border-yellow-500/20">
-                  <DollarSign className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-medium text-yellow-400">Pending Withdrawals</p>
-                    <p className="text-xs text-gray-400 mt-1">{stats.pendingWithdrawals} requests awaiting approval</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Quick Actions */}
-            <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
-              <h3 className="text-sm font-medium text-gray-400 mb-4">Quick Actions</h3>
-              <div className="space-y-2">
-                <button 
-                  onClick={() => navigate('/admin/users')}
-                  className="w-full px-4 py-2.5 bg-green-400 hover:bg-green-500 text-gray-900 font-medium rounded-lg transition-colors text-sm"
-                >
-                  View All Users
-                </button>
-                <button 
-                  onClick={() => navigate('/admin/bets')}
-                  className="w-full px-4 py-2.5 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-lg transition-colors text-sm"
-                >
-                  Manage Bets
-                </button>
-                <button 
-                  onClick={() => navigate('/admin/reports')}
-                  className="w-full px-4 py-2.5 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-lg transition-colors text-sm"
-                >
-                  Financial Reports
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Withdrawal Queue & Fraud Alerts Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-          <WithdrawalQueue />
-          <FraudAlerts />
         </div>
       </div>
 

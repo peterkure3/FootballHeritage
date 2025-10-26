@@ -228,8 +228,18 @@ async fn main() -> std::io::Result<()> {
                             .route("/users/{id}/status", web::put().to(handlers::admin::users::update_user_status))
                             .route("/users/{id}/verify", web::put().to(handlers::admin::users::verify_user))
                             // Event management
+                            .route("/events", web::get().to(handlers::admin::events::get_all_events))
                             .route("/events", web::post().to(handlers::admin::events::create_event))
+                            .route("/events/{id}", web::get().to(handlers::admin::events::get_event))
+                            .route("/events/{id}", web::put().to(handlers::admin::events::update_event))
+                            .route("/events/{id}", web::delete().to(handlers::admin::events::delete_event))
                             .route("/events/{id}/status", web::put().to(handlers::admin::events::update_event_status))
+                            // Bet management - Temporarily disabled
+                            // .route("/bets", web::get().to(handlers::admin::bets::get_all_bets))
+                            // .route("/bets/{id}", web::get().to(handlers::admin::bets::get_bet))
+                            // .route("/bets/{id}", web::delete().to(handlers::admin::bets::delete_bet))
+                            // .route("/bets/{id}/settle", web::put().to(handlers::admin::bets::settle_bet))
+                            // .route("/bets/{id}/void", web::put().to(handlers::admin::bets::void_bet))
                             // Analytics
                             .route("/analytics/dashboard", web::get().to(handlers::admin::analytics::get_dashboard_metrics))
                             // Monitoring

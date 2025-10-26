@@ -20,6 +20,8 @@ import Chat from "./pages/Chat";
 import Sports from './pages/Sports';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminBets from './pages/AdminBets';
+import AdminEvents from './pages/AdminEvents';
+import AdminLayout from './components/admin/AdminLayout';
 
 // Create React Query client with optimized settings
 const queryClient = new QueryClient({
@@ -133,22 +135,20 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            {/* Admin Routes - Nested under AdminLayout */}
             <Route
               path="/admin"
               element={
                 <ProtectedRoute>
-                  <AdminDashboard />
+                  <AdminLayout />
                 </ProtectedRoute>
               }
-            />
-            <Route
-              path="/admin/bets"
-              element={
-                <ProtectedRoute>
-                  <AdminBets />
-                </ProtectedRoute>
-              }
-            />
+            >
+              <Route index element={<Navigate to="/admin/dashboard" replace />} />
+              <Route path="dashboard" element={<AdminDashboard />} />
+              <Route path="events" element={<AdminEvents />} />
+              <Route path="bets" element={<AdminBets />} />
+            </Route>
 
             {/* Default Route */}
             <Route path="/" element={<Navigate to="/login" replace />} />
