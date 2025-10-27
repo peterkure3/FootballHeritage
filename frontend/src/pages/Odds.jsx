@@ -7,6 +7,7 @@ import OddsRow from '../components/OddsRow';
 import BetConfirmationModal from '../components/BetConfirmationModal';
 import LoadingSkeleton from '../components/LoadingSkeleton';
 import EmptyState from '../components/EmptyState';
+import ParlayBuilderSidebar from '../components/parlay/ParlayBuilderSidebar';
 
 const Odds = () => {
   const navigate = useNavigate();
@@ -288,6 +289,9 @@ const Odds = () => {
         onClose={closeBetModal}
         betDetails={selectedBet}
       />
+
+      {/* Parlay Builder Sidebar */}
+      <ParlayBuilderSidebar />
     </>
   );
 };

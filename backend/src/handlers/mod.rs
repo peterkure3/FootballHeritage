@@ -6,6 +6,7 @@ pub mod health;
 pub mod limits;
 pub mod monitoring;
 pub mod not_found;
+pub mod parlay;
 pub mod sports;
 pub mod user;
 pub mod wallet;

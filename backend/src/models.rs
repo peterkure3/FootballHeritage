@@ -532,3 +532,115 @@ impl TransactionResponse {
         }
     }
 }
+
+// ============================================================================
+// PARLAY CALCULATOR MODELS
+// ============================================================================
+
+/// Individual bet in a parlay
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct ParlayBet {
+    pub event_id: Uuid,
+    pub team: String,
+    pub odds: f64,
+    pub win_prob: Option<f64>, // Optional user override
+    pub bet_type: String,
+    pub selection: String,
+}
+
+/// Request to calculate parlay expected value
+#[derive(Debug, Deserialize, Validate)]
+pub struct CalculateParlayRequest {
+    #[validate(length(min = 2, max = 15, message = "Parlay must have 2-15 legs"))]
+    pub bets: Vec<ParlayBet>,
+    
+    #[validate(range(min = 0.01, message = "Stake must be at least 0.01"))]
+    pub stake: f64,
+}
+
+/// Response from parlay calculation
+#[derive(Debug, Serialize)]
+pub struct ParlayCalculationResponse {
+    pub combined_odds: f64,
+    pub combined_probability: f64,
+    pub expected_profit: BigDecimal,
+    pub projected_payout: BigDecimal,
+    pub break_even_probability: f64,
+    pub recommendation: String,
+    pub risk_level: String,
+    pub expected_value: f64,
+    pub kelly_criterion: f64,
+}
+
+/// Request to save a parlay
+#[derive(Debug, Deserialize, Validate)]
+pub struct SaveParlayRequest {
+    #[validate(length(max = 100))]
+    pub name: Option<String>,
+    
+    #[validate(length(min = 2, max = 15))]
+    pub bets: Vec<ParlayBet>,
+    
+    #[validate(range(min = 0.01))]
+    pub stake: f64,
+}
+
+/// Parlay database model
+#[derive(Debug, Serialize, FromRow)]
+pub struct Parlay {
+    pub id: Uuid,
+    pub user_id: Uuid,
+    pub name: Option<String>,
+    pub total_stake: BigDecimal,
+    pub combined_odds: BigDecimal,
+    pub combined_probability: BigDecimal,
+    pub expected_value: BigDecimal,
+    pub potential_payout: BigDecimal,
+    pub risk_level: String,
+    pub status: String,
+    pub created_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc>,
+}
+
+/// Parlay leg database model
+#[derive(Debug, Serialize, FromRow)]
+pub struct ParlayLeg {
+    pub id: Uuid,
+    pub parlay_id: Uuid,
+    pub event_id: Uuid,
+    pub team_name: String,
+    pub bet_type: String,
+    pub selection: String,
+    pub odds: BigDecimal,
+    pub win_probability: Option<BigDecimal>,
+    pub leg_order: i32,
+    pub created_at: DateTime<Utc>,
+}
+
+/// Parlay calculation history model
+#[derive(Debug, Serialize, FromRow)]
+pub struct ParlayCalculation {
+    pub id: Uuid,
+    pub user_id: Uuid,
+    pub num_legs: i32,
+    pub total_stake: BigDecimal,
+    pub combined_odds: BigDecimal,
+    pub combined_probability: BigDecimal,
+    pub expected_value: BigDecimal,
+    pub expected_profit: BigDecimal,
+    pub potential_payout: BigDecimal,
+    pub break_even_probability: BigDecimal,
+    pub kelly_criterion: Option<BigDecimal>,
+    pub risk_level: String,
+    pub recommendation: String,
+    pub calculation_data: serde_json::Value,
+    pub created_at: DateTime<Utc>,
+}
+
+/// Response with parlay and its legs
+#[derive(Debug, Serialize)]
+pub struct ParlayWithLegs {
+    #[serde(flatten)]
+    pub parlay: Parlay,
+    pub legs: Vec<ParlayLeg>,
+}

@@ -1,7 +1,11 @@
 import { memo, useState } from 'react';
+import { Plus, Check } from 'lucide-react';
+import useParlayStore from '../stores/parlayStore';
+import { toast } from 'react-hot-toast';
 
 const OddsRow = memo(({ event, onBetClick }) => {
   const [selectedType, setSelectedType] = useState(null);
+  const { addBet, isBetSelected } = useParlayStore();
 
   // Format team names
   const formatTeamName = (name) => {
@@ -44,6 +48,17 @@ const OddsRow = memo(({ event, onBetClick }) => {
       type,
       odds,
     });
+  };
+
+  // Handle add to parlay
+  const handleAddToParlay = (betType, selection, odds, e) => {
+    e.stopPropagation(); // Prevent triggering the bet click
+    const success = addBet(event, betType, selection, odds);
+    if (success) {
+      toast.success(`Added to parlay!`);
+    } else {
+      toast.error('Already in parlay or max 15 legs reached');
+    }
   };
 
   // Get button styles based on selection
@@ -98,26 +113,60 @@ const OddsRow = memo(({ event, onBetClick }) => {
           <div className="bg-gray-900/50 rounded-lg p-3 border border-gray-700">
             <h4 className="text-gray-400 text-xs font-semibold mb-2 uppercase">Moneyline</h4>
             <div className="space-y-2">
-              <button
-                onClick={() => handleBetClick('moneyline', event.moneyline_home)}
-                className={getButtonStyles('moneyline_home')}
-                disabled={!isPending}
-              >
-                <div className="flex justify-between items-center">
-                  <span className="truncate">{formatTeamName(event.home_team).slice(0, 10)}</span>
-                  <span className="font-bold ml-2">{formatOdds(event.moneyline_home)}</span>
-                </div>
-              </button>
-              <button
-                onClick={() => handleBetClick('moneyline', event.moneyline_away)}
-                className={getButtonStyles('moneyline_away')}
-                disabled={!isPending}
-              >
-                <div className="flex justify-between items-center">
-                  <span className="truncate">{formatTeamName(event.away_team).slice(0, 10)}</span>
-                  <span className="font-bold ml-2">{formatOdds(event.moneyline_away)}</span>
-                </div>
-              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleBetClick('moneyline', event.moneyline_home)}
+                  className={`${getButtonStyles('moneyline_home')} flex-1`}
+                  disabled={!isPending}
+                >
+                  <div className="flex justify-between items-center">
+                    <span className="truncate">{formatTeamName(event.home_team).slice(0, 10)}</span>
+                    <span className="font-bold ml-2">{formatOdds(event.moneyline_home)}</span>
+                  </div>
+                </button>
+                <button
+                  onClick={(e) => handleAddToParlay('MONEYLINE', 'HOME', event.moneyline_home, e)}
+                  className={`p-2 rounded-lg transition ${
+                    isBetSelected(event.id, 'MONEYLINE', 'HOME')
+                      ? 'bg-green-600 text-white'
+                      : 'bg-blue-600 hover:bg-blue-700 text-white'
+                  }`}
+                  title="Add to Parlay"
+                >
+                  {isBetSelected(event.id, 'MONEYLINE', 'HOME') ? (
+                    <Check className="w-4 h-4" />
+                  ) : (
+                    <Plus className="w-4 h-4" />
+                  )}
+                </button>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleBetClick('moneyline', event.moneyline_away)}
+                  className={`${getButtonStyles('moneyline_away')} flex-1`}
+                  disabled={!isPending}
+                >
+                  <div className="flex justify-between items-center">
+                    <span className="truncate">{formatTeamName(event.away_team).slice(0, 10)}</span>
+                    <span className="font-bold ml-2">{formatOdds(event.moneyline_away)}</span>
+                  </div>
+                </button>
+                <button
+                  onClick={(e) => handleAddToParlay('MONEYLINE', 'AWAY', event.moneyline_away, e)}
+                  className={`p-2 rounded-lg transition ${
+                    isBetSelected(event.id, 'MONEYLINE', 'AWAY')
+                      ? 'bg-green-600 text-white'
+                      : 'bg-blue-600 hover:bg-blue-700 text-white'
+                  }`}
+                  title="Add to Parlay"
+                >
+                  {isBetSelected(event.id, 'MONEYLINE', 'AWAY') ? (
+                    <Check className="w-4 h-4" />
+                  ) : (
+                    <Plus className="w-4 h-4" />
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         )}

@@ -82,16 +82,21 @@ const AdminSportsGPT = () => {
 
     // Actual Genkit API call
     try {
-      const response = await fetch("http://localhost:3400/chat", {
+      // Get JWT token from auth store
+      const token = useAuthStore.getState().token;
+      if (!token) {
+        toast.error("Please log in to use SportsGPT");
+        return;
+      }
+
+      const response = await fetch("http://localhost:3000/chat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          data: {
-            query: userQuery,
-            userId: user?.id || "admin",
-          },
+          prompt: userQuery,
         }),
       });
 
@@ -104,7 +109,7 @@ const AdminSportsGPT = () => {
       const aiResponse = {
         id: messages.length + 2,
         type: "ai",
-        content: data.result || "Sorry, I couldn't generate a response.",
+        content: data.response || "Sorry, I couldn't generate a response.",
         timestamp: new Date(),
       };
 
@@ -117,7 +122,7 @@ const AdminSportsGPT = () => {
         id: messages.length + 2,
         type: "ai",
         content:
-          "⚠️ Sorry, I'm having trouble connecting to the AI service. Please check that the Genkit server is running on port 3400.",
+          "⚠️ Sorry, I'm having trouble connecting to the AI service. Please check that the Genkit server is running on port 3000.",
         timestamp: new Date(),
       };
 

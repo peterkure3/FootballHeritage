@@ -18,6 +18,7 @@ import Odds from "./pages/Odds";
 import BetHistory from "./pages/BetHistory";
 import Chat from "./pages/Chat";
 import Sports from './pages/Sports';
+import ParlayCalculator from './pages/ParlayCalculator';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminBets from './pages/AdminBets';
 import AdminEvents from './pages/AdminEvents';
@@ -130,6 +131,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Sports />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/parlay-calculator"
+              element={
+                <ProtectedRoute>
+                  <ParlayCalculator />
                 </ProtectedRoute>
               }
             />

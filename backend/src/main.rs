@@ -221,6 +221,15 @@ async fn main() -> std::io::Result<()> {
                             .route("/{sport}/leagues", web::get().to(handlers::sports::get_sport_leagues))
                     )
                     .service(
+                        web::scope("/parlay")
+                            .route("/calculate", web::post().to(handlers::parlay::calculate_parlay))
+                            .route("/save", web::post().to(handlers::parlay::save_parlay))
+                            .route("/saved", web::get().to(handlers::parlay::get_saved_parlays))
+                            .route("/history", web::get().to(handlers::parlay::get_calculation_history))
+                            .route("/{id}", web::get().to(handlers::parlay::get_parlay))
+                            .route("/{id}", web::delete().to(handlers::parlay::delete_parlay))
+                    )
+                    .service(
                         web::scope("/admin")
                             // User management
                             .route("/users", web::get().to(handlers::admin::users::list_users))
