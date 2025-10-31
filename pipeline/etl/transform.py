@@ -372,6 +372,9 @@ def transform_data() -> None:
         logger.warning("No match data to transform")
         return
     
+    # Remove rows without match_id (required for database)
+    matches_df = matches_df[matches_df["match_id"].notna()].copy()
+    
     # Remove duplicates
     matches_df = matches_df.drop_duplicates(subset=["match_id"], keep="last")
     

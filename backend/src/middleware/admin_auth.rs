@@ -13,6 +13,7 @@ use actix_web::{
 use futures_util::future::LocalBoxFuture;
 use std::future::{ready, Ready};
 use std::rc::Rc;
+use tracing::{info, warn, error};
 
 use crate::auth::AuthService;
 
@@ -83,8 +84,10 @@ where
                 // Extract token
                 if let Some(token) = auth_header.strip_prefix("Bearer ") {
                     // Validate token
+                    info!("Validating token for admin access: {}...", &token[..20.min(token.len())]);
                     match auth_service.validate_token(token) {
                         Ok(claims) => {
+                            info!("Token validated successfully. User: {}, Role: {}", claims.email, claims.role);
                             // Check if user has admin or superadmin role
                             if claims.role == "admin" || claims.role == "superadmin" {
                                 // Store claims in request extensions for later use
@@ -94,6 +97,7 @@ where
                                 return service.call(req).await.map(|res| res.map_into_boxed_body());
                             } else {
                                 // User is not an admin
+                                warn!("User {} attempted admin access with role: {}", claims.email, claims.role);
                                 let response = HttpResponse::Forbidden()
                                     .json(serde_json::json!({
                                         "error": "Admin access required"
@@ -101,8 +105,9 @@ where
                                 return Ok(req.into_response(response).map_into_boxed_body());
                             }
                         }
-                        Err(_) => {
+                        Err(e) => {
                             // Invalid token
+                            error!("Token validation failed: {:?}", e);
                             let response = HttpResponse::Unauthorized()
                                 .json(serde_json::json!({
                                     "error": "Invalid token"

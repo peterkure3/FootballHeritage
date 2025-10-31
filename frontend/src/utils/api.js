@@ -1,6 +1,6 @@
 // API utility for secure communication with the Rust betting backend
 const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "https://localhost:8080/api/v1";
+  import.meta.env.VITE_API_URL || "http://localhost:8080/api/v1";
 
 // Encryption key for localStorage (in production, use a more robust solution)
 const STORAGE_KEY = "betting_auth_token";

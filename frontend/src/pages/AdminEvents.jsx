@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import useAuthStore from '../stores/authStore';
+import { tokenManager } from '../utils/api';
 import EventFormModal from '../components/EventFormModal';
 import { 
   Plus, 
@@ -23,7 +24,7 @@ import {
 
 const AdminEvents = () => {
   const navigate = useNavigate();
-  const { user } = useAuthStore();
+  const { user, isAuthenticated } = useAuthStore();
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -32,50 +33,98 @@ const AdminEvents = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
 
-  useEffect(() => {
-    if (!user?.is_admin && !user?.is_super_admin) {
-      toast.error('Access denied. Admin privileges required.');
-      navigate('/');
-      return;
-    }
-    fetchEvents();
-  }, [user, navigate, sportFilter, statusFilter]);
-
   const fetchEvents = async () => {
     try {
       setLoading(true);
+      const token = tokenManager.getToken();
+      
+      // Debug logging
+      console.log('=== FETCH EVENTS DEBUG ===');
+      console.log('Token exists:', !!token);
+      console.log('Token preview:', token ? token.substring(0, 20) + '...' : 'null');
+      console.log('User:', user);
+      
+      if (!token) {
+        console.error('No token found, redirecting to login');
+        toast.error('Please login to continue');
+        navigate('/login');
+        return;
+      }
+      
       const params = new URLSearchParams();
       if (sportFilter) params.append('sport', sportFilter);
       if (statusFilter) params.append('status', statusFilter);
       
+      console.log('Making request to:', `http://localhost:8080/api/v1/admin/events?${params}`);
+      
       const response = await fetch(`http://localhost:8080/api/v1/admin/events?${params}`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
         },
       });
+
+      if (response.status === 401) {
+        toast.error('Session expired. Please login again.');
+        tokenManager.removeToken();
+        navigate('/login');
+        return;
+      }
 
       if (response.ok) {
         const data = await response.json();
         setEvents(data.events || []);
       } else {
-        toast.error('Failed to fetch events');
+        const errorData = await response.json().catch(() => ({}));
+        toast.error(errorData.error || 'Failed to fetch events');
       }
     } catch (error) {
       console.error('Error fetching events:', error);
-      toast.error('Error loading events');
+      if (error.message.includes('Failed to fetch')) {
+        toast.error('Cannot connect to server. Please ensure backend is running.');
+      } else {
+        toast.error('Error loading events');
+      }
     } finally {
       setLoading(false);
     }
   };
 
+  useEffect(() => {
+    // Must be authenticated
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+
+    // Must have user data (should be set during login)
+    if (!user) {
+      console.log('No user data, redirecting to login');
+      navigate('/login');
+      return;
+    }
+
+    // Must be admin
+    if (!user.is_admin && !user.is_super_admin) {
+      toast.error('Access denied. Admin privileges required.');
+      navigate('/');
+      return;
+    }
+
+    // All checks passed, fetch events
+    fetchEvents();
+  }, [user, isAuthenticated, navigate, sportFilter, statusFilter]);
+
   const handleDeleteEvent = async (eventId) => {
     if (!confirm('Are you sure you want to delete this event?')) return;
 
     try {
+      const token = tokenManager.getToken();
       const response = await fetch(`http://localhost:8080/api/v1/admin/events/${eventId}`, {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
         },
       });
 
@@ -83,7 +132,7 @@ const AdminEvents = () => {
         toast.success('Event deleted successfully');
         fetchEvents();
       } else {
-        const data = await response.json();
+        const data = await response.json().catch(() => ({}));
         toast.error(data.error || 'Failed to delete event');
       }
     } catch (error) {

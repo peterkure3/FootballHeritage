@@ -4,6 +4,7 @@ use rustls::pki_types::CertificateDer;
 use sqlx::postgres::PgPoolOptions;
 use tracing::{info, error, warn};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
+use std::rc::Rc;
 
 mod auth;
 mod betting_simple;
@@ -231,6 +232,7 @@ async fn main() -> std::io::Result<()> {
                     )
                     .service(
                         web::scope("/admin")
+                            .wrap(middleware::admin_auth::RequireAdmin::new(Rc::new(auth_service_for_app.clone())))
                             // User management
                             .route("/users", web::get().to(handlers::admin::users::list_users))
                             .route("/users/{id}", web::get().to(handlers::admin::users::get_user_details))

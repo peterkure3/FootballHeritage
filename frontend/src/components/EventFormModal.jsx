@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 import { X, Save, Calendar, MapPin, Users, TrendingUp } from 'lucide-react';
+import { tokenManager } from '../utils/api';
 
 /**
  * Event Creation/Edit Form Modal
@@ -108,7 +109,7 @@ const EventFormModal = ({ isOpen, onClose, event, onSuccess }) => {
         method,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${tokenManager.getToken()}`,
         },
         body: JSON.stringify(payload),
       });

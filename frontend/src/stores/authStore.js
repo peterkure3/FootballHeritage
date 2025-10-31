@@ -24,9 +24,19 @@ const useAuthStore = create((set, get) => {
     resetLogoutTimer();
   }
 
+  // Load user from localStorage if exists
+  const loadStoredUser = () => {
+    try {
+      const storedUser = localStorage.getItem('betting_user_data');
+      return storedUser ? JSON.parse(storedUser) : null;
+    } catch {
+      return null;
+    }
+  };
+
   return {
     // State
-    user: null,
+    user: loadStoredUser(),
     isAuthenticated: !!tokenManager.getToken(),
     isLoading: false,
     error: null,
@@ -51,6 +61,8 @@ const useAuthStore = create((set, get) => {
 
     login: (token, user) => {
       tokenManager.setToken(token);
+      // Store user data in localStorage
+      localStorage.setItem('betting_user_data', JSON.stringify(user));
       set({
         user,
         isAuthenticated: true,
@@ -61,6 +73,8 @@ const useAuthStore = create((set, get) => {
 
     logout: () => {
       tokenManager.removeToken();
+      // Remove user data from localStorage
+      localStorage.removeItem('betting_user_data');
       if (logoutTimer) {
         clearTimeout(logoutTimer);
         logoutTimer = null;
