@@ -48,7 +48,7 @@ impl AuthService {
             iss: "football-heritage-api".to_string(),
             aud: "football-heritage-client".to_string(),
             session_id: session_id.to_string(),
-            role: if user.is_verified { "user" } else { "unverified" }.to_string(),
+            role: user.role.clone().unwrap_or_else(|| "user".to_string()),
         };
 
         let header = Header::default();

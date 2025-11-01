@@ -3,7 +3,7 @@ const API_BASE_URL =
   import.meta.env.VITE_API_URL || "http://localhost:8080/api/v1";
 
 // Encryption key for localStorage (in production, use a more robust solution)
-const STORAGE_KEY = "betting_auth_token";
+const STORAGE_KEY = "token";
 const CSRF_TOKEN_KEY = "betting_csrf_token";
 
 // Simple XOR encryption for localStorage (basic obfuscation)
