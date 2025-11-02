@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import Navbar from '../components/Navbar';
-import useAuthStore from '../stores/authStore';
 import { tokenManager } from '../utils/api';
+import { SPORTS, getSportByApiParam } from '../utils/constants';
 
 /**
  * Sports Page Component
@@ -75,16 +75,24 @@ const Sports = () => {
 
   /**
    * Navigate to odds page with sport filter
+   * Uses the API parameter from constants for consistency
    */
   const handleSportClick = (sportName) => {
-    navigate(`/odds?sport=${encodeURIComponent(sportName)}`);
+    // Try to find the sport in our constants to use the correct API param
+    const sportConfig = getSportByApiParam(sportName);
+    const sportParam = sportConfig ? sportConfig.apiParam : sportName;
+    navigate(`/odds?sport=${encodeURIComponent(sportParam)}`);
   };
 
   /**
    * Navigate to odds page with league filter
+   * Uses the API parameter from constants for consistency
    */
   const handleLeagueClick = (sportName, leagueName) => {
-    navigate(`/odds?sport=${encodeURIComponent(sportName)}&league=${encodeURIComponent(leagueName)}`);
+    // Try to find the sport in our constants to use the correct API param
+    const sportConfig = getSportByApiParam(sportName);
+    const sportParam = sportConfig ? sportConfig.apiParam : sportName;
+    navigate(`/odds?sport=${encodeURIComponent(sportParam)}&league=${encodeURIComponent(leagueName)}`);
   };
 
   if (loading) {

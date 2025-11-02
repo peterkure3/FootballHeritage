@@ -4,6 +4,7 @@ import useAuthStore from '../stores/authStore';
 import { useLogout } from '../hooks/useAuth';
 import WalletModal from './WalletModal';
 import RoleSwitcher from './RoleSwitcher';
+import { SPORTS } from '../utils/constants';
 
 const Navbar = memo(() => {
   const navigate = useNavigate();
@@ -68,12 +69,45 @@ const Navbar = memo(() => {
               >
                 Sports
               </Link>
-              <Link
-                to="/odds"
-                className="text-gray-300 hover:text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
-              >
-                Odds
-              </Link>
+              {/* Odds dropdown with sport filters */}
+              <div className="relative group">
+                <Link
+                  to="/odds"
+                  className="text-gray-300 hover:text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors inline-flex items-center"
+                >
+                  Odds
+                  <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </Link>
+                {/* Dropdown menu for quick sport access */}
+                <div className="absolute left-0 mt-1 w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                  <Link
+                    to="/odds"
+                    className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white rounded-t-lg"
+                  >
+                    🏆 All Sports
+                  </Link>
+                  <Link
+                    to={`/odds?sport=${SPORTS.SOCCER.apiParam}`}
+                    className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white"
+                  >
+                    {SPORTS.SOCCER.icon} {SPORTS.SOCCER.displayName}
+                  </Link>
+                  <Link
+                    to={`/odds?sport=${SPORTS.NFL.apiParam}`}
+                    className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white"
+                  >
+                    {SPORTS.NFL.icon} {SPORTS.NFL.displayName}
+                  </Link>
+                  <Link
+                    to={`/odds?sport=${SPORTS.BASKETBALL.apiParam}`}
+                    className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white rounded-b-lg"
+                  >
+                    {SPORTS.BASKETBALL.icon} {SPORTS.BASKETBALL.displayName}
+                  </Link>
+                </div>
+              </div>
               <Link
                 to="/bets"
                 className="text-gray-300 hover:text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"

@@ -118,6 +118,7 @@ const OddsRow = memo(({ event, onBetClick }) => {
                   onClick={() => handleBetClick('moneyline', event.moneyline_home)}
                   className={`${getButtonStyles('moneyline_home')} flex-1`}
                   disabled={!isPending}
+                  data-testid="bet-moneyline-home"
                 >
                   <div className="flex justify-between items-center">
                     <span className="truncate">{formatTeamName(event.home_team).slice(0, 10)}</span>
@@ -132,6 +133,7 @@ const OddsRow = memo(({ event, onBetClick }) => {
                       : 'bg-blue-600 hover:bg-blue-700 text-white'
                   }`}
                   title="Add to Parlay"
+                  data-testid="add-to-parlay-home"
                 >
                   {isBetSelected(event.id, 'MONEYLINE', 'HOME') ? (
                     <Check className="w-4 h-4" />
@@ -145,6 +147,7 @@ const OddsRow = memo(({ event, onBetClick }) => {
                   onClick={() => handleBetClick('moneyline', event.moneyline_away)}
                   className={`${getButtonStyles('moneyline_away')} flex-1`}
                   disabled={!isPending}
+                  data-testid="bet-moneyline-away"
                 >
                   <div className="flex justify-between items-center">
                     <span className="truncate">{formatTeamName(event.away_team).slice(0, 10)}</span>
@@ -159,6 +162,7 @@ const OddsRow = memo(({ event, onBetClick }) => {
                       : 'bg-blue-600 hover:bg-blue-700 text-white'
                   }`}
                   title="Add to Parlay"
+                  data-testid="add-to-parlay-away"
                 >
                   {isBetSelected(event.id, 'MONEYLINE', 'AWAY') ? (
                     <Check className="w-4 h-4" />
@@ -180,6 +184,7 @@ const OddsRow = memo(({ event, onBetClick }) => {
                 onClick={() => handleBetClick('spread', event.spread_odds_home || 1.91)}
                 className={getButtonStyles('spread_home')}
                 disabled={!isPending}
+                data-testid="bet-spread-home"
               >
                 <div className="flex justify-between items-center">
                   <span className="truncate">{formatTeamName(event.home_team).slice(0, 10)}</span>
@@ -190,6 +195,7 @@ const OddsRow = memo(({ event, onBetClick }) => {
                 onClick={() => handleBetClick('spread', event.spread_odds_away || 1.91)}
                 className={getButtonStyles('spread_away')}
                 disabled={!isPending}
+                data-testid="bet-spread-away"
               >
                 <div className="flex justify-between items-center">
                   <span className="truncate">{formatTeamName(event.away_team).slice(0, 10)}</span>
@@ -209,6 +215,7 @@ const OddsRow = memo(({ event, onBetClick }) => {
                 onClick={() => handleBetClick('over_under', event.over_odds || 1.91)}
                 className={getButtonStyles('over')}
                 disabled={!isPending}
+                data-testid="bet-over"
               >
                 <div className="flex justify-between items-center">
                   <span>Over</span>
@@ -219,6 +226,7 @@ const OddsRow = memo(({ event, onBetClick }) => {
                 onClick={() => handleBetClick('over_under', event.under_odds || 1.91)}
                 className={getButtonStyles('under')}
                 disabled={!isPending}
+                data-testid="bet-under"
               >
                 <div className="flex justify-between items-center">
                   <span>Under</span>

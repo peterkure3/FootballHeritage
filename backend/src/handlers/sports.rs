@@ -56,6 +56,7 @@ pub struct BetCategory {
  */
 pub async fn get_sports(pool: web::Data<PgPool>) -> HttpResponse {
     // Query sports with event counts
+    // Filter out expired events (event_date <= NOW())
     let sports_query = sqlx::query!(
         r#"
         SELECT 
@@ -64,6 +65,7 @@ pub async fn get_sports(pool: web::Data<PgPool>) -> HttpResponse {
             COUNT(*) FILTER (WHERE status = 'UPCOMING') as upcoming_count
         FROM events
         WHERE status IN ('UPCOMING', 'LIVE')
+        AND event_date > NOW()
         GROUP BY sport
         ORDER BY event_count DESC
         "#
@@ -82,6 +84,7 @@ pub async fn get_sports(pool: web::Data<PgPool>) -> HttpResponse {
     };
 
     // Query leagues per sport
+    // Filter out expired events (event_date <= NOW())
     let leagues_query = sqlx::query!(
         r#"
         SELECT 
@@ -91,6 +94,7 @@ pub async fn get_sports(pool: web::Data<PgPool>) -> HttpResponse {
             COUNT(*) FILTER (WHERE status = 'UPCOMING') as upcoming_count
         FROM events
         WHERE status IN ('UPCOMING', 'LIVE')
+        AND event_date > NOW()
         GROUP BY sport, league
         ORDER BY sport, event_count DESC
         "#
@@ -217,6 +221,7 @@ pub async fn get_sport_leagues(
 ) -> HttpResponse {
     let sport_name = sport.into_inner();
 
+    // Filter out expired events (event_date <= NOW())
     let leagues = sqlx::query!(
         r#"
         SELECT 
@@ -225,7 +230,9 @@ pub async fn get_sport_leagues(
             COUNT(*) FILTER (WHERE status = 'UPCOMING') as upcoming_count,
             MIN(event_date) as next_event
         FROM events
-        WHERE sport = $1 AND status IN ('UPCOMING', 'LIVE')
+        WHERE sport = $1 
+        AND status IN ('UPCOMING', 'LIVE')
+        AND event_date > NOW()
         GROUP BY league
         ORDER BY event_count DESC
         "#,

@@ -120,12 +120,34 @@ const BetConfirmationModal = memo(({ isOpen, onClose, betDetails }) => {
   const atLimit = isAtLimit();
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="bet-modal-title"
+      aria-describedby="bet-modal-description"
+      onClick={(e) => {
+        // Close modal when clicking backdrop
+        if (e.target === e.currentTarget && !isLoading) {
+          handleClose();
+        }
+      }}
+    >
       <div className="bg-gray-800 rounded-xl shadow-2xl border border-gray-700 w-full max-w-md overflow-hidden">
         {/* Header */}
         <div className="bg-gradient-to-r from-green-600 to-green-700 p-6 relative">
-          <h2 className="text-white text-2xl font-bold">Place Your Bet</h2>
-          <p className="text-green-100 text-sm mt-1">Confirm bet details</p>
+          <h2 
+            id="bet-modal-title" 
+            className="text-white text-2xl font-bold"
+          >
+            Place Your Bet
+          </h2>
+          <p 
+            id="bet-modal-description" 
+            className="text-green-100 text-sm mt-1"
+          >
+            Confirm bet details
+          </p>
           <button
             onClick={handleClose}
             disabled={isLoading}
@@ -151,7 +173,11 @@ const BetConfirmationModal = memo(({ isOpen, onClose, betDetails }) => {
         {/* Content */}
         <div className="p-6">
           {/* Event Details */}
-          <div className="bg-gray-900/50 border border-gray-700 rounded-lg p-4 mb-4">
+          <div 
+            className="bg-gray-900/50 border border-gray-700 rounded-lg p-4 mb-4"
+            role="region"
+            aria-label="Event details"
+          >
             <h3 className="text-white font-bold text-lg mb-2">{betDetails.eventName}</h3>
             <div className="grid grid-cols-2 gap-2 text-sm">
               <div>
@@ -169,7 +195,10 @@ const BetConfirmationModal = memo(({ isOpen, onClose, betDetails }) => {
 
           {/* Amount Input */}
           <div className="mb-4">
-            <label className="block text-gray-300 text-sm font-semibold mb-2">
+            <label 
+              htmlFor="bet-amount-input"
+              className="block text-gray-300 text-sm font-semibold mb-2"
+            >
               Bet Amount ($)
             </label>
             <div className="relative">
@@ -177,12 +206,18 @@ const BetConfirmationModal = memo(({ isOpen, onClose, betDetails }) => {
                 $
               </span>
               <input
+                id="bet-amount-input"
                 type="text"
+                inputMode="decimal"
                 value={betAmount}
                 onChange={handleAmountChange}
                 placeholder="0.00"
                 disabled={isLoading || atLimit}
                 autoFocus
+                aria-label="Bet amount in dollars"
+                aria-invalid={!!errors.amount}
+                aria-describedby={errors.amount ? 'bet-amount-error' : 'bet-amount-help'}
+                aria-required="true"
                 className={`w-full pl-10 pr-4 py-3 bg-gray-900 border rounded-lg text-white text-lg font-semibold placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                   errors.amount
                     ? 'border-red-500 focus:ring-red-500'
@@ -191,7 +226,12 @@ const BetConfirmationModal = memo(({ isOpen, onClose, betDetails }) => {
               />
             </div>
             {errors.amount && (
-              <p className="text-red-400 text-xs mt-2 flex items-center">
+              <p 
+                id="bet-amount-error"
+                className="text-red-400 text-xs mt-2 flex items-center"
+                role="alert"
+                aria-live="polite"
+              >
                 <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                   <path
                     fillRule="evenodd"
@@ -209,7 +249,11 @@ const BetConfirmationModal = memo(({ isOpen, onClose, betDetails }) => {
             <label className="block text-gray-300 text-sm font-semibold mb-2">
               Quick Select
             </label>
-            <div className="grid grid-cols-4 gap-2">
+            <div 
+              className="grid grid-cols-4 gap-2"
+              role="group"
+              aria-label="Quick bet amount selection"
+            >
               {quickAmounts.map((amount) => {
                 const remaining = getRemainingBudget();
                 const isDisabled = isLoading || atLimit || amount > remaining;
@@ -219,6 +263,8 @@ const BetConfirmationModal = memo(({ isOpen, onClose, betDetails }) => {
                     type="button"
                     onClick={() => handleQuickAmount(amount)}
                     disabled={isDisabled}
+                    aria-label={`Quick select $${amount} bet amount`}
+                    aria-pressed={betAmount === amount.toString()}
                     className={`py-2 px-3 rounded-lg font-semibold text-sm transition-all ${
                       betAmount === amount.toString()
                         ? 'bg-green-500 text-white shadow-lg'
@@ -234,7 +280,11 @@ const BetConfirmationModal = memo(({ isOpen, onClose, betDetails }) => {
 
           {/* Session Limit Warning */}
           {showWarning && !atLimit && (
-            <div className="bg-yellow-500/10 border border-yellow-500 rounded-lg p-3 mb-4">
+            <div 
+              className="bg-yellow-500/10 border border-yellow-500 rounded-lg p-3 mb-4"
+              role="alert"
+              aria-live="polite"
+            >
               <p className="text-yellow-400 text-xs flex items-center">
                 <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                   <path
@@ -250,7 +300,11 @@ const BetConfirmationModal = memo(({ isOpen, onClose, betDetails }) => {
 
           {/* At Limit Warning */}
           {atLimit && (
-            <div className="bg-red-500/10 border border-red-500 rounded-lg p-3 mb-4">
+            <div 
+              className="bg-red-500/10 border border-red-500 rounded-lg p-3 mb-4"
+              role="alert"
+              aria-live="assertive"
+            >
               <p className="text-red-400 text-xs flex items-center">
                 <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                   <path
@@ -265,7 +319,11 @@ const BetConfirmationModal = memo(({ isOpen, onClose, betDetails }) => {
           )}
 
           {/* Bet Summary */}
-          <div className="bg-gray-900 rounded-lg p-4 mb-4">
+          <div 
+            className="bg-gray-900 rounded-lg p-4 mb-4"
+            role="region"
+            aria-label="Bet summary"
+          >
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-gray-400">Bet Amount:</span>
@@ -283,7 +341,11 @@ const BetConfirmationModal = memo(({ isOpen, onClose, betDetails }) => {
           </div>
 
           {/* Session Stats */}
-          <div className="bg-blue-500/10 border border-blue-500/50 rounded-lg p-3 mb-4">
+          <div 
+            className="bg-blue-500/10 border border-blue-500/50 rounded-lg p-3 mb-4"
+            role="status"
+            aria-label="Session betting statistics"
+          >
             <div className="flex justify-between items-center text-xs">
               <span className="text-blue-300">Session: ${sessionStats.total.toFixed(2)} / ${sessionStats.limit}</span>
               <span className="text-blue-300">{sessionStats.percentUsed}% used</span>
@@ -294,13 +356,22 @@ const BetConfirmationModal = memo(({ isOpen, onClose, betDetails }) => {
                   sessionStats.percentUsed >= 80 ? 'bg-red-500' : 'bg-green-500'
                 }`}
                 style={{ width: `${Math.min(sessionStats.percentUsed, 100)}%` }}
+                role="progressbar"
+                aria-valuenow={sessionStats.percentUsed}
+                aria-valuemin="0"
+                aria-valuemax="100"
+                aria-label={`Session limit ${sessionStats.percentUsed}% used`}
               />
             </div>
           </div>
 
           {/* Submit Error */}
           {errors.submit && (
-            <div className="bg-red-500/10 border border-red-500 rounded-lg p-3 mb-4">
+            <div 
+              className="bg-red-500/10 border border-red-500 rounded-lg p-3 mb-4"
+              role="alert"
+              aria-live="assertive"
+            >
               <p className="text-red-400 text-sm">{errors.submit}</p>
             </div>
           )}
@@ -310,6 +381,7 @@ const BetConfirmationModal = memo(({ isOpen, onClose, betDetails }) => {
             <button
               onClick={handleClose}
               disabled={isLoading}
+              aria-label="Cancel bet placement"
               className="flex-1 py-3 px-4 bg-gray-700 text-white rounded-lg font-semibold hover:bg-gray-600 transition-colors disabled:opacity-50"
             >
               Cancel
@@ -317,6 +389,8 @@ const BetConfirmationModal = memo(({ isOpen, onClose, betDetails }) => {
             <button
               onClick={handlePlaceBet}
               disabled={isLoading || !betAmount || Object.keys(errors).length > 0 || atLimit}
+              aria-label={isLoading ? 'Placing bet, please wait' : `Place bet for $${betAmount || '0.00'}`}
+              aria-busy={isLoading}
               className="flex-1 py-3 px-4 bg-green-500 text-white rounded-lg font-bold hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-green-500/30 active:scale-95"
             >
               {isLoading ? (

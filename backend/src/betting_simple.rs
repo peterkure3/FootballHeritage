@@ -573,6 +573,9 @@ impl SimpleBettingService {
     }
 
     /// Get available events
+    /// 
+    /// Filters out expired events (event_date <= NOW())
+    /// Only returns future events to prevent betting on past games
     pub async fn get_events(
         &self,
         pool: &PgPool,
@@ -583,6 +586,7 @@ impl SimpleBettingService {
             r#"
             SELECT * FROM events
             WHERE 1=1
+            AND event_date > NOW()
             "#,
         );
 

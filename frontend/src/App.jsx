@@ -18,7 +18,7 @@ import Odds from "./pages/Odds";
 import BetHistory from "./pages/BetHistory";
 import Chat from "./pages/Chat";
 import Sports from './pages/Sports';
-import ParlayCalculator from './pages/ParlayCalculator';
+// ParlayCalculator removed - functionality integrated into Odds page
 import AdminDashboard from './pages/AdminDashboard';
 import AdminBets from './pages/AdminBets';
 import AdminEvents from './pages/AdminEvents';
@@ -134,14 +134,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route
-              path="/parlay-calculator"
-              element={
-                <ProtectedRoute>
-                  <ParlayCalculator />
-                </ProtectedRoute>
-              }
-            />
+            {/* /parlay-calculator route removed - parlay builder now integrated into /odds page */}
             <Route
               path="/profile"
               element={
