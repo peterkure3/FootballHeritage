@@ -1,8 +1,9 @@
 use crate::config::AppConfig;
 use crate::crypto::CryptoService;
 use crate::errors::{AppError, AppResult};
+use crate::models::Claims;
 use crate::rates::RateLimiters;
-use actix_web::{web, HttpRequest, HttpResponse};
+use actix_web::{web, HttpMessage, HttpRequest, HttpResponse};
 use bigdecimal::BigDecimal;
 use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
@@ -10,6 +11,18 @@ use std::str::FromStr;
 use tracing::{error, info};
 use uuid::Uuid;
 use validator::Validate;
+
+// Helper to extract user_id from JWT claims
+fn extract_user_id(req: &HttpRequest) -> AppResult<Uuid> {
+    let claims = req
+        .extensions()
+        .get::<Claims>()
+        .cloned()
+        .ok_or_else(|| AppError::Authentication("Invalid or missing token".to_string()))?;
+    
+    Uuid::parse_str(&claims.sub)
+        .map_err(|_| AppError::Authentication("Invalid user ID in token".to_string()))
+}
 
 #[derive(Debug, Deserialize, Validate)]
 pub struct DepositRequest {
@@ -39,25 +52,50 @@ pub struct TransactionResponse {
 }
 
 pub async fn get_balance(
-    _req: HttpRequest,
+    req: HttpRequest,
     pool: web::Data<PgPool>,
     config: web::Data<AppConfig>,
 ) -> AppResult<HttpResponse> {
-    // TODO: Extract user_id from JWT token
-    let user_id = Uuid::new_v4();
+    let user_id = extract_user_id(&req)?;
 
     let crypto_service = CryptoService::from_string(&config.encryption_key);
 
-    let wallet: (String, String) = sqlx::query_as(
+    // Try to fetch wallet, create if doesn't exist
+    let wallet_result: Result<(String, String), sqlx::Error> = sqlx::query_as(
         "SELECT encrypted_balance, encryption_iv FROM wallets WHERE user_id = $1"
     )
     .bind(user_id)
     .fetch_one(pool.as_ref())
-    .await
-    .map_err(|e| {
-        error!("Failed to fetch wallet: {}", e);
-        AppError::Database(e)
-    })?;
+    .await;
+
+    let wallet = match wallet_result {
+        Ok(w) => w,
+        Err(sqlx::Error::RowNotFound) => {
+            // Wallet doesn't exist, create one with 0.00 balance
+            info!("Creating new wallet for user_id={}", user_id);
+            let initial_balance = BigDecimal::from_str("0.00").unwrap();
+            let (encrypted_balance, iv) = crypto_service.encrypt_balance(&initial_balance)?;
+            
+            sqlx::query(
+                "INSERT INTO wallets (id, user_id, encrypted_balance, encryption_iv, created_at, updated_at) VALUES (gen_random_uuid(), $1, $2, $3, NOW(), NOW())"
+            )
+            .bind(user_id)
+            .bind(&encrypted_balance)
+            .bind(&iv)
+            .execute(pool.as_ref())
+            .await
+            .map_err(|e| {
+                error!("Failed to create wallet: {}", e);
+                AppError::Database(e)
+            })?;
+            
+            (encrypted_balance, iv)
+        }
+        Err(e) => {
+            error!("Failed to fetch wallet: {}", e);
+            return Err(AppError::Database(e));
+        }
+    };
 
     let balance = crypto_service.decrypt_balance(&wallet.0, &wallet.1)?;
 
@@ -68,7 +106,7 @@ pub async fn get_balance(
 }
 
 pub async fn deposit(
-    _req: HttpRequest,
+    req: HttpRequest,
     pool: web::Data<PgPool>,
     config: web::Data<AppConfig>,
     rate_limiters: web::Data<RateLimiters>,
@@ -76,8 +114,7 @@ pub async fn deposit(
 ) -> AppResult<HttpResponse> {
     body.validate().map_err(|e| AppError::Validation(e.to_string()))?;
 
-    // TODO: Extract user_id from JWT token
-    let user_id = Uuid::new_v4();
+    let user_id = extract_user_id(&req)?;
 
     // Check rate limit
     rate_limiters.check_deposit_limit(user_id)?;
@@ -91,19 +128,42 @@ pub async fn deposit(
         AppError::Database(e)
     })?;
 
-    // Get current balance
-    let wallet: (String, String) = sqlx::query_as(
+    // Get current balance or create wallet if doesn't exist
+    let wallet_result: Result<(String, String), sqlx::Error> = sqlx::query_as(
         "SELECT encrypted_balance, encryption_iv FROM wallets WHERE user_id = $1"
     )
     .bind(user_id)
     .fetch_one(&mut *tx)
-    .await
-    .map_err(|e| {
-        error!("Failed to fetch wallet: {}", e);
-        AppError::Database(e)
-    })?;
+    .await;
 
-    let current_balance = crypto_service.decrypt_balance(&wallet.0, &wallet.1)?;
+    let current_balance = match wallet_result {
+        Ok(wallet) => crypto_service.decrypt_balance(&wallet.0, &wallet.1)?,
+        Err(sqlx::Error::RowNotFound) => {
+            // Create wallet with 0.00 balance
+            info!("Creating new wallet for user_id={} during deposit", user_id);
+            let initial_balance = BigDecimal::from_str("0.00").unwrap();
+            let (encrypted_balance, iv) = crypto_service.encrypt_balance(&initial_balance)?;
+            
+            sqlx::query(
+                "INSERT INTO wallets (id, user_id, encrypted_balance, encryption_iv, created_at, updated_at) VALUES (gen_random_uuid(), $1, $2, $3, NOW(), NOW())"
+            )
+            .bind(user_id)
+            .bind(&encrypted_balance)
+            .bind(&iv)
+            .execute(&mut *tx)
+            .await
+            .map_err(|e| {
+                error!("Failed to create wallet: {}", e);
+                AppError::Database(e)
+            })?;
+            
+            initial_balance
+        }
+        Err(e) => {
+            error!("Failed to fetch wallet: {}", e);
+            return Err(AppError::Database(e));
+        }
+    };
     let new_balance = current_balance + &amount;
     let (encrypted_balance, iv) = crypto_service.encrypt_balance(&new_balance)?;
 
@@ -153,7 +213,7 @@ pub async fn deposit(
 }
 
 pub async fn withdraw(
-    _req: HttpRequest,
+    req: HttpRequest,
     pool: web::Data<PgPool>,
     config: web::Data<AppConfig>,
     rate_limiters: web::Data<RateLimiters>,
@@ -161,8 +221,7 @@ pub async fn withdraw(
 ) -> AppResult<HttpResponse> {
     body.validate().map_err(|e| AppError::Validation(e.to_string()))?;
 
-    // TODO: Extract user_id from JWT token
-    let user_id = Uuid::new_v4();
+    let user_id = extract_user_id(&req)?;
 
     // Check rate limit
     rate_limiters.check_withdraw_limit(user_id)?;
@@ -176,19 +235,42 @@ pub async fn withdraw(
         AppError::Database(e)
     })?;
 
-    // Get current balance
-    let wallet: (String, String) = sqlx::query_as(
+    // Get current balance or create wallet if doesn't exist
+    let wallet_result: Result<(String, String), sqlx::Error> = sqlx::query_as(
         "SELECT encrypted_balance, encryption_iv FROM wallets WHERE user_id = $1"
     )
     .bind(user_id)
     .fetch_one(&mut *tx)
-    .await
-    .map_err(|e| {
-        error!("Failed to fetch wallet: {}", e);
-        AppError::Database(e)
-    })?;
+    .await;
 
-    let current_balance = crypto_service.decrypt_balance(&wallet.0, &wallet.1)?;
+    let current_balance = match wallet_result {
+        Ok(wallet) => crypto_service.decrypt_balance(&wallet.0, &wallet.1)?,
+        Err(sqlx::Error::RowNotFound) => {
+            // Create wallet with 0.00 balance
+            info!("Creating new wallet for user_id={} during withdraw", user_id);
+            let initial_balance = BigDecimal::from_str("0.00").unwrap();
+            let (encrypted_balance, iv) = crypto_service.encrypt_balance(&initial_balance)?;
+            
+            sqlx::query(
+                "INSERT INTO wallets (id, user_id, encrypted_balance, encryption_iv, created_at, updated_at) VALUES (gen_random_uuid(), $1, $2, $3, NOW(), NOW())"
+            )
+            .bind(user_id)
+            .bind(&encrypted_balance)
+            .bind(&iv)
+            .execute(&mut *tx)
+            .await
+            .map_err(|e| {
+                error!("Failed to create wallet: {}", e);
+                AppError::Database(e)
+            })?;
+            
+            initial_balance
+        }
+        Err(e) => {
+            error!("Failed to fetch wallet: {}", e);
+            return Err(AppError::Database(e));
+        }
+    };
 
     if current_balance < amount {
         return Err(AppError::InsufficientFunds);
@@ -243,11 +325,10 @@ pub async fn withdraw(
 }
 
 pub async fn get_transactions(
-    _req: HttpRequest,
+    req: HttpRequest,
     pool: web::Data<PgPool>,
 ) -> AppResult<HttpResponse> {
-    // TODO: Extract user_id from JWT token
-    let user_id = Uuid::new_v4();
+    let user_id = extract_user_id(&req)?;
 
     let transactions: Vec<(Uuid, String, BigDecimal, String, chrono::DateTime<chrono::Utc>)> = sqlx::query_as(
         r#"

@@ -15,6 +15,7 @@ use validator::Validate;
 #[derive(Debug, Deserialize)]
 pub struct EventQuery {
     pub sport: Option<String>,
+    pub league: Option<String>,  // Filter by league (e.g., "nba_cup", "nba", "nfl")
     pub status: Option<String>,
 }
 
@@ -27,7 +28,7 @@ pub async fn get_events(
     let betting_service = SimpleBettingService::new(crypto_service);
 
     let events = betting_service
-        .get_events(pool.as_ref(), query.sport.clone(), query.status.clone())
+        .get_events(pool.as_ref(), query.sport.clone(), query.league.clone(), query.status.clone())
         .await?;
 
     let event_responses: Vec<EventResponse> = events

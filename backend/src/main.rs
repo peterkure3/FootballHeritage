@@ -183,6 +183,7 @@ async fn main() -> std::io::Result<()> {
                     )
                     .service(
                         web::scope("/wallet")
+                            .wrap(middleware::jwt_auth::RequireAuth::new(auth_service_for_app.clone()))
                             .route("/balance", web::get().to(handlers::wallet::get_balance))
                             .route("/deposit", web::post().to(handlers::wallet::deposit))
                             .route("/withdraw", web::post().to(handlers::wallet::withdraw))
@@ -192,12 +193,17 @@ async fn main() -> std::io::Result<()> {
                         web::scope("/betting")
                             .route("/events", web::get().to(handlers::betting::get_events))
                             .route("/events/{id}", web::get().to(handlers::betting::get_event))
-                            .route("/bets", web::post().to(handlers::betting::place_bet))
-                            .route("/bets", web::get().to(handlers::betting::get_user_bets))
-                            .route("/bets/{id}", web::get().to(handlers::betting::get_bet))
+                            .service(
+                                web::scope("")
+                                    .wrap(middleware::jwt_auth::RequireAuth::new(auth_service_for_app.clone()))
+                                    .route("/bets", web::post().to(handlers::betting::place_bet))
+                                    .route("/bets", web::get().to(handlers::betting::get_user_bets))
+                                    .route("/bets/{id}", web::get().to(handlers::betting::get_bet))
+                            )
                     )
                     .service(
                         web::scope("/limits")
+                            .wrap(middleware::jwt_auth::RequireAuth::new(auth_service_for_app.clone()))
                             .route("/", web::get().to(handlers::limits::get_limits))
                             .route("/", web::put().to(handlers::limits::update_limits))
                             .route("/self-exclude", web::post().to(handlers::limits::self_exclude))

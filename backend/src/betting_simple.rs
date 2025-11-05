@@ -576,10 +576,16 @@ impl SimpleBettingService {
     /// 
     /// Filters out expired events (event_date <= NOW())
     /// Only returns future events to prevent betting on past games
+    /// 
+    /// # Arguments
+    /// * `sport` - Filter by sport (e.g., "basketball", "football")
+    /// * `league` - Filter by league (e.g., "nba_cup", "nba", "nfl")
+    /// * `status` - Filter by status (e.g., "UPCOMING", "LIVE")
     pub async fn get_events(
         &self,
         pool: &PgPool,
         sport: Option<String>,
+        league: Option<String>,
         status: Option<String>,
     ) -> AppResult<Vec<Event>> {
         let mut query_str = String::from(
@@ -597,6 +603,11 @@ impl SimpleBettingService {
             query_str.push_str(&format!(" AND sport = ${}", bind_count));
         }
 
+        if league.is_some() {
+            bind_count += 1;
+            query_str.push_str(&format!(" AND league = ${}", bind_count));
+        }
+
         if status.is_some() {
             bind_count += 1;
             query_str.push_str(&format!(" AND status = ${}", bind_count));
@@ -608,6 +619,10 @@ impl SimpleBettingService {
 
         if let Some(s) = sport {
             query = query.bind(s);
+        }
+
+        if let Some(l) = league {
+            query = query.bind(l);
         }
 
         if let Some(st) = status {

@@ -281,6 +281,7 @@ fn get_sport_metadata(sport: &str) -> (String, String) {
     match sport.to_uppercase().as_str() {
         "NFL" | "FOOTBALL" => ("NFL Football".to_string(), "🏈".to_string()),
         "NBA" | "BASKETBALL" => ("NBA Basketball".to_string(), "🏀".to_string()),
+        "NBA_CUP" => ("NBA Cup".to_string(), "🏆".to_string()),  // NBA In-Season Tournament
         "MLB" | "BASEBALL" => ("MLB Baseball".to_string(), "⚾".to_string()),
         "NHL" | "HOCKEY" => ("NHL Hockey".to_string(), "🏒".to_string()),
         "SOCCER" | "FOOTBALL_SOCCER" => ("Soccer".to_string(), "⚽".to_string()),
