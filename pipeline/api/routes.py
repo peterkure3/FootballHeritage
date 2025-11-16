@@ -37,7 +37,7 @@ class PredictionResponse(BaseModel):
 class MatchResponse(BaseModel):
     match_id: int
     competition: Optional[str]
-    date: datetime
+    date: Optional[datetime]
     home_team: str
     away_team: str
     home_score: Optional[int]
