@@ -60,7 +60,7 @@ const Odds = () => {
     setSelectedBet(null);
   };
 
-  // Filter odds based on status AND sport
+  // Filter odds based on status AND sport/league
   const filteredOdds = odds?.filter((event) => {
     // Filter by status
     let statusMatch = true;
@@ -70,11 +70,18 @@ const Odds = () => {
       statusMatch = event.status === 'upcoming' || event.status === 'scheduled';
     }
     
-    // Filter by sport (if a specific sport is selected)
+    // Filter by sport or league (if a specific sport is selected)
     let sportMatch = true;
     if (selectedSport !== 'all') {
-      // Match against the sport field in the event data
-      sportMatch = event.sport?.toLowerCase() === selectedSport.toLowerCase();
+      const sportConfig = getSportByApiParam(selectedSport);
+      
+      // For NBA Cup, filter by league instead of sport
+      if (sportConfig?.league) {
+        sportMatch = event.league?.toLowerCase() === sportConfig.league.toLowerCase();
+      } else {
+        // For other sports, filter by sport field
+        sportMatch = event.sport?.toLowerCase() === selectedSport.toLowerCase();
+      }
     }
     
     return statusMatch && sportMatch;
