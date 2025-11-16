@@ -69,6 +69,11 @@ const Navbar = memo(() => {
               >
                 Sports
               </Link>
+              <Link 
+              to="/predictions" 
+              className="text-gray-300 hover:text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">
+              Predictions
+              </Link>
               {/* Odds dropdown with sport filters */}
               <div className="relative group">
                 <Link

@@ -29,6 +29,7 @@ import AdminSettings from './pages/AdminSettings';
 import AdminLogs from './pages/AdminLogs';
 import AdminSportsGPT from './pages/AdminSportsGPT';
 import AdminLayout from './components/admin/AdminLayout';
+import Predictions from "./pages/Predictions";
 
 // Create React Query client with optimized settings
 const queryClient = new QueryClient({
@@ -131,6 +132,15 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Sports />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/predictions"
+              element={
+                <ProtectedRoute>
+                  <Predictions />
                 </ProtectedRoute>
               }
             />
