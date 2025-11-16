@@ -50,6 +50,17 @@ export const SPORTS = {
     leagues: ['NBA', 'EuroLeague', 'NCAA Basketball']
   },
   
+  // NBA Cup (In-Season Tournament)
+  NBA_CUP: {
+    key: 'NBA_CUP',
+    displayName: 'NBA Cup',
+    apiParam: 'nba_cup',
+    league: 'nba_cup', // League filter for API
+    icon: '🏆',
+    description: 'NBA In-Season Tournament - Mid-season championship competition',
+    leagues: ['NBA Cup Group Stage', 'NBA Cup Knockout', 'NBA Cup Finals']
+  },
+  
   // Baseball
   BASEBALL: {
     key: 'BASEBALL',
