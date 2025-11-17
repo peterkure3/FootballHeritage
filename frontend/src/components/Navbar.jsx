@@ -59,75 +59,105 @@ const Navbar = memo(() => {
             <div className="hidden md:flex items-center space-x-4">
               <Link
                 to="/dashboard"
-                className="text-gray-300 hover:text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
+                className="text-gray-300 hover:text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-800 transition-colors"
               >
                 Dashboard
               </Link>
-              <Link
-                to="/sports"
-                className="text-gray-300 hover:text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
-              >
-                Sports
-              </Link>
-              <Link 
-              to="/predictions" 
-              className="text-gray-300 hover:text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">
-              Predictions
-              </Link>
-              {/* Odds dropdown with sport filters */}
               <div className="relative group">
-                <Link
-                  to="/odds"
-                  className="text-gray-300 hover:text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors inline-flex items-center"
+                <button
+                  type="button"
+                  className="text-gray-300 hover:text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-800 transition-colors inline-flex items-center gap-2"
                 >
-                  Odds
-                  <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  Explore
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
-                </Link>
-                {/* Dropdown menu for quick sport access */}
-                <div className="absolute left-0 mt-1 w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                  <Link
-                    to="/odds"
-                    className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white rounded-t-lg"
-                  >
-                    🏆 All Sports
-                  </Link>
-                  <Link
-                    to={`/odds?sport=${SPORTS.SOCCER.apiParam}`}
-                    className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white"
-                  >
-                    {SPORTS.SOCCER.icon} {SPORTS.SOCCER.displayName}
-                  </Link>
-                  <Link
-                    to={`/odds?sport=${SPORTS.NFL.apiParam}`}
-                    className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white"
-                  >
-                    {SPORTS.NFL.icon} {SPORTS.NFL.displayName}
-                  </Link>
-                  <Link
-                    to={`/odds?sport=${SPORTS.BASKETBALL.apiParam}`}
-                    className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-white rounded-b-lg"
-                  >
-                    {SPORTS.BASKETBALL.icon} {SPORTS.BASKETBALL.displayName}
-                  </Link>
+                </button>
+                <div className="absolute left-0 mt-2 w-64 bg-gray-900 border border-gray-800 rounded-2xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                  <div className="p-4 space-y-2">
+                    <Link to="/odds" className="flex flex-col rounded-lg px-3 py-2 text-sm text-gray-200 hover:bg-gray-800">
+                      <span className="font-semibold">All Odds</span>
+                      <span className="text-xs text-gray-500">Live & upcoming</span>
+                    </Link>
+                    <Link to="/sports" className="flex flex-col rounded-lg px-3 py-2 text-sm text-gray-200 hover:bg-gray-800">
+                      <span className="font-semibold">Sports Hub</span>
+                      <span className="text-xs text-gray-500">Leagues & markets</span>
+                    </Link>
+                  </div>
                 </div>
               </div>
-              <Link
-                to="/bets"
-                className="text-gray-300 hover:text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
-              >
-                My Bets
-              </Link>
-              <Link
-                to="/chat"
-                className="text-gray-300 hover:text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors flex items-center gap-1"
-              >
-                <span>🤖</span> AI Chat
-              </Link>
+
+              <div className="relative group">
+                <button
+                  type="button"
+                  className="text-gray-300 hover:text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-800 transition-colors inline-flex items-center gap-2"
+                >
+                  AI Tools
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                <div className="absolute left-0 mt-2 w-64 bg-gray-900 border border-gray-800 rounded-2xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                  <div className="p-4 space-y-2">
+                    <Link to="/predictions" className="flex flex-col rounded-lg px-3 py-2 text-sm text-gray-200 hover:bg-gray-800">
+                      <span className="font-semibold">Predictions</span>
+                      <span className="text-xs text-gray-500">Match insights</span>
+                    </Link>
+                    <Link to="/chat" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-200 hover:bg-gray-800">
+                      <span className="text-lg">🤖</span>
+                      <div>
+                        <p className="font-semibold leading-tight">AI Chat</p>
+                        <p className="text-xs text-gray-500">Ask betting questions</p>
+                      </div>
+                    </Link>
+                    <Link to="/parlay-calculator" className="flex flex-col rounded-lg px-3 py-2 text-sm text-gray-200 hover:bg-gray-800">
+                      <span className="font-semibold">Parlay Builder</span>
+                      <span className="text-xs text-gray-500">Stack your slips</span>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+
+              <div className="relative group">
+                <button
+                  type="button"
+                  className="text-gray-300 hover:text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-800 transition-colors inline-flex items-center gap-2"
+                >
+                  Quick Filters
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                <div className="absolute left-0 mt-2 w-72 bg-gray-900 border border-gray-800 rounded-2xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                  <div className="p-4 space-y-2">
+                    <Link to={`/odds?sport=${SPORTS.SOCCER.apiParam}`} className="flex items-center justify-between rounded-lg px-3 py-2 text-sm text-gray-200 hover:bg-gray-800">
+                      <span className="flex items-center gap-2">
+                        <span>{SPORTS.SOCCER.icon}</span>
+                        {SPORTS.SOCCER.displayName}
+                      </span>
+                      <span className="text-xs text-gray-500">Live</span>
+                    </Link>
+                    <Link to={`/odds?sport=${SPORTS.NFL.apiParam}`} className="flex items-center justify-between rounded-lg px-3 py-2 text-sm text-gray-200 hover:bg-gray-800">
+                      <span className="flex items-center gap-2">
+                        <span>{SPORTS.NFL.icon}</span>
+                        {SPORTS.NFL.displayName}
+                      </span>
+                      <span className="text-xs text-gray-500">Upcoming</span>
+                    </Link>
+                    <Link to={`/odds?sport=${SPORTS.BASKETBALL.apiParam}`} className="flex items-center justify-between rounded-lg px-3 py-2 text-sm text-gray-200 hover:bg-gray-800">
+                      <span className="flex items-center gap-2">
+                        <span>{SPORTS.BASKETBALL.icon}</span>
+                        {SPORTS.BASKETBALL.displayName}
+                      </span>
+                      <span className="text-xs text-gray-500">Trending</span>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+
               <Link
                 to="/profile"
-                className="text-gray-300 hover:text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors flex items-center gap-1"
+                className="text-gray-300 hover:text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-800 transition-colors inline-flex items-center gap-2"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -256,6 +286,12 @@ const Navbar = memo(() => {
                 className="w-full text-left text-gray-300 hover:text-white hover:bg-gray-800 block px-3 py-2 rounded-lg text-base font-medium transition-colors"
               >
                 Sports
+              </button>
+              <button
+                onClick={() => handleNavigation('/predictions')}
+                className="w-full text-left text-gray-300 hover:text-white hover:bg-gray-800 block px-3 py-2 rounded-lg text-base font-medium transition-colors"
+              >
+                Predictions
               </button>
               <button
                 onClick={() => handleNavigation('/bets')}
