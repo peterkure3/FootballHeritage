@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import Navbar from '../components/Navbar';
-import { tokenManager } from '../utils/api';
+import { api } from '../utils/api';
 import { SPORTS, getSportByApiParam } from '../utils/constants';
 
 /**
@@ -16,62 +16,54 @@ const Sports = () => {
   const navigate = useNavigate();
   const [sports, setSports] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [sportsLoading, setSportsLoading] = useState(true);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
+  const [sportsError, setSportsError] = useState(null);
+  const [categoriesError, setCategoriesError] = useState(null);
   const [selectedView, setSelectedView] = useState('sports'); // 'sports' or 'categories'
+  const [expandedSports, setExpandedSports] = useState(() => new Set());
 
   useEffect(() => {
-    fetchSportsData();
-    fetchCategories();
+    let isMounted = true;
+
+    const loadData = async () => {
+      setSportsLoading(true);
+      setCategoriesLoading(true);
+
+      const [sportsResult, categoriesResult] = await Promise.allSettled([
+        api.getSports(),
+        api.getSportsCategories(),
+      ]);
+
+      if (!isMounted) return;
+
+      if (sportsResult.status === 'fulfilled') {
+        setSports(sportsResult.value?.sports || []);
+        setSportsError(null);
+      } else {
+        setSports([]);
+        setSportsError('Unable to fetch sports right now.');
+        toast.error('Failed to load sports data');
+      }
+
+      if (categoriesResult.status === 'fulfilled') {
+        setCategories(categoriesResult.value?.categories || []);
+        setCategoriesError(null);
+      } else {
+        setCategories([]);
+        setCategoriesError('Unable to fetch bet categories.');
+      }
+
+      setSportsLoading(false);
+      setCategoriesLoading(false);
+    };
+
+    loadData();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
-
-  /**
-   * Fetch sports and leagues data
-   */
-  const fetchSportsData = async () => {
-    try {
-      const token = tokenManager.getToken();
-      const response = await fetch('http://localhost:8080/api/v1/sports', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch sports data');
-      }
-
-      const data = await response.json();
-      setSports(data.sports || []);
-    } catch (error) {
-      console.error('Error fetching sports:', error);
-      toast.error('Failed to load sports data');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  /**
-   * Fetch bet categories
-   */
-  const fetchCategories = async () => {
-    try {
-      const token = tokenManager.getToken();
-      const response = await fetch('http://localhost:8080/api/v1/sports/categories', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch categories');
-      }
-
-      const data = await response.json();
-      setCategories(data.categories || []);
-    } catch (error) {
-      console.error('Error fetching categories:', error);
-    }
-  };
 
   /**
    * Navigate to odds page with sport filter
@@ -95,7 +87,37 @@ const Sports = () => {
     navigate(`/odds?sport=${encodeURIComponent(sportParam)}&league=${encodeURIComponent(leagueName)}`);
   };
 
-  if (loading) {
+  const totals = useMemo(() => {
+    const totalEvents = sports.reduce((sum, sport) => sum + (sport.event_count || 0), 0);
+    const totalLeagues = sports.reduce((sum, sport) => sum + (sport.leagues?.length || 0), 0);
+    return {
+      totalSports: sports.length,
+      totalEvents,
+      totalLeagues,
+    };
+  }, [sports]);
+
+  const toggleSportExpansion = (sportName) => {
+    setExpandedSports((prev) => {
+      const next = new Set(prev);
+      if (next.has(sportName)) {
+        next.delete(sportName);
+      } else {
+        next.add(sportName);
+      }
+      return next;
+    });
+  };
+
+  const navigateToPredictions = (sportName) => {
+    const sportConfig = getSportByApiParam(sportName);
+    const sportParam = sportConfig ? sportConfig.apiParam : sportName;
+    navigate(`/predictions?sport=${encodeURIComponent(sportParam)}`);
+  };
+
+  const initialLoading = sportsLoading && sports.length === 0;
+
+  if (initialLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
         <Navbar />
@@ -125,7 +147,7 @@ const Sports = () => {
         </div>
 
         {/* View Toggle */}
-        <div className="flex gap-4 mb-8">
+        <div className="flex gap-4 mb-8 flex-wrap">
           <button
             onClick={() => setSelectedView('sports')}
             className={`px-6 py-3 rounded-lg font-semibold transition-all ${
@@ -133,6 +155,8 @@ const Sports = () => {
                 ? 'bg-green-500 text-white shadow-lg shadow-green-500/30'
                 : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
             }`}
+            type="button"
+            aria-pressed={selectedView === 'sports'}
           >
             🏆 Sports & Leagues
           </button>
@@ -143,8 +167,20 @@ const Sports = () => {
                 ? 'bg-green-500 text-white shadow-lg shadow-green-500/30'
                 : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
             }`}
+            type="button"
+            aria-pressed={selectedView === 'categories'}
           >
             📊 Bet Types
+          </button>
+          <button
+            onClick={() => navigate('/predictions')}
+            className="px-6 py-3 rounded-lg font-semibold transition-all bg-gray-800 text-gray-300 hover:bg-gray-700 flex items-center gap-2"
+            type="button"
+          >
+            🤖 Predictions
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
           </button>
         </div>
 
@@ -157,7 +193,7 @@ const Sports = () => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-400 text-sm mb-1">Total Sports</p>
-                    <p className="text-3xl font-bold text-white">{sports.length}</p>
+                    <p className="text-3xl font-bold text-white">{totals.totalSports}</p>
                   </div>
                   <div className="text-4xl">🏅</div>
                 </div>
@@ -167,7 +203,7 @@ const Sports = () => {
                   <div>
                     <p className="text-gray-400 text-sm mb-1">Total Events</p>
                     <p className="text-3xl font-bold text-green-400">
-                      {sports.reduce((sum, sport) => sum + sport.event_count, 0)}
+                      {totals.totalEvents}
                     </p>
                   </div>
                   <div className="text-4xl">📅</div>
@@ -178,7 +214,7 @@ const Sports = () => {
                   <div>
                     <p className="text-gray-400 text-sm mb-1">Active Leagues</p>
                     <p className="text-3xl font-bold text-blue-400">
-                      {sports.reduce((sum, sport) => sum + sport.leagues.length, 0)}
+                      {totals.totalLeagues}
                     </p>
                   </div>
                   <div className="text-4xl">🏆</div>
@@ -188,96 +224,129 @@ const Sports = () => {
 
             {/* Sports Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {sports.map((sport) => (
-                <div
-                  key={sport.name}
-                  className="bg-gray-800 rounded-lg border border-gray-700 hover:border-green-500 transition-all overflow-hidden group"
-                >
-                  {/* Sport Header */}
-                  <div
-                    onClick={() => handleSportClick(sport.name)}
-                    className="p-6 cursor-pointer hover:bg-gray-750 transition-colors"
-                  >
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-3">
-                        <span className="text-4xl">{sport.icon}</span>
-                        <div>
-                          <h3 className="text-xl font-bold text-white group-hover:text-green-400 transition-colors">
-                            {sport.display_name}
-                          </h3>
-                          <p className="text-sm text-gray-400">
-                            {sport.event_count} {sport.event_count === 1 ? 'event' : 'events'}
-                          </p>
-                        </div>
-                      </div>
-                      {sport.active && (
-                        <span className="px-3 py-1 bg-green-500/20 text-green-400 text-xs font-semibold rounded-full border border-green-500/50">
-                          LIVE
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Leagues */}
-                    {sport.leagues.length > 0 && (
-                      <div className="space-y-2">
-                        <p className="text-xs text-gray-500 uppercase font-semibold mb-2">
-                          Leagues ({sport.leagues.length})
-                        </p>
-                        <div className="space-y-2">
-                          {sport.leagues.slice(0, 3).map((league) => (
-                            <button
-                              key={league.name}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleLeagueClick(sport.name, league.name);
-                              }}
-                              className="w-full flex items-center justify-between p-3 bg-gray-700/50 hover:bg-gray-700 rounded-lg transition-colors text-left"
-                            >
-                              <span className="text-gray-300 text-sm font-medium">
-                                {league.name}
-                              </span>
-                              <span className="text-green-400 text-xs font-semibold">
-                                {league.upcoming_events} upcoming
-                              </span>
-                            </button>
-                          ))}
-                          {sport.leagues.length > 3 && (
-                            <p className="text-xs text-gray-500 text-center pt-2">
-                              +{sport.leagues.length - 3} more leagues
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* View All Button */}
-                  <div className="px-6 pb-6">
-                    <button
-                      onClick={() => handleSportClick(sport.name)}
-                      className="w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
-                    >
-                      View All {sport.display_name} Odds
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </button>
-                  </div>
+              {sportsError && (
+                <div className="col-span-full bg-red-500/10 border border-red-500 rounded-xl p-4 text-red-300 text-center">
+                  {sportsError}
                 </div>
-              ))}
-            </div>
+              )}
+              {!sportsError && sports.length === 0 && !sportsLoading && (
+                <div className="col-span-full text-center py-16">
+                  <div className="text-6xl mb-4">🏅</div>
+                  <h3 className="text-xl font-semibold text-gray-400 mb-2">
+                    No Sports Available
+                  </h3>
+                  <p className="text-gray-500">
+                    Check back soon for upcoming events
+                  </p>
+                </div>
+              )}
+              {sports.map((sport) => {
+                const isExpanded = expandedSports.has(sport.name);
+                return (
+                  <div
+                    key={sport.name}
+                    className="bg-gray-800 rounded-lg border border-gray-700 hover:border-green-500 transition-all overflow-hidden group"
+                  >
+                    {/* Sport Header */}
+                    <button
+                      type="button"
+                      onClick={() => handleSportClick(sport.name)}
+                      className="p-6 cursor-pointer hover:bg-gray-750 transition-colors w-full text-left"
+                      aria-label={`View odds for ${sport.display_name}`}
+                    >
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-3">
+                          <span className="text-4xl">{sport.icon}</span>
+                          <div>
+                            <h3 className="text-xl font-bold text-white group-hover:text-green-400 transition-colors">
+                              {sport.display_name}
+                            </h3>
+                            <p className="text-sm text-gray-400">
+                              {sport.event_count} {sport.event_count === 1 ? 'event' : 'events'}
+                            </p>
+                          </div>
+                        </div>
+                        {sport.active && (
+                          <span className="px-3 py-1 bg-green-500/20 text-green-400 text-xs font-semibold rounded-full border border-green-500/50">
+                            LIVE
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <p className="text-xs uppercase text-gray-500">
+                          Leagues Available: {sport.leagues.length}
+                        </p>
+                        {sport.leagues.length > 0 && (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleSportExpansion(sport.name);
+                            }}
+                            className="text-sm text-green-400 hover:text-green-300 underline"
+                            aria-expanded={isExpanded}
+                          >
+                            {isExpanded ? 'Hide leagues' : 'View leagues'}
+                          </button>
+                        )}
+                      </div>
 
-            {sports.length === 0 && (
-              <div className="text-center py-16">
-                <div className="text-6xl mb-4">🏅</div>
-                <h3 className="text-xl font-semibold text-gray-400 mb-2">
-                  No Sports Available
-                </h3>
-                <p className="text-gray-500">
-                  Check back soon for upcoming events
-                </p>
-              </div>
-            )}
+                      {/* Leagues */}
+                      {isExpanded && sport.leagues.length > 0 && (
+                        <div className="space-y-2 mt-4">
+                          <p className="text-xs text-gray-500 uppercase font-semibold">
+                            Leagues ({sport.leagues.length})
+                          </p>
+                          <div className="space-y-2">
+                            {sport.leagues.map((league) => (
+                              <button
+                                key={league.name}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleLeagueClick(sport.name, league.name);
+                                }}
+                                className="w-full flex items-center justify-between p-3 bg-gray-700/50 hover:bg-gray-700 rounded-lg transition-colors text-left"
+                              >
+                                <span className="text-gray-300 text-sm font-medium">
+                                  {league.name}
+                                </span>
+                                <span className="text-green-400 text-xs font-semibold">
+                                  {league.upcoming_events} upcoming
+                                </span>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </button>
+
+                    {/* View All Button */}
+                    <div className="px-6 pb-6">
+                      <button
+                        onClick={() => handleSportClick(sport.name)}
+                        className="w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
+                        type="button"
+                      >
+                        View All {sport.display_name} Odds
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </button>
+                      <button
+                        onClick={() => navigateToPredictions(sport.name)}
+                        className="w-full mt-3 bg-gray-700 hover:bg-gray-650 text-white py-2 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
+                        type="button"
+                      >
+                        AI Predictions for {sport.display_name}
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         )}
 
@@ -290,36 +359,55 @@ const Sports = () => {
                 Learn about different ways to bet on your favorite sports
               </p>
             </div>
+            {categoriesLoading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[...Array(6)].map((_, index) => (
+                  <div key={index} className="h-40 bg-gray-800 border border-gray-700 rounded-lg animate-pulse" />
+                ))}
+              </div>
+            ) : categoriesError ? (
+              <div className="bg-red-500/10 border border-red-500 rounded-xl p-6 text-center text-red-300">
+                {categoriesError}
+              </div>
+            ) : categories.length === 0 ? (
+              <div className="text-center py-16">
+                <div className="text-6xl mb-4">📊</div>
+                <h3 className="text-xl font-semibold text-gray-400 mb-2">
+                  No Bet Categories Available
+                </h3>
+                <p className="text-gray-500">Check back soon for more betting education.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {categories.map((category) => (
+                  <div
+                    key={category.id}
+                    className="bg-gray-800 rounded-lg border border-gray-700 hover:border-green-500 transition-all p-6 group"
+                  >
+                    <div className="flex items-start gap-4 mb-4">
+                      <span className="text-4l">{category.icon}</span>
+                      <div className="flex-1">
+                        <h3 className="text-xl font-bold text-white group-hover:text-green-400 transition-colors mb-2">
+                          {category.name}
+                        </h3>
+                        <p className="text-gray-400 text-sm mb-3">
+                          {category.description}
+                        </p>
+                      </div>
+                    </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {categories.map((category) => (
-                <div
-                  key={category.id}
-                  className="bg-gray-800 rounded-lg border border-gray-700 hover:border-green-500 transition-all p-6 group"
-                >
-                  <div className="flex items-start gap-4 mb-4">
-                    <span className="text-4xl">{category.icon}</span>
-                    <div className="flex-1">
-                      <h3 className="text-xl font-bold text-white group-hover:text-green-400 transition-colors mb-2">
-                        {category.name}
-                      </h3>
-                      <p className="text-gray-400 text-sm mb-3">
-                        {category.description}
+                    <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+                      <p className="text-xs text-gray-500 uppercase font-semibold mb-2">
+                        Example
+                      </p>
+                      <p className="text-gray-300 text-sm font-mono">
+                        {category.example}
                       </p>
                     </div>
                   </div>
-
-                  <div className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
-                    <p className="text-xs text-gray-500 uppercase font-semibold mb-2">
-                      Example
-                    </p>
-                    <p className="text-gray-300 text-sm font-mono">
-                      {category.example}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>
