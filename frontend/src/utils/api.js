@@ -218,6 +218,19 @@ export const api = {
       method: "GET",
     });
   },
+
+  // Sports data
+  getSports: async () => {
+    return await makeRequest("/sports", {
+      method: "GET",
+    });
+  },
+
+  getSportsCategories: async () => {
+    return await makeRequest("/sports/categories", {
+      method: "GET",
+    });
+  },
 };
 
 // Input sanitization utilities
