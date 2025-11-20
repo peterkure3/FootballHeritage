@@ -10,6 +10,11 @@ from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
 
+
+def _env_bool(key: str, default: str = "false") -> bool:
+    """Parse boolean environment variables with common truthy values."""
+    return os.getenv(key, default).strip().lower() in {"1", "true", "yes", "on"}
+
 # Base paths
 BASE_DIR = Path(__file__).parent
 DATA_DIR = BASE_DIR / "data"
@@ -17,6 +22,7 @@ RAW_DATA_DIR = DATA_DIR / "raw"
 INTERIM_DATA_DIR = DATA_DIR / "interim"
 PROCESSED_DATA_DIR = DATA_DIR / "processed"
 MODEL_DIR = BASE_DIR / "models" / "model_store"
+CACHE_DIR = DATA_DIR / "cache"
 
 # API Configuration
 FOOTBALL_DATA_ORG_API_KEY = os.getenv("FOOTBALL_DATA_ORG_API_KEY", "YOUR_FOOTBALL_DATA_ORG_API_KEY")
@@ -74,6 +80,14 @@ MIN_MATCHES_FOR_TRAINING = 100  # minimum matches required to train model
 # Logging Configuration
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
 LOG_FORMAT = "json"  # json or text
+
+# Cache Configuration
+CACHE_ENABLED = _env_bool("CACHE_ENABLED", "true")
+CACHE_BYPASS = _env_bool("CACHE_BYPASS", "false")
+FOOTBALL_DATA_CACHE_TTL = int(os.getenv("FOOTBALL_DATA_CACHE_TTL", "3600"))  # 1 hour
+ODDS_CACHE_TTL = int(os.getenv("ODDS_CACHE_TTL", "300"))  # 5 minutes
+NCAA_CACHE_TTL = int(os.getenv("NCAA_CACHE_TTL", "900"))  # 15 minutes
+NBA_CUP_CACHE_TTL = int(os.getenv("NBA_CUP_CACHE_TTL", "600"))  # 10 minutes
 
 # Airflow Configuration
 AIRFLOW_DAG_SCHEDULE = "0 0 * * 0"  # Weekly on Sunday at midnight

@@ -27,6 +27,9 @@ from config import (
     ODDS_API_ODDS_FORMAT,
     API_TIMEOUT,
     LOG_LEVEL,
+    FOOTBALL_DATA_CACHE_TTL,
+    ODDS_CACHE_TTL,
+    CACHE_BYPASS,
 )
 from etl.utils import (
     setup_logger,
@@ -36,6 +39,7 @@ from etl.utils import (
     get_timestamp_str,
     ensure_dir,
 )
+from etl.cache import load_cache, store_cache
 
 logger = setup_logger(__name__, LOG_LEVEL)
 
@@ -69,6 +73,12 @@ class FootballDataOrgFetcher:
         url = f"{self.base_url}/competitions"
         logger.info(f"Fetching competitions from {url}")
         
+        cache_key = {"endpoint": "competitions"}
+        cached = load_cache("football_data_org", cache_key, FOOTBALL_DATA_CACHE_TTL)
+        if cached is not None:
+            logger.info("Cache hit: football-data competitions")
+            return cached
+
         try:
             response = self.session.get(
                 url,
@@ -79,6 +89,7 @@ class FootballDataOrgFetcher:
             
             data = response.json()
             logger.info(f"Fetched {len(data.get('competitions', []))} competitions")
+            store_cache("football_data_org", cache_key, data)
             return data
         except requests.HTTPError as e:
             if e.response.status_code == 400:
@@ -116,6 +127,16 @@ class FootballDataOrgFetcher:
         
         logger.info(f"Fetching matches for {competition_code} from {url}")
         
+        cache_key = {
+            "endpoint": "matches",
+            "competition": competition_code,
+            "params": params,
+        }
+        cached = load_cache("football_data_org", cache_key, FOOTBALL_DATA_CACHE_TTL)
+        if cached is not None:
+            logger.info("Cache hit: matches %s", competition_code)
+            return cached
+
         try:
             response = self.session.get(
                 url,
@@ -127,6 +148,7 @@ class FootballDataOrgFetcher:
             
             data = response.json()
             logger.info(f"Fetched {len(data.get('matches', []))} matches for {competition_code}")
+            store_cache("football_data_org", cache_key, data)
             return data
         except requests.HTTPError as e:
             if e.response.status_code == 400:
@@ -150,6 +172,12 @@ class FootballDataOrgFetcher:
         url = f"{self.base_url}/matches/{match_id}"
         logger.info(f"Fetching match details for {match_id}")
         
+        cache_key = {"endpoint": "match_details", "match_id": match_id}
+        cached = load_cache("football_data_org", cache_key, FOOTBALL_DATA_CACHE_TTL)
+        if cached is not None:
+            logger.info("Cache hit: match %s", match_id)
+            return cached
+
         try:
             response = self.session.get(
                 url,
@@ -157,7 +185,9 @@ class FootballDataOrgFetcher:
                 timeout=API_TIMEOUT
             )
             response.raise_for_status()
-            return response.json()
+            data = response.json()
+            store_cache("football_data_org", cache_key, data)
+            return data
         except requests.HTTPError as e:
             logger.error(f"Failed to fetch match {match_id}: {e.response.text}")
             raise
@@ -207,6 +237,18 @@ class TheOddsApiFetcher:
         
         logger.info(f"Fetching odds for {sport} from {url}")
         
+        cache_key = {
+            "endpoint": "odds",
+            "sport": sport,
+            "regions": regions,
+            "markets": markets,
+            "odds_format": odds_format,
+        }
+        cached = load_cache("the_odds_api", cache_key, ODDS_CACHE_TTL)
+        if cached is not None:
+            logger.info("Cache hit: odds %s", sport)
+            return cached
+
         try:
             response = self.session.get(url, params=params, timeout=API_TIMEOUT)
             response.raise_for_status()
@@ -214,6 +256,7 @@ class TheOddsApiFetcher:
             data = response.json()
             logger.info(f"Fetched odds for {len(data)} events")
             logger.info(f"Remaining requests: {response.headers.get('x-requests-remaining', 'unknown')}")
+            store_cache("the_odds_api", cache_key, data)
             return data
         except requests.HTTPError as e:
             logger.error(f"Failed to fetch odds: {e.response.text if e.response else str(e)}")
@@ -238,6 +281,16 @@ class TheOddsApiFetcher:
         
         logger.info(f"Fetching scores for {sport} from {url}")
         
+        cache_key = {
+            "endpoint": "scores",
+            "sport": sport,
+            "days_from": days_from,
+        }
+        cached = load_cache("the_odds_api", cache_key, ODDS_CACHE_TTL)
+        if cached is not None:
+            logger.info("Cache hit: scores %s", sport)
+            return cached
+
         try:
             response = self.session.get(url, params=params, timeout=API_TIMEOUT)
             response.raise_for_status()
@@ -245,6 +298,7 @@ class TheOddsApiFetcher:
             data = response.json()
             logger.info(f"Fetched scores for {len(data)} events")
             logger.info(f"Remaining requests: {response.headers.get('x-requests-remaining', 'unknown')}")
+            store_cache("the_odds_api", cache_key, data)
             return data
         except requests.HTTPError as e:
             logger.error(f"Failed to fetch scores: {e.response.text if e.response else str(e)}")
@@ -326,6 +380,18 @@ def fetch_the_odds_api() -> None:
 
 def main() -> None:
     """Main entry point for data fetching."""
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Fetch football data and odds")
+    parser.add_argument("--no-cache", action="store_true", help="Bypass local cache for this run")
+    args = parser.parse_args()
+
+    if args.no_cache:
+        os.environ["CACHE_BYPASS"] = "1"
+        logger.info("Cache bypass requested via CLI flag")
+    elif CACHE_BYPASS:
+        logger.info("Cache bypass enabled via environment variable")
+
     logger.info("Starting raw data fetch")
     
     try:

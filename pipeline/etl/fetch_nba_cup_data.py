@@ -24,6 +24,8 @@ from config import (
     THE_ODDS_API_DIR,
     API_TIMEOUT,
     LOG_LEVEL,
+    NBA_CUP_CACHE_TTL,
+    ODDS_CACHE_TTL,
 )
 from etl.utils import (
     setup_logger,
@@ -32,6 +34,7 @@ from etl.utils import (
     get_timestamp_str,
     ensure_dir,
 )
+from etl.cache import load_cache, store_cache
 
 logger = setup_logger(__name__, LOG_LEVEL)
 
@@ -124,6 +127,15 @@ class NbaCupFetcher:
         
         logger.info(f"Fetching NBA Cup games for season {season}")
         
+        cache_key = {
+            "endpoint": "nba_cup_games",
+            "season": season,
+        }
+        cached = load_cache("nba_cup", cache_key, NBA_CUP_CACHE_TTL)
+        if cached is not None:
+            logger.info("Cache hit: NBA Cup games %s", season)
+            return cached
+
         try:
             response = self.session.get(
                 url,
@@ -135,6 +147,7 @@ class NbaCupFetcher:
             
             data = response.json()
             logger.info(f"✓ Fetched {len(data.get('data', []))} NBA Cup games")
+            store_cache("nba_cup", cache_key, data)
             
             return data
             
@@ -205,6 +218,16 @@ class NbaCupFetcher:
         
         logger.info("Fetching NBA Cup odds from The Odds API")
         
+        cache_key = {
+            "endpoint": "nba_cup_odds",
+            "regions": regions,
+            "markets": markets,
+        }
+        cached = load_cache("the_odds_api", cache_key, ODDS_CACHE_TTL)
+        if cached is not None:
+            logger.info("Cache hit: NBA Cup odds")
+            return cached
+
         try:
             response = self.session.get(
                 url,
@@ -219,6 +242,7 @@ class NbaCupFetcher:
             # Log remaining API quota
             remaining = response.headers.get('x-requests-remaining', 'unknown')
             logger.info(f"The Odds API requests remaining: {remaining}")
+            store_cache("the_odds_api", cache_key, data)
             
             return data
             

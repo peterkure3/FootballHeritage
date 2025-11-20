@@ -20,8 +20,10 @@ from config import (
     NCAA_RATE_LIMIT,
     API_TIMEOUT,
     LOG_LEVEL,
+    NCAA_CACHE_TTL,
 )
 from etl.utils import setup_logger, ensure_dir, save_json, retry_on_failure
+from etl.cache import load_cache, store_cache
 
 logger = setup_logger(__name__, LOG_LEVEL)
 
@@ -87,10 +89,21 @@ class NCAADataFetcher:
             endpoint = f"/scoreboard/{sport}/{division}/{date}/all-conf"
         else:
             endpoint = f"/scoreboard/{sport}/{division}"
+        cache_key = {
+            "endpoint": "scoreboard",
+            "sport": sport,
+            "division": division,
+            "date": date or "today",
+        }
+        cached = load_cache("ncaa_api", cache_key, NCAA_CACHE_TTL)
+        if cached is not None:
+            logger.info("Cache hit: NCAA scoreboard %s %s %s", sport, division, date or "today")
+            return cached
         
         try:
             data = self._make_request(endpoint)
             logger.info(f"Fetched {len(data.get('games', []))} games for {sport} on {date or 'today'}")
+            store_cache("ncaa_api", cache_key, data)
             return data
         except Exception as e:
             logger.error(f"Failed to fetch scoreboard: {str(e)}")
@@ -107,10 +120,16 @@ class NCAADataFetcher:
             Game details
         """
         endpoint = f"/game/{game_id}"
+        cache_key = {"endpoint": "game", "game_id": game_id}
+        cached = load_cache("ncaa_api", cache_key, NCAA_CACHE_TTL)
+        if cached is not None:
+            logger.info("Cache hit: NCAA game %s", game_id)
+            return cached
         
         try:
             data = self._make_request(endpoint)
             logger.info(f"Fetched details for game {game_id}")
+            store_cache("ncaa_api", cache_key, data)
             return data
         except Exception as e:
             logger.error(f"Failed to fetch game {game_id}: {str(e)}")
@@ -127,10 +146,16 @@ class NCAADataFetcher:
             Team information
         """
         endpoint = f"/team/{team_slug}"
+        cache_key = {"endpoint": "team", "team_slug": team_slug}
+        cached = load_cache("ncaa_api", cache_key, NCAA_CACHE_TTL)
+        if cached is not None:
+            logger.info("Cache hit: NCAA team %s", team_slug)
+            return cached
         
         try:
             data = self._make_request(endpoint)
             logger.info(f"Fetched info for team {team_slug}")
+            store_cache("ncaa_api", cache_key, data)
             return data
         except Exception as e:
             logger.error(f"Failed to fetch team {team_slug}: {str(e)}")
