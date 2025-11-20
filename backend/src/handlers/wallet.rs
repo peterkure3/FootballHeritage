@@ -1,9 +1,10 @@
 use crate::config::AppConfig;
 use crate::crypto::CryptoService;
 use crate::errors::{AppError, AppResult};
-use crate::models::Claims;
+use crate::monitoring::MonitoringService;
+use crate::utils::extract_user_id;
 use crate::rates::RateLimiters;
-use actix_web::{web, HttpMessage, HttpRequest, HttpResponse};
+use actix_web::{web, HttpRequest, HttpResponse};
 use bigdecimal::BigDecimal;
 use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
@@ -11,18 +12,6 @@ use std::str::FromStr;
 use tracing::{error, info};
 use uuid::Uuid;
 use validator::Validate;
-
-// Helper to extract user_id from JWT claims
-fn extract_user_id(req: &HttpRequest) -> AppResult<Uuid> {
-    let claims = req
-        .extensions()
-        .get::<Claims>()
-        .cloned()
-        .ok_or_else(|| AppError::Authentication("Invalid or missing token".to_string()))?;
-    
-    Uuid::parse_str(&claims.sub)
-        .map_err(|_| AppError::Authentication("Invalid user ID in token".to_string()))
-}
 
 #[derive(Debug, Deserialize, Validate)]
 pub struct DepositRequest {
@@ -110,6 +99,7 @@ pub async fn deposit(
     pool: web::Data<PgPool>,
     config: web::Data<AppConfig>,
     rate_limiters: web::Data<RateLimiters>,
+    monitoring: web::Data<MonitoringService>,
     body: web::Json<DepositRequest>,
 ) -> AppResult<HttpResponse> {
     body.validate().map_err(|e| AppError::Validation(e.to_string()))?;
@@ -206,6 +196,8 @@ pub async fn deposit(
 
     info!("Deposit successful: user_id={}, amount={}", user_id, amount);
 
+    monitoring.record_deposit().await;
+
     Ok(HttpResponse::Ok().json(BalanceResponse {
         balance: new_balance,
         currency: "USD".to_string(),
@@ -217,6 +209,7 @@ pub async fn withdraw(
     pool: web::Data<PgPool>,
     config: web::Data<AppConfig>,
     rate_limiters: web::Data<RateLimiters>,
+    monitoring: web::Data<MonitoringService>,
     body: web::Json<WithdrawRequest>,
 ) -> AppResult<HttpResponse> {
     body.validate().map_err(|e| AppError::Validation(e.to_string()))?;

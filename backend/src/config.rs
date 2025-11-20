@@ -6,7 +6,6 @@ use anyhow::Result;
 #[derive(Debug, Clone, Deserialize)]
 pub struct AppConfig {
     pub database_url: String,
-    pub pipeline_database_url: String,  // New: Pipeline DB connection
     pub jwt_secret: String,
     pub jwt_expiration_hours: u64,
     pub encryption_key: String,
@@ -44,16 +43,28 @@ impl AppConfig {
             .map(|s| s.trim().to_string())
             .collect();
 
-        Ok(Self {
+        let https_enabled: bool = env::var("HTTPS_ENABLED")
+            .unwrap_or_else(|_| "false".to_string())
+            .parse()
+            .map_err(|_| anyhow::anyhow!("Invalid HTTPS_ENABLED"))?;
+
+        let tls_cert_path = if https_enabled {
+            env::var("TLS_CERT_PATH")
+                .map_err(|_| anyhow::anyhow!("TLS_CERT_PATH must be set when HTTPS is enabled"))?
+        } else {
+            env::var("TLS_CERT_PATH").unwrap_or_else(|_| "./certs/server.crt".to_string())
+        };
+
+        let tls_key_path = if https_enabled {
+            env::var("TLS_KEY_PATH")
+                .map_err(|_| anyhow::anyhow!("TLS_KEY_PATH must be set when HTTPS is enabled"))?
+        } else {
+            env::var("TLS_KEY_PATH").unwrap_or_else(|_| "./certs/server.key".to_string())
+        };
+
+        let config = Self {
             database_url: env::var("DATABASE_URL")
                 .map_err(|_| anyhow::anyhow!("DATABASE_URL must be set"))?,
-            pipeline_database_url: env::var("PIPELINE_DATABASE_URL")
-                .unwrap_or_else(|_| format!("postgresql://{}:{}@{}:{}/football_betting",
-                    env::var("DB_USER").unwrap_or_else(|_| "postgres".to_string()),
-                    env::var("DB_PASSWORD").unwrap_or_else(|_| "jumpman13".to_string()),
-                    env::var("DB_HOST").unwrap_or_else(|_| "localhost".to_string()),
-                    env::var("DB_PORT").unwrap_or_else(|_| "5432".to_string())
-                )),
             jwt_secret: env::var("JWT_SECRET")
                 .map_err(|_| anyhow::anyhow!("JWT_SECRET must be set"))?,
             jwt_expiration_hours: env::var("JWT_EXPIRATION_HOURS")
@@ -67,14 +78,9 @@ impl AppConfig {
                 .unwrap_or_else(|_| "8080".to_string())
                 .parse()
                 .map_err(|_| anyhow::anyhow!("Invalid PORT"))?,
-            https_enabled: env::var("HTTPS_ENABLED")
-                .unwrap_or_else(|_| "true".to_string())
-                .parse()
-                .map_err(|_| anyhow::anyhow!("Invalid HTTPS_ENABLED"))?,
-            tls_cert_path: env::var("TLS_CERT_PATH")
-                .unwrap_or_else(|_| "./certs/server.crt".to_string()),
-            tls_key_path: env::var("TLS_KEY_PATH")
-                .unwrap_or_else(|_| "./certs/server.key".to_string()),
+            https_enabled,
+            tls_cert_path,
+            tls_key_path,
             bet_rate_limit_per_minute: env::var("BET_RATE_LIMIT_PER_MINUTE")
                 .unwrap_or_else(|_| "5".to_string())
                 .parse()
@@ -143,7 +149,13 @@ impl AppConfig {
                 .unwrap_or_else(|_| "30".to_string())
                 .parse()
                 .map_err(|_| anyhow::anyhow!("Invalid HEALTH_CHECK_INTERVAL_SECONDS"))?,
-        })
+        };
+
+        if !config.validate_jwt_secret() {
+            return Err(anyhow::anyhow!("JWT_SECRET must be at least 32 characters"));
+        }
+
+        Ok(config)
     }
 
     pub fn is_development(&self) -> bool {

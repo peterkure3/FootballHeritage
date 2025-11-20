@@ -7,11 +7,13 @@ use std::sync::atomic::{AtomicU64, Ordering};
 use tokio::sync::RwLock;
 
 /// Monitoring service for tracking system metrics
+#[derive(Clone)]
 pub struct MonitoringService {
     config: Arc<AppConfig>,
     metrics: Arc<RwLock<SystemMetrics>>,
     request_counter: Arc<AtomicU64>,
     error_counter: Arc<AtomicU64>,
+    start_time: DateTime<Utc>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -48,16 +50,23 @@ impl MonitoringService {
             metrics: Arc::new(RwLock::new(SystemMetrics::default())),
             request_counter: Arc::new(AtomicU64::new(0)),
             error_counter: Arc::new(AtomicU64::new(0)),
+            start_time: Utc::now(),
         }
     }
 
     /// Increment request counter
     pub fn increment_requests(&self) {
+        if !self.metrics_enabled() {
+            return;
+        }
         self.request_counter.fetch_add(1, Ordering::Relaxed);
     }
 
     /// Increment error counter
     pub fn increment_errors(&self) {
+        if !self.metrics_enabled() {
+            return;
+        }
         self.error_counter.fetch_add(1, Ordering::Relaxed);
     }
 
@@ -66,30 +75,46 @@ impl MonitoringService {
         let mut metrics = self.metrics.read().await.clone();
         metrics.total_requests = self.request_counter.load(Ordering::Relaxed);
         metrics.total_errors = self.error_counter.load(Ordering::Relaxed);
+        metrics.uptime_seconds = Utc::now()
+            .signed_duration_since(self.start_time)
+            .num_seconds()
+            .max(0) as u64;
         metrics.last_updated = Utc::now();
         metrics
     }
 
     /// Update bet metrics
     pub async fn record_bet(&self) {
+        if !self.metrics_enabled() {
+            return;
+        }
         let mut metrics = self.metrics.write().await;
         metrics.total_bets_placed += 1;
     }
 
     /// Update user registration metrics
     pub async fn record_registration(&self) {
+        if !self.metrics_enabled() {
+            return;
+        }
         let mut metrics = self.metrics.write().await;
         metrics.total_users_registered += 1;
     }
 
     /// Update deposit metrics
     pub async fn record_deposit(&self) {
+        if !self.metrics_enabled() {
+            return;
+        }
         let mut metrics = self.metrics.write().await;
         metrics.total_deposits += 1;
     }
 
     /// Update withdrawal metrics
     pub async fn record_withdrawal(&self) {
+        if !self.metrics_enabled() {
+            return;
+        }
         let mut metrics = self.metrics.write().await;
         metrics.total_withdrawals += 1;
     }
@@ -101,6 +126,10 @@ impl MonitoringService {
             timestamp: Utc::now(),
             version: env!("CARGO_PKG_VERSION").to_string(),
         }
+    }
+
+    pub fn metrics_enabled(&self) -> bool {
+        self.config.metrics_enabled
     }
 }
 

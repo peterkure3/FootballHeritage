@@ -68,8 +68,11 @@ impl AuthService {
 
         let token_data = decode::<Claims>(token, &key, &validation)
             .map_err(|e| AppError::JWT(e))?;
+        let claims = token_data.claims;
 
-        Ok(token_data.claims)
+        self.ensure_active_session(&claims)?;
+
+        Ok(claims)
     }
 
     /// Extract token from Authorization header
@@ -300,6 +303,35 @@ impl AuthService {
     pub fn validate_email_verification_token(&self, token: &str) -> bool {
         token.starts_with("verify_") && token.len() > 50
     }
+
+    fn ensure_active_session(&self, claims: &Claims) -> AppResult<()> {
+        let now = Utc::now();
+        let timeout = Duration::minutes(self.config.session_timeout_minutes as i64);
+        let mut should_remove = false;
+
+        {
+            let mut session = self
+                .active_sessions
+                .get_mut(&claims.session_id)
+                .ok_or(AppError::SessionExpired)?;
+
+            if !session.is_active
+                || now.signed_duration_since(session.last_activity) > timeout
+                || session.user_id.to_string() != claims.sub
+            {
+                should_remove = true;
+            } else {
+                session.last_activity = now;
+            }
+        }
+
+        if should_remove {
+            self.active_sessions.remove(&claims.session_id);
+            return Err(AppError::SessionExpired);
+        }
+
+        Ok(())
+    }
 }
 
 // Middleware for JWT authentication
@@ -389,6 +421,7 @@ mod tests {
             address: None,
             is_verified: true,
             is_active: true,
+            role: Some("user".to_string()),
             created_at: Utc::now(),
             updated_at: Utc::now(),
             last_login: None,

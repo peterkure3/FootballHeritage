@@ -3,6 +3,8 @@ use crate::config::AppConfig;
 use crate::crypto::CryptoService;
 use crate::errors::{AppError, AppResult};
 use crate::models::{BetResponse, EventResponse, PlaceBetRequest};
+use crate::monitoring::MonitoringService;
+use crate::utils::extract_user_id;
 use crate::rates::RateLimiters;
 use actix_web::{web, HttpRequest, HttpResponse};
 use serde::Deserialize;
@@ -91,18 +93,17 @@ pub async fn get_event(
 }
 
 pub async fn place_bet(
-    _req: HttpRequest,
+    req: HttpRequest,
     pool: web::Data<PgPool>,
     config: web::Data<AppConfig>,
     rate_limiters: web::Data<RateLimiters>,
+    monitoring: web::Data<MonitoringService>,
     body: web::Json<PlaceBetRequest>,
 ) -> AppResult<HttpResponse> {
     // Validate input
     body.validate().map_err(|e| AppError::Validation(e.to_string()))?;
 
-    // TODO: Extract user_id from JWT token in Authorization header
-    // For now, using a placeholder
-    let user_id = Uuid::new_v4(); // This should come from JWT claims
+    let user_id = extract_user_id(&req)?;
 
     // Check bet rate limit
     rate_limiters.check_bet_limit(user_id)?;
@@ -115,6 +116,8 @@ pub async fn place_bet(
         .await?;
 
     info!("Bet placed: user_id={}, bet_id={}", user_id, bet.id);
+
+    monitoring.record_bet().await;
 
     let bet_response = BetResponse {
         id: bet.id,
@@ -133,12 +136,11 @@ pub async fn place_bet(
 }
 
 pub async fn get_user_bets(
-    _req: HttpRequest,
+    req: HttpRequest,
     pool: web::Data<PgPool>,
     config: web::Data<AppConfig>,
 ) -> AppResult<HttpResponse> {
-    // TODO: Extract user_id from JWT token
-    let user_id = Uuid::new_v4();
+    let user_id = extract_user_id(&req)?;
 
     let crypto_service = Arc::new(CryptoService::from_string(&config.encryption_key));
     let betting_service = SimpleBettingService::new(crypto_service);
@@ -167,13 +169,12 @@ pub async fn get_user_bets(
 }
 
 pub async fn get_bet(
-    _req: HttpRequest,
+    req: HttpRequest,
     pool: web::Data<PgPool>,
     config: web::Data<AppConfig>,
     bet_id: web::Path<Uuid>,
 ) -> AppResult<HttpResponse> {
-    // TODO: Extract user_id from JWT token
-    let user_id = Uuid::new_v4();
+    let user_id = extract_user_id(&req)?;
 
     let crypto_service = Arc::new(CryptoService::from_string(&config.encryption_key));
     let betting_service = SimpleBettingService::new(crypto_service);

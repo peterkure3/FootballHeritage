@@ -1,7 +1,9 @@
 #![allow(dead_code)]
 use crate::errors::{AppError, AppResult};
-use actix_web::HttpRequest;
+use crate::models::Claims;
+use actix_web::{HttpMessage, HttpRequest};
 use chrono::{NaiveDate, Utc};
+use uuid::Uuid;
 use validator::ValidationError;
 
 /// Extract IP address from HTTP request
@@ -19,6 +21,18 @@ pub fn extract_user_agent(req: &HttpRequest) -> String {
         .and_then(|h| h.to_str().ok())
         .unwrap_or("unknown")
         .to_string()
+}
+
+/// Extract authenticated user ID from request extensions
+pub fn extract_user_id(req: &HttpRequest) -> AppResult<Uuid> {
+    let claims = req
+        .extensions()
+        .get::<Claims>()
+        .cloned()
+        .ok_or_else(|| AppError::Authentication("Invalid or missing token".to_string()))?;
+
+    Uuid::parse_str(&claims.sub)
+        .map_err(|_| AppError::Authentication("Invalid user ID in token".to_string()))
 }
 
 /// Validate age (must be 21+)

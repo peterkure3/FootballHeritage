@@ -2,7 +2,7 @@ use actix_cors::Cors;
 use actix_web::{web, App, HttpServer};
 use rustls::pki_types::CertificateDer;
 use sqlx::postgres::PgPoolOptions;
-use tracing::{info, error, warn};
+use tracing::{debug, error, info, warn};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 use std::rc::Rc;
 
@@ -144,7 +144,7 @@ async fn main() -> std::io::Result<()> {
         let cors = Cors::default()
             .allowed_origin_fn(move |origin, _req_head| {
                 let origin_str = origin.to_str().unwrap_or("");
-                info!("CORS request from origin: {}", origin_str);
+                debug!("CORS request from origin: {}", origin_str);
                 allowed_origins_clone.contains(&origin_str.to_string())
             })
             .allowed_methods(vec!["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"])
@@ -166,6 +166,8 @@ async fn main() -> std::io::Result<()> {
             .app_data(web::Data::new(auth_service_for_app.clone()))
             .app_data(rate_limiters.clone())
             .app_data(monitoring_service.clone())
+            .wrap(middleware::monitoring::Metrics::new(monitoring_service.clone()))
+            .wrap(middleware::rate_limit::RateLimitMiddleware::new())
             .wrap(cors)
             .wrap(actix_web::middleware::Logger::default())
             .wrap(actix_web::middleware::Compress::default())

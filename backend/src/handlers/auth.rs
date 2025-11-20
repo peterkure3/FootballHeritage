@@ -3,6 +3,7 @@ use crate::config::AppConfig;
 use crate::crypto::CryptoService;
 use crate::errors::{AppError, AppResult};
 use crate::models::{LoginRequest, User};
+use crate::monitoring::MonitoringService;
 use crate::rates::RateLimiters;
 use crate::utils::{extract_ip_address, extract_user_agent, generate_session_id, validate_age};
 use actix_web::{web, HttpRequest, HttpResponse};
@@ -51,6 +52,7 @@ pub async fn register(
     config: web::Data<AppConfig>,
     auth_service: web::Data<AuthService>,
     rate_limiters: web::Data<RateLimiters>,
+    monitoring: web::Data<MonitoringService>,
     body: web::Json<RegisterRequestHandler>,
 ) -> AppResult<HttpResponse> {
     // Validate input
@@ -160,6 +162,8 @@ pub async fn register(
     })?;
 
     info!("User registered successfully: {}", user.email);
+
+    monitoring.record_registration().await;
 
     // Generate JWT token
     let session_id = generate_session_id();
