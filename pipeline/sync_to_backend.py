@@ -48,6 +48,50 @@ def decimal_to_american_odds(decimal_odds: float) -> int:
         return int(-100 / (decimal_odds - 1))
 
 
+def standardize_sport_name(sport: str) -> str:
+    """
+    Standardize sport name to match frontend constants.
+    
+    Args:
+        sport: Raw sport name from data source
+        
+    Returns:
+        Standardized sport name (SOCCER, NFL, BASKETBALL, etc.)
+    """
+    if not sport:
+        return 'SOCCER'  # Default to SOCCER if not specified
+        
+    sport_lower = sport.strip().lower()
+    
+    # Basketball variations
+    if any(kw in sport_lower for kw in ['basketball', 'nba', 'wnba', 'euroleague', 'euro cup']):
+        if 'nba_cup' in sport_lower or 'in-season' in sport_lower:
+            return 'NBA_CUP'
+        return 'BASKETBALL'
+        
+    # Football variations
+    if any(kw in sport_lower for kw in ['football', 'soccer', 'premier league', 'la liga', 'bundesliga', 'serie a', 'champions league', 'europa league']):
+        if any(kw in sport_lower for kw in ['nfl', 'ncaa football', 'college football', 'american football']):
+            return 'NFL'
+        return 'SOCCER'
+        
+    # Other sports
+    sport_mapping = {
+        'baseball': 'BASEBALL',
+        'mlb': 'BASEBALL',
+        'hockey': 'HOCKEY',
+        'nhl': 'HOCKEY',
+        'tennis': 'TENNIS',
+        'golf': 'GOLF',
+        'mma': 'MMA',
+        'ufc': 'UFC',
+        'boxing': 'BOXING',
+        'esports': 'ESPORTS',
+        'esports': 'ESPORTS'
+    }
+    
+    return sport_mapping.get(sport_lower, 'SOCCER')  # Default to SOCCER if no match
+
 def get_sport_from_competition(competition: str) -> str:
     """
     Determine sport type from competition name.
@@ -56,13 +100,12 @@ def get_sport_from_competition(competition: str) -> str:
         competition: Competition name
     
     Returns:
-        Sport type in UPPERCASE (SOCCER, BASKETBALL, etc.)
+        Sport type in UPPERCASE (SOCCER, NFL, BASKETBALL, etc.)
     """
-    basketball_keywords = ['basketball', 'nba', 'ncaa', 'euroleague']
-    
-    if any(keyword in competition.lower() for keyword in basketball_keywords):
-        return 'BASKETBALL'
-    return 'SOCCER'  # Frontend expects SOCCER not Football
+    if not competition:
+        return 'SOCCER'  # Default to SOCCER if competition is empty
+        
+    return standardize_sport_name(competition)
 
 
 def sync_matches_to_backend():
@@ -101,11 +144,13 @@ def sync_matches_to_backend():
         
         # Fetch all matches from pipeline with odds
         logger.info("Fetching matches and odds from pipeline database...")
+        
+        # First, get football matches
         pipeline_cur.execute("""
             SELECT 
-                m.match_id,
+                m.match_id::TEXT as match_id,
                 m.competition,
-                m.season,
+                m.season::TEXT as season,
                 m.date,
                 m.home_team,
                 m.away_team,
@@ -115,18 +160,60 @@ def sync_matches_to_backend():
                 m.status,
                 o.home_win,
                 o.draw,
-                o.away_win
+                o.away_win,
+                'SOCCER' as sport_type  -- Standardized sport type
             FROM matches m
             LEFT JOIN odds o ON m.match_id = o.match_id
             WHERE m.match_id IS NOT NULL
                 AND m.date IS NOT NULL
                 AND m.home_team IS NOT NULL
                 AND m.away_team IS NOT NULL
-            ORDER BY m.date DESC
+            
+            UNION ALL
+            
+            -- Add NBA games
+            SELECT 
+                game_id::TEXT as match_id,
+                sport_title as competition,
+                EXTRACT(YEAR FROM commence_time)::TEXT as season,
+                commence_time as date,
+                home_team,
+                away_team,
+                home_score,
+                away_score,
+                CASE 
+                    WHEN completed = true AND home_score > away_score THEN 'H'
+                    WHEN completed = true AND away_score > home_score THEN 'A'
+                    WHEN completed = true AND home_score = away_score THEN 'D'
+                    ELSE NULL
+                END as result,
+                CASE 
+                    WHEN completed = true THEN 'FINISHED'
+                    ELSE 'SCHEDULED'
+                END as status,
+                NULL as home_win,  -- These would come from NBA odds if available
+                NULL as draw,
+                NULL as away_win,
+                'BASKETBALL' as sport_type  -- Standardized sport type
+            FROM nba_games
+            WHERE commence_time IS NOT NULL
+                AND home_team IS NOT NULL
+                AND away_team IS NOT NULL
+            
+            ORDER BY date DESC
         """)
         
         matches = pipeline_cur.fetchall()
-        logger.info(f"Found {len(matches)} matches to sync")
+        logger.info(f"Found {len(matches)} matches to sync (including NBA games)")
+        
+        # Log count by sport type for debugging
+        match_types = {}
+        for match in matches:
+            sport_type = match[13] if len(match) > 13 else 'unknown'
+            match_types[sport_type] = match_types.get(sport_type, 0) + 1
+        
+        for sport_type, count in match_types.items():
+            logger.info(f"  - {sport_type}: {count} matches")
         
         if not matches:
             logger.warning("No matches to sync")
@@ -140,11 +227,14 @@ def sync_matches_to_backend():
         for match in matches:
             (match_id, competition, season, date, home_team, away_team,
              home_score, away_score, result, status, home_win_odds,
-             draw_odds, away_win_odds) = match
+             draw_odds, away_win_odds, sport_type) = match
             
             try:
-                # Determine sport from competition name
-                sport = get_sport_from_competition(competition)
+                # Standardize the sport type to match frontend constants and ensure uppercase
+                sport = standardize_sport_name(sport_type).upper()  # Force uppercase
+                
+                # Ensure sport is uppercase
+                sport = sport.upper() if sport else 'SOCCER'
                 
                 # Map status
                 status_map = {

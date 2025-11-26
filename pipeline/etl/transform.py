@@ -18,6 +18,7 @@ from config import (
     THE_ODDS_API_DIR,
     HISTORICAL_CSV_DIR,
     PROCESSED_DATA_DIR,
+    NBA_DATA_DIR,
     TEAM_FORM_WINDOW,
     LOG_LEVEL,
 )
@@ -349,50 +350,55 @@ def merge_odds_with_matches(matches_df: pd.DataFrame, odds_df: pd.DataFrame) -> 
     return merged
 
 
-def transform_data() -> None:
+def transform_data():
     """Main transformation pipeline."""
+    from etl.transform_nba_odds import transform_nba_data
+    
     logger.info("Starting data transformation")
     
+    # Ensure output directory exists
     ensure_dir(PROCESSED_DATA_DIR)
     
-    # Load raw data
-    football_data_files = list(FOOTBALL_DATA_ORG_DIR.glob("matches_*.json"))
-    odds_files = list(THE_ODDS_API_DIR.glob("odds_*.json"))
+    # Process football data
+    logger.info("Processing football data...")
+    football_data_org_files = list(FOOTBALL_DATA_ORG_DIR.glob("matches_*.json"))
+    the_odds_api_files = list(THE_ODDS_API_DIR.glob("odds_*.json"))
     
-    # Normalize data
-    matches_df = normalize_football_data_org_matches(football_data_files)
-    odds_df = normalize_the_odds_api_odds(odds_files)
-    historical_df = load_historical_csvs()
+    # Normalize data from different sources
+    football_matches = pd.DataFrame()
+    if football_data_org_files:
+        logger.info(f"Processing {len(football_data_org_files)} football-data.org files")
+        football_matches = normalize_football_data_org_matches(football_data_org_files)
     
-    # Combine matches
-    if not historical_df.empty:
-        matches_df = pd.concat([matches_df, historical_df], ignore_index=True)
+    odds_data = pd.DataFrame()
+    if the_odds_api_files:
+        logger.info(f"Processing {len(the_odds_api_files)} The Odds API files")
+        odds_data = normalize_the_odds_api_odds(the_odds_api_files)
     
-    if matches_df.empty:
-        logger.warning("No match data to transform")
-        return
+    # Load historical data
+    historical_data = load_historical_csvs()
     
-    # Remove rows without match_id (required for database)
-    matches_df = matches_df[matches_df["match_id"].notna()].copy()
+    # Combine all match data
+    all_matches = pd.concat([football_matches, historical_data], ignore_index=True)
     
-    # Remove duplicates
-    matches_df = matches_df.drop_duplicates(subset=["match_id"], keep="last")
+    if not all_matches.empty:
+        # Calculate features
+        all_matches = calculate_team_form(all_matches)
+        all_matches = calculate_goal_difference(all_matches)
+        
+        # Merge with odds if available
+        if not odds_data.empty:
+            all_matches = merge_odds_with_matches(all_matches, odds_data)
+        
+        # Save processed data
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        output_file = PROCESSED_DATA_DIR / f"matches_processed_{timestamp}.parquet"
+        all_matches.to_parquet(output_file, index=False)
+        logger.info(f"Saved processed football matches to {output_file}")
     
-    # Engineer features
-    matches_df = calculate_team_form(matches_df)
-    matches_df = calculate_goal_difference(matches_df)
-    matches_df = merge_odds_with_matches(matches_df, odds_df)
-    
-    # Save processed data
-    timestamp = get_timestamp_str("%Y-%m-%d")
-    matches_output = PROCESSED_DATA_DIR / f"matches_{timestamp}.parquet"
-    matches_df.to_parquet(matches_output, index=False)
-    logger.info(f"Saved {len(matches_df)} processed matches to {matches_output}")
-    
-    if not odds_df.empty:
-        odds_output = PROCESSED_DATA_DIR / f"odds_{timestamp}.parquet"
-        odds_df.to_parquet(odds_output, index=False)
-        logger.info(f"Saved {len(odds_df)} odds records to {odds_output}")
+    # Process NBA data
+    logger.info("Processing NBA data...")
+    nba_result = transform_nba_data()
     
     logger.info("Data transformation completed")
 

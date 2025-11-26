@@ -12,18 +12,34 @@ echo ========================================
 REM Activate virtual environment if you have one
 REM call venv\Scripts\activate
 
-REM Fetch new data
+REM Fetch football data
 echo.
-echo [1/5] Fetching raw data...
+echo [1/5] Fetching football data...
 python -m etl.fetch_raw_data
 if %errorlevel% neq 0 (
-    echo ERROR: Data fetch failed
+    echo WARNING: Football data fetch had issues, but continuing with other steps...
+)
+
+REM Fetch NBA data
+echo.
+echo [1.5/5] Fetching NBA data...
+python -m etl.fetch_nba_data_wrapper
+if %errorlevel% neq 0 (
+    echo WARNING: NBA data fetch had issues, but continuing with other steps...
+)
+
+REM Validate database schema
+echo.
+echo [3/6] Validating database schema...
+python check_schema.py --ensure nba_games
+if %errorlevel% neq 0 (
+    echo ERROR: Schema validation failed
     exit /b 1
 )
 
 REM Transform data
 echo.
-echo [2/5] Transforming data...
+echo [4/6] Transforming data...
 python -m etl.transform
 if %errorlevel% neq 0 (
     echo ERROR: Transform failed
@@ -32,7 +48,7 @@ if %errorlevel% neq 0 (
 
 REM Load to pipeline database
 echo.
-echo [3/5] Loading to pipeline database...
+echo [5/6] Loading to pipeline database...
 python -m etl.load_to_db
 if %errorlevel% neq 0 (
     echo ERROR: Database load failed
@@ -41,19 +57,10 @@ if %errorlevel% neq 0 (
 
 REM Sync to backend database
 echo.
-echo [4/5] Syncing to backend database...
+echo [6/6] Syncing to backend database...
 python sync_to_backend.py
 if %errorlevel% neq 0 (
     echo ERROR: Backend sync failed
-    exit /b 1
-)
-
-REM Generate predictions
-echo.
-echo [5/5] Generating predictions...
-python -m models.predict
-if %errorlevel% neq 0 (
-    echo ERROR: Prediction generation failed
     exit /b 1
 )
 

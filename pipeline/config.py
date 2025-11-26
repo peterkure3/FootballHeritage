@@ -35,6 +35,13 @@ THE_ODDS_API_BASE_URL = "https://api.the-odds-api.com/v4"
 NCAA_API_BASE_URL = "https://ncaa-api.henrygd.me"
 NCAA_RATE_LIMIT = 5  # requests per second
 
+# NBA API Configuration
+NBA_API_KEY = os.getenv("NBA_API_KEY", "YOUR_BALLDONTLIE_API_KEY")  # Get from https://www.balldontlie.io/
+NBA_API_BASE_URL = "https://api.balldontlie.io/v1"
+NBA_DATA_DIR = RAW_DATA_DIR / "nba"
+NBA_SEASONS = [2024]  # Current NBA season
+NBA_CACHE_TTL = 3600  # 1 hour cache TTL
+
 # API Request Configuration
 API_TIMEOUT = 30  # seconds
 API_RETRY_ATTEMPTS = 3
@@ -126,6 +133,7 @@ ODDS_API_SPORTS = [
     "soccer_germany_bundesliga", # Bundesliga
     "soccer_italy_serie_a",    # Serie A
     "soccer_france_ligue_one", # Ligue 1
+    "basketball_nba",          # NBA
 ]
 ODDS_API_SPORT = "soccer_epl"  # Default sport
 ODDS_API_REGIONS = "uk,us,eu"
