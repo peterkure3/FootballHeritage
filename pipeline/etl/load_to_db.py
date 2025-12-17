@@ -194,6 +194,14 @@ def upsert_matches(df: pd.DataFrame, engine) -> None:
         id_column="match_id",
         date_columns=["date", "season"]
     )
+
+    # Drop rows with null match_id to satisfy NOT NULL constraint in the database
+    if "match_id" in df_to_load.columns:
+        before_count = len(df_to_load)
+        df_to_load = df_to_load[df_to_load["match_id"].notna()]
+        dropped_null_ids = before_count - len(df_to_load)
+        if dropped_null_ids > 0:
+            logger.warning(f"Dropped {dropped_null_ids} rows with null match_id before upsert")
     
     if df_to_load.empty:
         logger.warning("No valid matches data to load after processing")

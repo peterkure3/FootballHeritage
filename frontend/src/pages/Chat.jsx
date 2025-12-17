@@ -73,7 +73,7 @@ const Chat = () => {
       }
 
       // Call chat API
-      const response = await fetch('http://localhost:8080/api/v1/chat', {
+      const response = await fetch('http://localhost:3000/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

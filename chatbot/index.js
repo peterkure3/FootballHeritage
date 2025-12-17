@@ -18,7 +18,7 @@ import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
-import { chatFlow } from './flows/chat.js';
+import { ragChatFlow } from './flows/chat-rag.js';
 
 // Load environment variables
 dotenv.config();
@@ -61,10 +61,10 @@ app.use(cors({
 // Body parser
 app.use(express.json({ limit: '10kb' })); // Limit payload size for security
 
-// Rate limiting - 20 requests per minute per IP
+// Rate limiting - 12 requests per minute per IP
 const limiter = rateLimit({
   windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 60000,
-  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 20,
+  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 12,
   message: {
     error: 'Too many requests from this IP, please try again later.',
   },
@@ -156,8 +156,8 @@ app.post('/chat', authenticateToken, async (req, res) => {
 
     console.log(`[${new Date().toISOString()}] Chat request from user ${req.userId}: "${sanitizedPrompt.substring(0, 50)}..."`);
 
-    // Call Genkit chat flow
-    const result = await chatFlow({
+    // Call RAG chat flow
+    const result = await ragChatFlow({
       prompt: sanitizedPrompt,
       userId: req.userId,
     });

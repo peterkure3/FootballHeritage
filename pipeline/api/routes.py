@@ -176,7 +176,7 @@ async def get_matches(
         query_str += """
             GROUP BY m.match_id, m.competition, m.date, m.home_team, 
                      m.away_team, m.home_score, m.away_score, m.status
-            ORDER BY m.date DESC
+            ORDER BY m.date DESC NULLS LAST, m.match_id DESC
             LIMIT :limit
         """
         params["limit"] = limit

@@ -22,9 +22,9 @@ import toast from 'react-hot-toast';
  *   console.log(`Home win probability: ${prediction.home_prob * 100}%`);
  * }
  */
-export const usePrediction = (matchId) => {
+export const usePrediction = (matchId, refreshKey = 0) => {
   return useQuery({
-    queryKey: ['prediction', matchId],
+    queryKey: ['prediction', matchId, refreshKey],
     queryFn: () => predictionService.getPrediction(matchId),
     enabled: !!matchId, // Only fetch if matchId exists
     staleTime: 60000, // 1 minute - predictions don't change frequently

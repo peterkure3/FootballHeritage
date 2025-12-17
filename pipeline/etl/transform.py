@@ -389,6 +389,15 @@ def transform_data():
         # Merge with odds if available
         if not odds_data.empty:
             all_matches = merge_odds_with_matches(all_matches, odds_data)
+
+        # Cleanup: remove rows with missing critical fields before saving
+        critical_columns = [col for col in ["match_id", "home_team", "away_team"] if col in all_matches.columns]
+        if critical_columns:
+            before_count = len(all_matches)
+            all_matches = all_matches.dropna(subset=critical_columns)
+            removed_count = before_count - len(all_matches)
+            if removed_count > 0:
+                logger.info(f"Removed {removed_count} rows with missing critical data before saving processed matches")
         
         # Save processed data
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")

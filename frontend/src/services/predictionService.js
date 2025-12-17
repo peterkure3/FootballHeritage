@@ -7,6 +7,23 @@
 
 const PIPELINE_API_URL = import.meta.env.VITE_PIPELINE_API_URL || 'http://localhost:5555/api/v1';
 
+const toNumber = (value) => {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : null;
+};
+
+const impliedProbabilityFromAmerican = (value) => {
+  const odds = toNumber(value);
+  if (odds === null || odds === 0) return null;
+
+  if (odds > 0) {
+    return 100 / (odds + 100);
+  }
+
+  const absOdds = Math.abs(odds);
+  return absOdds / (absOdds + 100);
+};
+
 export const predictionService = {
   /**
    * Get prediction for a specific match
@@ -19,6 +36,7 @@ export const predictionService = {
     try {
       const response = await fetch(`${PIPELINE_API_URL}/predictions/${matchId}`, {
         method: 'GET',
+        cache: 'no-store',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -62,9 +80,13 @@ export const predictionService = {
       if (filters.limit) {
         params.append('limit', filters.limit.toString());
       }
+
+      if (filters._t) {
+        params.append('_t', String(filters._t));
+      }
       
       const url = `${PIPELINE_API_URL}/matches${params.toString() ? '?' + params.toString() : ''}`;
-      const response = await fetch(url);
+      const response = await fetch(url, { cache: 'no-store' });
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -172,27 +194,36 @@ export const predictionService = {
     if (!prediction || !odds) {
       return null;
     }
-    
-    const homeEdge = (prediction.home_prob * odds.home_win) - 1;
-    const drawEdge = (prediction.draw_prob * odds.draw) - 1;
-    const awayEdge = (prediction.away_prob * odds.away_win) - 1;
-    
+
+    const homeOdds = toNumber(odds.home_win);
+    const awayOdds = toNumber(odds.away_win);
+
+    const homeImplied = impliedProbabilityFromAmerican(homeOdds);
+    const awayImplied = impliedProbabilityFromAmerican(awayOdds);
+
+    const homeEdge = (typeof prediction.home_prob === 'number' && homeImplied != null)
+      ? prediction.home_prob - homeImplied
+      : null;
+
+    const awayEdge = (typeof prediction.away_prob === 'number' && awayImplied != null)
+      ? prediction.away_prob - awayImplied
+      : null;
+
     const edges = [
-      { outcome: 'home', edge: homeEdge, probability: prediction.home_prob },
-      { outcome: 'draw', edge: drawEdge, probability: prediction.draw_prob },
-      { outcome: 'away', edge: awayEdge, probability: prediction.away_prob }
-    ];
-    
-    // Find best value bet
-    const bestBet = edges.reduce((best, current) => 
-      current.edge > best.edge ? current : best
-    );
-    
+      { outcome: 'home', edge: homeEdge, probability: prediction.home_prob, implied: homeImplied, odds: homeOdds },
+      { outcome: 'away', edge: awayEdge, probability: prediction.away_prob, implied: awayImplied, odds: awayOdds },
+    ].filter((item) => typeof item.edge === 'number' && Number.isFinite(item.edge));
+
+    const bestBet = edges.sort((a, b) => b.edge - a.edge)[0] || null;
+
     return {
       home: homeEdge,
-      draw: drawEdge,
       away: awayEdge,
-      bestBet: bestBet.edge > 0 ? bestBet : null
+      implied: {
+        home: homeImplied,
+        away: awayImplied,
+      },
+      bestBet: bestBet && bestBet.edge > 0 ? bestBet : null,
     };
   }
 };

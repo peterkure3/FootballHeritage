@@ -8,6 +8,29 @@ import {
   useBettingEdge,
 } from '../hooks/usePredictions';
 
+const toNumber = (value) => {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : null;
+};
+
+const formatAmericanOdds = (value) => {
+  const n = toNumber(value);
+  if (n === null || n === 0) return '--';
+  return n > 0 ? `+${Math.round(n)}` : `${Math.round(n)}`;
+};
+
+const impliedProbabilityFromAmerican = (value) => {
+  const odds = toNumber(value);
+  if (odds === null || odds === 0) return null;
+
+  if (odds > 0) {
+    return 100 / (odds + 100);
+  }
+
+  const absOdds = Math.abs(odds);
+  return absOdds / (absOdds + 100);
+};
+
 const formatDateTime = (value) => {
   if (!value) return 'TBD';
   try {
@@ -25,13 +48,46 @@ const formatDateTime = (value) => {
 const Predictions = () => {
   const [homeTeam, setHomeTeam] = useState('');
   const [awayTeam, setAwayTeam] = useState('');
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const {
     data: matches = [],
     isLoading: matchesLoading,
     isError: matchesError,
     refetch: refetchMatches,
-  } = usePipelineMatches({ limit: 6 });
+  } = usePipelineMatches({ limit: 30, _t: refreshKey });
+
+  const upcomingMatches = useMemo(() => {
+    const now = Date.now();
+    const graceMs = 2 * 60 * 60 * 1000;
+    const allowedStatuses = new Set(['UPCOMING', 'SCHEDULED', 'NOT_STARTED', 'PRE', 'PREGAME']);
+
+    return (matches || [])
+      .filter((match) => {
+        const rawStatus = match?.status ? String(match.status).toUpperCase() : null;
+        if (rawStatus && (rawStatus === 'FINISHED' || rawStatus === 'CANCELLED')) {
+          return false;
+        }
+
+        const dateValue = match?.date ?? match?.event_date ?? match?.start_time;
+        const time = dateValue ? new Date(dateValue).getTime() : null;
+        const isFutureOrRecent = typeof time === 'number' && Number.isFinite(time) ? time > (now - graceMs) : null;
+
+        // If status says it's upcoming-like, trust it even if the time is missing/invalid.
+        if (rawStatus && (allowedStatuses.has(rawStatus) || rawStatus === 'LIVE')) {
+          return isFutureOrRecent === null ? true : isFutureOrRecent;
+        }
+
+        // Otherwise: only keep if we have a valid time and it's not in the past (with grace)
+        return isFutureOrRecent === null ? false : isFutureOrRecent;
+      })
+      .sort((a, b) => {
+        const ta = new Date(a?.date ?? a?.event_date ?? a?.start_time ?? 0).getTime();
+        const tb = new Date(b?.date ?? b?.event_date ?? b?.start_time ?? 0).getTime();
+        return ta - tb;
+      })
+      .slice(0, 6);
+  }, [matches]);
 
   const {
     data: matchupPrediction,
@@ -69,7 +125,10 @@ const Predictions = () => {
               <p className="text-gray-500 text-sm">Pulled directly from the pipeline API (auto-refreshes every minute)</p>
             </div>
             <button
-              onClick={() => refetchMatches()}
+              onClick={() => {
+                setRefreshKey((value) => value + 1);
+                refetchMatches();
+              }}
               className="self-start md:self-auto inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-800 text-white font-semibold border border-gray-700 hover:bg-gray-700"
             >
               <svg className={`w-4 h-4 ${matchesLoading ? 'animate-spin' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -98,10 +157,14 @@ const Predictions = () => {
             <div className="rounded-xl border border-gray-800 bg-gray-850 p-10 text-center text-gray-400">
               No pipeline matches available right now. Check back shortly.
             </div>
+          ) : upcomingMatches.length === 0 ? (
+            <div className="rounded-xl border border-gray-800 bg-gray-850 p-10 text-center text-gray-400">
+              No upcoming matches found. Try refreshing after the next pipeline sync.
+            </div>
           ) : (
             <div className="grid gap-6 md:grid-cols-2">
-              {matches.map((match) => (
-                <PredictionCard key={match.match_id || match.external_id} match={match} />
+              {upcomingMatches.map((match) => (
+                <PredictionCard key={match.match_id || match.external_id} match={match} refreshKey={refreshKey} />
               ))}
             </div>
           )}
@@ -211,20 +274,23 @@ const ProbabilityBar = ({ label, value }) => {
   );
 };
 
-const PredictionCard = ({ match }) => {
+const PredictionCard = ({ match, refreshKey }) => {
   const matchId = match?.match_id || match?.external_id;
-  const { data: prediction, isLoading } = usePrediction(matchId);
+  const { data: prediction, isLoading } = usePrediction(matchId, refreshKey);
 
   const odds = useMemo(
     () => ({
-      home_win: match?.home_win_odds ? Number(match.home_win_odds) : null,
-      draw: match?.draw_odds ? Number(match.draw_odds) : null,
-      away_win: match?.away_win_odds ? Number(match.away_win_odds) : null,
+      home: toNumber(match?.moneyline_home ?? match?.home_moneyline ?? match?.home_ml ?? match?.home_win_odds),
+      away: toNumber(match?.moneyline_away ?? match?.away_moneyline ?? match?.away_ml ?? match?.away_win_odds),
     }),
     [match]
   );
 
-  const edge = useBettingEdge(prediction, odds);
+  const edge = useBettingEdge(prediction, {
+    home_win: odds.home,
+    draw: null,
+    away_win: odds.away,
+  });
   const bestBet = edge?.bestBet;
 
   return (
@@ -245,19 +311,43 @@ const PredictionCard = ({ match }) => {
       </div>
 
       <div className="grid grid-cols-3 gap-3">
-        {['home_team', 'draw', 'away_team'].map((key) => (
-          <div key={key} className="bg-gray-900/60 rounded-xl border border-gray-800 p-3 text-center">
-            <p className="text-xs uppercase text-gray-500 mb-1">
-              {key === 'home_team' ? 'Home' : key === 'away_team' ? 'Away' : 'Draw'}
-            </p>
-            <p className="text-white font-semibold text-lg">
-              {key === 'draw'
-                ? odds.draw?.toFixed(2) || '--'
-                : odds[key === 'home_team' ? 'home_win' : 'away_win']?.toFixed(2) || '--'}
-            </p>
-            <p className="text-gray-500 text-xs">decimal odds</p>
-          </div>
-        ))}
+        <div className="bg-gray-900/60 rounded-xl border border-gray-800 p-3 text-center">
+          <p className="text-xs uppercase text-gray-500 mb-1">Home ML</p>
+          <p className="text-white font-semibold text-lg">{formatAmericanOdds(odds.home)}</p>
+          <p className="text-gray-500 text-xs">moneyline</p>
+        </div>
+        <div className="bg-gray-900/60 rounded-xl border border-gray-800 p-3 text-center">
+          <p className="text-xs uppercase text-gray-500 mb-1">Away ML</p>
+          <p className="text-white font-semibold text-lg">{formatAmericanOdds(odds.away)}</p>
+          <p className="text-gray-500 text-xs">moneyline</p>
+        </div>
+        <div className="bg-gray-900/60 rounded-xl border border-gray-800 p-3 text-center">
+          <p className="text-xs uppercase text-gray-500 mb-1">Best Edge</p>
+          {(() => {
+            const homeImplied = impliedProbabilityFromAmerican(odds.home);
+            const awayImplied = impliedProbabilityFromAmerican(odds.away);
+            const homeEdge = prediction?.home_prob != null && homeImplied != null ? prediction.home_prob - homeImplied : null;
+            const awayEdge = prediction?.away_prob != null && awayImplied != null ? prediction.away_prob - awayImplied : null;
+            const best = [
+              { side: 'home', value: homeEdge },
+              { side: 'away', value: awayEdge },
+            ].filter((item) => typeof item.value === 'number' && Number.isFinite(item.value))
+              .sort((a, b) => b.value - a.value)[0];
+
+            if (!best) {
+              return <p className="text-white font-semibold text-lg">--</p>;
+            }
+
+            const pct = Math.round(best.value * 1000) / 10;
+            const color = best.value > 0 ? 'text-green-300' : 'text-gray-300';
+            return (
+              <p className={`font-semibold text-lg ${color}`}>
+                {best.side === 'home' ? 'Home' : 'Away'} {pct > 0 ? '+' : ''}{pct}%
+              </p>
+            );
+          })()}
+          <p className="text-gray-500 text-xs">model - implied</p>
+        </div>
       </div>
 
       <div className="space-y-3">
@@ -266,7 +356,6 @@ const PredictionCard = ({ match }) => {
         ) : prediction ? (
           <>
             <ProbabilityBar label={`Home win (${match.home_team})`} value={prediction.home_prob} />
-            <ProbabilityBar label="Draw" value={prediction.draw_prob} />
             <ProbabilityBar label={`Away win (${match.away_team})`} value={prediction.away_prob} />
           </>
         ) : (
@@ -280,7 +369,6 @@ const PredictionCard = ({ match }) => {
           <p className="text-white font-semibold">
             {bestBet.outcome === 'home' && match.home_team}
             {bestBet.outcome === 'away' && match.away_team}
-            {bestBet.outcome === 'draw' && 'Draw'}
             <span className="text-green-300 text-sm font-normal"> · {Math.round(bestBet.edge * 100)}% edge</span>
           </p>
         </div>
