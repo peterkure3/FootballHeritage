@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import Navbar from '../components/Navbar';
 import {
@@ -49,6 +49,8 @@ const Predictions = () => {
   const [homeTeam, setHomeTeam] = useState('');
   const [awayTeam, setAwayTeam] = useState('');
   const [refreshKey, setRefreshKey] = useState(0);
+  const [matchesPage, setMatchesPage] = useState(1);
+  const matchesPerPage = 6;
 
   const {
     data: matches = [],
@@ -85,9 +87,31 @@ const Predictions = () => {
         const ta = new Date(a?.date ?? a?.event_date ?? a?.start_time ?? 0).getTime();
         const tb = new Date(b?.date ?? b?.event_date ?? b?.start_time ?? 0).getTime();
         return ta - tb;
-      })
-      .slice(0, 6);
+      });
   }, [matches]);
+
+  useEffect(() => {
+    setMatchesPage(1);
+  }, [refreshKey, upcomingMatches.length]);
+
+  const totalPages = Math.max(1, Math.ceil(upcomingMatches.length / matchesPerPage));
+  const clampedPage = Math.min(matchesPage, totalPages);
+  const startIndex = (clampedPage - 1) * matchesPerPage;
+  const pagedUpcomingMatches = useMemo(
+    () => upcomingMatches.slice(startIndex, startIndex + matchesPerPage),
+    [upcomingMatches, startIndex, matchesPerPage]
+  );
+
+  const pageNumbers = useMemo(() => {
+    const maxButtons = 5;
+    if (totalPages <= maxButtons) {
+      return Array.from({ length: totalPages }, (_, idx) => idx + 1);
+    }
+
+    const half = Math.floor(maxButtons / 2);
+    const start = Math.max(1, Math.min(clampedPage - half, totalPages - maxButtons + 1));
+    return Array.from({ length: maxButtons }, (_, idx) => start + idx);
+  }, [clampedPage, totalPages]);
 
   const {
     data: matchupPrediction,
@@ -162,10 +186,77 @@ const Predictions = () => {
               No upcoming matches found. Try refreshing after the next pipeline sync.
             </div>
           ) : (
-            <div className="grid gap-6 md:grid-cols-2">
-              {upcomingMatches.map((match) => (
-                <PredictionCard key={match.match_id || match.external_id} match={match} refreshKey={refreshKey} />
-              ))}
+            <div>
+              <div className="grid gap-6 md:grid-cols-2">
+                {pagedUpcomingMatches.map((match) => (
+                  <PredictionCard key={match.match_id || match.external_id} match={match} refreshKey={refreshKey} />
+                ))}
+              </div>
+
+              <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-sm text-gray-500">
+                  Showing <span className="text-gray-200">{Math.min(upcomingMatches.length, startIndex + 1)}</span>-
+                  <span className="text-gray-200">{Math.min(upcomingMatches.length, startIndex + pagedUpcomingMatches.length)}</span>{' '}
+                  of <span className="text-gray-200">{upcomingMatches.length}</span>
+                </p>
+
+                <div className="flex flex-wrap items-center gap-2 justify-start sm:justify-end">
+                  <button
+                    type="button"
+                    onClick={() => setMatchesPage((page) => Math.max(1, page - 1))}
+                    disabled={clampedPage <= 1}
+                    className="px-3 py-2 rounded-lg bg-gray-800 text-white text-sm font-semibold border border-gray-700 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Prev
+                  </button>
+
+                  {pageNumbers[0] !== 1 && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => setMatchesPage(1)}
+                        className={`px-3 py-2 rounded-lg text-sm font-semibold border ${clampedPage === 1 ? 'bg-green-500 text-white border-green-500' : 'bg-gray-800 text-white border-gray-700 hover:bg-gray-700'}`}
+                      >
+                        1
+                      </button>
+                      <span className="px-1 text-gray-600">…</span>
+                    </>
+                  )}
+
+                  {pageNumbers.map((page) => (
+                    <button
+                      key={page}
+                      type="button"
+                      onClick={() => setMatchesPage(page)}
+                      className={`px-3 py-2 rounded-lg text-sm font-semibold border ${clampedPage === page ? 'bg-green-500 text-white border-green-500' : 'bg-gray-800 text-white border-gray-700 hover:bg-gray-700'}`}
+                    >
+                      {page}
+                    </button>
+                  ))}
+
+                  {pageNumbers[pageNumbers.length - 1] !== totalPages && (
+                    <>
+                      <span className="px-1 text-gray-600">…</span>
+                      <button
+                        type="button"
+                        onClick={() => setMatchesPage(totalPages)}
+                        className={`px-3 py-2 rounded-lg text-sm font-semibold border ${clampedPage === totalPages ? 'bg-green-500 text-white border-green-500' : 'bg-gray-800 text-white border-gray-700 hover:bg-gray-700'}`}
+                      >
+                        {totalPages}
+                      </button>
+                    </>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={() => setMatchesPage((page) => Math.min(totalPages, page + 1))}
+                    disabled={clampedPage >= totalPages}
+                    className="px-3 py-2 rounded-lg bg-gray-800 text-white text-sm font-semibold border border-gray-700 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
             </div>
           )}
         </section>
