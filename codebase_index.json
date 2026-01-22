@@ -1,0 +1,332 @@
+{
+  "project_name": "Football Heritage Betting Platform",
+  "generated_at": "2026-01-22T16:20:00Z",
+  "repository": "peterkure3/FootballHeritage",
+  "summary": {
+    "description": "A full-stack sports betting platform with real-time odds, parlay calculator, admin dashboard, AI-powered chatbot, and ML-driven matchup predictions",
+    "tech_stack": {
+      "backend": "Rust (Actix-web)",
+      "frontend": "React 19 with Vite",
+      "database": "PostgreSQL",
+      "styling": "TailwindCSS 4",
+      "state_management": "Zustand",
+      "data_fetching": "TanStack React Query",
+      "ml_pipeline": "Python FastAPI service exposed at /api/v1"
+    }
+  },
+  "backend": {
+    "language": "Rust",
+    "framework": "Actix-web 4.4.0",
+    "runtime": "Tokio async runtime",
+    "database": "PostgreSQL with SQLx",
+    "authentication": "JWT with Argon2 password hashing",
+    "security": [
+      "AES-GCM encryption for sensitive data",
+      "Rate limiting with Governor",
+      "HTTPS with Rustls",
+      "Security headers middleware",
+      "Admin role-based access control"
+    ],
+    "core_modules": {
+      "auth.rs": "Authentication service with JWT token generation and session management",
+      "betting_simple.rs": "Betting service with transaction handling, wallet management, and responsible gambling limits",
+      "config.rs": "Application configuration management",
+      "crypto.rs": "Cryptographic service for encrypting/decrypting sensitive data (wallet balances)",
+      "db.rs": "Database connection and pool management",
+      "errors.rs": "Centralized error handling with custom error types",
+      "models.rs": "Data models and request/response structures",
+      "monitoring.rs": "Application monitoring and metrics",
+      "rates.rs": "Rate limiting configuration and management",
+      "utils.rs": "Utility functions"
+    },
+    "handlers": {
+      "auth.rs": "User authentication endpoints (login, register, logout, refresh token)",
+      "betting.rs": "Betting operations (place bet, get bets, cancel bet)",
+      "chat.rs": "AI chatbot integration endpoints",
+      "health.rs": "Health check endpoint",
+      "limits.rs": "Responsible gambling limits management",
+      "monitoring.rs": "System monitoring endpoints",
+      "not_found.rs": "404 handler",
+      "parlay.rs": "Parlay bet calculator and management",
+      "sports.rs": "Sports data and events endpoints",
+      "user.rs": "User profile management",
+      "wallet.rs": "Wallet operations (deposit, withdraw, balance)",
+      "admin": {
+        "analytics.rs": "Admin analytics and reporting",
+        "bets.rs": "Admin bet management and oversight",
+        "events.rs": "Admin event creation and management",
+        "monitoring.rs": "Admin system monitoring",
+        "users.rs": "Admin user management"
+      }
+    },
+    "middleware": {
+      "admin_auth.rs": "Admin authentication and authorization middleware",
+      "jwt_auth.rs": "JWT token validation middleware",
+      "rate_limit.rs": "Rate limiting middleware",
+      "security_headers.rs": "Security headers injection middleware"
+    },
+    "database_migrations": [
+      "20251023150910_real_sports_data.sql",
+      "20251024000001_add_admin_system.sql",
+      "20251025000001_add_external_tracking.sql",
+      "20251027000001_add_parlay_calculator.sql"
+    ],
+    "key_features": [
+      "User registration and authentication with age verification",
+      "Wallet management with encrypted balances",
+      "Sports betting with real-time odds",
+      "Parlay bet calculator",
+      "Responsible gambling limits",
+      "Admin dashboard with analytics",
+      "AI-powered sports chatbot",
+      "Fraud detection and monitoring",
+      "Transaction history and audit logs"
+    ]
+  },
+  "frontend": {
+    "framework": "React 19.1.1",
+    "build_tool": "Vite 7.1.7",
+    "routing": "React Router DOM 7.9.4",
+    "styling": "TailwindCSS 4.1.14",
+    "state_management": "Zustand 5.0.8",
+    "data_fetching": "TanStack React Query 5.90.5",
+    "ui_libraries": [
+      "Lucide React (icons)",
+      "React Hot Toast (notifications)"
+    ],
+    "validation": "Zod 4.1.12",
+    "pages": {
+      "public": [
+        "Login.jsx - User login page",
+        "Register.jsx - User registration with age verification"
+      ],
+      "user": [
+        "Dashboard.jsx - User dashboard with wallet and quick actions",
+        "Profile.jsx - User profile management",
+        "Odds.jsx - Live betting odds display",
+        "BetHistory.jsx - User bet history and tracking",
+        "Chat.jsx - AI chatbot interface",
+        "Sports.jsx - Sports events and betting interface",
+        "ParlayCalculator.jsx - Parlay bet calculator",
+        "Predictions.jsx - ML-powered match insights and what-if simulator"
+      ],
+      "admin": [
+        "AdminDashboard.jsx - Admin overview with KPIs and metrics",
+        "AdminBets.jsx - Bet management interface",
+        "AdminEvents.jsx - Event creation and management",
+        "AdminUsers.jsx - User management and fraud detection",
+        "AdminAnalytics.jsx - Analytics and reporting",
+        "AdminRevenue.jsx - Revenue tracking",
+        "AdminSettings.jsx - System settings",
+        "AdminLogs.jsx - System logs viewer",
+        "AdminSportsGPT.jsx - AI chatbot management"
+      ]
+    },
+    "components": {
+      "shared": [
+        "Navbar.jsx - Main navigation bar",
+        "ErrorBoundary.jsx - Error boundary wrapper",
+        "LoadingSkeleton.jsx - Loading state components",
+        "EmptyState.jsx - Empty state displays"
+      ],
+      "betting": [
+        "BetCard.jsx - Individual bet display card",
+        "BetConfirmationModal.jsx - Bet confirmation dialog",
+        "BetManagement.jsx - Bet management interface",
+        "OddsRow.jsx - Odds display row"
+      ],
+      "wallet": [
+        "WalletModal.jsx - Wallet operations modal"
+      ],
+      "admin": [
+        "AdminLayout.jsx - Admin page layout wrapper",
+        "AdminNavbar.jsx - Admin navigation bar",
+        "AdminSidebar.jsx - Admin sidebar navigation",
+        "AdminChatbot.jsx - Admin chatbot interface",
+        "KPIDashboard.jsx - KPI metrics display",
+        "FraudAlerts.jsx - Fraud detection alerts",
+        "UserDetailsModal.jsx - User details modal",
+        "WithdrawalQueue.jsx - Withdrawal queue management",
+        "RecentActivity.jsx - Recent activity feed"
+      ],
+      "parlay": [
+        "ParlayBetLeg.jsx - Individual parlay leg component",
+        "ParlayBuilderSidebar.jsx - Parlay builder sidebar",
+        "ParlayResults.jsx - Parlay calculation results"
+      ],
+      "modals": [
+        "AgeVerificationModal.jsx - Age verification dialog",
+        "EventFormModal.jsx - Event creation/edit form"
+      ],
+      "role": [
+        "RoleSwitcher.jsx - Admin/user role switcher"
+      ]
+    },
+    "hooks": {
+      "useAuth.js": "Authentication state and operations",
+      "useBetting.js": "Betting operations and state",
+      "useParlayCalculator.js": "Parlay calculator logic",
+      "useParlayData.js": "Parlay data fetching"
+    },
+    "stores": {
+      "authStore.js": "Authentication state management",
+      "bettingStore.js": "Betting state management",
+      "parlayStore.js": "Parlay state management",
+      "settingsStore.js": "Application settings"
+    },
+    "utils": {
+      "api.js": "API client and request helpers",
+      "validation.js": "Form validation utilities"
+    },
+    "key_features": [
+      "Responsive design with TailwindCSS",
+      "Real-time updates with React Query",
+      "Protected routes with authentication",
+      "Admin and user role separation",
+      "Toast notifications for user feedback",
+      "Error boundaries for graceful error handling",
+      "Age verification on registration",
+      "Wallet management interface",
+      "Live odds display",
+      "Parlay bet builder",
+      "Admin analytics dashboard",
+      "User fraud detection",
+      "Withdrawal queue management"
+    ]
+  },
+  "additional_components": {
+    "chatbot": {
+      "description": "AI-powered sports betting chatbot",
+      "files": [
+        "index.js - Chatbot server entry point",
+        "flows/ - Conversation flows"
+      ]
+    },
+    "documentation": [
+      "README.md - Main project documentation",
+      "QUICK_START.md - Quick start guide",
+      "SETUP_GUIDE.md - Detailed setup instructions",
+      "CHATBOT_SETUP_GUIDE.md - Chatbot integration guide",
+      "PARLAY_INTEGRATION_GUIDE.md - Parlay feature guide",
+      "PIPELINE_INTEGRATION_GUIDE.md - CI/CD pipeline guide",
+      "ADMIN_DASHBOARD_COMPLETE.md - Admin dashboard documentation",
+      "COMPLETED_FEATURES.md - Feature completion status",
+      "IMPLEMENTATION_SUMMARY.md - Implementation overview"
+    ]
+  },
+  "architecture": {
+    "pattern": "Full-stack monorepo with separate frontend and backend",
+    "communication": "RESTful API with JSON",
+    "authentication": "JWT bearer tokens",
+    "data_encryption": "AES-GCM for sensitive data at rest",
+    "deployment": "Separate frontend and backend deployments",
+    "security_layers": [
+      "HTTPS/TLS encryption",
+      "JWT authentication",
+      "Rate limiting",
+      "CORS protection",
+      "Security headers",
+      "Role-based access control",
+      "Password strength validation",
+      "Account lockout on failed attempts"
+    ]
+  },
+  "database_schema": {
+    "main_tables": [
+      "users - User accounts and authentication",
+      "wallets - User wallet balances (encrypted)",
+      "events - Sports events for betting",
+      "bets - User bets and outcomes",
+      "transactions - Wallet transactions",
+      "parlay_bets - Parlay bet combinations",
+      "responsible_gambling_limits - User betting limits",
+      "admin_logs - Admin action audit trail",
+      "chat_messages - Chatbot conversation history"
+    ]
+  },
+  "api_endpoints_summary": {
+    "authentication": [
+      "POST /api/v1/auth/register",
+      "POST /api/v1/auth/login",
+      "POST /api/v1/auth/logout",
+      "POST /api/v1/auth/refresh"
+    ],
+    "betting": [
+      "POST /api/v1/betting/bets",
+      "GET /api/v1/betting/bets",
+      "GET /api/v1/betting/bets/{id}"
+    ],
+    "wallet": [
+      "GET /api/v1/wallet/balance",
+      "POST /api/v1/wallet/deposit",
+      "POST /api/v1/wallet/withdraw",
+      "GET /api/v1/wallet/transactions"
+    ],
+    "sports": [
+      "GET /api/v1/sports",
+      "GET /api/v1/sports/categories",
+      "GET /api/v1/sports/{sport}/leagues",
+      "GET /api/v1/betting/events"
+    ],
+    "parlay": [
+      "POST /api/v1/parlay/calculate",
+      "POST /api/v1/parlay/save",
+      "GET /api/v1/parlay/saved",
+      "GET /api/v1/parlay/history",
+      "GET /api/v1/parlay/{id}",
+      "DELETE /api/v1/parlay/{id}"
+    ],
+    "admin": [
+      "GET /api/v1/admin/analytics/dashboard",
+      "GET /api/v1/admin/users",
+      "GET /api/v1/admin/users/{id}",
+      "PUT /api/v1/admin/users/{id}/status",
+      "PUT /api/v1/admin/users/{id}/verify",
+      "GET /api/v1/admin/events",
+      "POST /api/v1/admin/events",
+      "GET /api/v1/admin/events/{id}",
+      "PUT /api/v1/admin/events/{id}",
+      "DELETE /api/v1/admin/events/{id}",
+      "PUT /api/v1/admin/events/{id}/status",
+      "GET /api/v1/admin/monitoring/fraud-alerts",
+      "GET /api/v1/admin/monitoring/audit-logs"
+    ],
+    "user": [
+      "GET /api/v1/user/profile",
+      "PUT /api/v1/user/profile",
+      "GET /api/v1/limits/",
+      "PUT /api/v1/limits/",
+      "POST /api/v1/limits/self-exclude",
+      "GET /api/v1/user/activity",
+      "PUT /api/v1/user/password"
+    ],
+    "chat": [
+      "POST /api/v1/chat",
+      "GET /api/v1/chat/health"
+    ]
+  },
+  "development": {
+    "backend_commands": {
+      "dev": "cargo run",
+      "build": "cargo build --release",
+      "test": "cargo test"
+    },
+    "frontend_commands": {
+      "dev": "npm run dev",
+      "build": "npm run build",
+      "preview": "npm run preview",
+      "lint": "npm run lint"
+    }
+  },
+  "ml_pipeline": {
+    "language": "Python 3",
+    "framework": "FastAPI with SQLAlchemy",
+    "endpoints": [
+      "GET /api/v1/matches - Upcoming matches with odds",
+      "GET /api/v1/predictions/{match_id} - Stored model output",
+      "GET /api/v1/predict-matchup - On-demand what-if prediction",
+      "GET /api/v1/health - Pipeline health stats"
+    ],
+    "notes": "Pipeline API CORS is configured via API_ALLOWED_ORIGINS and does not use wildcard origins. SQLAlchemy engine is created once and reused. Predict-matchup errors return generic 500 responses (details logged server-side)."
+  }
+}
