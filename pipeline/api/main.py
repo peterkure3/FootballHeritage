@@ -12,6 +12,7 @@ import uvicorn
 sys.path.append(str(Path(__file__).parent.parent))
 
 from config import API_HOST, API_PORT, API_TITLE, API_VERSION, API_DESCRIPTION
+from config import API_ALLOWED_ORIGINS
 from api.routes import router
 
 # Create FastAPI app
@@ -26,8 +27,8 @@ app = FastAPI(
 # allow_origins=["https://yourdomain.com", "https://app.yourdomain.com"]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins (change for production)
-    allow_credentials=True,
+    allow_origins=API_ALLOWED_ORIGINS,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )

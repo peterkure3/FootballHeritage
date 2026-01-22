@@ -2,78 +2,22 @@
 const API_BASE_URL =
   import.meta.env.VITE_API_URL || "http://localhost:8080/api/v1";
 
-// Encryption key for localStorage (in production, use a more robust solution)
 const STORAGE_KEY = "token";
-const CSRF_TOKEN_KEY = "betting_csrf_token";
-
-// Simple XOR encryption for localStorage (basic obfuscation)
-const encryptToken = (token) => {
-  const key = "BettingSecureKey2024";
-  let encrypted = "";
-  for (let i = 0; i < token.length; i++) {
-    encrypted += String.fromCharCode(
-      token.charCodeAt(i) ^ key.charCodeAt(i % key.length),
-    );
-  }
-  return btoa(encrypted);
-};
-
-const decryptToken = (encrypted) => {
-  try {
-    const key = "BettingSecureKey2024";
-    const decoded = atob(encrypted);
-    let decrypted = "";
-    for (let i = 0; i < decoded.length; i++) {
-      decrypted += String.fromCharCode(
-        decoded.charCodeAt(i) ^ key.charCodeAt(i % key.length),
-      );
-    }
-    return decrypted;
-  } catch {
-    return null;
-  }
-};
 
 // Token management
 export const tokenManager = {
   setToken: (token) => {
-    const encrypted = encryptToken(token);
-    localStorage.setItem(STORAGE_KEY, encrypted);
+    sessionStorage.setItem(STORAGE_KEY, token);
   },
 
   getToken: () => {
-    const encrypted = localStorage.getItem(STORAGE_KEY);
-    if (!encrypted) return null;
-    return decryptToken(encrypted);
+    return sessionStorage.getItem(STORAGE_KEY);
   },
 
   removeToken: () => {
-    localStorage.removeItem(STORAGE_KEY);
-    localStorage.removeItem(CSRF_TOKEN_KEY);
-  },
-
-  setCsrfToken: (token) => {
-    localStorage.setItem(CSRF_TOKEN_KEY, token);
-  },
-
-  getCsrfToken: () => {
-    return localStorage.getItem(CSRF_TOKEN_KEY);
+    sessionStorage.removeItem(STORAGE_KEY);
   },
 };
-
-// Generate CSRF token
-const generateCsrfToken = () => {
-  const array = new Uint8Array(32);
-  crypto.getRandomValues(array);
-  return Array.from(array, (byte) => byte.toString(16).padStart(2, "0")).join(
-    "",
-  );
-};
-
-// Initialize CSRF token
-if (!tokenManager.getCsrfToken()) {
-  tokenManager.setCsrfToken(generateCsrfToken());
-}
 
 // Request helper with automatic auth headers
 const makeRequest = async (endpoint, options = {}) => {

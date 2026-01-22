@@ -5,6 +5,7 @@ use anyhow::Result;
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct AppConfig {
+    pub app_env: String,
     pub database_url: String,
     pub jwt_secret: String,
     pub jwt_expiration_hours: u64,
@@ -63,6 +64,7 @@ impl AppConfig {
         };
 
         let config = Self {
+            app_env: env::var("APP_ENV").unwrap_or_else(|_| "development".to_string()),
             database_url: env::var("DATABASE_URL")
                 .map_err(|_| anyhow::anyhow!("DATABASE_URL must be set"))?,
             jwt_secret: env::var("JWT_SECRET")
@@ -159,7 +161,7 @@ impl AppConfig {
     }
 
     pub fn is_development(&self) -> bool {
-        self.host == "127.0.0.1" && self.port == 8080
+        self.app_env.eq_ignore_ascii_case("development")
     }
 
     pub fn validate_jwt_secret(&self) -> bool {

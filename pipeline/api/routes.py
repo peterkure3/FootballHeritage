@@ -23,6 +23,9 @@ logger = setup_logger(__name__, LOG_LEVEL)
 router = APIRouter()
 
 
+engine = create_engine(DATABASE_URI)
+
+
 # Response models
 class PredictionResponse(BaseModel):
     match_id: int
@@ -68,7 +71,7 @@ class WhatIfPredictionResponse(BaseModel):
 
 def get_db_connection():
     """Get database connection."""
-    return create_engine(DATABASE_URI)
+    return engine
 
 
 @router.get("/predictions/{match_id}", response_model=PredictionResponse)
@@ -451,4 +454,4 @@ async def predict_matchup(
         raise HTTPException(status_code=500, detail="Database error")
     except Exception as e:
         logger.error(f"Prediction error: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Prediction failed: {str(e)}")
+        raise HTTPException(status_code=500, detail="Prediction failed")

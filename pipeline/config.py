@@ -25,10 +25,10 @@ MODEL_DIR = BASE_DIR / "models" / "model_store"
 CACHE_DIR = DATA_DIR / "cache"
 
 # API Configuration
-FOOTBALL_DATA_ORG_API_KEY = os.getenv("FOOTBALL_DATA_ORG_API_KEY", "YOUR_FOOTBALL_DATA_ORG_API_KEY")
+FOOTBALL_DATA_ORG_API_KEY = os.getenv("FOOTBALL_DATA_ORG_API_KEY", "")
 FOOTBALL_DATA_ORG_BASE_URL = "https://api.football-data.org/v4"
 
-THE_ODDS_API_KEY = os.getenv("THE_ODDS_API_KEY", "YOUR_THE_ODDS_API_KEY")
+THE_ODDS_API_KEY = os.getenv("THE_ODDS_API_KEY", "")
 THE_ODDS_API_BASE_URL = "https://api.the-odds-api.com/v4"
 
 # NCAA API Configuration
@@ -52,7 +52,7 @@ DB_HOST = os.getenv("DB_HOST", "localhost")
 DB_PORT = os.getenv("DB_PORT", "5432")
 DB_NAME = os.getenv("DB_NAME", "football_betting")
 DB_USER = os.getenv("DB_USER", "postgres")
-DB_PASSWORD = os.getenv("DB_PASSWORD", "jumpman13")
+DB_PASSWORD = os.getenv("DB_PASSWORD", "")
 
 DATABASE_URI = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
@@ -106,6 +106,11 @@ API_PORT = int(os.getenv("API_PORT", "5555"))  # Changed from 8000 to 5555
 API_TITLE = "Football Betting Predictions API"
 API_VERSION = "1.0.0"
 API_DESCRIPTION = "REST API for football match predictions and betting data"
+API_ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv("API_ALLOWED_ORIGINS", "http://localhost:5173,http://localhost:3000").split(",")
+    if origin.strip()
+]
 
 # Competitions to track (football-data.org competition codes)
 # Note: Free tier may have limited access to some competitions
