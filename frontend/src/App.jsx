@@ -30,6 +30,9 @@ import AdminLogs from './pages/AdminLogs';
 import AdminSportsGPT from './pages/AdminSportsGPT';
 import AdminLayout from './components/admin/AdminLayout';
 import Predictions from "./pages/Predictions";
+import DeviggedOdds from "./pages/DeviggedOdds";
+import EVBets from "./pages/EVBets";
+import Arbitrage from "./pages/Arbitrage";
 
 // Create React Query client with optimized settings
 const queryClient = new QueryClient({
@@ -141,6 +144,31 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Predictions />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/intelligence/devigged-odds"
+              element={
+                <ProtectedRoute>
+                  <DeviggedOdds />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/intelligence/ev-bets"
+              element={
+                <ProtectedRoute>
+                  <EVBets />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/intelligence/arbitrage"
+              element={
+                <ProtectedRoute>
+                  <Arbitrage />
                 </ProtectedRoute>
               }
             />

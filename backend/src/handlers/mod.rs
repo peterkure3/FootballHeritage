@@ -3,6 +3,7 @@ pub mod auth;
 pub mod betting;
 pub mod chat;
 pub mod health;
+pub mod intelligence;
 pub mod limits;
 pub mod monitoring;
 pub mod not_found;

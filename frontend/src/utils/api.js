@@ -175,6 +175,42 @@ export const api = {
       method: "GET",
     });
   },
+
+  getDeviggedOdds: async (params = {}) => {
+    const qs = new URLSearchParams();
+    Object.entries(params || {}).forEach(([k, v]) => {
+      if (v === undefined || v === null || v === "") return;
+      qs.set(k, String(v));
+    });
+    const suffix = qs.toString() ? `?${qs.toString()}` : "";
+    return await makeRequest(`/intelligence/devigged-odds${suffix}`, {
+      method: "GET",
+    });
+  },
+
+  getEvBets: async (params = {}) => {
+    const qs = new URLSearchParams();
+    Object.entries(params || {}).forEach(([k, v]) => {
+      if (v === undefined || v === null || v === "") return;
+      qs.set(k, String(v));
+    });
+    const suffix = qs.toString() ? `?${qs.toString()}` : "";
+    return await makeRequest(`/intelligence/ev-bets${suffix}`, {
+      method: "GET",
+    });
+  },
+
+  getArbitrage: async (params = {}) => {
+    const qs = new URLSearchParams();
+    Object.entries(params || {}).forEach(([k, v]) => {
+      if (v === undefined || v === null || v === "") return;
+      qs.set(k, String(v));
+    });
+    const suffix = qs.toString() ? `?${qs.toString()}` : "";
+    return await makeRequest(`/intelligence/arbitrage${suffix}`, {
+      method: "GET",
+    });
+  },
 };
 
 // Input sanitization utilities

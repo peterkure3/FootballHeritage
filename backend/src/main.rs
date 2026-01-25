@@ -184,6 +184,12 @@ async fn main() -> std::io::Result<()> {
                             .route("/verify-email", web::post().to(handlers::auth::verify_email))
                     )
                     .service(
+                        web::scope("/intelligence")
+                            .route("/devigged-odds", web::get().to(handlers::intelligence::get_devigged_odds))
+                            .route("/ev-bets", web::get().to(handlers::intelligence::get_ev_bets))
+                            .route("/arbitrage", web::get().to(handlers::intelligence::get_arbitrage))
+                    )
+                    .service(
                         web::scope("/wallet")
                             .wrap(middleware::jwt_auth::RequireAuth::new(auth_service_for_app.clone()))
                             .route("/balance", web::get().to(handlers::wallet::get_balance))

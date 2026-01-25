@@ -3,7 +3,7 @@ API routes for football betting predictions.
 """
 
 from datetime import datetime
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel
@@ -16,6 +16,7 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
 
 from config import DATABASE_URI, LOG_LEVEL
+from heritage_config import DATABASE_URI as HERITAGE_DATABASE_URI
 from etl.utils import setup_logger
 
 logger = setup_logger(__name__, LOG_LEVEL)
@@ -24,6 +25,8 @@ router = APIRouter()
 
 
 engine = create_engine(DATABASE_URI)
+
+heritage_engine = create_engine(HERITAGE_DATABASE_URI)
 
 
 # Response models
@@ -69,9 +72,435 @@ class WhatIfPredictionResponse(BaseModel):
     recommendation: str
 
 
+class DevigRequest(BaseModel):
+    pipeline_match_id: Optional[str] = None
+    event_id: Optional[str] = None
+    bookmaker: str
+    market: str = "h2h"
+    outcome_a: str
+    outcome_b: str
+    odds_a: int
+    odds_b: int
+    source_updated_at: Optional[datetime] = None
+
+
+class DevigResponse(BaseModel):
+    fair_prob_a: float
+    fair_prob_b: float
+    vig: float
+
+
+class EvRequest(BaseModel):
+    pipeline_match_id: Optional[str] = None
+    event_id: Optional[str] = None
+    bookmaker: Optional[str] = None
+    market: str
+    selection: str
+    odds: int
+    stake: float
+    true_probability: float
+    source_updated_at: Optional[datetime] = None
+
+
+class EvResponse(BaseModel):
+    expected_value: float
+    expected_value_pct: float
+
+
+class EvBatchRequest(BaseModel):
+    bets: List[EvRequest]
+
+
+class ArbitrageOffer(BaseModel):
+    bookmaker: str
+    selection: str
+    decimal_odds: float
+
+
+class ArbitrageScanRequest(BaseModel):
+    pipeline_match_id: Optional[str] = None
+    event_id: Optional[str] = None
+    market: str = "h2h"
+    selection_a: str
+    selection_b: str
+    total_stake: float
+    offers: List[ArbitrageOffer]
+    source_updated_at: Optional[datetime] = None
+
+
+class ArbitrageResponse(BaseModel):
+    book_a: str
+    book_b: str
+    odds_a: float
+    odds_b: float
+    arb_percentage: float
+    stake_a: float
+    stake_b: float
+
+
+def american_to_decimal(odds: int) -> float:
+    if odds == 0:
+        raise ValueError("odds cannot be 0")
+    if odds > 0:
+        return 1.0 + (odds / 100.0)
+    return 1.0 + (100.0 / abs(float(odds)))
+
+
+def implied_probability_from_decimal(decimal_odds: float) -> float:
+    if decimal_odds <= 1.0:
+        raise ValueError("decimal odds must be > 1")
+    return 1.0 / decimal_odds
+
+
+def devig_two_way(odds_a: int, odds_b: int) -> Dict[str, float]:
+    dec_a = american_to_decimal(odds_a)
+    dec_b = american_to_decimal(odds_b)
+    p1 = implied_probability_from_decimal(dec_a)
+    p2 = implied_probability_from_decimal(dec_b)
+    p_total = p1 + p2
+    if p_total <= 0:
+        raise ValueError("invalid implied probabilities")
+    fair_p1 = p1 / p_total
+    fair_p2 = p2 / p_total
+    vig = p_total - 1.0
+    return {"fair_prob_a": fair_p1, "fair_prob_b": fair_p2, "vig": vig}
+
+
+def win_profit_from_american(odds: int, stake: float) -> float:
+    if odds == 0:
+        raise ValueError("odds cannot be 0")
+    if stake <= 0:
+        raise ValueError("stake must be > 0")
+    if odds > 0:
+        return stake * (odds / 100.0)
+    return stake * (100.0 / abs(float(odds)))
+
+
+def expected_value(true_probability: float, odds: int, stake: float) -> Dict[str, float]:
+    if true_probability < 0 or true_probability > 1:
+        raise ValueError("true_probability must be in [0, 1]")
+    win_profit = win_profit_from_american(odds, stake)
+    ev = (true_probability * win_profit) - ((1.0 - true_probability) * stake)
+    ev_pct = ev / stake
+    return {"expected_value": ev, "expected_value_pct": ev_pct}
+
+
+def arbitrage_two_way(decimal_odds_a: float, decimal_odds_b: float, total_stake: float) -> Optional[Dict[str, float]]:
+    if decimal_odds_a <= 1.0 or decimal_odds_b <= 1.0:
+        raise ValueError("decimal odds must be > 1")
+    if total_stake <= 0:
+        raise ValueError("total_stake must be > 0")
+    inv_a = 1.0 / decimal_odds_a
+    inv_b = 1.0 / decimal_odds_b
+    inv_sum = inv_a + inv_b
+    if inv_sum >= 1.0:
+        return None
+    edge = 1.0 - inv_sum
+    stake_a = total_stake * (inv_a / inv_sum)
+    stake_b = total_stake * (inv_b / inv_sum)
+    return {"arb_percentage": edge, "stake_a": stake_a, "stake_b": stake_b}
+
+
 def get_db_connection():
     """Get database connection."""
     return engine
+
+
+def get_heritage_db_connection():
+    return heritage_engine
+
+
+@router.post("/intelligence/devig", response_model=DevigResponse)
+async def devig_endpoint(payload: DevigRequest):
+    try:
+        computed = devig_two_way(payload.odds_a, payload.odds_b)
+
+        insert_query = text("""
+            INSERT INTO devigged_odds (
+                event_id,
+                pipeline_match_id,
+                bookmaker,
+                market,
+                outcome_a,
+                outcome_b,
+                odds_a,
+                odds_b,
+                fair_prob_a,
+                fair_prob_b,
+                vig,
+                source_updated_at
+            ) VALUES (
+                :event_id,
+                :pipeline_match_id,
+                :bookmaker,
+                :market,
+                :outcome_a,
+                :outcome_b,
+                :odds_a,
+                :odds_b,
+                :fair_prob_a,
+                :fair_prob_b,
+                :vig,
+                :source_updated_at
+            )
+            ON CONFLICT DO NOTHING
+        """)
+
+        params = {
+            "event_id": payload.event_id,
+            "pipeline_match_id": payload.pipeline_match_id,
+            "bookmaker": payload.bookmaker,
+            "market": payload.market,
+            "outcome_a": payload.outcome_a,
+            "outcome_b": payload.outcome_b,
+            "odds_a": payload.odds_a,
+            "odds_b": payload.odds_b,
+            "fair_prob_a": computed["fair_prob_a"],
+            "fair_prob_b": computed["fair_prob_b"],
+            "vig": computed["vig"],
+            "source_updated_at": payload.source_updated_at,
+        }
+
+        heritage = get_heritage_db_connection()
+        with heritage.begin() as conn:
+            conn.execute(insert_query, params)
+
+        return DevigResponse(
+            fair_prob_a=computed["fair_prob_a"],
+            fair_prob_b=computed["fair_prob_b"],
+            vig=computed["vig"],
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except SQLAlchemyError as e:
+        logger.error(f"Database error (devig): {str(e)}")
+        raise HTTPException(status_code=500, detail="Database error")
+
+
+@router.post("/intelligence/ev", response_model=EvResponse)
+async def ev_endpoint(payload: EvRequest):
+    try:
+        computed = expected_value(payload.true_probability, payload.odds, payload.stake)
+
+        insert_query = text("""
+            INSERT INTO ev_bets (
+                event_id,
+                pipeline_match_id,
+                bookmaker,
+                market,
+                selection,
+                odds,
+                stake,
+                true_probability,
+                expected_value,
+                expected_value_pct,
+                source_updated_at
+            ) VALUES (
+                :event_id,
+                :pipeline_match_id,
+                :bookmaker,
+                :market,
+                :selection,
+                :odds,
+                :stake,
+                :true_probability,
+                :expected_value,
+                :expected_value_pct,
+                :source_updated_at
+            )
+            ON CONFLICT DO NOTHING
+        """)
+
+        params = {
+            "event_id": payload.event_id,
+            "pipeline_match_id": payload.pipeline_match_id,
+            "bookmaker": payload.bookmaker,
+            "market": payload.market,
+            "selection": payload.selection,
+            "odds": payload.odds,
+            "stake": payload.stake,
+            "true_probability": payload.true_probability,
+            "expected_value": computed["expected_value"],
+            "expected_value_pct": computed["expected_value_pct"],
+            "source_updated_at": payload.source_updated_at,
+        }
+
+        heritage = get_heritage_db_connection()
+        with heritage.begin() as conn:
+            conn.execute(insert_query, params)
+
+        return EvResponse(
+            expected_value=computed["expected_value"],
+            expected_value_pct=computed["expected_value_pct"],
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except SQLAlchemyError as e:
+        logger.error(f"Database error (ev): {str(e)}")
+        raise HTTPException(status_code=500, detail="Database error")
+
+
+@router.post("/intelligence/ev/batch", response_model=List[EvResponse])
+async def ev_batch_endpoint(payload: EvBatchRequest):
+    results: List[EvResponse] = []
+    try:
+        heritage = get_heritage_db_connection()
+
+        insert_query = text("""
+            INSERT INTO ev_bets (
+                event_id,
+                pipeline_match_id,
+                bookmaker,
+                market,
+                selection,
+                odds,
+                stake,
+                true_probability,
+                expected_value,
+                expected_value_pct,
+                source_updated_at
+            ) VALUES (
+                :event_id,
+                :pipeline_match_id,
+                :bookmaker,
+                :market,
+                :selection,
+                :odds,
+                :stake,
+                :true_probability,
+                :expected_value,
+                :expected_value_pct,
+                :source_updated_at
+            )
+            ON CONFLICT DO NOTHING
+        """)
+
+        with heritage.begin() as conn:
+            for bet in payload.bets:
+                computed = expected_value(bet.true_probability, bet.odds, bet.stake)
+                conn.execute(
+                    insert_query,
+                    {
+                        "event_id": bet.event_id,
+                        "pipeline_match_id": bet.pipeline_match_id,
+                        "bookmaker": bet.bookmaker,
+                        "market": bet.market,
+                        "selection": bet.selection,
+                        "odds": bet.odds,
+                        "stake": bet.stake,
+                        "true_probability": bet.true_probability,
+                        "expected_value": computed["expected_value"],
+                        "expected_value_pct": computed["expected_value_pct"],
+                        "source_updated_at": bet.source_updated_at,
+                    },
+                )
+                results.append(
+                    EvResponse(
+                        expected_value=computed["expected_value"],
+                        expected_value_pct=computed["expected_value_pct"],
+                    )
+                )
+
+        return results
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except SQLAlchemyError as e:
+        logger.error(f"Database error (ev batch): {str(e)}")
+        raise HTTPException(status_code=500, detail="Database error")
+
+
+@router.post("/intelligence/arbitrage/scan", response_model=List[ArbitrageResponse])
+async def arbitrage_scan(payload: ArbitrageScanRequest):
+    try:
+        offers_a = [o for o in payload.offers if o.selection == payload.selection_a]
+        offers_b = [o for o in payload.offers if o.selection == payload.selection_b]
+
+        if not offers_a or not offers_b:
+            return []
+
+        heritage = get_heritage_db_connection()
+        insert_query = text("""
+            INSERT INTO arbitrage (
+                event_id,
+                pipeline_match_id,
+                market,
+                selection_a,
+                selection_b,
+                book_a,
+                book_b,
+                odds_a,
+                odds_b,
+                arb_percentage,
+                total_stake,
+                stake_a,
+                stake_b,
+                source_updated_at
+            ) VALUES (
+                :event_id,
+                :pipeline_match_id,
+                :market,
+                :selection_a,
+                :selection_b,
+                :book_a,
+                :book_b,
+                :odds_a,
+                :odds_b,
+                :arb_percentage,
+                :total_stake,
+                :stake_a,
+                :stake_b,
+                :source_updated_at
+            )
+            ON CONFLICT DO NOTHING
+        """)
+
+        results: List[ArbitrageResponse] = []
+        with heritage.begin() as conn:
+            for oa in offers_a:
+                for ob in offers_b:
+                    if oa.bookmaker == ob.bookmaker:
+                        continue
+                    computed = arbitrage_two_way(oa.decimal_odds, ob.decimal_odds, payload.total_stake)
+                    if not computed:
+                        continue
+                    conn.execute(
+                        insert_query,
+                        {
+                            "event_id": payload.event_id,
+                            "pipeline_match_id": payload.pipeline_match_id,
+                            "market": payload.market,
+                            "selection_a": payload.selection_a,
+                            "selection_b": payload.selection_b,
+                            "book_a": oa.bookmaker,
+                            "book_b": ob.bookmaker,
+                            "odds_a": oa.decimal_odds,
+                            "odds_b": ob.decimal_odds,
+                            "arb_percentage": computed["arb_percentage"],
+                            "total_stake": payload.total_stake,
+                            "stake_a": computed["stake_a"],
+                            "stake_b": computed["stake_b"],
+                            "source_updated_at": payload.source_updated_at,
+                        },
+                    )
+                    results.append(
+                        ArbitrageResponse(
+                            book_a=oa.bookmaker,
+                            book_b=ob.bookmaker,
+                            odds_a=oa.decimal_odds,
+                            odds_b=ob.decimal_odds,
+                            arb_percentage=computed["arb_percentage"],
+                            stake_a=computed["stake_a"],
+                            stake_b=computed["stake_b"],
+                        )
+                    )
+
+        results.sort(key=lambda r: r.arb_percentage, reverse=True)
+        return results
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except SQLAlchemyError as e:
+        logger.error(f"Database error (arbitrage): {str(e)}")
+        raise HTTPException(status_code=500, detail="Database error")
 
 
 @router.get("/predictions/{match_id}", response_model=PredictionResponse)

@@ -103,6 +103,18 @@ const Navbar = memo(() => {
                       <span className="font-semibold">Predictions</span>
                       <span className="text-xs text-gray-500">Match insights</span>
                     </Link>
+                    <Link to="/intelligence/ev-bets" className="flex flex-col rounded-lg px-3 py-2 text-sm text-gray-200 hover:bg-gray-800">
+                      <span className="font-semibold">+EV Bets</span>
+                      <span className="text-xs text-gray-500">Positive expected value feed</span>
+                    </Link>
+                    <Link to="/intelligence/arbitrage" className="flex flex-col rounded-lg px-3 py-2 text-sm text-gray-200 hover:bg-gray-800">
+                      <span className="font-semibold">Arbitrage</span>
+                      <span className="text-xs text-gray-500">Cross-book opportunities</span>
+                    </Link>
+                    <Link to="/intelligence/devigged-odds" className="flex flex-col rounded-lg px-3 py-2 text-sm text-gray-200 hover:bg-gray-800">
+                      <span className="font-semibold">Devigged Odds</span>
+                      <span className="text-xs text-gray-500">Fair probabilities</span>
+                    </Link>
                     <Link to="/chat" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-200 hover:bg-gray-800">
                       <span className="text-lg">🤖</span>
                       <div>
@@ -292,6 +304,24 @@ const Navbar = memo(() => {
                 className="w-full text-left text-gray-300 hover:text-white hover:bg-gray-800 block px-3 py-2 rounded-lg text-base font-medium transition-colors"
               >
                 Predictions
+              </button>
+              <button
+                onClick={() => handleNavigation('/intelligence/ev-bets')}
+                className="w-full text-left text-gray-300 hover:text-white hover:bg-gray-800 block px-3 py-2 rounded-lg text-base font-medium transition-colors"
+              >
+                +EV Bets
+              </button>
+              <button
+                onClick={() => handleNavigation('/intelligence/arbitrage')}
+                className="w-full text-left text-gray-300 hover:text-white hover:bg-gray-800 block px-3 py-2 rounded-lg text-base font-medium transition-colors"
+              >
+                Arbitrage
+              </button>
+              <button
+                onClick={() => handleNavigation('/intelligence/devigged-odds')}
+                className="w-full text-left text-gray-300 hover:text-white hover:bg-gray-800 block px-3 py-2 rounded-lg text-base font-medium transition-colors"
+              >
+                Devigged Odds
               </button>
               <button
                 onClick={() => handleNavigation('/bets')}

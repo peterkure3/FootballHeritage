@@ -8,7 +8,11 @@ from dotenv import load_dotenv
 from pathlib import Path
 
 # Load environment variables
-load_dotenv()
+_dotenv_path = Path(__file__).resolve().parent / ".env"
+if _dotenv_path.exists():
+    load_dotenv(_dotenv_path)
+else:
+    load_dotenv()
 
 # Database Configuration for Heritage DB
 DB_HOST = os.getenv("DB_HOST", "localhost")
