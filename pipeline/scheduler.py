@@ -18,6 +18,9 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).parent))
 
 from etl.fetch_raw_data import main as fetch_data
+from etl.ingest_oddsapi_offers import main as ingest_oddsapi_offers
+from etl.match_oddsapi_events import main as match_oddsapi_events
+from etl.compute_intelligence import main as compute_betting_intelligence
 from etl.transform import main as transform_data
 from etl.load_to_db import main as load_data
 from models.train_model import main as train_model
@@ -45,17 +48,26 @@ def daily_fetch_job():
         # Fetch new data
         logger.info("[1/4] Fetching raw data...")
         fetch_data()
+
+        logger.info("[2/5] Ingesting OddsAPI offers...")
+        ingest_oddsapi_offers()
+
+        logger.info("[3/6] Matching OddsAPI events...")
+        match_oddsapi_events()
+
+        logger.info("[4/7] Computing betting intelligence...")
+        compute_betting_intelligence()
         
         # Transform data
-        logger.info("[2/4] Transforming data...")
+        logger.info("[5/7] Transforming data...")
         transform_data()
         
         # Load to database
-        logger.info("[3/4] Loading to database...")
+        logger.info("[6/7] Loading to database...")
         load_data()
         
         # Generate predictions
-        logger.info("[4/4] Generating predictions...")
+        logger.info("[7/7] Generating predictions...")
         predict_matches()
         
         logger.info("✓ Daily fetch completed successfully")
@@ -74,21 +86,30 @@ def weekly_retrain_job():
         # Fetch new data
         logger.info("[1/5] Fetching raw data...")
         fetch_data()
+
+        logger.info("[2/6] Ingesting OddsAPI offers...")
+        ingest_oddsapi_offers()
+
+        logger.info("[3/7] Matching OddsAPI events...")
+        match_oddsapi_events()
+
+        logger.info("[4/8] Computing betting intelligence...")
+        compute_betting_intelligence()
         
         # Transform data
-        logger.info("[2/5] Transforming data...")
+        logger.info("[5/8] Transforming data...")
         transform_data()
         
         # Load to database
-        logger.info("[3/5] Loading to database...")
+        logger.info("[6/8] Loading to database...")
         load_data()
         
         # Train model
-        logger.info("[4/5] Training model...")
+        logger.info("[7/8] Training model...")
         train_model()
         
         # Generate predictions
-        logger.info("[5/5] Generating predictions...")
+        logger.info("[8/8] Generating predictions...")
         predict_matches()
         
         logger.info("✓ Weekly retrain completed successfully")

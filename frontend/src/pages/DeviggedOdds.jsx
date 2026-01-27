@@ -15,10 +15,17 @@ const formatPct = (v) => {
   return `${(n * 100).toFixed(2)}%`;
 };
 
-const formatAmericanOdds = (v) => {
+const formatDecimalOdds = (v) => {
   const n = toNumber(v);
-  if (n === null || n === 0) return "--";
-  return n > 0 ? `+${Math.round(n)}` : `${Math.round(n)}`;
+  if (n === null) return "--";
+  return n.toFixed(3);
+};
+
+const formatMatchLabel = (row) => {
+  const home = row?.event_home_team;
+  const away = row?.event_away_team;
+  if (home && away) return `${home} vs ${away}`;
+  return row?.pipeline_match_id || "";
 };
 
 const DeviggedOdds = () => {
@@ -165,10 +172,10 @@ const DeviggedOdds = () => {
                     <th className="text-left px-4 py-3 cursor-pointer select-none" onClick={() => toggleSort("bookmaker")}>Book</th>
                     <th className="text-left px-4 py-3 cursor-pointer select-none" onClick={() => toggleSort("market")}>Market</th>
                     <th className="text-left px-4 py-3">Outcome A</th>
-                    <th className="text-left px-4 py-3 cursor-pointer select-none" onClick={() => toggleSort("odds_a")}>Odds A</th>
+                    <th className="text-left px-4 py-3 cursor-pointer select-none" onClick={() => toggleSort("odds_a")}>Odds A (Dec)</th>
                     <th className="text-left px-4 py-3 cursor-pointer select-none" onClick={() => toggleSort("fair_prob_a")}>Fair A</th>
                     <th className="text-left px-4 py-3">Outcome B</th>
-                    <th className="text-left px-4 py-3 cursor-pointer select-none" onClick={() => toggleSort("odds_b")}>Odds B</th>
+                    <th className="text-left px-4 py-3 cursor-pointer select-none" onClick={() => toggleSort("odds_b")}>Odds B (Dec)</th>
                     <th className="text-left px-4 py-3 cursor-pointer select-none" onClick={() => toggleSort("fair_prob_b")}>Fair B</th>
                     <th className="text-left px-4 py-3 cursor-pointer select-none" onClick={() => toggleSort("vig")}>Vig</th>
                   </tr>
@@ -184,15 +191,16 @@ const DeviggedOdds = () => {
                         >
                           <td className="px-4 py-3 whitespace-nowrap">{row.created_at ? new Date(row.created_at).toLocaleString() : "--"}</td>
                           <td className="px-4 py-3">
-                            <div className="font-mono text-xs">{row.pipeline_match_id || ""}</div>
+                            <div className="font-semibold">{formatMatchLabel(row) || "--"}</div>
+                            <div className="text-xs text-gray-500">{row.event_date ? new Date(row.event_date).toLocaleString() : ""}</div>
                           </td>
                           <td className="px-4 py-3">{row.bookmaker}</td>
                           <td className="px-4 py-3">{row.market}</td>
                           <td className="px-4 py-3">{row.outcome_a}</td>
-                          <td className="px-4 py-3">{formatAmericanOdds(row.odds_a)}</td>
+                          <td className="px-4 py-3">{formatDecimalOdds(row.odds_a)}</td>
                           <td className="px-4 py-3">{formatPct(row.fair_prob_a)}</td>
                           <td className="px-4 py-3">{row.outcome_b}</td>
-                          <td className="px-4 py-3">{formatAmericanOdds(row.odds_b)}</td>
+                          <td className="px-4 py-3">{formatDecimalOdds(row.odds_b)}</td>
                           <td className="px-4 py-3">{formatPct(row.fair_prob_b)}</td>
                           <td className="px-4 py-3">{formatPct(row.vig)}</td>
                         </tr>

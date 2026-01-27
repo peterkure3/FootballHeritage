@@ -57,6 +57,9 @@ def run_full_pipeline():
     
     steps = [
         ("Fetch raw data", "etl.fetch_raw_data", "main"),
+        ("Ingest OddsAPI offers", "etl.ingest_oddsapi_offers", "main"),
+        ("Match OddsAPI events", "etl.match_oddsapi_events", "main"),
+        ("Compute betting intelligence", "etl.compute_intelligence", "main"),
         ("Transform data", "etl.transform", "main"),
         ("Clean processed data", None, clean_processed_data),  # Custom cleaning step
         ("Load to database", "etl.load_to_db", "main"),

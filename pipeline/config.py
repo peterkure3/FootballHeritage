@@ -63,9 +63,12 @@ NCAA_API_DIR = RAW_DATA_DIR / "ncaa_api"
 HISTORICAL_CSV_DIR = RAW_DATA_DIR / "historical"
 
 # Model Configuration
-MODEL_VERSION = "1.0.0"
+MODEL_VERSION = "2.0.0"  # Enhanced ensemble model with calibration
 MODEL_NAME = f"model_v{MODEL_VERSION}.pkl"
 MODEL_PATH = MODEL_DIR / MODEL_NAME
+
+# Fallback to v1 if v2 not available
+MODEL_VERSION_FALLBACK = "1.0.0"
 
 # XGBoost Hyperparameters
 XGBOOST_PARAMS = {
@@ -141,8 +144,8 @@ ODDS_API_SPORTS = [
     "basketball_nba",          # NBA
 ]
 ODDS_API_SPORT = "soccer_epl"  # Default sport
-ODDS_API_REGIONS = "uk,us,eu"
-ODDS_API_MARKETS = "h2h"  # head-to-head (match winner)
+ODDS_API_REGIONS = "us,eu"
+ODDS_API_MARKETS = "h2h,spreads,totals"
 ODDS_API_ODDS_FORMAT = "decimal"
 
 # NCAA Basketball Configuration

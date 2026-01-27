@@ -25,10 +25,17 @@ const formatMoney = (v) => {
   }).format(n);
 };
 
-const formatAmericanOdds = (v) => {
+const formatDecimalOdds = (v) => {
   const n = toNumber(v);
-  if (n === null || n === 0) return "--";
-  return n > 0 ? `+${Math.round(n)}` : `${Math.round(n)}`;
+  if (n === null) return "--";
+  return n.toFixed(3);
+};
+
+const formatMatchLabel = (row) => {
+  const home = row?.event_home_team;
+  const away = row?.event_away_team;
+  if (home && away) return `${home} vs ${away}`;
+  return row?.pipeline_match_id || "";
 };
 
 const Arbitrage = () => {
@@ -172,11 +179,13 @@ const Arbitrage = () => {
               <table className="min-w-full text-sm">
                 <thead className="bg-gray-900 border-b border-gray-800">
                   <tr className="text-gray-400">
-                    <th className="text-left px-4 py-3 cursor-pointer select-none" onClick={() => toggleSort("created_at")}>Created</th>
-                    <th className="text-left px-4 py-3">Match</th>
                     <th className="text-left px-4 py-3 cursor-pointer select-none" onClick={() => toggleSort("market")}>Market</th>
-                    <th className="text-left px-4 py-3">Leg A</th>
-                    <th className="text-left px-4 py-3">Leg B</th>
+                    <th className="text-left px-4 py-3">Selection A</th>
+                    <th className="text-left px-4 py-3 cursor-pointer select-none" onClick={() => toggleSort("book_a")}>Book A</th>
+                    <th className="text-left px-4 py-3 cursor-pointer select-none" onClick={() => toggleSort("odds_a")}>Odds A (Decimal)</th>
+                    <th className="text-left px-4 py-3">Selection B</th>
+                    <th className="text-left px-4 py-3 cursor-pointer select-none" onClick={() => toggleSort("book_b")}>Book B</th>
+                    <th className="text-left px-4 py-3 cursor-pointer select-none" onClick={() => toggleSort("odds_b")}>Odds B (Decimal)</th>
                     <th className="text-left px-4 py-3 cursor-pointer select-none" onClick={() => toggleSort("arb_percentage")}>Edge</th>
                     <th className="text-left px-4 py-3 cursor-pointer select-none" onClick={() => toggleSort("total_stake")}>Total Stake</th>
                     <th className="text-left px-4 py-3 cursor-pointer select-none" onClick={() => toggleSort("stake_a")}>Stake A</th>
@@ -194,16 +203,17 @@ const Arbitrage = () => {
                         >
                           <td className="px-4 py-3 whitespace-nowrap">{row.created_at ? new Date(row.created_at).toLocaleString() : "--"}</td>
                           <td className="px-4 py-3">
-                            <div className="font-mono text-xs">{row.pipeline_match_id || ""}</div>
+                            <div className="font-semibold">{formatMatchLabel(row) || "--"}</div>
+                            <div className="text-xs text-gray-500">{row.event_date ? new Date(row.event_date).toLocaleString() : ""}</div>
                           </td>
                           <td className="px-4 py-3">{row.market}</td>
                           <td className="px-4 py-3">
                             <div className="font-semibold">{row.selection_a}</div>
-                            <div className="text-xs text-gray-500">{row.book_a} @ {formatAmericanOdds(row.odds_a)}</div>
+                            <div className="text-xs text-gray-500">{row.book_a} @ {formatDecimalOdds(row.odds_a)}</div>
                           </td>
                           <td className="px-4 py-3">
                             <div className="font-semibold">{row.selection_b}</div>
-                            <div className="text-xs text-gray-500">{row.book_b} @ {formatAmericanOdds(row.odds_b)}</div>
+                            <div className="text-xs text-gray-500">{row.book_b} @ {formatDecimalOdds(row.odds_b)}</div>
                           </td>
                           <td className="px-4 py-3">
                             <span className="text-green-400 font-semibold">{formatPct(row.arb_percentage)}</span>

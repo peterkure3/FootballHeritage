@@ -25,10 +25,17 @@ const formatMoney = (v) => {
   }).format(n);
 };
 
-const formatAmericanOdds = (v) => {
+const formatDecimalOdds = (v) => {
   const n = toNumber(v);
-  if (n === null || n === 0) return "--";
-  return n > 0 ? `+${Math.round(n)}` : `${Math.round(n)}`;
+  if (n === null) return "--";
+  return n.toFixed(3);
+};
+
+const formatMatchLabel = (row) => {
+  const home = row?.event_home_team;
+  const away = row?.event_away_team;
+  if (home && away) return `${home} vs ${away}`;
+  return row?.pipeline_match_id || "";
 };
 
 const EVBets = () => {
@@ -189,7 +196,7 @@ const EVBets = () => {
                     <th className="text-left px-4 py-3 cursor-pointer select-none" onClick={() => toggleSort("bookmaker")}>Book</th>
                     <th className="text-left px-4 py-3 cursor-pointer select-none" onClick={() => toggleSort("market")}>Market</th>
                     <th className="text-left px-4 py-3">Selection</th>
-                    <th className="text-left px-4 py-3 cursor-pointer select-none" onClick={() => toggleSort("odds")}>Odds</th>
+                    <th className="text-left px-4 py-3 cursor-pointer select-none" onClick={() => toggleSort("odds")}>Odds (Dec)</th>
                     <th className="text-left px-4 py-3 cursor-pointer select-none" onClick={() => toggleSort("true_probability")}>True Prob</th>
                     <th className="text-left px-4 py-3 cursor-pointer select-none" onClick={() => toggleSort("stake")}>Stake</th>
                     <th className="text-left px-4 py-3 cursor-pointer select-none" onClick={() => toggleSort("expected_value")}>EV</th>
@@ -208,12 +215,13 @@ const EVBets = () => {
                         >
                           <td className="px-4 py-3 whitespace-nowrap">{row.created_at ? new Date(row.created_at).toLocaleString() : "--"}</td>
                           <td className="px-4 py-3">
-                            <div className="font-mono text-xs">{row.pipeline_match_id || ""}</div>
+                            <div className="font-semibold">{formatMatchLabel(row) || "--"}</div>
+                            <div className="text-xs text-gray-500">{row.event_date ? new Date(row.event_date).toLocaleString() : ""}</div>
                           </td>
                           <td className="px-4 py-3">{row.bookmaker || "--"}</td>
                           <td className="px-4 py-3">{row.market}</td>
                           <td className="px-4 py-3">{row.selection}</td>
-                          <td className="px-4 py-3">{formatAmericanOdds(row.odds)}</td>
+                          <td className="px-4 py-3">{formatDecimalOdds(row.odds)}</td>
                           <td className="px-4 py-3">{formatPct(row.true_probability)}</td>
                           <td className="px-4 py-3">{formatMoney(row.stake)}</td>
                           <td className="px-4 py-3">{formatMoney(row.expected_value)}</td>
