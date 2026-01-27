@@ -33,6 +33,7 @@ import Predictions from "./pages/Predictions";
 import DeviggedOdds from "./pages/DeviggedOdds";
 import EVBets from "./pages/EVBets";
 import Arbitrage from "./pages/Arbitrage";
+import BestBets from "./pages/BestBets";
 
 // Create React Query client with optimized settings
 const queryClient = new QueryClient({
@@ -169,6 +170,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Arbitrage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/best-bets"
+              element={
+                <ProtectedRoute>
+                  <BestBets />
                 </ProtectedRoute>
               }
             />

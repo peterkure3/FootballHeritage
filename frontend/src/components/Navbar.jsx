@@ -99,6 +99,10 @@ const Navbar = memo(() => {
                 </button>
                 <div className="absolute left-0 mt-2 w-64 bg-gray-900 border border-gray-800 rounded-2xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                   <div className="p-4 space-y-2">
+                    <Link to="/best-bets" className="flex flex-col rounded-lg px-3 py-2 text-sm text-gray-200 hover:bg-gray-800 bg-green-500/10 border border-green-500/20">
+                      <span className="font-semibold text-green-400">⚡ Best Value Bets</span>
+                      <span className="text-xs text-gray-500">AI picks with Kelly sizing</span>
+                    </Link>
                     <Link to="/predictions" className="flex flex-col rounded-lg px-3 py-2 text-sm text-gray-200 hover:bg-gray-800">
                       <span className="font-semibold">Predictions</span>
                       <span className="text-xs text-gray-500">Match insights</span>
