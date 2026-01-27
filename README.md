@@ -43,6 +43,55 @@ pip install -r requirements.txt
 python -m api.main
 ```
 
+### Odds Ingestion + Betting Intelligence (The Odds API)
+
+This project ingests sportsbook odds from **The Odds API** (polling) into Postgres and computes:
+
+- Devigged probabilities
+- +EV bets
+- Arbitrage opportunities
+
+Core tables:
+
+- `sportsbook_registry` (book configuration + enable/disable)
+- `provider_events` (raw provider events)
+- `odds_offers` (normalized odds offers, **decimal odds**)
+- `devigged_odds`, `ev_bets`, `arbitrage` (computed betting intelligence)
+
+Required pipeline environment variables (see `pipeline/.env.example`):
+
+- `ODDS_API_KEY`
+- `ODDS_API_REGIONS` (default: `us,eu`)
+- `ODDS_API_MARKETS` (default: `h2h,spreads,totals`)
+- `ODDS_API_SPORTS` (comma-separated sport keys, e.g. `soccer_epl,basketball_nba,...`)
+
+Run the odds pipeline steps manually:
+
+```bash
+cd pipeline
+
+# 1) Fetch raw OddsAPI JSON
+python -m etl.fetch_raw_data --no-cache
+
+# 2) Ingest raw JSON into provider_events + odds_offers
+python -m etl.ingest_oddsapi_offers
+
+# 3) Link provider events to canonical events (creates canonical events for OddsAPI as needed)
+python -m etl.match_oddsapi_events
+
+# 4) Compute devig/EV/arbitrage into intelligence tables
+python -m etl.compute_intelligence
+```
+
+Notes:
+
+- Odds are stored and displayed in **decimal format**.
+- Soccer `h2h` can be 3-way (HOME/AWAY/DRAW). The initial intelligence compute step focuses on 2-way markets:
+  - `spreads` (HOME/AWAY)
+  - `totals` (OVER/UNDER)
+  - `h2h` when it is 2-way (e.g. basketball)
+- The Intelligence UI pulls match names by joining `events`.
+
 ## 📚 Documentation
 
 ### Core Features
@@ -271,6 +320,12 @@ redis-server
 cd pipeline
 python -m api.main
 ```
+
+To view betting intelligence in the UI:
+
+- `http://localhost:5173/devigged-odds`
+- `http://localhost:5173/ev-bets`
+- `http://localhost:5173/arbitrage`
 
 ### 6. Initialize RAG System
 ```bash

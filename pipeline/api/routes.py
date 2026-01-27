@@ -768,19 +768,27 @@ async def predict_matchup(
         def get_venue_stats(team_name, is_home, window=20):
             if is_home:
                 query = text("""
+                    WITH recent AS (
+                        SELECT result, home_score FROM matches 
+                        WHERE home_team ILIKE :team AND result IS NOT NULL
+                        ORDER BY date DESC LIMIT :window
+                    )
                     SELECT COUNT(*) as matches,
                            COUNT(CASE WHEN result = 'home_win' THEN 1 END) as wins,
                            AVG(home_score) as avg_goals
-                    FROM matches WHERE home_team ILIKE :team AND result IS NOT NULL
-                    ORDER BY date DESC LIMIT :window
+                    FROM recent
                 """)
             else:
                 query = text("""
+                    WITH recent AS (
+                        SELECT result, away_score FROM matches 
+                        WHERE away_team ILIKE :team AND result IS NOT NULL
+                        ORDER BY date DESC LIMIT :window
+                    )
                     SELECT COUNT(*) as matches,
                            COUNT(CASE WHEN result = 'away_win' THEN 1 END) as wins,
                            AVG(away_score) as avg_goals
-                    FROM matches WHERE away_team ILIKE :team AND result IS NOT NULL
-                    ORDER BY date DESC LIMIT :window
+                    FROM recent
                 """)
             
             with engine.connect() as conn:

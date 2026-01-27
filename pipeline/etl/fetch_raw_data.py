@@ -4,6 +4,7 @@ Save JSON responses to data/raw/ directories.
 """
 
 import sys
+import os
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, List, Optional
@@ -22,6 +23,7 @@ from config import (
     THE_ODDS_API_DIR,
     TRACKED_COMPETITIONS,
     ODDS_API_SPORT,
+    ODDS_API_SPORTS,
     ODDS_API_REGIONS,
     ODDS_API_MARKETS,
     ODDS_API_ODDS_FORMAT,
@@ -349,31 +351,35 @@ def fetch_the_odds_api() -> None:
     timestamp = get_timestamp_str("%Y%m%d_%H%M%S")
     
     ensure_dir(THE_ODDS_API_DIR)
-    
+
+    sports = ODDS_API_SPORTS if ODDS_API_SPORTS else [ODDS_API_SPORT]
+
     # Fetch odds
-    try:
-        odds = fetcher.fetch_odds(
-            ODDS_API_SPORT,
-            ODDS_API_REGIONS,
-            ODDS_API_MARKETS,
-            ODDS_API_ODDS_FORMAT
-        )
-        save_json(
-            {"events": odds, "fetched_at": timestamp},
-            THE_ODDS_API_DIR / f"odds_{timestamp}.json"
-        )
-    except Exception as e:
-        logger.error(f"Failed to fetch odds: {str(e)}")
+    for sport in sports:
+        try:
+            odds = fetcher.fetch_odds(
+                sport,
+                ODDS_API_REGIONS,
+                ODDS_API_MARKETS,
+                ODDS_API_ODDS_FORMAT
+            )
+            save_json(
+                {"events": odds, "fetched_at": timestamp, "sport": sport, "regions": ODDS_API_REGIONS, "markets": ODDS_API_MARKETS},
+                THE_ODDS_API_DIR / f"odds_{sport}_{timestamp}.json"
+            )
+        except Exception as e:
+            logger.error(f"Failed to fetch odds for {sport}: {str(e)}")
     
     # Fetch scores
-    try:
-        scores = fetcher.fetch_scores(ODDS_API_SPORT, days_from=3)
-        save_json(
-            {"events": scores, "fetched_at": timestamp},
-            THE_ODDS_API_DIR / f"scores_{timestamp}.json"
-        )
-    except Exception as e:
-        logger.error(f"Failed to fetch scores: {str(e)}")
+    for sport in sports:
+        try:
+            scores = fetcher.fetch_scores(sport, days_from=3)
+            save_json(
+                {"events": scores, "fetched_at": timestamp, "sport": sport},
+                THE_ODDS_API_DIR / f"scores_{sport}_{timestamp}.json"
+            )
+        except Exception as e:
+            logger.error(f"Failed to fetch scores for {sport}: {str(e)}")
     
     logger.info("Completed The Odds API data fetch")
 
