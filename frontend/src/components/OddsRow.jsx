@@ -93,7 +93,7 @@ const OddsRow = memo(({ event, onBetClick }) => {
             )}
           </div>
           <div className="flex items-center gap-3 text-sm text-gray-400">
-            <span>📅 {formatEventTime(event.event_time || event.start_time)}</span>
+            <span>📅 {formatEventTime(event.event_date || event.event_time || event.start_time || event.date)}</span>
             {event.league && <span>🏈 {event.league}</span>}
           </div>
         </div>

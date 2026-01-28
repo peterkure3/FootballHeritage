@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import Navbar from '../components/Navbar';
+import PredictionResults from '../components/predictions/PredictionResults';
 import {
   usePipelineMatches,
   usePrediction,
@@ -46,6 +47,7 @@ const formatDateTime = (value) => {
 };
 
 const Predictions = () => {
+  const [activeTab, setActiveTab] = useState('upcoming'); // 'upcoming' or 'results'
   const [homeTeam, setHomeTeam] = useState('');
   const [awayTeam, setAwayTeam] = useState('');
   const [refreshKey, setRefreshKey] = useState(0);
@@ -142,6 +144,35 @@ const Predictions = () => {
           </p>
         </header>
 
+        {/* Tab Navigation */}
+        <div className="flex border-b border-gray-700">
+          <button
+            onClick={() => setActiveTab('upcoming')}
+            className={`px-6 py-3 font-semibold text-sm transition ${
+              activeTab === 'upcoming'
+                ? 'text-green-400 border-b-2 border-green-400'
+                : 'text-gray-400 hover:text-white'
+            }`}
+          >
+            Upcoming Predictions
+          </button>
+          <button
+            onClick={() => setActiveTab('results')}
+            className={`px-6 py-3 font-semibold text-sm transition ${
+              activeTab === 'results'
+                ? 'text-green-400 border-b-2 border-green-400'
+                : 'text-gray-400 hover:text-white'
+            }`}
+          >
+            Results & Accuracy
+          </button>
+        </div>
+
+        {/* Results Tab Content */}
+        {activeTab === 'results' ? (
+          <PredictionResults />
+        ) : (
+        <>
         <section className="bg-gray-900/60 border border-gray-800 rounded-2xl p-6 shadow-2xl shadow-black/30">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-6">
             <div>
@@ -345,6 +376,8 @@ const Predictions = () => {
             )}
           </div>
         </section>
+        </>
+        )}
       </div>
     </div>
   );

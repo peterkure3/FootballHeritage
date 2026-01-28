@@ -148,6 +148,12 @@ const useParlayStore = create(
           combinedEdge: null,
           parlayEV: null,
         });
+        // Also clear from localStorage to ensure persistence is reset
+        try {
+          localStorage.removeItem('parlay-builder-storage');
+        } catch {
+          // Ignore storage errors
+        }
       },
       
       /**
@@ -310,7 +316,10 @@ const useParlayStore = create(
     }),
     {
       name: 'parlay-builder-storage',
-      partialPersist: true,
+      partialize: (state) => ({ 
+        selectedBets: state.selectedBets,
+        totalOdds: state.totalOdds,
+      }),
     }
   )
 );

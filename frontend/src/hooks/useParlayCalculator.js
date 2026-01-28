@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { toast } from "react-hot-toast";
-import useAuthStore from "../stores/authStore";
+import { tokenManager } from "../utils/api";
 
 /**
  * Single Responsibility: Handle parlay calculation business logic
  * Open/Closed: Can be extended without modifying existing code
  */
 export const useParlayCalculator = () => {
-  const { token } = useAuthStore();
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
 
@@ -26,9 +25,21 @@ export const useParlayCalculator = () => {
 
     setLoading(true);
     try {
+      // Convert numeric match IDs to UUID format for backend compatibility
+      const toUuid = (id) => {
+        if (!id) return "00000000-0000-0000-0000-000000000000";
+        // If already a valid UUID format, return as-is
+        if (typeof id === 'string' && id.includes('-') && id.length === 36) {
+          return id;
+        }
+        // Convert numeric ID to padded UUID format
+        const numStr = String(id).padStart(12, '0');
+        return `00000000-0000-0000-0000-${numStr}`;
+      };
+
       const payload = {
         bets: validBets.map(bet => ({
-          event_id: bet.event_id || "00000000-0000-0000-0000-000000000000",
+          event_id: toUuid(bet.event_id),
           team: bet.team,
           odds: parseFloat(bet.odds),
           win_prob: bet.win_prob ? parseFloat(bet.win_prob) : null,
@@ -42,14 +53,21 @@ export const useParlayCalculator = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${tokenManager.getToken()}`,
         },
         body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error?.message || "Calculation failed");
+        let errorMessage = "Calculation failed";
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error?.message || errorData.message || errorMessage;
+        } catch {
+          // Response wasn't JSON, use status text
+          errorMessage = response.statusText || errorMessage;
+        }
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();
@@ -72,10 +90,20 @@ export const useParlayCalculator = () => {
     }
 
     try {
+      // Convert numeric match IDs to UUID format for backend compatibility
+      const toUuid = (id) => {
+        if (!id) return "00000000-0000-0000-0000-000000000000";
+        if (typeof id === 'string' && id.includes('-') && id.length === 36) {
+          return id;
+        }
+        const numStr = String(id).padStart(12, '0');
+        return `00000000-0000-0000-0000-${numStr}`;
+      };
+
       const payload = {
         name,
         bets: bets.map(bet => ({
-          event_id: bet.event_id || "00000000-0000-0000-0000-000000000000",
+          event_id: toUuid(bet.event_id),
           team: bet.team,
           odds: parseFloat(bet.odds),
           win_prob: bet.win_prob ? parseFloat(bet.win_prob) : null,
@@ -89,7 +117,7 @@ export const useParlayCalculator = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${tokenManager.getToken()}`,
         },
         body: JSON.stringify(payload),
       });

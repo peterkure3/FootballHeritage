@@ -111,9 +111,9 @@ const Odds = () => {
                     : `${getSportByApiParam(selectedSport)?.displayName || 'Sports'} Betting Odds`
                   }
                 </h1>
-                <p className="text-gray-400">
+                {/* <p className="text-gray-400">
                   Live odds update every 15 seconds • Place your bets now
-                </p>
+                </p> */}
               </div>
 
               {/* Refresh Button */}
@@ -265,12 +265,12 @@ const Odds = () => {
           {/* Auto-refresh indicator */}
           {!isLoading && odds && odds.length > 0 && (
             <div className="mt-8 text-center">
-              <div className="inline-flex items-center bg-gray-800 border border-gray-700 rounded-lg px-4 py-2">
+              {/* <div className="inline-flex items-center bg-gray-800 border border-gray-700 rounded-lg px-4 py-2">
                 <span className="w-2 h-2 bg-green-500 rounded-full mr-3 animate-pulse"></span>
                 <span className="text-gray-400 text-sm">
                   Odds refresh automatically every 15 seconds
                 </span>
-              </div>
+              </div> */}
             </div>
           )}
 
