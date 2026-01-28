@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { X, Trash2, TrendingUp, DollarSign } from "lucide-react";
+import { X, Trash2, TrendingUp, DollarSign, Brain, AlertTriangle, RefreshCw } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
 import useParlayStore from "../../stores/parlayStore";
@@ -32,7 +32,13 @@ const ParlayBuilderSidebar = () => {
     clearAll, 
     getBetCount,
     totalOdds,
-    calculatePayout
+    calculatePayout,
+    enrichParlay,
+    isEnriching,
+    correlationWarnings,
+    combinedModelProb,
+    combinedEdge,
+    parlayEV,
   } = useParlayStore();
   
   // Auth store for user token
@@ -242,8 +248,75 @@ const ParlayBuilderSidebar = () => {
           )}
         </div>
 
+        {/* Correlation Warnings */}
+        {correlationWarnings && correlationWarnings.length > 0 && (
+          <div className="px-4 py-2 bg-yellow-500/10 border-t border-yellow-500/30">
+            {correlationWarnings.map((warning, idx) => (
+              <div key={idx} className="flex items-start gap-2 text-xs text-yellow-400 py-1">
+                <AlertTriangle className="w-3 h-3 mt-0.5 flex-shrink-0" />
+                <span>{warning}</span>
+              </div>
+            ))}
+          </div>
+        )}
+
         {/* Calculation Section */}
-        <div className="border-t border-gray-700 p-4 space-y-4 bg-gray-850">
+        <div className="border-t border-gray-700 p-4 space-y-3 bg-gray-850">
+          {/* ML Enrich Button */}
+          <button
+            onClick={() => enrichParlay()}
+            disabled={isEnriching || betCount === 0}
+            className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 text-white rounded-lg text-sm font-semibold transition"
+          >
+            {isEnriching ? (
+              <>
+                <RefreshCw className="w-4 h-4 animate-spin" />
+                Analyzing...
+              </>
+            ) : (
+              <>
+                <Brain className="w-4 h-4" />
+                Get ML Predictions
+              </>
+            )}
+          </button>
+
+          {/* ML Insights Display */}
+          {combinedModelProb !== null && (
+            <div className={`rounded-lg p-3 border ${
+              combinedEdge > 0 
+                ? 'bg-green-900/20 border-green-500/30' 
+                : 'bg-yellow-900/20 border-yellow-500/30'
+            }`}>
+              <div className="flex items-center gap-2 mb-2">
+                <Brain className="w-4 h-4 text-blue-400" />
+                <span className="text-sm font-semibold text-white">ML Analysis</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div>
+                  <span className="text-gray-400">Win Prob</span>
+                  <p className="text-white font-bold">{(combinedModelProb * 100).toFixed(1)}%</p>
+                </div>
+                <div>
+                  <span className="text-gray-400">Edge</span>
+                  <p className={`font-bold ${combinedEdge > 0 ? 'text-green-400' : 'text-yellow-400'}`}>
+                    {combinedEdge > 0 ? '+' : ''}{combinedEdge?.toFixed(1)}%
+                  </p>
+                </div>
+              </div>
+              {parlayEV !== null && (
+                <div className="mt-2 pt-2 border-t border-gray-700">
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-400 text-xs">Expected Value</span>
+                    <span className={`font-bold ${parlayEV > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                      {parlayEV > 0 ? '+' : ''}{parlayEV}%
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Total Odds Display */}
           <div className="bg-gray-900 border border-gray-700 rounded-lg p-3">
             <div className="flex items-center justify-between mb-2">

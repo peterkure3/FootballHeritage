@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+const PIPELINE_API_URL = import.meta.env?.VITE_PIPELINE_API_URL || "http://localhost:5555/api/v1";
+
 /**
  * Parlay Builder Store
  * Manages selected bets for parlay construction with real-time calculations
@@ -10,6 +12,8 @@ import { persist } from 'zustand/middleware';
  * - Real-time total odds calculation
  * - Persistent storage across sessions
  * - Optimistic UI updates
+ * - ML prediction enrichment
+ * - Correlation detection
  */
 const useParlayStore = create(
   persist(
@@ -18,6 +22,14 @@ const useParlayStore = create(
       selectedBets: [], // Array of bet legs
       totalOdds: 1.0,   // Combined odds (American format)
       isCalculating: false, // Loading state for calculations
+      
+      // ML Enrichment state
+      enrichedData: null, // Enriched parlay data from ML API
+      isEnriching: false, // Loading state for enrichment
+      correlationWarnings: [], // Warnings about correlated legs
+      combinedModelProb: null, // Combined ML probability
+      combinedEdge: null, // Combined edge percentage
+      parlayEV: null, // Expected value percentage
       
       /**
        * Add a bet to the parlay
@@ -129,8 +141,73 @@ const useParlayStore = create(
       clearAll: () => {
         set({ 
           selectedBets: [],
-          totalOdds: 1.0
+          totalOdds: 1.0,
+          enrichedData: null,
+          correlationWarnings: [],
+          combinedModelProb: null,
+          combinedEdge: null,
+          parlayEV: null,
         });
+      },
+      
+      /**
+       * Enrich parlay legs with ML predictions
+       * Calls pipeline API to get model probabilities and edge calculations
+       */
+      enrichParlay: async () => {
+        const { selectedBets } = get();
+        if (selectedBets.length === 0) return;
+        
+        set({ isEnriching: true });
+        
+        try {
+          // Prepare legs for API
+          const legs = selectedBets.map(bet => ({
+            home_team: bet.event_name?.split(' vs ')[0] || bet.team,
+            away_team: bet.event_name?.split(' vs ')[1] || 'Unknown',
+            selection: bet.selection,
+            odds: bet.odds,
+            bet_type: bet.bet_type,
+          }));
+          
+          const response = await fetch(`${PIPELINE_API_URL}/parlay/enrich`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ legs }),
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to enrich parlay');
+          }
+          
+          const data = await response.json();
+          
+          // Update bets with enriched data
+          const enrichedBets = selectedBets.map((bet, index) => ({
+            ...bet,
+            model_prob: data.legs[index]?.model_prob,
+            edge_pct: data.legs[index]?.edge_pct,
+            confidence: data.legs[index]?.confidence,
+            has_value: data.legs[index]?.has_value,
+            implied_prob: data.legs[index]?.implied_prob,
+          }));
+          
+          set({
+            selectedBets: enrichedBets,
+            enrichedData: data,
+            correlationWarnings: data.correlation_warnings || [],
+            combinedModelProb: data.combined_model_prob,
+            combinedEdge: data.combined_edge_pct,
+            parlayEV: data.parlay_ev,
+            isEnriching: false,
+          });
+          
+          return data;
+        } catch (error) {
+          console.error('Parlay enrichment error:', error);
+          set({ isEnriching: false });
+          return null;
+        }
       },
       
       // Get bet count

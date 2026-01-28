@@ -1,9 +1,11 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { toast } from "react-hot-toast";
 import Navbar from "../components/Navbar";
 import LoadingSkeleton from "../components/LoadingSkeleton";
 import EmptyState from "../components/EmptyState";
-import { TrendingUp, DollarSign, Target, Zap, AlertTriangle } from "lucide-react";
+import { TrendingUp, DollarSign, Target, Zap, AlertTriangle, Plus, Check } from "lucide-react";
+import useParlayStore from "../stores/parlayStore";
 
 const PIPELINE_API_URL = import.meta.env.VITE_PIPELINE_API_URL || "http://localhost:5555/api/v1";
 
@@ -54,6 +56,9 @@ const BestBets = () => {
   const [minEdge, setMinEdge] = useState(0.05);
   const [kellyFraction, setKellyFraction] = useState(0.25);
   const [limit, setLimit] = useState(20);
+  
+  // Parlay store for quick-add
+  const { addBet, isBetSelected } = useParlayStore();
 
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["best-value-bets", bankroll, minEdge, kellyFraction, limit],
@@ -291,6 +296,70 @@ const BestBets = () => {
                       {formatMoney(bet.expected_value)}
                     </p>
                     <p className="text-xs text-gray-500">v{bet.model_version}</p>
+                  </div>
+
+                  {/* Add to Parlay Button */}
+                  <div className="lg:ml-4">
+                    {(() => {
+                      // Extract selection type
+                      const selectionMatch = bet.selection.match(/\((Home|Away|Draw)\s*Win\)/i);
+                      const selection = selectionMatch 
+                        ? selectionMatch[1].toUpperCase() === 'HOME' ? 'HOME' 
+                          : selectionMatch[1].toUpperCase() === 'AWAY' ? 'AWAY' 
+                          : 'DRAW'
+                        : bet.selection.includes('Home') ? 'HOME' 
+                          : bet.selection.includes('Away') ? 'AWAY' 
+                          : 'DRAW';
+                      
+                      const isSelected = isBetSelected(bet.match_id, 'MONEYLINE', selection);
+                      
+                      const handleAddToParlay = () => {
+                        const event = {
+                          id: bet.match_id,
+                          home_team: bet.home_team,
+                          away_team: bet.away_team,
+                          event_date: bet.match_date,
+                          league: bet.competition,
+                        };
+                        
+                        // Convert decimal odds to American
+                        const americanOdds = bet.decimal_odds >= 2 
+                          ? Math.round((bet.decimal_odds - 1) * 100)
+                          : Math.round(-100 / (bet.decimal_odds - 1));
+                        
+                        const success = addBet(event, 'MONEYLINE', selection, americanOdds);
+                        if (success) {
+                          toast.success(`Added ${bet.selection} to parlay!`, { icon: '🎯' });
+                        } else {
+                          toast.error('Already in parlay or limit reached');
+                        }
+                      };
+                      
+                      return (
+                        <button
+                          onClick={handleAddToParlay}
+                          disabled={isSelected}
+                          className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition ${
+                            isSelected
+                              ? 'bg-green-500/20 text-green-400 border border-green-500/40 cursor-default'
+                              : 'bg-blue-600 hover:bg-blue-700 text-white'
+                          }`}
+                          title={isSelected ? 'Already in parlay' : 'Add to parlay'}
+                        >
+                          {isSelected ? (
+                            <>
+                              <Check className="w-4 h-4" />
+                              <span className="hidden sm:inline">In Parlay</span>
+                            </>
+                          ) : (
+                            <>
+                              <Plus className="w-4 h-4" />
+                              <span className="hidden sm:inline">Add to Parlay</span>
+                            </>
+                          )}
+                        </button>
+                      );
+                    })()}
                   </div>
                 </div>
               </div>

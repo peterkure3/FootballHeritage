@@ -120,47 +120,66 @@ Notes:
 
 ## 🎯 Key Features
 
-### 1. ⚡ Super-Fast RAG System (NEW!)
+### 1. 🎯 Best Value Bets (NEW!)
+- **ML-powered value detection** using ensemble model (56.6% accuracy)
+- **Kelly criterion stake sizing** for optimal bankroll management
+- **Edge calculation** comparing model probability vs bookmaker odds
+- **Real-time filtering** by minimum edge, bankroll, and bet count
+
+**Access:** `/best-bets` or via Smart Assistant
+
+### 2. 🤖 Smart Betting Assistant (NEW!)
+- **No LLM required** - uses intelligent pattern matching
+- **Natural language queries** for bets, predictions, and team analysis
+- **Rich response cards** with bet details, probabilities, and recommendations
+- **Contextual suggestions** for follow-up queries
+
+**Example Queries:**
+- "Show me the best value bets"
+- "Predict Arsenal vs Liverpool"
+- "What matches are on today?"
+- "How is Manchester City doing?"
+
+**Access:** `/assistant` or AI Tools menu
+
+### 3. 📊 Enhanced Parlay Builder (NEW!)
+- **ML predictions for each leg** with win probability
+- **Edge % display** showing value vs bookmaker odds
+- **Correlation warnings** for same-league/same-team bets
+- **Combined EV calculation** for entire parlay
+- **Auto-enrichment** when bets are added
+
+**Access:** `/parlay-calculator` or parlay sidebar on Odds page
+
+### 4. ⚡ Super-Fast RAG System
 - **Sub-100ms response time** for natural language queries
 - **Hybrid search** combining vector similarity and keyword matching
 - **Redis caching** with 60-70% hit rate
 - **Streaming responses** for real-time feel
 - **Intent routing** for optimized query handling
 
-**Example Queries:**
-- "What are the best bets for the Chiefs game?"
-- "Show me today's NFL odds"
-- "How am I doing with my bets?"
-- "Analyze the Lakers vs Celtics matchup"
-
 👉 **[Read the RAG Implementation Guide](RAG_IMPLEMENTATION_GUIDE.md)**
 
-### 2. 🤖 AI-Powered Betting Advice
-- Google Gemini 1.5 Flash integration
-- Real-time odds analysis
-- Personalized recommendations based on betting history
-- Confidence scoring for each recommendation
-
-### 3. 🎲 Comprehensive Betting Options
+### 5. 🎲 Comprehensive Betting Options
 - Moneyline bets
 - Point spreads
 - Over/Under totals
 - Parlay calculator
 - Live odds updates
 
-### 4. 🛡️ Responsible Gambling
+### 6. 🛡️ Responsible Gambling
 - Daily/weekly/monthly betting limits
 - Self-exclusion options
 - Session time limits
 - Fraud detection and pattern analysis
 
-### 5. 📊 Advanced Analytics
+### 7. 📊 Advanced Analytics
 - Win rate tracking
 - Profit/loss analysis
 - Betting pattern insights
 - Team statistics and trends
 
-### 6. 🔒 Security
+### 8. 🔒 Security
 - JWT authentication
 - Encrypted wallet balances
 - Rate limiting
@@ -173,34 +192,47 @@ Notes:
 ┌─────────────────────────────────────────────────────────────────┐
 │                         Frontend (React)                         │
 │  - Vite + TailwindCSS + Lucide Icons                            │
-│  - Real-time chat interface                                      │
-│  - Responsive design                                             │
-└────────────────────────┬────────────────────────────────────────┘
-                         │
-                         ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    Backend (Rust + Actix-web)                    │
-│  - JWT authentication                                            │
-│  - RESTful API                                                   │
-│  - Rate limiting                                                 │
+│  - Smart Assistant, Best Bets, Parlay Builder                   │
+│  - Real-time odds & predictions                                  │
 └────────────────────────┬────────────────────────────────────────┘
                          │
          ┌───────────────┴───────────────┐
          ▼                               ▼
-┌──────────────────┐          ┌──────────────────────┐
-│  AI Chatbot      │          │  PostgreSQL Database │
-│  (Node.js)       │◄─────────┤  - Users & Wallets   │
-│  - Genkit        │          │  - Events & Odds     │
-│  - pgvector RAG  │          │  - Bets & History    │
-│  - Redis Cache   │          │  - Vector Embeddings │
-└──────────────────┘          └──────────────────────┘
-         │
-         ▼
-┌──────────────────┐
-│  Gemini 1.5 Flash│
-│  (Free Tier)     │
-└──────────────────┘
+┌──────────────────────┐      ┌──────────────────────────────────┐
+│  Backend (Rust)      │      │  ML Pipeline (Python + FastAPI)  │
+│  - JWT auth          │      │  - XGBoost/LightGBM Ensemble     │
+│  - Betting API       │      │  - ELO ratings, H2H stats        │
+│  - Wallet/Users      │      │  - Value bet detection           │
+└──────────┬───────────┘      │  - Parlay enrichment             │
+           │                  │  - Smart Assistant (no LLM)      │
+           │                  └──────────────┬───────────────────┘
+           │                                 │
+           └─────────────┬───────────────────┘
+                         ▼
+              ┌──────────────────────┐
+              │  PostgreSQL Database │
+              │  - Matches & Odds    │
+              │  - ML Predictions    │
+              │  - Users & Bets      │
+              │  - Vector Embeddings │
+              └──────────────────────┘
 ```
+
+## 🧠 ML Model Performance
+
+| Metric | v1.0.0 | v2.0.0 (Current) |
+|--------|--------|------------------|
+| **Validation Accuracy** | 46% | **56.6%** |
+| **Features** | 13 | **38** |
+| **Model Type** | XGBoost | **Stacking Ensemble** |
+| **Calibration** | None | **Isotonic Regression** |
+
+**v2.0.0 Features Include:**
+- ELO ratings with home advantage
+- Head-to-head historical stats
+- Weighted form (exponential decay)
+- Venue-specific performance
+- Advanced odds engineering (implied probs, log odds, fair probs)
 
 ## 🎓 RAG System Performance
 

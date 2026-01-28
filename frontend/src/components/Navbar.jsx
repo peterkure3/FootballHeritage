@@ -119,11 +119,11 @@ const Navbar = memo(() => {
                       <span className="font-semibold">Devigged Odds</span>
                       <span className="text-xs text-gray-500">Fair probabilities</span>
                     </Link>
-                    <Link to="/chat" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-200 hover:bg-gray-800">
+                    <Link to="/assistant" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-200 hover:bg-gray-800 bg-blue-500/10 border border-blue-500/20">
                       <span className="text-lg">🤖</span>
                       <div>
-                        <p className="font-semibold leading-tight">AI Chat</p>
-                        <p className="text-xs text-gray-500">Ask betting questions</p>
+                        <p className="font-semibold leading-tight text-blue-400">Smart Assistant</p>
+                        <p className="text-xs text-gray-500">AI picks & analysis</p>
                       </div>
                     </Link>
                     <Link to="/parlay-calculator" className="flex flex-col rounded-lg px-3 py-2 text-sm text-gray-200 hover:bg-gray-800">

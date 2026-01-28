@@ -18,7 +18,7 @@ import Odds from "./pages/Odds";
 import BetHistory from "./pages/BetHistory";
 import Chat from "./pages/Chat";
 import Sports from './pages/Sports';
-// ParlayCalculator removed - functionality integrated into Odds page
+import ParlayCalculator from './pages/ParlayCalculator';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminBets from './pages/AdminBets';
 import AdminEvents from './pages/AdminEvents';
@@ -34,6 +34,7 @@ import DeviggedOdds from "./pages/DeviggedOdds";
 import EVBets from "./pages/EVBets";
 import Arbitrage from "./pages/Arbitrage";
 import BestBets from "./pages/BestBets";
+import SmartAssistant from "./pages/SmartAssistant";
 
 // Create React Query client with optimized settings
 const queryClient = new QueryClient({
@@ -126,7 +127,15 @@ function App() {
               path="/chat"
               element={
                 <ProtectedRoute>
-                  <Chat />
+                  <SmartAssistant />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/assistant"
+              element={
+                <ProtectedRoute>
+                  <SmartAssistant />
                 </ProtectedRoute>
               }
             />
@@ -181,7 +190,14 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            {/* /parlay-calculator route removed - parlay builder now integrated into /odds page */}
+            <Route
+              path="/parlay-calculator"
+              element={
+                <ProtectedRoute>
+                  <ParlayCalculator />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="/profile"
               element={
