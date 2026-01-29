@@ -726,10 +726,13 @@ async def get_prediction_history(
     league: Optional[str] = Query(None, description="Filter by league"),
     result_filter: Optional[str] = Query(None, description="all, correct, incorrect"),
     days: Optional[int] = Query(None, ge=1, le=365, description="Filter by last N days"),
+    start_date: Optional[str] = Query(None, description="Start date (YYYY-MM-DD)"),
+    end_date: Optional[str] = Query(None, description="End date (YYYY-MM-DD)"),
 ):
     """
     Get paginated prediction history with actual outcomes.
     Shows which predictions were correct/incorrect.
+    Supports custom date range via start_date and end_date parameters.
     """
     try:
         db = get_db_connection()
@@ -738,7 +741,18 @@ async def get_prediction_history(
         filters = ["m.result IS NOT NULL"]  # Only finished matches
         params = {}
         
-        if days:
+        # Custom date range takes precedence over days
+        if start_date and end_date:
+            filters.append("m.date >= :start_date AND m.date <= :end_date")
+            params["start_date"] = start_date
+            params["end_date"] = end_date
+        elif start_date:
+            filters.append("m.date >= :start_date")
+            params["start_date"] = start_date
+        elif end_date:
+            filters.append("m.date <= :end_date")
+            params["end_date"] = end_date
+        elif days:
             filters.append(f"(m.date IS NULL OR m.date >= NOW() - INTERVAL '{days} days')")
         
         if league:
@@ -998,6 +1012,86 @@ async def get_prediction_accuracy(
     
     except Exception as e:
         logger.error(f"Prediction accuracy error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+class ModelVersionInfo(BaseModel):
+    version: str
+    prediction_count: int
+    correct_count: int
+    accuracy_pct: float
+    first_used: Optional[datetime] = None
+    last_used: Optional[datetime] = None
+    is_current: bool = False
+
+
+class ModelVersionsResponse(BaseModel):
+    versions: List[ModelVersionInfo]
+    current_version: Optional[str] = None
+
+
+@router.get("/predictions/versions", response_model=ModelVersionsResponse)
+async def get_prediction_versions():
+    """
+    Get all model versions used for predictions with their accuracy stats.
+    Useful for tracking model performance over time.
+    """
+    try:
+        db = get_db_connection()
+        
+        query = text("""
+            SELECT 
+                p.model_version,
+                COUNT(*) AS prediction_count,
+                SUM(CASE WHEN m.result = p.winner THEN 1 ELSE 0 END) AS correct_count,
+                MIN(p.created_at) AS first_used,
+                MAX(p.created_at) AS last_used
+            FROM predictions p
+            LEFT JOIN matches m ON p.match_id = m.match_id
+            WHERE p.model_version IS NOT NULL
+            GROUP BY p.model_version
+            ORDER BY MAX(p.created_at) DESC
+        """)
+        
+        with db.connect() as conn:
+            results = conn.execute(query).fetchall()
+        
+        if not results:
+            return ModelVersionsResponse(versions=[], current_version=None)
+        
+        versions = []
+        current_version = None
+        
+        for i, row in enumerate(results):
+            version = str(row[0]) if row[0] else "unknown"
+            prediction_count = int(row[1]) if row[1] else 0
+            correct_count = int(row[2]) if row[2] else 0
+            first_used = row[3]
+            last_used = row[4]
+            
+            accuracy_pct = (correct_count / prediction_count * 100) if prediction_count > 0 else 0
+            is_current = (i == 0)  # Most recent version is current
+            
+            if is_current:
+                current_version = version
+            
+            versions.append(ModelVersionInfo(
+                version=version,
+                prediction_count=prediction_count,
+                correct_count=correct_count,
+                accuracy_pct=round(accuracy_pct, 2),
+                first_used=first_used,
+                last_used=last_used,
+                is_current=is_current,
+            ))
+        
+        return ModelVersionsResponse(
+            versions=versions,
+            current_version=current_version,
+        )
+    
+    except Exception as e:
+        logger.error(f"Prediction versions error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
