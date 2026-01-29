@@ -106,6 +106,7 @@ Notes:
 - **[NBA Cup Integration](NBA_CUP_INTEGRATION_GUIDE.md)** - NBA In-Season Tournament support
 - **[Parlay Calculator](PARLAY_INTEGRATION_GUIDE.md)** - Multi-bet parlay system
 - **[Prediction Pipeline](PREDICTION_INTEGRATION_SUMMARY.md)** - ML-powered predictions
+- **[Prediction History](pipeline/docs/API_DOCUMENTATION.md)** - Track prediction accuracy over time
 - **[Admin Dashboard](ADMIN_DASHBOARD_COMPLETE.md)** - Admin panel features
 
 ### Mobile
@@ -120,7 +121,18 @@ Notes:
 
 ## 🎯 Key Features
 
-### 1. 🎯 Best Value Bets (NEW!)
+### 1. 📈 Prediction History & Accuracy Tracking (NEW!)
+
+- **Date range picker** with quick presets (7/30/90 days) and custom date selection
+- **Confidence distribution chart** showing correct vs incorrect predictions by tier
+- **Model versioning** tracking accuracy per model version over time
+- **Paginated history** with filters by league, result (correct/incorrect), and date
+- **Real-time accuracy metrics** including overall accuracy, by league, and by confidence
+
+**Access:** `/predictions` → Results tab
+
+### 2. 🎯 Best Value Bets
+
 - **ML-powered value detection** using ensemble model (56.6% accuracy)
 - **Kelly criterion stake sizing** for optimal bankroll management
 - **Edge calculation** comparing model probability vs bookmaker odds
@@ -128,13 +140,15 @@ Notes:
 
 **Access:** `/best-bets` or via Smart Assistant
 
-### 2. 🤖 Smart Betting Assistant (NEW!)
+### 3. 🤖 Smart Betting Assistant
+
 - **No LLM required** - uses intelligent pattern matching
 - **Natural language queries** for bets, predictions, and team analysis
 - **Rich response cards** with bet details, probabilities, and recommendations
 - **Contextual suggestions** for follow-up queries
 
 **Example Queries:**
+
 - "Show me the best value bets"
 - "Predict Arsenal vs Liverpool"
 - "What matches are on today?"
@@ -142,7 +156,8 @@ Notes:
 
 **Access:** `/assistant` or AI Tools menu
 
-### 3. 📊 Enhanced Parlay Builder (NEW!)
+### 4. 📊 Enhanced Parlay Builder
+
 - **ML predictions for each leg** with win probability
 - **Edge % display** showing value vs bookmaker odds
 - **Correlation warnings** for same-league/same-team bets
@@ -151,7 +166,8 @@ Notes:
 
 **Access:** `/parlay-calculator` or parlay sidebar on Odds page
 
-### 4. ⚡ Super-Fast RAG System
+### 5. ⚡ Super-Fast RAG System
+
 - **Sub-100ms response time** for natural language queries
 - **Hybrid search** combining vector similarity and keyword matching
 - **Redis caching** with 60-70% hit rate
@@ -160,26 +176,30 @@ Notes:
 
 👉 **[Read the RAG Implementation Guide](RAG_IMPLEMENTATION_GUIDE.md)**
 
-### 5. 🎲 Comprehensive Betting Options
+### 6. 🎲 Comprehensive Betting Options
+
 - Moneyline bets
 - Point spreads
 - Over/Under totals
 - Parlay calculator
 - Live odds updates
 
-### 6. 🛡️ Responsible Gambling
+### 7. 🛡️ Responsible Gambling
+
 - Daily/weekly/monthly betting limits
 - Self-exclusion options
 - Session time limits
 - Fraud detection and pattern analysis
 
-### 7. 📊 Advanced Analytics
+### 8. 📊 Advanced Analytics
+
 - Win rate tracking
 - Profit/loss analysis
 - Betting pattern insights
 - Team statistics and trends
 
-### 8. 🔒 Security
+### 9. 🔒 Security
+
 - JWT authentication
 - Encrypted wallet balances
 - Rate limiting
@@ -223,16 +243,25 @@ Notes:
 | Metric | v1.0.0 | v2.0.0 (Current) |
 |--------|--------|------------------|
 | **Validation Accuracy** | 46% | **56.6%** |
+| **Live Accuracy** | N/A | **72.74%** |
+| **High Confidence** | N/A | **94.86%** |
 | **Features** | 13 | **38** |
 | **Model Type** | XGBoost | **Stacking Ensemble** |
 | **Calibration** | None | **Isotonic Regression** |
 
 **v2.0.0 Features Include:**
+
 - ELO ratings with home advantage
 - Head-to-head historical stats
 - Weighted form (exponential decay)
 - Venue-specific performance
 - Advanced odds engineering (implied probs, log odds, fair probs)
+
+**Prediction Tracking:**
+
+- 543+ predictions tracked with results
+- Model version history with per-version accuracy
+- Confidence-based accuracy breakdown (High: 94.86%, Medium: 62.55%, Low: 46.51%)
 
 ## 🎓 RAG System Performance
 
@@ -246,6 +275,7 @@ Notes:
 ## 🛠️ Technology Stack
 
 ### Backend
+
 - **Rust** - High-performance API server
 - **Actix-web** - Async web framework
 - **SQLx** - Type-safe SQL queries
@@ -253,6 +283,7 @@ Notes:
 - **pgvector** - Vector similarity search
 
 ### AI/ML
+
 - **Node.js** - Chatbot microservice
 - **Genkit** - AI framework
 - **Google Gemini** - LLM (free tier)
@@ -260,18 +291,21 @@ Notes:
 - **text-embedding-004** - Embeddings (768 dims)
 
 ### Frontend
+
 - **React** - UI framework
 - **Vite** - Build tool
 - **TailwindCSS** - Styling
 - **Lucide Icons** - Icon library
 
 ### Mobile
+
 - **React Native** - Mobile framework
 - **Expo** - Development platform
 
 ## 📦 Installation
 
 ### Prerequisites
+
 - Rust 1.70+
 - Node.js 18+
 - PostgreSQL 14+
@@ -279,12 +313,14 @@ Notes:
 - Gemini API key (free)
 
 ### 1. Clone Repository
+
 ```bash
 git clone https://github.com/yourusername/FootballHeritage.git
 cd FootballHeritage
 ```
 
 ### 2. Setup Database
+
 ```bash
 psql -U postgres
 CREATE DATABASE football_heritage;
@@ -296,6 +332,7 @@ CREATE EXTENSION vector;
 ```
 
 ### 3. Configure Environment
+
 ```bash
 # Backend
 cd backend
@@ -317,6 +354,7 @@ cp .env.example .env
 ```
 
 ### 4. Install Dependencies
+
 ```bash
 # Backend
 cd backend
@@ -332,6 +370,7 @@ npm install
 ```
 
 ### 5. Run Services
+
 ```bash
 # Terminal 1: Backend
 cd backend
@@ -360,6 +399,7 @@ To view betting intelligence in the UI:
 - `http://localhost:5173/arbitrage`
 
 ### 6. Initialize RAG System
+
 ```bash
 cd chatbot
 node scripts/sync-embeddings.js
@@ -368,23 +408,27 @@ node scripts/sync-embeddings.js
 ## 🧪 Testing
 
 ### Backend Tests
+
 ```bash
 cd backend
 cargo test
 ```
 
 ### Frontend Tests
+
 ```bash
 cd frontend
 npm run lint
 ```
 
 ### E2E Tests
+
 ```bash
 npx playwright test
 ```
 
 ### API Tests
+
 ```bash
 # Test health endpoint
 curl http://localhost:8080/api/v1/health
@@ -399,11 +443,13 @@ curl -X POST http://localhost:8080/api/v1/chat \
 ## 📊 Performance Monitoring
 
 ### Metrics Endpoint
+
 ```bash
 curl http://localhost:8080/metrics
 ```
 
 **Response:**
+
 ```json
 {
   "total": {
@@ -426,6 +472,7 @@ curl http://localhost:8080/metrics
 ## 🚀 Deployment
 
 ### Production Checklist
+
 - [ ] Set `NODE_ENV=production`
 - [ ] Enable database SSL
 - [ ] Configure Redis persistence
@@ -438,6 +485,7 @@ curl http://localhost:8080/metrics
 - [ ] Test cache invalidation
 
 ### Docker Deployment
+
 ```bash
 docker-compose up -d
 ```
@@ -464,6 +512,7 @@ MIT License - see LICENSE file for details
 ## 📞 Support
 
 For issues or questions:
+
 1. Check the [RAG Implementation Guide](RAG_IMPLEMENTATION_GUIDE.md)
 2. Review [Troubleshooting](CHATBOT_SETUP_GUIDE.md#troubleshooting)
 3. Open an issue on GitHub
