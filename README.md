@@ -8,6 +8,15 @@ A comprehensive sports betting platform with AI-powered betting advice, real-tim
 
 ```bash
 cd backend
+
+# 1. Setup database and run migrations
+cargo sqlx database create
+cargo sqlx migrate run
+
+# 2. Initialize admin account (interactive)
+cargo run --bin init_admin
+
+# 3. Start the server
 cargo run --release
 ```
 
@@ -24,8 +33,6 @@ cd frontend
 npm install
 npm run dev
 ```
-
-Authentication uses JWT bearer tokens stored in session storage (Option B).
 
 ### AI Chatbot (Node.js + Genkit)
 
@@ -322,14 +329,18 @@ cd FootballHeritage
 ### 2. Setup Database
 
 ```bash
-psql -U postgres
-CREATE DATABASE football_heritage;
-\c football_heritage
-\i backend/schema.sql
+cd backend
 
-# Install pgvector
-CREATE EXTENSION vector;
+# Create database and run migrations (requires sqlx-cli)
+cargo install sqlx-cli --no-default-features --features postgres
+cargo sqlx database create
+cargo sqlx migrate run
+
+# Optional: Install pgvector for RAG features
+psql -U postgres -d football_heritage -c "CREATE EXTENSION IF NOT EXISTS vector;"
 ```
+
+**Note:** If pgvector is not available, RAG migrations are skipped automatically.
 
 ### 3. Configure Environment
 
@@ -337,7 +348,7 @@ CREATE EXTENSION vector;
 # Backend
 cd backend
 cp .env.example .env
-# Edit .env with your database credentials
+# Edit .env with your database credentials and encryption key (must be 32 bytes)
 
 # Set APP_ENV explicitly (recommended)
 # APP_ENV=development|staging|production
@@ -353,7 +364,16 @@ cp .env.example .env
 # Set DB_PASSWORD and API_ALLOWED_ORIGINS (e.g. http://localhost:5173)
 ```
 
-### 4. Install Dependencies
+### 4. Initialize Admin Account
+
+```bash
+cd backend
+cargo run --bin init_admin
+```
+
+Follow the interactive prompts to create your first admin user.
+
+### 5. Install Dependencies
 
 ```bash
 # Backend
@@ -369,7 +389,7 @@ cd ../chatbot
 npm install
 ```
 
-### 5. Run Services
+### 6. Run Services
 
 ```bash
 # Terminal 1: Backend
@@ -398,7 +418,7 @@ To view betting intelligence in the UI:
 - `http://localhost:5173/ev-bets`
 - `http://localhost:5173/arbitrage`
 
-### 6. Initialize RAG System
+### 7. Initialize RAG System
 
 ```bash
 cd chatbot

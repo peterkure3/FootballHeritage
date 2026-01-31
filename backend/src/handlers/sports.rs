@@ -73,7 +73,7 @@ pub async fn get_sports(pool: web::Data<PgPool>) -> HttpResponse {
     .fetch_all(pool.get_ref())
     .await;
 
-    let sports_data = match sports_query {
+    let sports_data: Vec<_> = match sports_query {
         Ok(data) => data,
         Err(e) => {
             eprintln!("Database error fetching sports: {}", e);
@@ -222,7 +222,7 @@ pub async fn get_sport_leagues(
     let sport_name = sport.into_inner();
 
     // Filter out expired events (event_date <= NOW())
-    let leagues = sqlx::query!(
+    let leagues: Result<Vec<_>, sqlx::Error> = sqlx::query!(
         r#"
         SELECT 
             league,

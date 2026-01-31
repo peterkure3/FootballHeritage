@@ -44,7 +44,7 @@ pub async fn get_fraud_alerts(
         return HttpResponse::Unauthorized().json(serde_json::json!({"error": "Unauthorized"}));
     }
 
-    let alerts = sqlx::query!(
+    let alerts: Result<Vec<_>, sqlx::Error> = sqlx::query!(
         r#"
         SELECT id, user_id, alert_type, severity, description, status, created_at
         FROM fraud_alerts
@@ -62,12 +62,12 @@ pub async fn get_fraud_alerts(
                 .into_iter()
                 .map(|r| FraudAlert {
                     id: r.id.to_string(),
-                    user_id: r.user_id.map(|id| id.to_string()),
+                    user_id: r.user_id.map(|id: uuid::Uuid| id.to_string()),
                     alert_type: r.alert_type,
                     severity: r.severity,
                     description: r.description,
                     status: r.status.unwrap_or_else(|| "pending".to_string()),
-                    created_at: r.created_at.map(|dt| dt.to_rfc3339()).unwrap_or_default(),
+                    created_at: r.created_at.map(|dt: chrono::DateTime<chrono::Utc>| dt.to_rfc3339()).unwrap_or_default(),
                 })
                 .collect();
 
@@ -93,7 +93,7 @@ pub async fn get_audit_logs(
         return HttpResponse::Unauthorized().json(serde_json::json!({"error": "Unauthorized"}));
     }
 
-    let logs = sqlx::query!(
+    let logs: Result<Vec<_>, sqlx::Error> = sqlx::query!(
         r#"
         SELECT 
             l.id, l.action, l.target_type, l.target_id, l.created_at,
@@ -116,8 +116,8 @@ pub async fn get_audit_logs(
                     admin_email: r.admin_email,
                     action: r.action,
                     target_type: r.target_type,
-                    target_id: r.target_id.map(|id| id.to_string()),
-                    created_at: r.created_at.map(|dt| dt.to_rfc3339()).unwrap_or_default(),
+                    target_id: r.target_id.map(|id: uuid::Uuid| id.to_string()),
+                    created_at: r.created_at.map(|dt: chrono::DateTime<chrono::Utc>| dt.to_rfc3339()).unwrap_or_default(),
                 })
                 .collect();
 

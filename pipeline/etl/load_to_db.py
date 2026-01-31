@@ -125,14 +125,127 @@ def ensure_nba_table_schema(engine) -> None:
     ensure_table_columns(engine, 'nba_games', nba_columns)
 
 
+def ensure_schema_exists(engine) -> None:
+    """
+    Ensure all required tables exist in the database.
+    Creates tables if they don't exist.
+    """
+    schema_sql = """
+    -- Matches table (supports both football and basketball)
+    CREATE TABLE IF NOT EXISTS matches (
+        match_id INTEGER PRIMARY KEY,
+        sport_type TEXT DEFAULT 'football',
+        competition TEXT,
+        season DATE,
+        date TIMESTAMP,
+        home_team TEXT NOT NULL,
+        away_team TEXT NOT NULL,
+        home_score INTEGER,
+        away_score INTEGER,
+        result TEXT,
+        home_shots INTEGER,
+        away_shots INTEGER,
+        home_possession FLOAT,
+        away_possession FLOAT,
+        home_corners INTEGER,
+        away_corners INTEGER,
+        home_yellow_cards INTEGER,
+        away_yellow_cards INTEGER,
+        home_red_cards INTEGER,
+        away_red_cards INTEGER,
+        home_xg FLOAT,
+        away_xg FLOAT,
+        venue TEXT,
+        referee TEXT,
+        attendance INTEGER,
+        status TEXT,
+        data_source TEXT,
+        home_team_wins_last_n INTEGER DEFAULT 0,
+        home_team_draws_last_n INTEGER DEFAULT 0,
+        home_team_losses_last_n INTEGER DEFAULT 0,
+        away_team_wins_last_n INTEGER DEFAULT 0,
+        away_team_draws_last_n INTEGER DEFAULT 0,
+        away_team_losses_last_n INTEGER DEFAULT 0,
+        home_team_avg_gd_last_n FLOAT DEFAULT 0.0,
+        away_team_avg_gd_last_n FLOAT DEFAULT 0.0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    -- Odds table
+    CREATE TABLE IF NOT EXISTS odds (
+        id SERIAL PRIMARY KEY,
+        match_id INTEGER REFERENCES matches(match_id) ON DELETE CASCADE,
+        bookmaker TEXT NOT NULL,
+        home_win FLOAT,
+        draw FLOAT,
+        away_win FLOAT,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    -- Predictions table
+    CREATE TABLE IF NOT EXISTS predictions (
+        id SERIAL PRIMARY KEY,
+        match_id INTEGER REFERENCES matches(match_id) ON DELETE CASCADE,
+        model_version TEXT NOT NULL,
+        winner TEXT NOT NULL,
+        home_prob FLOAT NOT NULL,
+        draw_prob FLOAT NOT NULL,
+        away_prob FLOAT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    -- NBA games table
+    CREATE TABLE IF NOT EXISTS nba_games (
+        game_id VARCHAR(100) PRIMARY KEY,
+        sport_key VARCHAR(50),
+        sport VARCHAR(50) NOT NULL DEFAULT 'BASKETBALL',
+        sport_title VARCHAR(100),
+        commence_time TIMESTAMP,
+        home_team VARCHAR(100),
+        away_team VARCHAR(100),
+        home_score INTEGER,
+        away_score INTEGER,
+        completed BOOLEAN,
+        last_update TIMESTAMP,
+        source_file VARCHAR(255),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+
+    -- Create indexes if they don't exist
+    CREATE INDEX IF NOT EXISTS idx_matches_date ON matches(date);
+    CREATE INDEX IF NOT EXISTS idx_matches_competition ON matches(competition);
+    CREATE INDEX IF NOT EXISTS idx_matches_home_team ON matches(home_team);
+    CREATE INDEX IF NOT EXISTS idx_matches_away_team ON matches(away_team);
+    CREATE INDEX IF NOT EXISTS idx_odds_match_id ON odds(match_id);
+    CREATE INDEX IF NOT EXISTS idx_predictions_match_id ON predictions(match_id);
+    """
+    
+    try:
+        with engine.begin() as conn:
+            # Execute each statement separately
+            for statement in schema_sql.split(';'):
+                statement = statement.strip()
+                if statement:
+                    conn.execute(text(statement))
+        logger.info("✅ Database schema verified/created successfully")
+    except Exception as e:
+        logger.error(f"❌ Failed to create schema: {e}")
+        raise
+
+
 def get_db_engine():
     """
-    Create SQLAlchemy database engine.
+    Create SQLAlchemy database engine and ensure schema exists.
     
     Returns:
         SQLAlchemy engine
     """
-    return create_engine(DATABASE_URI)
+    engine = create_engine(DATABASE_URI)
+    ensure_schema_exists(engine)
+    return engine
 
 
 def prepare_dataframe(df: pd.DataFrame, id_column: str, date_columns: list = None) -> pd.DataFrame:

@@ -82,6 +82,10 @@ num_cpus = "1.16.0"
 # Futures
 futures-util = { version = "0.3.30", default-features = false }
 
+[[bin]]
+name = "init_admin"
+path = "src/bin/init_admin.rs"
+
 [dev-dependencies]
 tempfile = "3.9.0"
 
