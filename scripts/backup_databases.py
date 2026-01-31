@@ -130,7 +130,7 @@ def create_manifest(output_dir: Path, timestamp: str, results: dict):
     """Create a manifest file with backup details."""
     manifest_file = output_dir / f"backup_manifest_{timestamp}.txt"
     
-    with open(manifest_file, "w") as f:
+    with open(manifest_file, "w", encoding="utf-8") as f:
         f.write("Football Heritage Database Backup Manifest\n")
         f.write("=" * 50 + "\n\n")
         f.write(f"Backup Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
