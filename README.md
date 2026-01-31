@@ -510,6 +510,65 @@ curl http://localhost:8080/metrics
 docker-compose up -d
 ```
 
+## 💾 Database Backup & Restore
+
+### Backup Databases
+
+Create a backup of both databases (pipeline + backend):
+
+```bash
+cd scripts
+
+# Using Python script
+python backup_databases.py --db-password YOUR_PASSWORD
+
+# Or using batch file (Windows)
+backup_databases.bat YOUR_PASSWORD
+```
+
+Backups are saved to `backups/<timestamp>/` with:
+- `football_betting_<timestamp>.sql` - Pipeline data (matches, odds, predictions)
+- `football_heritage_<timestamp>.sql` - Backend data (users, wallets, bets, events)
+- `backup_manifest_<timestamp>.txt` - Backup details and restore instructions
+
+### Restore Databases
+
+Restore from a backup after data loss or on a new machine:
+
+```bash
+cd scripts
+
+# Restore all databases
+python restore_databases.py --backup-dir ../backups/20260131_170000 --db-password YOUR_PASSWORD
+
+# Clean restore (drops existing data first)
+python restore_databases.py --backup-dir ../backups/20260131_170000 --db-password YOUR_PASSWORD --clean
+
+# Restore specific database only
+python restore_databases.py --backup-dir ../backups/20260131_170000 --db-password YOUR_PASSWORD --database football_heritage
+```
+
+### Recommended Backup Schedule
+
+| Frequency | What to Backup | Why |
+|-----------|---------------|-----|
+| **Daily** | Both databases | Protect against data loss |
+| **Before updates** | Both databases | Rollback if issues |
+| **Weekly** | Copy to external drive | Disaster recovery |
+
+### Quick Recovery Steps
+
+If you need to set up on a new machine:
+
+1. Install PostgreSQL and create the databases
+2. Clone the repository
+3. Restore databases:
+   ```bash
+   python scripts/restore_databases.py --backup-dir backups/LATEST --db-password YOUR_PASSWORD --clean
+   ```
+4. Configure `.env` files in `backend/` and `pipeline/`
+5. Start services
+
 ## 🤝 Contributing
 
 1. Fork the repository

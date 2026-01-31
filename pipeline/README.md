@@ -246,6 +246,98 @@ Edit `config.py` to customize:
 ### Historical CSVs
 Place historical match data in `data/raw/historical/` as CSV files.
 
+## Scraping Historical Data
+
+The pipeline includes scripts to fetch historical data with configurable year ranges.
+
+### NBA Historical Data (Basketball Reference)
+
+Scrape NBA game data from Basketball Reference for specific seasons:
+
+```bash
+# Fetch default seasons (2020-2024)
+python -m etl.fetch_basketball_reference_async
+
+# To customize years, edit SEASONS in the script:
+# SEASONS = list(range(2020, 2025))  # 2020-21 through 2024-25 seasons
+```
+
+Output: `data/raw/historical/nba/games/nba_games_YYYY_YYYY+1.json`
+
+### NBA Historical Odds (The Odds API)
+
+Fetch historical NBA odds for a specific season:
+
+```bash
+# Fetch 2023-24 season odds (default)
+python -m etl.fetch_historical_nba_odds
+
+# To customize, edit season_year in the script:
+# season_year = 2023  # Fetches 2023-24 season
+# python -m etl.fetch_historical_nba_odds season_year = 2023
+```
+
+Output: `data/raw/historical/nba/odds/nba_odds_YYYYMMDD.json`
+
+### Football Historical Data (football-data.co.uk)
+
+Download free historical football match data:
+
+```bash
+# Download 5 seasons of data for major leagues
+python download_sample_data.py
+```
+
+This fetches data from football-data.co.uk (FREE, no API limits):
+- Premier League, La Liga, Bundesliga, Serie A, Ligue 1
+- 5 seasons (2019-2024)
+- ~10,000+ matches with results and odds
+
+### Football API Data (football-data.org)
+
+Fetch historical matches from the API:
+
+```bash
+# Fetch last 12 months of matches
+python fetch_more_data.py
+```
+
+This fetches:
+- Last 3, 6, and 12 months of matches
+- Multiple competitions (Premier League, La Liga, etc.)
+- Current odds for configured sports
+
+### Custom Date Ranges
+
+To fetch specific date ranges, use the API directly:
+
+```python
+from etl.fetch_raw_data import fetch_matches_for_competition
+
+# Fetch Premier League matches for a specific period
+matches = fetch_matches_for_competition(
+    comp_id=2021,  # Premier League
+    comp_name="Premier League",
+    date_from="2023-01-01",
+    date_to="2023-12-31"
+)
+```
+
+### Data Processing After Scraping
+
+After fetching historical data, process it:
+
+```bash
+# Transform raw data
+python -m etl.transform
+
+# Load to database
+python -m etl.load_to_db
+
+# Train model with new data
+python -m models.train_model
+```
+
 ## Model Features
 
 The XGBoost model uses the following features:

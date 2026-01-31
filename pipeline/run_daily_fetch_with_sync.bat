@@ -22,37 +22,36 @@ if %errorlevel% neq 0 (
 
 REM Fetch NBA data
 echo.
-echo [1.5/5] Fetching NBA data...
+echo [2/6] Fetching NBA data...
 python -m etl.fetch_nba_data_wrapper
 if %errorlevel% neq 0 (
     echo WARNING: NBA data fetch had issues, but continuing with other steps...
 )
 
-REM Validate database schema
-echo.
-echo [3/6] Validating database schema...
-python check_schema.py --ensure nba_games
-if %errorlevel% neq 0 (
-    echo ERROR: Schema validation failed
-    exit /b 1
-)
-
 REM Transform data
 echo.
-echo [4/6] Transforming data...
+echo [3/6] Transforming data...
 python -m etl.transform
 if %errorlevel% neq 0 (
     echo ERROR: Transform failed
     exit /b 1
 )
 
-REM Load to pipeline database
+REM Load to pipeline database (creates tables if needed)
 echo.
-echo [5/6] Loading to pipeline database...
+echo [4/6] Loading to pipeline database...
 python -m etl.load_to_db
 if %errorlevel% neq 0 (
     echo ERROR: Database load failed
     exit /b 1
+)
+
+REM Validate database schema (after load, tables should exist)
+echo.
+echo [5/6] Validating database schema...
+python check_schema.py --ensure nba_games
+if %errorlevel% neq 0 (
+    echo WARNING: Schema validation had issues, but continuing...
 )
 
 REM Sync to backend database
