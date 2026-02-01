@@ -83,6 +83,10 @@ const Navbar = memo(() => {
                       <span className="font-semibold">Sports Hub</span>
                       <span className="text-xs text-gray-500">Leagues & markets</span>
                     </Link>
+                    <Link to="/college" className="flex flex-col rounded-lg px-3 py-2 text-sm text-gray-200 hover:bg-gray-800 bg-orange-500/10 border border-orange-500/20">
+                      <span className="font-semibold text-orange-400">🏀 College Sports</span>
+                      <span className="text-xs text-gray-500">NCAAB & March Madness</span>
+                    </Link>
                   </div>
                 </div>
               </div>

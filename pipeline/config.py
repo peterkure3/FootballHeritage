@@ -142,7 +142,12 @@ ODDS_API_SPORTS = [
     "soccer_italy_serie_a",    # Serie A
     "soccer_france_ligue_one", # Ligue 1
     "basketball_nba",          # NBA
+    "basketball_ncaab",        # NCAA Men's Basketball (March Madness)
 ]
+
+# NCAA Basketball Odds Configuration (The Odds API)
+NCAAB_DATA_DIR = RAW_DATA_DIR / "ncaab"
+NCAAB_CACHE_TTL = 900  # 15 minutes
 ODDS_API_SPORT = "soccer_epl"  # Default sport
 ODDS_API_REGIONS = "us,eu"
 ODDS_API_MARKETS = "h2h,spreads,totals"

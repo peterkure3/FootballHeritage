@@ -5,7 +5,7 @@ Production-ready pipeline for football and NCAA basketball predictions using XGB
 ## Features
 
 - **Multi-Sport Support**: Football (soccer) and NCAA Basketball (Men's & Women's)
-- **Data Ingestion**: Fetch data from football-data.org, The Odds API, and NCAA API
+- **Data Ingestion**: Fetch data from football-data.org, The Odds API, NCAA API, and NCAAB odds
 - **ETL Pipeline**: Transform and load data into PostgreSQL
 - **ML Models**: XGBoost classifiers for match outcome predictions
   - Football: 3-class (win/draw/loss)
@@ -23,10 +23,13 @@ sports-betting-pipeline/
 │   ├── interim/          # Intermediate processing
 │   └── processed/        # Parquet files
 ├── etl/
-│   ├── fetch_raw_data.py # API data fetching
-│   ├── transform.py      # Feature engineering
-│   ├── load_to_db.py     # Database loading
-│   └── utils.py          # Shared utilities
+│   ├── fetch_raw_data.py      # Football API data fetching
+│   ├── fetch_nba_data_wrapper.py # NBA odds/scores
+│   ├── fetch_ncaab_odds.py    # NCAAB odds/scores (March Madness)
+│   ├── fetch_ncaa_data.py     # NCAA API data fetching
+│   ├── transform.py           # Feature engineering
+│   ├── load_to_db.py          # Database loading
+│   └── utils.py               # Shared utilities
 ├── models/
 │   ├── train_model.py    # Model training
 │   ├── predict.py        # Prediction generation
@@ -107,27 +110,53 @@ cp dags/betting_pipeline.py $AIRFLOW_HOME/dags/
 
 ## Usage
 
+### Daily Pipeline (Recommended)
+
+Run the automated daily fetch script that handles all sports:
+
+```bash
+# Windows
+.\run_daily_fetch_with_sync.bat
+
+# This runs 7 steps:
+# 1. Fetch football data
+# 2. Fetch NBA data
+# 3. Fetch NCAAB data (March Madness)
+# 4. Transform data
+# 5. Load to database
+# 6. Validate schema
+# 7. Sync to backend
+```
+
 ### Manual Pipeline Execution
 
 Run each step individually:
 
 ```bash
-# 1. Fetch raw data
+# 1. Fetch raw data (football)
 python -m etl.fetch_raw_data
 
-# 2. Transform data
+# 2. Fetch NBA data
+python -m etl.fetch_nba_data_wrapper
+
+# 3. Fetch NCAAB data (March Madness)
+python -m etl.fetch_ncaab_odds
+python -m etl.fetch_ncaab_odds --type odds
+python -m etl.fetch_ncaab_odds --type scores --days 7
+
+# 4. Transform data
 python -m etl.transform
 
-# 3. Load to database
+# 5. Load to database
 python -m etl.load_to_db
 
-# 4. Train model
+# 6. Train model
 python -m models.train_model
 
-# 5. Generate predictions
+# 7. Generate predictions
 python -m models.predict
 
-# 6. Evaluate model (optional)
+# 8. Evaluate model (optional)
 python -m models.evaluate
 ```
 
@@ -240,8 +269,14 @@ Edit `config.py` to customize:
 ### The Odds API
 - **Endpoint**: https://api.the-odds-api.com/v4
 - **Data**: Pre-match odds, scores
+- **Sports**: Soccer (EPL, La Liga, etc.), NBA, NCAAB (March Madness)
 - **Format**: JSON
 - **Rate Limit**: Check API documentation
+
+### NCAA Basketball (NCAAB) - March Madness
+- **Sport Key**: `basketball_ncaab`
+- **Data**: Odds, scores, events for NCAA Men's Basketball
+- **Season**: November - April (March Madness in March)
 
 ### Historical CSVs
 Place historical match data in `data/raw/historical/` as CSV files.

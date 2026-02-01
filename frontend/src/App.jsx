@@ -35,6 +35,8 @@ import EVBets from "./pages/EVBets";
 import Arbitrage from "./pages/Arbitrage";
 import BestBets from "./pages/BestBets";
 import SmartAssistant from "./pages/SmartAssistant";
+import CollegeSports from "./pages/CollegeSports";
+import MarchMadnessBracket from "./pages/MarchMadnessBracket";
 
 // Create React Query client with optimized settings
 const queryClient = new QueryClient({
@@ -203,6 +205,22 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Profile />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/college"
+              element={
+                <ProtectedRoute>
+                  <CollegeSports />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/college/bracket"
+              element={
+                <ProtectedRoute>
+                  <MarchMadnessBracket />
                 </ProtectedRoute>
               }
             />
