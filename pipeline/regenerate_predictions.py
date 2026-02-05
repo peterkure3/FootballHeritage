@@ -228,8 +228,72 @@ def build_features(match, engine, elo_ratings, feature_names, avg_odds) -> pd.Da
     return X.fillna(0)
 
 
+def archive_predictions_to_history(engine):
+    """
+    Archive first predictions to prediction_history table.
+    Only archives predictions that don't already exist in history.
+    """
+    archive_query = text("""
+        INSERT INTO prediction_history (match_id, model_version, winner, home_prob, draw_prob, away_prob, created_at, locked_at)
+        SELECT DISTINCT ON (p.match_id)
+            p.match_id,
+            p.model_version,
+            p.winner,
+            p.home_prob,
+            p.draw_prob,
+            p.away_prob,
+            p.created_at,
+            CASE WHEN m.status = 'FINISHED' THEN CURRENT_TIMESTAMP ELSE NULL END
+        FROM predictions p
+        JOIN matches m ON p.match_id = m.match_id
+        WHERE NOT EXISTS (
+            SELECT 1 FROM prediction_history ph WHERE ph.match_id = p.match_id
+        )
+        ORDER BY p.match_id, p.created_at ASC
+        RETURNING match_id
+    """)
+    
+    try:
+        with engine.begin() as conn:
+            result = conn.execute(archive_query)
+            archived_count = result.rowcount
+            if archived_count > 0:
+                logger.info(f"Archived {archived_count} predictions to history")
+            return archived_count
+    except Exception as e:
+        # Table might not exist yet - that's okay
+        logger.warning(f"Could not archive predictions (table may not exist): {e}")
+        return 0
+
+
+def lock_finished_match_predictions(engine):
+    """
+    Lock predictions for finished matches in prediction_history.
+    """
+    lock_query = text("""
+        UPDATE prediction_history ph
+        SET locked_at = CURRENT_TIMESTAMP
+        FROM matches m
+        WHERE ph.match_id = m.match_id
+          AND m.status = 'FINISHED'
+          AND ph.locked_at IS NULL
+        RETURNING ph.match_id
+    """)
+    
+    try:
+        with engine.begin() as conn:
+            result = conn.execute(lock_query)
+            locked_count = result.rowcount
+            if locked_count > 0:
+                logger.info(f"Locked {locked_count} predictions for finished matches")
+            return locked_count
+    except Exception as e:
+        logger.warning(f"Could not lock predictions: {e}")
+        return 0
+
+
 def regenerate_predictions():
-    """Regenerate predictions for all matches."""
+    """Regenerate predictions for upcoming matches only (not finished)."""
     logger.info("Starting prediction regeneration with v2 model")
     
     # Load model
@@ -266,7 +330,13 @@ def regenerate_predictions():
         'away': float(odds_result[2]) if odds_result and odds_result[2] else 2.8,
     }
     
-    # Get all matches (join with odds if available)
+    # Archive existing predictions to history before regenerating
+    archive_predictions_to_history(engine)
+    
+    # Lock predictions for any newly finished matches
+    lock_finished_match_predictions(engine)
+    
+    # Get only UPCOMING matches (not finished) - join with odds if available
     with engine.connect() as conn:
         matches = pd.read_sql(text("""
             SELECT m.match_id, m.home_team, m.away_team,
@@ -275,11 +345,18 @@ def regenerate_predictions():
                    AVG(o.away_win) as away_win_odds
             FROM matches m
             LEFT JOIN odds o ON m.match_id = o.match_id
-            WHERE m.home_team IS NOT NULL AND m.away_team IS NOT NULL
+            WHERE m.home_team IS NOT NULL 
+              AND m.away_team IS NOT NULL
+              AND (m.status != 'FINISHED' OR m.status IS NULL)
             GROUP BY m.match_id, m.home_team, m.away_team
         """), conn)
+        
+        # Count finished matches we're preserving
+        finished_count = conn.execute(text(
+            "SELECT COUNT(*) FROM matches WHERE status = 'FINISHED'"
+        )).scalar() or 0
     
-    logger.info(f"Processing {len(matches)} matches...")
+    logger.info(f"Processing {len(matches)} upcoming matches (preserving {finished_count} finished match predictions)...")
     
     predictions = []
     for idx, match in matches.iterrows():
@@ -317,10 +394,17 @@ def regenerate_predictions():
     predictions_df = pd.DataFrame(predictions)
     
     with engine.begin() as conn:
-        # Delete old predictions
-        conn.execute(text("DELETE FROM predictions"))
+        # Only delete predictions for NON-FINISHED matches
+        # This preserves predictions for finished matches
+        conn.execute(text("""
+            DELETE FROM predictions 
+            WHERE match_id IN (
+                SELECT match_id FROM matches 
+                WHERE status != 'FINISHED' OR status IS NULL
+            )
+        """))
         
-        # Insert new predictions
+        # Insert new predictions for upcoming matches
         predictions_df.to_sql('predictions', conn, if_exists='append', index=False)
     
     logger.info("Prediction regeneration complete!")

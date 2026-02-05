@@ -5,6 +5,7 @@ Run this periodically (e.g., daily) to keep results current.
 """
 
 import sys
+import time
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -19,6 +20,8 @@ from config import (
     FOOTBALL_DATA_ORG_BASE_URL,
     TRACKED_COMPETITIONS,
     API_TIMEOUT,
+    API_RETRY_ATTEMPTS,
+    API_RETRY_BACKOFF_FACTOR,
     LOG_LEVEL,
     DATABASE_URI,
 )
@@ -58,14 +61,25 @@ def fetch_finished_matches(competition_code: str, days_back: int = 7) -> list:
         "status": "FINISHED"
     }
     
-    try:
-        response = requests.get(url, headers=headers, params=params, timeout=API_TIMEOUT)
-        response.raise_for_status()
-        data = response.json()
-        return data.get("matches", [])
-    except requests.RequestException as e:
-        logger.error(f"Failed to fetch matches for {competition_code}: {e}")
-        return []
+    for attempt in range(1, API_RETRY_ATTEMPTS + 1):
+        try:
+            response = requests.get(url, headers=headers, params=params, timeout=API_TIMEOUT)
+            response.raise_for_status()
+            data = response.json()
+            return data.get("matches", [])
+        except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as e:
+            if attempt < API_RETRY_ATTEMPTS:
+                wait_time = API_RETRY_BACKOFF_FACTOR ** attempt
+                logger.warning(f"Attempt {attempt}/{API_RETRY_ATTEMPTS} failed for {competition_code}: {e}. Retrying in {wait_time}s...")
+                time.sleep(wait_time)
+            else:
+                logger.error(f"Failed to fetch matches for {competition_code} after {API_RETRY_ATTEMPTS} attempts: {e}")
+                return []
+        except requests.RequestException as e:
+            logger.error(f"Failed to fetch matches for {competition_code}: {e}")
+            return []
+    
+    return []
 
 
 def update_match_result(db, match_data: dict) -> bool:

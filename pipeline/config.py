@@ -121,7 +121,7 @@ API_ALLOWED_ORIGINS = [
 TRACKED_COMPETITIONS = [
     "PL",    # Premier League (2021)
     "CL",    # Champions League (2001)
-    "WC",    # World Cup (2000)
+    # "WC",    # World Cup (2000)
     "EC",    # European Championship (2018)
 ]
 
