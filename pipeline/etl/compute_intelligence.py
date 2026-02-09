@@ -124,15 +124,59 @@ def _load_two_way_offer_groups(conn, limit_events: int = 200) -> Dict[Tuple[str,
     return groups
 
 
+def _archive_and_clear_intelligence(conn) -> Dict[str, int]:
+    """
+    Archive devigged_odds to history table and truncate all intelligence tables.
+    Returns count of archived rows.
+    """
+    # Archive devigged_odds to history table for vig trend analysis
+    archive_query = text("""
+        INSERT INTO devigged_odds_archive (
+            original_id, event_id, pipeline_match_id, bookmaker, market,
+            outcome_a, outcome_b, odds_a, odds_b,
+            fair_prob_a, fair_prob_b, vig,
+            source_updated_at, original_created_at
+        )
+        SELECT 
+            id, event_id, pipeline_match_id, bookmaker, market,
+            outcome_a, outcome_b, odds_a, odds_b,
+            fair_prob_a, fair_prob_b, vig,
+            source_updated_at, created_at
+        FROM devigged_odds
+    """)
+    
+    try:
+        result = conn.execute(archive_query)
+        archived_count = result.rowcount
+        logger.info("Archived %s devigged_odds rows to history", archived_count)
+    except Exception as e:
+        # Archive table might not exist yet - that's okay, just log warning
+        logger.warning("Could not archive devigged_odds (table may not exist): %s", str(e))
+        archived_count = 0
+    
+    # Truncate all intelligence tables to ensure fresh data
+    conn.execute(text("TRUNCATE ev_bets CASCADE"))
+    conn.execute(text("TRUNCATE arbitrage CASCADE"))
+    conn.execute(text("TRUNCATE devigged_odds CASCADE"))
+    logger.info("Cleared ev_bets, arbitrage, and devigged_odds tables")
+    
+    return {"archived": archived_count}
+
+
 def compute_and_store_intelligence(stake: float = 100.0) -> Dict[str, int]:
     engine = create_engine(HERITAGE_DATABASE_URI)
 
     devig_rows = 0
     ev_rows = 0
     arb_rows = 0
+    archived_rows = 0
 
     try:
         with engine.begin() as conn:
+            # Archive devigged_odds and clear all intelligence tables
+            archive_result = _archive_and_clear_intelligence(conn)
+            archived_rows = archive_result.get("archived", 0)
+            
             groups = _load_two_way_offer_groups(conn)
 
             # Reference books for true probability baseline
@@ -345,13 +389,14 @@ def compute_and_store_intelligence(stake: float = 100.0) -> Dict[str, int]:
         raise
 
     logger.info(
-        "Computed intelligence rows: devig=%s ev=%s arb=%s",
+        "Computed intelligence rows: devig=%s ev=%s arb=%s (archived=%s devigged_odds)",
         devig_rows,
         ev_rows,
         arb_rows,
+        archived_rows,
     )
 
-    return {"devig_rows": devig_rows, "ev_rows": ev_rows, "arb_rows": arb_rows}
+    return {"devig_rows": devig_rows, "ev_rows": ev_rows, "arb_rows": arb_rows, "archived_rows": archived_rows}
 
 
 def main():
