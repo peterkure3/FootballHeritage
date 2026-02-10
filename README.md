@@ -183,7 +183,21 @@ Notes:
 
 👉 **[Read the RAG Implementation Guide](RAG_IMPLEMENTATION_GUIDE.md)**
 
-### 6. 🎲 Comprehensive Betting Options
+### 6. ⚽ FPL Advisor (NEW!)
+
+AI-powered Fantasy Premier League team optimization:
+
+- **Optimal 15-player squad** within £100m budget
+- **Valid formations** (3-4-3, 4-3-3, 4-4-2, etc.)
+- **Captain & vice-captain picks** based on expected points
+- **Differential picks** (high-potential, low-ownership players)
+- **Value picks** (best points-per-million under £6m)
+- **Fixture difficulty analysis** for next 5 gameweeks
+- **Real-time data** from official FPL API
+
+**Access:** `/fpl-advisor` or Explore menu
+
+### 7. 🎲 Comprehensive Betting Options
 
 - Moneyline bets
 - Point spreads
@@ -191,21 +205,21 @@ Notes:
 - Parlay calculator
 - Live odds updates
 
-### 7. 🛡️ Responsible Gambling
+### 8. 🛡️ Responsible Gambling
 
 - Daily/weekly/monthly betting limits
 - Self-exclusion options
 - Session time limits
 - Fraud detection and pattern analysis
 
-### 8. 📊 Advanced Analytics
+### 9. 📊 Advanced Analytics
 
 - Win rate tracking
 - Profit/loss analysis
 - Betting pattern insights
 - Team statistics and trends
 
-### 9. 🔒 Security
+### 10. 🔒 Security
 
 - JWT authentication
 - Encrypted wallet balances
