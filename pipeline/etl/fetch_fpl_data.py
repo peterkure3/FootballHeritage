@@ -266,8 +266,8 @@ def calculate_fixture_difficulty(
                 "difficulty": f.get("away_difficulty", 3),
             })
     
-    # Sort by gameweek and take next N
-    team_fixtures.sort(key=lambda x: x.get("gameweek", 999))
+    # Sort by gameweek and take next N (handle None gameweeks)
+    team_fixtures.sort(key=lambda x: x.get("gameweek") or 999)
     upcoming = team_fixtures[:next_n_gameweeks]
     
     if not upcoming:

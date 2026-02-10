@@ -2833,8 +2833,8 @@ async def get_fpl_advice(refresh: bool = Query(False, description="Force refresh
             logger.info("Fetching fresh FPL data...")
             fetch_and_process_all()
         
-        # Load data
-        with open(latest_file, "r") as f:
+        # Load data (use UTF-8 for player names with special characters)
+        with open(latest_file, "r", encoding="utf-8") as f:
             fpl_data = json.load(f)
         
         # Generate advice
@@ -2871,7 +2871,7 @@ async def get_fpl_players(
         if not latest_file.exists():
             raise HTTPException(status_code=404, detail="FPL data not found. Call /fpl/advice?refresh=true first.")
         
-        with open(latest_file, "r") as f:
+        with open(latest_file, "r", encoding="utf-8") as f:
             fpl_data = json.load(f)
         
         players = load_players_from_data(fpl_data)
@@ -2930,7 +2930,7 @@ async def get_fpl_fixtures(
         if not latest_file.exists():
             raise HTTPException(status_code=404, detail="FPL data not found")
         
-        with open(latest_file, "r") as f:
+        with open(latest_file, "r", encoding="utf-8") as f:
             fpl_data = json.load(f)
         
         fixtures = fpl_data.get("fixtures", [])

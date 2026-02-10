@@ -236,37 +236,79 @@ def greedy_team_selection(
         logger.error("No available players found")
         return None
     
-    # Sort by priority metric
-    if prioritize == "value_score":
-        available.sort(key=lambda p: p.value_score, reverse=True)
-    elif prioritize == "form":
-        available.sort(key=lambda p: p.form, reverse=True)
-    else:
-        available.sort(key=lambda p: p.expected_points, reverse=True)
-    
     # Track selected players
     selected: List[Player] = []
     position_counts = {"GKP": 0, "DEF": 0, "MID": 0, "FWD": 0}
     team_counts: Dict[int, int] = {}
     remaining_budget = budget
     
-    # First pass: fill required positions with best available
+    # Calculate target budget per position (weighted by typical costs)
+    # GK: ~10%, DEF: ~25%, MID: ~35%, FWD: ~30%
+    position_budget = {
+        "GKP": budget * 0.10 / 2,   # 2 GKs, ~£5m each
+        "DEF": budget * 0.25 / 5,   # 5 DEFs, ~£5m each
+        "MID": budget * 0.35 / 5,   # 5 MIDs, ~£7m each
+        "FWD": budget * 0.30 / 3,   # 3 FWDs, ~£10m each
+    }
+    
+    # Fill each position with a mix of premium and budget players
     for position, limits in POSITION_LIMITS.items():
         position_players = [p for p in available if p.position == position]
+        
+        # Sort by value score (best points per million)
+        position_players.sort(key=lambda p: (p.value_score or 0, p.expected_points or 0), reverse=True)
+        
+        slots_needed = limits["max"]
+        avg_budget = position_budget[position]
+        
+        # First, pick best value players that fit budget
+        for player in position_players:
+            if position_counts[position] >= slots_needed:
+                break
+            
+            if player in selected:
+                continue
+            if team_counts.get(player.team_id, 0) >= MAX_PER_TEAM:
+                continue
+            
+            # For first half of slots, allow premium picks; for rest, be budget-conscious
+            slots_filled = position_counts[position]
+            if slots_filled < slots_needed // 2:
+                # Premium slot - allow up to 1.5x average budget
+                max_price = min(avg_budget * 1.8, remaining_budget)
+            else:
+                # Budget slot - stick to average or below
+                max_price = min(avg_budget * 1.2, remaining_budget)
+            
+            if player.price > max_price:
+                continue
+            
+            selected.append(player)
+            position_counts[position] += 1
+            team_counts[player.team_id] = team_counts.get(player.team_id, 0) + 1
+            remaining_budget -= player.price
+    
+    # Second pass: fill any remaining slots with cheapest available
+    for position, limits in POSITION_LIMITS.items():
+        if position_counts[position] >= limits["max"]:
+            continue
+        
+        position_players = [
+            p for p in available 
+            if p.position == position and p not in selected
+        ]
+        # Sort by price (cheapest first)
+        position_players.sort(key=lambda p: p.price or 999)
         
         for player in position_players:
             if position_counts[position] >= limits["max"]:
                 break
             
-            # Check constraints
-            if player in selected:
-                continue
             if player.price > remaining_budget:
                 continue
             if team_counts.get(player.team_id, 0) >= MAX_PER_TEAM:
                 continue
             
-            # Add player
             selected.append(player)
             position_counts[position] += 1
             team_counts[player.team_id] = team_counts.get(player.team_id, 0) + 1
@@ -274,14 +316,18 @@ def greedy_team_selection(
     
     # Verify we have a valid squad
     if len(selected) != SQUAD_SIZE:
-        logger.warning(f"Could not fill squad: {len(selected)}/{SQUAD_SIZE} players")
+        logger.warning(f"Could not fill squad: {len(selected)}/{SQUAD_SIZE} players (budget remaining: £{remaining_budget:.1f}m)")
+        # Log what's missing
+        for pos, limits in POSITION_LIMITS.items():
+            if position_counts[pos] < limits["max"]:
+                logger.warning(f"  Missing {limits['max'] - position_counts[pos]} {pos}")
         return None
     
     # Select starting XI with best formation
     starting_xi, bench, formation = select_starting_xi(selected)
     
     # Select captain and vice captain
-    starting_xi.sort(key=lambda p: p.captain_score, reverse=True)
+    starting_xi.sort(key=lambda p: p.captain_score or 0, reverse=True)
     captain = starting_xi[0]
     vice_captain = starting_xi[1] if len(starting_xi) > 1 else starting_xi[0]
     
@@ -316,7 +362,7 @@ def select_starting_xi(squad: List[Player]) -> Tuple[List[Player], List[Player],
     
     # Sort each position by expected points
     for pos in by_position:
-        by_position[pos].sort(key=lambda p: p.expected_points, reverse=True)
+        by_position[pos].sort(key=lambda p: p.expected_points or 0, reverse=True)
     
     best_xi = None
     best_bench = None
@@ -379,11 +425,11 @@ def get_top_picks_by_position(
     position_players = [p for p in players if p.position == position and p.is_available]
     
     if sort_by == "value_score":
-        position_players.sort(key=lambda p: p.value_score, reverse=True)
+        position_players.sort(key=lambda p: p.value_score or 0, reverse=True)
     elif sort_by == "form":
-        position_players.sort(key=lambda p: p.form, reverse=True)
+        position_players.sort(key=lambda p: p.form or 0, reverse=True)
     else:
-        position_players.sort(key=lambda p: p.expected_points, reverse=True)
+        position_players.sort(key=lambda p: p.expected_points or 0, reverse=True)
     
     return position_players[:limit]
 
@@ -398,14 +444,14 @@ def get_differential_picks(
         p for p in players 
         if p.is_available and p.selected_by_percent <= max_ownership
     ]
-    differentials.sort(key=lambda p: p.expected_points, reverse=True)
+    differentials.sort(key=lambda p: p.expected_points or 0, reverse=True)
     return differentials[:limit]
 
 
 def get_captain_picks(players: List[Player], limit: int = 5) -> List[Player]:
     """Get best captain options."""
     available = [p for p in players if p.is_available]
-    available.sort(key=lambda p: p.captain_score, reverse=True)
+    available.sort(key=lambda p: p.captain_score or 0, reverse=True)
     return available[:limit]
 
 
@@ -419,7 +465,7 @@ def get_value_picks(
         p for p in players 
         if p.is_available and p.price <= max_price
     ]
-    budget_players.sort(key=lambda p: p.value_score, reverse=True)
+    budget_players.sort(key=lambda p: p.value_score or 0, reverse=True)
     return budget_players[:limit]
 
 
