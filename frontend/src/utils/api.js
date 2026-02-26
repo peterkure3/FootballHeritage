@@ -211,6 +211,12 @@ export const api = {
       method: "GET",
     });
   },
+
+  refreshIntelligence: async () => {
+    return await makeRequest("/intelligence/refresh", {
+      method: "POST",
+    });
+  },
 };
 
 // Input sanitization utilities

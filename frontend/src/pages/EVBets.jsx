@@ -3,6 +3,7 @@ import Navbar from "../components/Navbar";
 import LoadingSkeleton from "../components/LoadingSkeleton";
 import EmptyState from "../components/EmptyState";
 import { useEvBets } from "../hooks/useIntelligence";
+import { api } from "../utils/api";
 
 const toNumber = (value) => {
   const n = Number(value);
@@ -38,16 +39,31 @@ const formatMatchLabel = (row) => {
   return row?.pipeline_match_id || "";
 };
 
+const LEAGUES = [
+  { value: "", label: "All Leagues" },
+  { value: "Premier League", label: "Premier League" },
+  { value: "La Liga", label: "La Liga" },
+  { value: "Bundesliga", label: "Bundesliga" },
+  { value: "Serie A", label: "Serie A" },
+  { value: "Ligue 1", label: "Ligue 1" },
+  { value: "UEFA Champions League", label: "Champions League" },
+  { value: "NFL", label: "NFL" },
+  { value: "NBA", label: "NBA" },
+  { value: "NCAA", label: "NCAA" },
+];
+
 const EVBets = () => {
   const [pipelineMatchId, setPipelineMatchId] = useState("");
   const [eventId, setEventId] = useState("");
   const [bookmaker, setBookmaker] = useState("");
   const [market, setMarket] = useState("");
+  const [league, setLeague] = useState("");
   const [minEvPct, setMinEvPct] = useState(0.0);
   const [limit, setLimit] = useState(200);
   const [sortKey, setSortKey] = useState("expected_value_pct");
   const [sortDir, setSortDir] = useState("desc");
   const [expandedId, setExpandedId] = useState(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const params = useMemo(() => {
     const p = { limit };
@@ -55,9 +71,10 @@ const EVBets = () => {
     if (eventId.trim()) p.event_id = eventId.trim();
     if (bookmaker.trim()) p.bookmaker = bookmaker.trim();
     if (market.trim()) p.market = market.trim();
+    if (league) p.league = league;
     if (minEvPct !== null && Number.isFinite(minEvPct)) p.min_ev_pct = minEvPct;
     return p;
-  }, [pipelineMatchId, eventId, bookmaker, market, minEvPct, limit]);
+  }, [pipelineMatchId, eventId, bookmaker, market, league, minEvPct, limit]);
 
   const { data, isLoading, isError, error, refetch } = useEvBets(params);
 
@@ -79,6 +96,8 @@ const EVBets = () => {
           return toNumber(row.odds) ?? 0;
         case "stake":
           return toNumber(row.stake) ?? 0;
+        case "league":
+          return row?.league ?? "";
         default:
           return row?.[sortKey] ?? "";
       }
@@ -118,28 +137,42 @@ const EVBets = () => {
           </div>
 
           <button
-            onClick={() => refetch()}
-            className="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-semibold border border-gray-700"
+            onClick={async () => {
+              setIsRefreshing(true);
+              try {
+                await api.refreshIntelligence();
+                await refetch();
+              } catch (err) {
+                console.error("Failed to refresh intelligence:", err);
+              } finally {
+                setIsRefreshing(false);
+              }
+            }}
+            disabled={isRefreshing}
+            className={`px-4 py-2 rounded-lg font-semibold border ${
+              isRefreshing
+                ? "bg-gray-700 text-gray-400 border-gray-600 cursor-not-allowed"
+                : "bg-gray-800 hover:bg-gray-700 text-white border-gray-700"
+            }`}
             type="button"
           >
-            Refresh
+            {isRefreshing ? "Refreshing..." : "Refresh"}
           </button>
         </div>
 
         <div className="bg-gray-900/60 border border-gray-800 rounded-2xl p-4 mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-6 gap-3">
-            <input
-              className="bg-gray-950 border border-gray-800 rounded-lg px-3 py-2 text-white placeholder-gray-600"
-              placeholder="pipeline_match_id"
-              value={pipelineMatchId}
-              onChange={(e) => setPipelineMatchId(e.target.value)}
-            />
-            <input
-              className="bg-gray-950 border border-gray-800 rounded-lg px-3 py-2 text-white placeholder-gray-600"
-              placeholder="event_id (uuid)"
-              value={eventId}
-              onChange={(e) => setEventId(e.target.value)}
-            />
+          <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-7 gap-3">
+            <select
+              className="bg-gray-950 border border-gray-800 rounded-lg px-3 py-2 text-white"
+              value={league}
+              onChange={(e) => setLeague(e.target.value)}
+            >
+              {LEAGUES.map((l) => (
+                <option key={l.value} value={l.value}>
+                  {l.label}
+                </option>
+              ))}
+            </select>
             <input
               className="bg-gray-950 border border-gray-800 rounded-lg px-3 py-2 text-white placeholder-gray-600"
               placeholder="bookmaker"
@@ -172,6 +205,18 @@ const EVBets = () => {
               <option value={500}>Limit 500</option>
               <option value={1000}>Limit 1000</option>
             </select>
+            <input
+              className="bg-gray-950 border border-gray-800 rounded-lg px-3 py-2 text-white placeholder-gray-600"
+              placeholder="pipeline_match_id"
+              value={pipelineMatchId}
+              onChange={(e) => setPipelineMatchId(e.target.value)}
+            />
+            <input
+              className="bg-gray-950 border border-gray-800 rounded-lg px-3 py-2 text-white placeholder-gray-600"
+              placeholder="event_id (uuid)"
+              value={eventId}
+              onChange={(e) => setEventId(e.target.value)}
+            />
           </div>
         </div>
 
@@ -192,6 +237,7 @@ const EVBets = () => {
                 <thead className="bg-gray-900 border-b border-gray-800">
                   <tr className="text-gray-400">
                     <th className="text-left px-4 py-3 cursor-pointer select-none" onClick={() => toggleSort("created_at")}>Created</th>
+                    <th className="text-left px-4 py-3 cursor-pointer select-none" onClick={() => toggleSort("league")}>League</th>
                     <th className="text-left px-4 py-3">Match</th>
                     <th className="text-left px-4 py-3 cursor-pointer select-none" onClick={() => toggleSort("bookmaker")}>Book</th>
                     <th className="text-left px-4 py-3 cursor-pointer select-none" onClick={() => toggleSort("market")}>Market</th>
@@ -214,6 +260,7 @@ const EVBets = () => {
                           onClick={() => setExpandedId(isExpanded ? null : row.id)}
                         >
                           <td className="px-4 py-3 whitespace-nowrap">{row.created_at ? new Date(row.created_at).toLocaleString() : "--"}</td>
+                          <td className="px-4 py-3 whitespace-nowrap">{row.league || "--"}</td>
                           <td className="px-4 py-3">
                             <div className="font-semibold">{formatMatchLabel(row) || "--"}</div>
                             <div className="text-xs text-gray-500">{row.event_date ? new Date(row.event_date).toLocaleString() : ""}</div>
@@ -233,7 +280,7 @@ const EVBets = () => {
                         </tr>
                         {isExpanded && (
                           <tr className="border-b border-gray-800/60 bg-gray-950/40">
-                            <td className="px-4 py-3" colSpan={10}>
+                            <td className="px-4 py-3" colSpan={11}>
                               <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs text-gray-300">
                                 <div>
                                   <div className="text-gray-500">Event ID</div>

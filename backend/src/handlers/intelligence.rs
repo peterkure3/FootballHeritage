@@ -2,6 +2,7 @@ use actix_web::{web, HttpResponse};
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use sqlx::{PgPool, Postgres, QueryBuilder};
+use std::process::Command;
 use uuid::Uuid;
 
 use crate::errors::AppResult;
@@ -86,6 +87,7 @@ pub struct EvBetRow {
     pub event_home_team: Option<String>,
     pub event_away_team: Option<String>,
     pub event_date: Option<DateTime<Utc>>,
+    pub league: Option<String>,
     pub bookmaker: Option<String>,
     pub market: String,
     pub selection: String,
@@ -104,13 +106,14 @@ pub struct EvBetsQuery {
     pub pipeline_match_id: Option<String>,
     pub bookmaker: Option<String>,
     pub market: Option<String>,
+    pub league: Option<String>,
     pub min_ev_pct: Option<f64>,
     pub limit: Option<i64>,
 }
 
 pub async fn get_ev_bets(pool: web::Data<PgPool>, query: web::Query<EvBetsQuery>) -> AppResult<HttpResponse> {
     let mut qb: QueryBuilder<Postgres> = QueryBuilder::new(
-        "SELECT b.id, b.event_id, b.pipeline_match_id, e.home_team as event_home_team, e.away_team as event_away_team, e.event_date as event_date, b.bookmaker, b.market, b.selection, b.odds, b.stake, b.true_probability, b.expected_value, b.expected_value_pct, b.source_updated_at, b.created_at FROM ev_bets b LEFT JOIN events e ON e.id = b.event_id",
+        "SELECT b.id, b.event_id, b.pipeline_match_id, e.home_team as event_home_team, e.away_team as event_away_team, e.event_date as event_date, e.league as league, b.bookmaker, b.market, b.selection, b.odds, b.stake, b.true_probability, b.expected_value, b.expected_value_pct, b.source_updated_at, b.created_at FROM ev_bets b LEFT JOIN events e ON e.id = b.event_id",
     );
 
     let mut has_where = false;
@@ -137,6 +140,12 @@ pub async fn get_ev_bets(pool: web::Data<PgPool>, query: web::Query<EvBetsQuery>
         qb.push(if !has_where { " WHERE " } else { " AND " });
         has_where = true;
         qb.push("b.market = ").push_bind(market);
+    }
+
+    if let Some(ref league) = query.league {
+        qb.push(if !has_where { " WHERE " } else { " AND " });
+        has_where = true;
+        qb.push("e.league = ").push_bind(league);
     }
 
     if let Some(min_ev_pct) = query.min_ev_pct {
@@ -222,4 +231,50 @@ pub async fn get_arbitrage(pool: web::Data<PgPool>, query: web::Query<ArbitrageQ
 
     let rows: Vec<ArbitrageRow> = qb.build_query_as().fetch_all(pool.get_ref()).await?;
     Ok(HttpResponse::Ok().json(rows))
+}
+
+#[derive(Debug, Serialize)]
+pub struct RefreshIntelligenceResponse {
+    pub success: bool,
+    pub message: String,
+}
+
+/// POST /api/v1/intelligence/refresh
+/// 
+/// Triggers the compute_intelligence pipeline script to refresh EV bets, devigged odds, and arbitrage data.
+pub async fn refresh_intelligence() -> HttpResponse {
+    // Run the compute_intelligence script from the pipeline directory
+    let pipeline_dir = std::env::var("PIPELINE_DIR").unwrap_or_else(|_| "../pipeline".to_string());
+    
+    let result = Command::new("python")
+        .args(["-m", "etl.compute_intelligence"])
+        .current_dir(&pipeline_dir)
+        .output();
+    
+    match result {
+        Ok(output) => {
+            if output.status.success() {
+                let stdout = String::from_utf8_lossy(&output.stdout);
+                eprintln!("compute_intelligence completed successfully: {}", stdout);
+                HttpResponse::Ok().json(RefreshIntelligenceResponse {
+                    success: true,
+                    message: "Intelligence data refreshed successfully".to_string(),
+                })
+            } else {
+                let stderr = String::from_utf8_lossy(&output.stderr);
+                eprintln!("compute_intelligence failed: {}", stderr);
+                HttpResponse::InternalServerError().json(RefreshIntelligenceResponse {
+                    success: false,
+                    message: format!("Script failed: {}", stderr),
+                })
+            }
+        }
+        Err(e) => {
+            eprintln!("Failed to spawn compute_intelligence: {}", e);
+            HttpResponse::InternalServerError().json(RefreshIntelligenceResponse {
+                success: false,
+                message: format!("Failed to run script: {}", e),
+            })
+        }
+    }
 }

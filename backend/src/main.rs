@@ -188,6 +188,7 @@ async fn main() -> std::io::Result<()> {
                             .route("/devigged-odds", web::get().to(handlers::intelligence::get_devigged_odds))
                             .route("/ev-bets", web::get().to(handlers::intelligence::get_ev_bets))
                             .route("/arbitrage", web::get().to(handlers::intelligence::get_arbitrage))
+                            .route("/refresh", web::post().to(handlers::intelligence::refresh_intelligence))
                     )
                     .service(
                         web::scope("/wallet")

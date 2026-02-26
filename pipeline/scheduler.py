@@ -84,13 +84,13 @@ def weekly_retrain_job():
     
     try:
         # Fetch new data
-        logger.info("[1/5] Fetching raw data...")
+        logger.info("[1/8] Fetching raw data...")
         fetch_data()
 
-        logger.info("[2/6] Ingesting OddsAPI offers...")
+        logger.info("[2/8] Ingesting OddsAPI offers...")
         ingest_oddsapi_offers()
 
-        logger.info("[3/7] Matching OddsAPI events...")
+        logger.info("[3/8] Matching OddsAPI events...")
         match_oddsapi_events()
 
         logger.info("[4/8] Computing betting intelligence...")
@@ -109,7 +109,7 @@ def weekly_retrain_job():
         train_model()
         
         # Generate predictions
-        logger.info("[8/8] Generating predictions...")
+        logger.info("[8/8] Generating match predictions...")
         predict_matches()
         
         logger.info("✓ Weekly retrain completed successfully")

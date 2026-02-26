@@ -64,8 +64,13 @@ const getTeamConference = (teamName) => {
 const CollegeSports = () => {
   const [ncaabGames, setNcaabGames] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState(null);
   const [filter, setFilter] = useState('all'); // 'all', 'live', 'upcoming', 'finished'
+  const [dataTimestamp, setDataTimestamp] = useState(null);
+  const [isStale, setIsStale] = useState(false);
+
+  const PIPELINE_API_URL = import.meta.env.VITE_PIPELINE_API_URL || 'http://localhost:5555/api/v1';
 
   useEffect(() => {
     fetchNcaabData();
@@ -74,25 +79,42 @@ const CollegeSports = () => {
     return () => clearInterval(interval);
   }, []);
 
+  const refreshNcaabData = async () => {
+    try {
+      setRefreshing(true);
+      // First refresh data from The Odds API
+      await fetch(`${PIPELINE_API_URL}/ncaab/refresh`, { method: 'POST' });
+      // Then fetch the updated games
+      await fetchNcaabData();
+    } catch (err) {
+      console.error('Failed to refresh NCAAB data:', err);
+      setError('Failed to refresh data from The Odds API');
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   const fetchNcaabData = async () => {
     try {
       setLoading(true);
-      // Fetch from backend events endpoint filtered by NCAAB
-      const response = await api.getOdds();
-      const events = response?.events || [];
+      // Fetch from pipeline NCAAB games endpoint
+      const PIPELINE_API_URL = import.meta.env.VITE_PIPELINE_API_URL || 'http://localhost:5555/api/v1';
+      const response = await fetch(`${PIPELINE_API_URL}/ncaab/games?limit=50`);
       
-      // Filter for basketball/NCAAB events
-      const ncaabEvents = events.filter(event => 
-        event.sport?.toLowerCase().includes('basketball') ||
-        event.sport_key?.includes('ncaab') ||
-        event.competition?.toLowerCase().includes('ncaa')
-      );
+      if (!response.ok) {
+        throw new Error('Failed to fetch NCAAB games');
+      }
       
-      setNcaabGames(ncaabEvents);
+      const data = await response.json();
+      const games = data?.games || [];
+      
+      setNcaabGames(games);
+      setDataTimestamp(data?.data_timestamp);
+      setIsStale(data?.is_stale || false);
       setError(null);
     } catch (err) {
       console.error('Failed to fetch NCAAB data:', err);
-      setError('Failed to load college basketball data');
+      setError('Failed to load college basketball data. Try refreshing the data.');
     } finally {
       setLoading(false);
     }
@@ -192,6 +214,36 @@ const CollegeSports = () => {
           />
         </div>
 
+        {/* Prediction */}
+        {!isFinished && game.prediction && (
+          <div className="px-4 py-3 bg-orange-500/10 border-t border-orange-500/20">
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-orange-400 font-semibold">AI Prediction</span>
+              <span className={`px-2 py-0.5 rounded text-xs font-bold ${
+                game.prediction.confidence === 'High' ? 'bg-green-500/20 text-green-400' :
+                game.prediction.confidence === 'Medium' ? 'bg-yellow-500/20 text-yellow-400' :
+                'bg-gray-500/20 text-gray-400'
+              }`}>
+                {game.prediction.confidence}
+              </span>
+            </div>
+            <div className="mt-1 text-sm">
+              <span className="text-white font-medium">{game.prediction.predicted_winner}</span>
+              <span className="text-gray-400 ml-2">
+                ({(game.prediction.home_win_prob > game.prediction.away_win_prob 
+                  ? game.prediction.home_win_prob 
+                  : game.prediction.away_win_prob * 100).toFixed(0)}%)
+              </span>
+            </div>
+            {game.prediction.best_bet && (
+              <div className="mt-1 text-xs text-green-400">
+                💡 Best Bet: {game.prediction.best_bet}
+                {game.prediction.edge_pct && ` (+${game.prediction.edge_pct}% edge)`}
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Footer with odds */}
         {!isFinished && game.odds && (
           <div className="px-4 py-3 bg-gray-900/30 border-t border-gray-700">
@@ -223,14 +275,24 @@ const CollegeSports = () => {
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center gap-4 mb-4">
-            <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg">
-              <span className="text-3xl">🏀</span>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg">
+                <span className="text-3xl">🏀</span>
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold text-white">College Sports</h1>
+                <p className="text-gray-400">NCAA Basketball • March Madness</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-3xl font-bold text-white">College Sports</h1>
-              <p className="text-gray-400">NCAA Basketball • March Madness</p>
-            </div>
+            <button
+              onClick={refreshNcaabData}
+              disabled={refreshing}
+              className="flex items-center gap-2 px-4 py-2 bg-orange-600 hover:bg-orange-700 disabled:bg-orange-800 text-white rounded-lg transition-colors"
+            >
+              <span className={refreshing ? 'animate-spin' : ''}>🔄</span>
+              {refreshing ? 'Refreshing...' : 'Refresh Data'}
+            </button>
           </div>
 
           {/* Quick Links */}
@@ -255,6 +317,28 @@ const CollegeSports = () => {
             </Link>
           </div>
         </div>
+
+        {/* Stale Data Warning */}
+        {(isStale || (ncaabGames.length === 0 && !loading)) && (
+          <div className="mb-6 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-xl">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">⚠️</span>
+              <div>
+                <p className="text-yellow-400 font-semibold">Data may be outdated</p>
+                <p className="text-gray-400 text-sm">
+                  {dataTimestamp 
+                    ? `Last updated: ${new Date(dataTimestamp).toLocaleString()}`
+                    : 'No recent data available.'
+                  }
+                  {' '}Click "Refresh Data" to fetch the latest games.
+                </p>
+                <p className="text-gray-500 text-xs mt-1">
+                  Note: The Odds API has usage limits. If refresh fails, the quota may be exhausted.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Filter Tabs */}
         <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
