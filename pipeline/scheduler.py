@@ -21,6 +21,9 @@ from etl.fetch_raw_data import main as fetch_data
 from etl.ingest_oddsapi_offers import main as ingest_oddsapi_offers
 from etl.match_oddsapi_events import main as match_oddsapi_events
 from etl.compute_intelligence import main as compute_betting_intelligence
+from etl.compute_intelligence_v2 import run_full_pipeline as compute_intelligence_v2
+from etl.data_validator import validate_data
+from etl.backtesting import run_backtest
 from etl.transform import main as transform_data
 from etl.load_to_db import main as load_data
 from models.train_model import main as train_model
@@ -55,8 +58,8 @@ def daily_fetch_job():
         logger.info("[3/6] Matching OddsAPI events...")
         match_oddsapi_events()
 
-        logger.info("[4/7] Computing betting intelligence...")
-        compute_betting_intelligence()
+        logger.info("[4/7] Computing betting intelligence (enhanced)...")
+        compute_intelligence_v2()
         
         # Transform data
         logger.info("[5/7] Transforming data...")
@@ -93,8 +96,8 @@ def weekly_retrain_job():
         logger.info("[3/8] Matching OddsAPI events...")
         match_oddsapi_events()
 
-        logger.info("[4/8] Computing betting intelligence...")
-        compute_betting_intelligence()
+        logger.info("[4/8] Computing betting intelligence (enhanced)...")
+        compute_intelligence_v2()
         
         # Transform data
         logger.info("[5/8] Transforming data...")
@@ -109,8 +112,19 @@ def weekly_retrain_job():
         train_model()
         
         # Generate predictions
-        logger.info("[8/8] Generating match predictions...")
+        logger.info("[8/9] Generating match predictions...")
         predict_matches()
+        
+        # Run backtesting to validate model accuracy
+        logger.info("[9/9] Running model backtesting...")
+        try:
+            backtest_result = run_backtest(model="elo", days_back=90, save=True)
+            logger.info("Backtest: %d predictions, accuracy %.1f%%, brier %.4f",
+                       backtest_result.total_predictions,
+                       backtest_result.accuracy * 100,
+                       backtest_result.brier_score)
+        except Exception as e:
+            logger.warning("Backtesting failed (non-critical): %s", e)
         
         logger.info("✓ Weekly retrain completed successfully")
         

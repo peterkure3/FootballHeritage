@@ -3300,3 +3300,203 @@ async def refresh_ncaab_data():
         raise HTTPException(status_code=500, detail=str(e))
 
 
+# ============================================================================
+# PREDICTION IMPROVEMENT ENDPOINTS
+# ============================================================================
+
+class DataValidationResponse(BaseModel):
+    timestamp: str
+    overall_passed: bool
+    checks: List[Dict]
+    recommendations: List[str]
+
+
+class EloRatingResponse(BaseModel):
+    team: str
+    elo: float
+    form: float
+    games_played: int
+    recent_form: str
+
+
+class BacktestResultResponse(BaseModel):
+    model_name: str
+    total_predictions: int
+    brier_score: float
+    log_loss: float
+    accuracy: float
+    by_league: Dict
+
+
+class MatchPredictionResponse(BaseModel):
+    home_team: str
+    away_team: str
+    home_win_prob: float
+    draw_prob: float
+    away_win_prob: float
+    home_elo: float
+    away_elo: float
+    confidence: float
+    league: Optional[str]
+    event_date: Optional[str]
+
+
+@router.get("/predictions/validate-data")
+async def validate_prediction_data():
+    """
+    Run data validation checks before predictions.
+    Returns validation status and recommendations.
+    """
+    from etl.data_validator import DataValidator
+    
+    try:
+        validator = DataValidator(heritage_engine)
+        report = validator.validate_all()
+        
+        return {
+            "timestamp": report.timestamp.isoformat(),
+            "overall_passed": report.overall_passed,
+            "checks": [
+                {
+                    "check_name": c.check_name,
+                    "passed": c.passed,
+                    "message": c.message,
+                    "severity": c.severity,
+                }
+                for c in report.checks
+            ],
+            "recommendations": report.recommendations,
+        }
+    except Exception as e:
+        logger.error(f"Data validation error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/predictions/elo-ratings", response_model=List[EloRatingResponse])
+async def get_elo_ratings(
+    league: Optional[str] = Query(None, description="Filter by league"),
+    limit: int = Query(50, ge=1, le=500),
+):
+    """
+    Get current Elo ratings for all teams.
+    """
+    from etl.elo_model import EloModel
+    
+    try:
+        model = EloModel(heritage_engine)
+        model.load_ratings_from_db()
+        
+        if not model.ratings:
+            model.load_historical_results(league=league)
+        
+        ratings = model.get_all_ratings()
+        return ratings[:limit]
+    except Exception as e:
+        logger.error(f"Elo ratings error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/predictions/update-elo")
+async def update_elo_ratings(
+    league: Optional[str] = Query(None, description="Filter by league"),
+):
+    """
+    Recalculate Elo ratings from historical data.
+    """
+    from etl.elo_model import compute_elo_ratings
+    
+    try:
+        result = compute_elo_ratings(league=league, save=True)
+        return {
+            "status": "success",
+            "teams_rated": result.get("teams_rated", 0),
+            "top_10": result.get("top_10", []),
+        }
+    except Exception as e:
+        logger.error(f"Elo update error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/predictions/upcoming", response_model=List[MatchPredictionResponse])
+async def get_upcoming_predictions(
+    league: Optional[str] = Query(None, description="Filter by league"),
+    limit: int = Query(20, ge=1, le=100),
+):
+    """
+    Get predictions for upcoming matches using enhanced Elo model.
+    """
+    from etl.elo_model import predict_upcoming_matches
+    
+    try:
+        predictions = predict_upcoming_matches(league=league)
+        return predictions[:limit]
+    except Exception as e:
+        logger.error(f"Predictions error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/predictions/backtest")
+async def get_backtest_results(
+    days_back: int = Query(90, ge=7, le=365),
+    league: Optional[str] = Query(None, description="Filter by league"),
+):
+    """
+    Run backtesting on the Elo model and return accuracy metrics.
+    """
+    from etl.backtesting import run_backtest
+    
+    try:
+        result = run_backtest(model="elo", days_back=days_back, league=league, save=False)
+        return result.to_dict()
+    except Exception as e:
+        logger.error(f"Backtest error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/predictions/value-bets")
+async def get_enhanced_value_bets(
+    min_ev_pct: float = Query(0.02, ge=0, le=1.0, description="Minimum EV percentage"),
+    min_confidence: float = Query(0.5, ge=0, le=1.0, description="Minimum confidence"),
+    limit: int = Query(50, ge=1, le=200),
+):
+    """
+    Get value bets using improved true probability calculation.
+    Uses ensemble of sharp book devigging, consensus odds, and Elo model.
+    """
+    from etl.true_probability import TrueProbabilityCalculator
+    
+    try:
+        calculator = TrueProbabilityCalculator(heritage_engine)
+        value_bets = calculator.find_value_bets(
+            min_ev_pct=min_ev_pct,
+            min_confidence=min_confidence,
+            limit=limit,
+        )
+        
+        return {
+            "count": len(value_bets),
+            "bets": value_bets,
+        }
+    except Exception as e:
+        logger.error(f"Value bets error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/predictions/run-pipeline")
+async def run_enhanced_pipeline():
+    """
+    Run the full enhanced intelligence pipeline.
+    Includes data validation, Elo updates, and improved EV calculation.
+    """
+    from etl.compute_intelligence_v2 import run_full_pipeline
+    
+    try:
+        results = run_full_pipeline(stake=100.0)
+        return {
+            "status": "success",
+            "results": results,
+        }
+    except Exception as e:
+        logger.error(f"Pipeline error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+

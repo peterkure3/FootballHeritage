@@ -5,6 +5,7 @@ from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 from sqlalchemy import create_engine, text
 from sqlalchemy.exc import SQLAlchemyError
+from tqdm import tqdm
 
 import sys
 
@@ -228,7 +229,7 @@ def ingest_latest_raw_files(max_files: int = 3) -> Dict[str, int]:
                 """
             )
 
-            for path in files:
+            for path in tqdm(files, desc="Ingesting odds files", unit="file"):
                 with open(path, "r", encoding="utf-8") as f:
                     payload = json.load(f)
 
@@ -269,7 +270,9 @@ def ingest_latest_raw_files(max_files: int = 3) -> Dict[str, int]:
 
 
 def main():
-    ingest_latest_raw_files(max_files=3)
+    # Process all recent files - 7 sports x multiple fetches
+    # Set to 50 to cover at least a week of data across all leagues
+    ingest_latest_raw_files(max_files=5000)
 
 
 if __name__ == "__main__":

@@ -41,15 +41,15 @@ const formatMatchLabel = (row) => {
 
 const LEAGUES = [
   { value: "", label: "All Leagues" },
-  { value: "Premier League", label: "Premier League" },
-  { value: "La Liga", label: "La Liga" },
-  { value: "Bundesliga", label: "Bundesliga" },
-  { value: "Serie A", label: "Serie A" },
-  { value: "Ligue 1", label: "Ligue 1" },
-  { value: "UEFA Champions League", label: "Champions League" },
-  { value: "NFL", label: "NFL" },
-  { value: "NBA", label: "NBA" },
-  { value: "NCAA", label: "NCAA" },
+  { value: "soccer_epl", label: "Premier League" },
+  { value: "soccer_spain_la_liga", label: "La Liga" },
+  { value: "soccer_germany_bundesliga", label: "Bundesliga" },
+  { value: "soccer_italy_serie_a", label: "Serie A" },
+  { value: "soccer_france_ligue_one", label: "Ligue 1" },
+  { value: "soccer_uefa_champs_league", label: "Champions League" },
+  { value: "americanfootball_nfl", label: "NFL" },
+  { value: "basketball_nba", label: "NBA" },
+  { value: "basketball_ncaab", label: "NCAA Basketball" },
 ];
 
 const EVBets = () => {
