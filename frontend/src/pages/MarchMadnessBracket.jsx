@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 
-// NCAA Team data with ESPN IDs for logos
 const TEAM_DATA = {
   'Duke': { id: '150', color: '#003087', seed: 1 },
   'North Carolina': { id: '153', color: '#7BAFD4', seed: 2 },
@@ -38,15 +37,13 @@ const TEAM_DATA = {
   'Memphis': { id: '235', color: '#003087', seed: 8 },
 };
 
-// Sample bracket data structure - in production this would come from API
 const generateSampleBracket = () => {
   const teams = Object.keys(TEAM_DATA);
   const regions = ['East', 'West', 'South', 'Midwest'];
-  
+
   return regions.map(region => ({
     name: region,
     rounds: [
-      // Round of 64
       {
         name: 'Round of 64',
         games: Array(8).fill(null).map((_, i) => ({
@@ -57,7 +54,6 @@ const generateSampleBracket = () => {
           status: 'upcoming'
         }))
       },
-      // Round of 32
       {
         name: 'Round of 32',
         games: Array(4).fill(null).map((_, i) => ({
@@ -68,7 +64,6 @@ const generateSampleBracket = () => {
           status: 'pending'
         }))
       },
-      // Sweet 16
       {
         name: 'Sweet 16',
         games: Array(2).fill(null).map((_, i) => ({
@@ -79,7 +74,6 @@ const generateSampleBracket = () => {
           status: 'pending'
         }))
       },
-      // Elite 8
       {
         name: 'Elite 8',
         games: [{
@@ -94,13 +88,10 @@ const generateSampleBracket = () => {
   }));
 };
 
-// Conference data for filtering
 const CONFERENCES = ['All', 'ACC', 'Big Ten', 'Big 12', 'SEC', 'Big East', 'Pac-12', 'AAC', 'WCC', 'MWC'];
 
-// Round names for filtering
 const ROUNDS = ['All Rounds', 'Round of 64', 'Round of 32', 'Sweet 16', 'Elite 8', 'Final Four', 'Championship'];
 
-// Game status options
 const GAME_STATUS = ['All Games', 'Live', 'Upcoming', 'Finished'];
 
 const MarchMadnessBracket = () => {
@@ -117,10 +108,9 @@ const MarchMadnessBracket = () => {
     status: 'pending'
   });
   const [selectedRegion, setSelectedRegion] = useState('East');
-  const [viewMode, setViewMode] = useState('region'); // 'region' or 'full'
+  const [viewMode, setViewMode] = useState('region');
   const [lastUpdate, setLastUpdate] = useState(new Date());
-  
-  // Filter states
+
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRound, setSelectedRound] = useState('All Rounds');
   const [selectedConference, setSelectedConference] = useState('All');
@@ -128,17 +118,13 @@ const MarchMadnessBracket = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [highlightedTeam, setHighlightedTeam] = useState(null);
 
-  // Auto-refresh bracket data
   useEffect(() => {
     const fetchBracketData = async () => {
-      // In production, fetch from API
-      // const response = await api.getBracket();
-      // setBracket(response.bracket);
       setLastUpdate(new Date());
     };
 
     fetchBracketData();
-    const interval = setInterval(fetchBracketData, 30000); // Refresh every 30 seconds
+    const interval = setInterval(fetchBracketData, 30000);
     return () => clearInterval(interval);
   }, []);
 
@@ -154,13 +140,12 @@ const MarchMadnessBracket = () => {
     return TEAM_DATA[teamName]?.color || '#6B7280';
   };
 
-  // Get team conference (would come from API in production)
   const getTeamConference = (teamName) => {
     const conferenceMap = {
       'Duke': 'ACC', 'North Carolina': 'ACC', 'Louisville': 'ACC', 'Syracuse': 'ACC', 'Miami': 'ACC',
       'Kentucky': 'SEC', 'Tennessee': 'SEC', 'Alabama': 'SEC', 'Auburn': 'SEC', 'Florida': 'SEC', 'Arkansas': 'SEC', 'Texas': 'SEC',
       'Kansas': 'Big 12', 'Baylor': 'Big 12', 'Houston': 'Big 12', 'Arizona': 'Big 12',
-      'UCLA': 'Big Ten', 'Michigan State': 'Big Ten', 'Purdue': 'Big Ten', 'Indiana': 'Big Ten', 'Michigan': 'Big Ten', 
+      'UCLA': 'Big Ten', 'Michigan State': 'Big Ten', 'Purdue': 'Big Ten', 'Indiana': 'Big Ten', 'Michigan': 'Big Ten',
       'Ohio State': 'Big Ten', 'Wisconsin': 'Big Ten', 'Iowa': 'Big Ten', 'Illinois': 'Big Ten', 'Oregon': 'Big Ten',
       'Gonzaga': 'WCC',
       'Villanova': 'Big East', 'UConn': 'Big East', 'Marquette': 'Big East', 'Creighton': 'Big East', 'St. Johns': 'Big East',
@@ -170,14 +155,11 @@ const MarchMadnessBracket = () => {
     return conferenceMap[teamName] || 'NCAA';
   };
 
-  // Filter games based on criteria
   const filterGame = (game, roundName) => {
-    // Round filter
     if (selectedRound !== 'All Rounds' && roundName !== selectedRound) {
       return false;
     }
 
-    // Status filter
     if (selectedStatus !== 'All Games') {
       const statusMap = {
         'Live': ['live', 'in_progress'],
@@ -190,7 +172,6 @@ const MarchMadnessBracket = () => {
       }
     }
 
-    // Team search filter
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
       const team1Match = game.team1?.name?.toLowerCase().includes(term);
@@ -200,7 +181,6 @@ const MarchMadnessBracket = () => {
       }
     }
 
-    // Conference filter
     if (selectedConference !== 'All') {
       const team1Conf = game.team1 ? getTeamConference(game.team1.name) : null;
       const team2Conf = game.team2 ? getTeamConference(game.team2.name) : null;
@@ -212,7 +192,6 @@ const MarchMadnessBracket = () => {
     return true;
   };
 
-  // Check if a team matches the search/highlight
   const isTeamHighlighted = (teamName) => {
     if (!teamName) return false;
     if (highlightedTeam && teamName.toLowerCase() === highlightedTeam.toLowerCase()) return true;
@@ -220,7 +199,6 @@ const MarchMadnessBracket = () => {
     return false;
   };
 
-  // Clear all filters
   const clearFilters = () => {
     setSearchTerm('');
     setSelectedRound('All Rounds');
@@ -229,18 +207,18 @@ const MarchMadnessBracket = () => {
     setHighlightedTeam(null);
   };
 
-  // Check if any filters are active
-  const hasActiveFilters = searchTerm || selectedRound !== 'All Rounds' || 
+  const hasActiveFilters = searchTerm || selectedRound !== 'All Rounds' ||
     selectedConference !== 'All' || selectedStatus !== 'All Games';
 
   const TeamSlot = ({ team, isWinner, isLoser, size = 'normal' }) => {
     if (!team) {
       return (
-        <div className={`flex items-center gap-2 p-2 bg-gray-800/50 rounded border border-gray-700 border-dashed ${
-          size === 'large' ? 'p-3' : 'p-2'
-        }`}>
-          <div className={`${size === 'large' ? 'w-8 h-8' : 'w-6 h-6'} rounded-full bg-gray-700`}></div>
-          <span className="text-gray-500 text-sm">TBD</span>
+        <div
+          className={`card-glow rounded-xl p-4 border border-dashed flex items-center gap-2 ${size === 'large' ? 'p-3' : 'p-2'}`}
+          style={{ background: 'var(--color-card)', borderColor: 'var(--color-card-border)' }}
+        >
+          <div className={`${size === 'large' ? 'w-8 h-8' : 'w-6 h-6'} rounded-full`} style={{ background: 'var(--color-card)' }}></div>
+          <span className="text-sm" style={{ color: '#64748b' }}>TBD</span>
         </div>
       );
     }
@@ -250,31 +228,34 @@ const MarchMadnessBracket = () => {
     const highlighted = isTeamHighlighted(team.name);
 
     return (
-      <div 
-        className={`flex items-center gap-2 rounded border transition-all ${
-          size === 'large' ? 'p-3' : 'p-2'
-        } ${
-          highlighted
-            ? 'bg-yellow-500/30 border-yellow-500 ring-2 ring-yellow-500/50'
-            : isWinner 
-              ? 'bg-green-900/40 border-green-500' 
-              : isLoser 
-                ? 'bg-gray-800/30 border-gray-700 opacity-50' 
-                : 'bg-gray-800/50 border-gray-700 hover:border-orange-500/50'
-        }`}
+      <div
+        className={`card-glow rounded-xl p-4 border flex items-center gap-2 transition-all ${size === 'large' ? 'p-3' : 'p-2'}`}
         onClick={() => team.name && setHighlightedTeam(highlightedTeam === team.name ? null : team.name)}
-        style={{ cursor: 'pointer' }}
+        style={{
+          background: highlighted
+            ? 'rgba(250, 204, 21, 0.15)'
+            : isWinner
+              ? 'rgba(16, 185, 129, 0.08)'
+              : 'var(--color-card)',
+          borderColor: highlighted
+            ? 'rgba(250, 204, 21, 0.5)'
+            : isWinner
+              ? 'rgba(16, 185, 129, 0.3)'
+              : 'var(--color-card-border)',
+          opacity: isLoser ? 0.5 : 1,
+          cursor: 'pointer'
+        }}
       >
-        <span className={`${size === 'large' ? 'text-sm' : 'text-xs'} font-bold text-orange-400 w-5`}>
+        <span className={`${size === 'large' ? 'text-sm' : 'text-xs'} font-bold w-5`} style={{ color: '#10b981' }}>
           {team.seed}
         </span>
-        <div 
+        <div
           className={`${size === 'large' ? 'w-8 h-8' : 'w-6 h-6'} rounded-full flex items-center justify-center overflow-hidden`}
           style={{ backgroundColor: teamColor + '20', border: `1px solid ${teamColor}` }}
         >
           {logoUrl && (
-            <img 
-              src={logoUrl} 
+            <img
+              src={logoUrl}
               alt={team.name}
               className={`${size === 'large' ? 'w-6 h-6' : 'w-5 h-5'} object-contain`}
               onError={(e) => e.target.style.display = 'none'}
@@ -285,7 +266,7 @@ const MarchMadnessBracket = () => {
           {team.name}
         </span>
         {team.score !== null && (
-          <span className={`${size === 'large' ? 'text-lg' : 'text-sm'} font-bold ${isWinner ? 'text-green-400' : 'text-white'}`}>
+          <span className={`${size === 'large' ? 'text-lg' : 'text-sm'} font-bold`} style={{ color: isWinner ? '#10b981' : 'white' }}>
             {team.score}
           </span>
         )}
@@ -300,9 +281,15 @@ const MarchMadnessBracket = () => {
     const team2Wins = isFinished && game.winner === game.team2?.name;
 
     return (
-      <div className="bg-gray-900/50 rounded-lg border border-gray-700 overflow-hidden">
+      <div
+        className="card-glow rounded-xl p-4 border overflow-hidden"
+        style={{ background: 'var(--color-card)', borderColor: 'var(--color-card-border)' }}
+      >
         {isLive && (
-          <div className="bg-red-500 text-white text-xs font-bold px-2 py-1 text-center animate-pulse">
+          <div
+            className="text-white text-xs font-bold px-2 py-1 text-center animate-pulse"
+            style={{ background: '#ef4444' }}
+          >
             🔴 LIVE
           </div>
         )}
@@ -315,14 +302,13 @@ const MarchMadnessBracket = () => {
   };
 
   const RegionBracket = ({ region }) => {
-    // Filter rounds based on selectedRound
-    const filteredRounds = selectedRound === 'All Rounds' 
-      ? region.rounds 
+    const filteredRounds = selectedRound === 'All Rounds'
+      ? region.rounds
       : region.rounds.filter(r => r.name === selectedRound);
 
     if (filteredRounds.length === 0) {
       return (
-        <div className="text-center py-8 text-gray-400">
+        <div className="text-center py-8" style={{ color: '#94a3b8' }}>
           No games match the current filters in {region.name} Region
         </div>
       );
@@ -331,23 +317,25 @@ const MarchMadnessBracket = () => {
     return (
       <div className="space-y-6">
         <h3 className="text-xl font-bold text-white flex items-center gap-2">
-          <span className="w-3 h-3 rounded-full bg-orange-500"></span>
+          <span className="w-3 h-3 rounded-full" style={{ background: '#10b981' }}></span>
           {region.name} Region
         </h3>
-        
+
         <div className="flex gap-4 overflow-x-auto pb-4">
           {filteredRounds.map((round, roundIndex) => {
-            // Filter games within the round
             const filteredGames = round.games.filter(game => filterGame(game, round.name));
-            
+
             if (filteredGames.length === 0 && hasActiveFilters) {
               return (
                 <div key={round.name} className="flex-shrink-0 w-48">
-                  <h4 className="text-sm font-semibold text-gray-400 mb-3 text-center">
+                  <h4 className="text-sm font-semibold mb-3 text-center" style={{ color: '#94a3b8' }}>
                     {round.name}
                   </h4>
-                  <div className="p-4 bg-gray-800/30 rounded-lg border border-gray-700 border-dashed text-center">
-                    <span className="text-gray-500 text-sm">No matches</span>
+                  <div
+                    className="card-glow rounded-xl p-4 border border-dashed text-center"
+                    style={{ background: 'var(--color-card)', borderColor: 'var(--color-card-border)' }}
+                  >
+                    <span className="text-sm" style={{ color: '#64748b' }}>No matches</span>
                   </div>
                 </div>
               );
@@ -355,18 +343,18 @@ const MarchMadnessBracket = () => {
 
             return (
               <div key={round.name} className="flex-shrink-0">
-                <h4 className="text-sm font-semibold text-gray-400 mb-3 text-center">
+                <h4 className="text-sm font-semibold mb-3 text-center" style={{ color: '#94a3b8' }}>
                   {round.name}
                   {hasActiveFilters && filteredGames.length !== round.games.length && (
-                    <span className="ml-2 text-xs text-orange-400">
+                    <span className="ml-2 text-xs" style={{ color: '#10b981' }}>
                       ({filteredGames.length}/{round.games.length})
                     </span>
                   )}
                 </h4>
                 <div className="space-y-2" style={{ marginTop: `${roundIndex * 20}px` }}>
                   {(hasActiveFilters ? filteredGames : round.games).map((game, gameIndex) => (
-                    <div 
-                      key={game.id} 
+                    <div
+                      key={game.id}
                       className="w-48"
                       style={{ marginTop: gameIndex > 0 ? `${Math.pow(2, roundIndex) * 8}px` : 0 }}
                     >
@@ -384,42 +372,51 @@ const MarchMadnessBracket = () => {
 
   const FinalFourBracket = () => {
     return (
-      <div className="bg-gradient-to-br from-orange-900/20 to-gray-900 rounded-2xl border border-orange-500/30 p-6">
-        <h3 className="text-2xl font-bold text-white text-center mb-6 flex items-center justify-center gap-2">
+      <div
+        className="card-glow rounded-xl p-6 border"
+        style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}
+      >
+        <h3 className="text-2xl font-bold text-white text-center mb-6 flex items-center justify-center gap-2 font-[Oswald] tracking-tight">
           <span className="text-3xl">🏆</span>
           Final Four & Championship
         </h3>
-        
+
         <div className="flex flex-col md:flex-row items-center justify-center gap-8">
-          {/* Left Semi-Final */}
           <div className="w-64">
-            <h4 className="text-sm font-semibold text-gray-400 mb-2 text-center">Semi-Final 1</h4>
-            <div className="bg-gray-900/50 rounded-lg border border-gray-700 p-3 space-y-2">
+            <h4 className="text-sm font-semibold mb-2 text-center" style={{ color: '#94a3b8' }}>Semi-Final 1</h4>
+            <div
+              className="card-glow rounded-xl p-4 border space-y-2"
+              style={{ background: 'var(--color-card)', borderColor: 'var(--color-card-border)' }}
+            >
               <TeamSlot team={finalFour[0].team1} size="large" />
               <TeamSlot team={finalFour[0].team2} size="large" />
             </div>
           </div>
 
-          {/* Championship */}
           <div className="w-72">
-            <h4 className="text-sm font-semibold text-orange-400 mb-2 text-center">🏆 Championship</h4>
-            <div className="bg-gradient-to-br from-orange-500/20 to-yellow-500/20 rounded-lg border-2 border-orange-500 p-4 space-y-3">
+            <h4 className="text-sm font-semibold mb-2 text-center" style={{ color: '#10b981' }}>🏆 Championship</h4>
+            <div
+              className="card-glow rounded-xl p-4 border space-y-3"
+              style={{ background: 'linear-gradient(135deg, rgba(16,185,129,0.1), rgba(5,150,105,0.1))', borderColor: '#10b981' }}
+            >
               <TeamSlot team={championship.team1} size="large" />
-              <div className="text-center text-orange-400 font-bold">VS</div>
+              <div className="text-center font-bold" style={{ color: '#10b981' }}>VS</div>
               <TeamSlot team={championship.team2} size="large" />
             </div>
             {championship.winner && (
               <div className="mt-4 text-center">
-                <span className="text-yellow-400 text-lg">👑 Champion</span>
+                <span className="text-lg" style={{ color: '#34d399' }}>👑 Champion</span>
                 <p className="text-white font-bold text-xl">{championship.winner}</p>
               </div>
             )}
           </div>
 
-          {/* Right Semi-Final */}
           <div className="w-64">
-            <h4 className="text-sm font-semibold text-gray-400 mb-2 text-center">Semi-Final 2</h4>
-            <div className="bg-gray-900/50 rounded-lg border border-gray-700 p-3 space-y-2">
+            <h4 className="text-sm font-semibold mb-2 text-center" style={{ color: '#94a3b8' }}>Semi-Final 2</h4>
+            <div
+              className="card-glow rounded-xl p-4 border space-y-2"
+              style={{ background: 'var(--color-card)', borderColor: 'var(--color-card-border)' }}
+            >
               <TeamSlot team={finalFour[1].team1} size="large" />
               <TeamSlot team={finalFour[1].team2} size="large" />
             </div>
@@ -430,91 +427,98 @@ const MarchMadnessBracket = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+    <div className="min-h-screen" style={{ background: "var(--color-surface)" }}>
       <Navbar />
-      
+
       <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="mb-8">
+        <header style={{ animation: 'slide-up 0.4s ease-out both' }}>
+          <p className="text-sm uppercase tracking-wide font-semibold mb-2" style={{ color: '#10b981' }}>NCAA Tournament</p>
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-yellow-500 rounded-2xl flex items-center justify-center shadow-lg">
                 <span className="text-3xl">🏆</span>
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-white">March Madness Bracket</h1>
-                <p className="text-gray-400">NCAA Tournament 2026</p>
+                <h1 className="text-3xl font-bold text-white font-[Oswald] tracking-tight">March Madness Bracket</h1>
+                <p className="text-sm" style={{ color: '#64748b' }}>NCAA Tournament 2026</p>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-4">
-              <span className="text-xs text-gray-500">
+              <span className="text-xs" style={{ color: '#64748b' }}>
                 Last updated: {lastUpdate.toLocaleTimeString()}
               </span>
-              <Link 
+              <Link
                 to="/college"
-                className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-semibold transition-colors"
+                className="card-glow rounded-lg py-3 px-4 font-semibold transition-all hover:opacity-90"
+                style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)', color: '#cbd5e1' }}
               >
                 ← Back to College Sports
               </Link>
             </div>
           </div>
-        </div>
+        </header>
 
-        {/* View Toggle & Filter Toggle */}
         <div className="flex flex-wrap items-center gap-2 mb-6">
           <button
             onClick={() => setViewMode('region')}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-              viewMode === 'region' 
-                ? 'bg-orange-500 text-white' 
-                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-            }`}
+            className={`px-4 py-2 rounded-lg font-medium transition-all ${viewMode === 'region' ? 'text-white font-semibold' : 'card-glow'}`}
+            style={viewMode === 'region'
+              ? { background: 'linear-gradient(135deg, #10b981, #059669)' }
+              : { background: 'var(--color-card)', border: '1px solid var(--color-card-border)', color: '#94a3b8' }
+            }
           >
             By Region
           </button>
           <button
             onClick={() => setViewMode('full')}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-              viewMode === 'full' 
-                ? 'bg-orange-500 text-white' 
-                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-            }`}
+            className={`px-4 py-2 rounded-lg font-medium transition-all ${viewMode === 'full' ? 'text-white font-semibold' : 'card-glow'}`}
+            style={viewMode === 'full'
+              ? { background: 'linear-gradient(135deg, #10b981, #059669)' }
+              : { background: 'var(--color-card)', border: '1px solid var(--color-card-border)', color: '#94a3b8' }
+            }
           >
             Full Bracket
           </button>
-          
+
           <div className="flex-1"></div>
-          
+
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 ${
-              showFilters || hasActiveFilters
-                ? 'bg-blue-500 text-white' 
-                : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-            }`}
+            className={`card-glow rounded-lg px-4 py-2 font-medium transition-all flex items-center gap-2`}
+            style={{
+              background: showFilters || hasActiveFilters ? 'linear-gradient(135deg, #10b981, #059669)' : 'var(--color-card)',
+              border: showFilters || hasActiveFilters ? 'none' : '1px solid var(--color-card-border)',
+              color: showFilters || hasActiveFilters ? 'white' : '#94a3b8'
+            }}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
             </svg>
             Filters
             {hasActiveFilters && (
-              <span className="bg-white text-blue-500 text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+              <span
+                className="text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold"
+                style={{ background: 'white', color: '#10b981' }}
+              >
                 !
               </span>
             )}
           </button>
         </div>
 
-        {/* Filter Panel */}
         {showFilters && (
-          <div className="mb-6 p-4 bg-gray-800/50 rounded-xl border border-gray-700 space-y-4">
+          <div
+            className="card-glow rounded-xl p-6 border space-y-4 mb-6"
+            style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}
+          >
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold text-white">Filter Bracket</h3>
               {hasActiveFilters && (
                 <button
                   onClick={clearFilters}
-                  className="text-sm text-red-400 hover:text-red-300 flex items-center gap-1"
+                  className="text-sm flex items-center gap-1"
+                  style={{ color: '#fca5a5' }}
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -523,23 +527,24 @@ const MarchMadnessBracket = () => {
                 </button>
               )}
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {/* Search by Team */}
               <div>
-                <label className="block text-sm text-gray-400 mb-2">Search Team</label>
+                <label className="block text-sm mb-2" style={{ color: '#94a3b8' }}>Search Team</label>
                 <div className="relative">
                   <input
                     type="text"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     placeholder="e.g., Duke, Kentucky..."
-                    className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-orange-500"
+                    className="w-full rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 transition-all"
+                    style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)', '--tw-ring-color': '#10b981' }}
                   />
                   {searchTerm && (
                     <button
                       onClick={() => setSearchTerm('')}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 hover:text-white"
+                      style={{ color: '#64748b' }}
                     >
                       ✕
                     </button>
@@ -547,13 +552,13 @@ const MarchMadnessBracket = () => {
                 </div>
               </div>
 
-              {/* Round Filter */}
               <div>
-                <label className="block text-sm text-gray-400 mb-2">Round</label>
+                <label className="block text-sm mb-2" style={{ color: '#94a3b8' }}>Round</label>
                 <select
                   value={selectedRound}
                   onChange={(e) => setSelectedRound(e.target.value)}
-                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-orange-500"
+                  className="w-full rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 transition-all"
+                  style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)', '--tw-ring-color': '#10b981' }}
                 >
                   {ROUNDS.map(round => (
                     <option key={round} value={round}>{round}</option>
@@ -561,13 +566,13 @@ const MarchMadnessBracket = () => {
                 </select>
               </div>
 
-              {/* Conference Filter */}
               <div>
-                <label className="block text-sm text-gray-400 mb-2">Conference</label>
+                <label className="block text-sm mb-2" style={{ color: '#94a3b8' }}>Conference</label>
                 <select
                   value={selectedConference}
                   onChange={(e) => setSelectedConference(e.target.value)}
-                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-orange-500"
+                  className="w-full rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 transition-all"
+                  style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)', '--tw-ring-color': '#10b981' }}
                 >
                   {CONFERENCES.map(conf => (
                     <option key={conf} value={conf}>{conf}</option>
@@ -575,13 +580,13 @@ const MarchMadnessBracket = () => {
                 </select>
               </div>
 
-              {/* Game Status Filter */}
               <div>
-                <label className="block text-sm text-gray-400 mb-2">Game Status</label>
+                <label className="block text-sm mb-2" style={{ color: '#94a3b8' }}>Game Status</label>
                 <select
                   value={selectedStatus}
                   onChange={(e) => setSelectedStatus(e.target.value)}
-                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-orange-500"
+                  className="w-full rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 transition-all"
+                  style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)', '--tw-ring-color': '#10b981' }}
                 >
                   {GAME_STATUS.map(status => (
                     <option key={status} value={status}>{status}</option>
@@ -590,30 +595,29 @@ const MarchMadnessBracket = () => {
               </div>
             </div>
 
-            {/* Active Filters Display */}
             {hasActiveFilters && (
-              <div className="flex flex-wrap gap-2 pt-2 border-t border-gray-700">
-                <span className="text-sm text-gray-400">Active:</span>
+              <div className="flex flex-wrap gap-2 pt-2" style={{ borderTop: '1px solid var(--color-card-border)' }}>
+                <span className="text-sm" style={{ color: '#94a3b8' }}>Active:</span>
                 {searchTerm && (
-                  <span className="px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded text-xs flex items-center gap-1">
+                  <span className="px-2 py-1 rounded text-xs flex items-center gap-1" style={{ background: 'rgba(234,179,8,0.2)', color: '#eab308' }}>
                     Team: {searchTerm}
                     <button onClick={() => setSearchTerm('')} className="hover:text-white">✕</button>
                   </span>
                 )}
                 {selectedRound !== 'All Rounds' && (
-                  <span className="px-2 py-1 bg-blue-500/20 text-blue-400 rounded text-xs flex items-center gap-1">
+                  <span className="px-2 py-1 rounded text-xs flex items-center gap-1" style={{ background: 'rgba(59,130,246,0.2)', color: '#60a5fa' }}>
                     {selectedRound}
                     <button onClick={() => setSelectedRound('All Rounds')} className="hover:text-white">✕</button>
                   </span>
                 )}
                 {selectedConference !== 'All' && (
-                  <span className="px-2 py-1 bg-purple-500/20 text-purple-400 rounded text-xs flex items-center gap-1">
+                  <span className="px-2 py-1 rounded text-xs flex items-center gap-1" style={{ background: 'rgba(168,85,247,0.2)', color: '#a78bfa' }}>
                     {selectedConference}
                     <button onClick={() => setSelectedConference('All')} className="hover:text-white">✕</button>
                   </span>
                 )}
                 {selectedStatus !== 'All Games' && (
-                  <span className="px-2 py-1 bg-green-500/20 text-green-400 rounded text-xs flex items-center gap-1">
+                  <span className="px-2 py-1 rounded text-xs flex items-center gap-1" style={{ background: 'rgba(16,185,129,0.2)', color: '#34d399' }}>
                     {selectedStatus}
                     <button onClick={() => setSelectedStatus('All Games')} className="hover:text-white">✕</button>
                   </span>
@@ -621,16 +625,19 @@ const MarchMadnessBracket = () => {
               </div>
             )}
 
-            {/* Highlighted Team Info */}
             {highlightedTeam && (
-              <div className="flex items-center gap-3 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
-                <span className="text-yellow-400">🔍</span>
+              <div
+                className="flex items-center gap-3 p-3 rounded-lg"
+                style={{ background: 'rgba(250, 204, 21, 0.1)', border: '1px solid rgba(250, 204, 21, 0.3)' }}
+              >
+                <span style={{ color: '#eab308' }}>🔍</span>
                 <span className="text-white">
                   Tracking <strong>{highlightedTeam}</strong> through the bracket
                 </span>
                 <button
                   onClick={() => setHighlightedTeam(null)}
-                  className="ml-auto text-yellow-400 hover:text-yellow-300"
+                  className="ml-auto"
+                  style={{ color: '#eab308' }}
                 >
                   Clear
                 </button>
@@ -639,36 +646,34 @@ const MarchMadnessBracket = () => {
           </div>
         )}
 
-        {/* Region Tabs (when in region view) */}
         {viewMode === 'region' && (
           <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
             {bracket.map(region => (
               <button
                 key={region.name}
                 onClick={() => setSelectedRegion(region.name)}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap ${
-                  selectedRegion === region.name 
-                    ? 'bg-orange-500 text-white' 
-                    : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-                }`}
+                className={`px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap ${selectedRegion === region.name ? 'text-white font-semibold' : 'card-glow'}`}
+                style={selectedRegion === region.name
+                  ? { background: 'linear-gradient(135deg, #10b981, #059669)' }
+                  : { background: 'var(--color-card)', border: '1px solid var(--color-card-border)', color: '#94a3b8' }
+                }
               >
                 {region.name}
               </button>
             ))}
             <button
               onClick={() => setSelectedRegion('Final Four')}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap ${
-                selectedRegion === 'Final Four' 
-                  ? 'bg-yellow-500 text-black' 
-                  : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-              }`}
+              className={`px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap ${selectedRegion === 'Final Four' ? 'text-white font-semibold' : 'card-glow'}`}
+              style={selectedRegion === 'Final Four'
+                ? { background: 'linear-gradient(135deg, #10b981, #059669)' }
+                : { background: 'var(--color-card)', border: '1px solid var(--color-card-border)', color: '#94a3b8' }
+              }
             >
               🏆 Final Four
             </button>
           </div>
         )}
 
-        {/* Bracket Display */}
         {viewMode === 'region' ? (
           selectedRegion === 'Final Four' ? (
             <FinalFourBracket />
@@ -677,10 +682,13 @@ const MarchMadnessBracket = () => {
           )
         ) : (
           <div className="space-y-8">
-            {/* Full bracket view */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {bracket.map(region => (
-                <div key={region.name} className="bg-gray-800/30 rounded-xl p-4 border border-gray-700">
+                <div
+                  key={region.name}
+                  className="card-glow rounded-xl p-4 border"
+                  style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}
+                >
                   <RegionBracket region={region} />
                 </div>
               ))}
@@ -689,25 +697,27 @@ const MarchMadnessBracket = () => {
           </div>
         )}
 
-        {/* Legend */}
-        <div className="mt-8 p-4 bg-gray-800/50 rounded-xl border border-gray-700">
-          <h4 className="text-sm font-semibold text-gray-400 mb-3">Legend</h4>
+        <div
+          className="card-glow rounded-xl p-6 border mt-8"
+          style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}
+        >
+          <h4 className="text-sm font-semibold mb-3" style={{ color: '#94a3b8' }}>Legend</h4>
           <div className="flex flex-wrap gap-4 text-sm">
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 rounded bg-green-500/40 border border-green-500"></div>
-              <span className="text-gray-300">Winner</span>
+              <div className="w-4 h-4 rounded" style={{ background: 'rgba(16,185,129,0.4)', border: '1px solid #10b981' }}></div>
+              <span style={{ color: '#cbd5e1' }}>Winner</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 rounded bg-red-500 animate-pulse"></div>
-              <span className="text-gray-300">Live Game</span>
+              <div className="w-4 h-4 rounded animate-pulse" style={{ background: '#ef4444' }}></div>
+              <span style={{ color: '#cbd5e1' }}>Live Game</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 rounded bg-gray-700 border border-dashed border-gray-600"></div>
-              <span className="text-gray-300">TBD</span>
+              <div className="w-4 h-4 rounded border border-dashed" style={{ background: 'var(--color-card)', borderColor: 'var(--color-card-border)' }}></div>
+              <span style={{ color: '#cbd5e1' }}>TBD</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-orange-400 font-bold">1</span>
-              <span className="text-gray-300">Seed Number</span>
+              <span className="font-bold" style={{ color: '#10b981' }}>1</span>
+              <span style={{ color: '#cbd5e1' }}>Seed Number</span>
             </div>
           </div>
         </div>

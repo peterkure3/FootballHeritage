@@ -11,34 +11,30 @@ const Profile = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuthStore();
   const { data: user, isLoading, refetch } = useUser();
-  
+
   const [isEditing, setIsEditing] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  
-  // Profile form state
+
   const [profileForm, setProfileForm] = useState({
     first_name: '',
     last_name: '',
     phone: '',
     address: ''
   });
-  
-  // Password form state
+
   const [passwordForm, setPasswordForm] = useState({
     current_password: '',
     new_password: '',
     confirm_password: ''
   });
 
-  // Redirect if not authenticated
   useEffect(() => {
     if (!isAuthenticated) {
       navigate('/login');
     }
   }, [isAuthenticated, navigate]);
 
-  // Initialize form with user data
   useEffect(() => {
     if (user) {
       setProfileForm({
@@ -101,13 +97,11 @@ const Profile = () => {
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate passwords match
     if (passwordForm.new_password !== passwordForm.confirm_password) {
       toast.error('New passwords do not match');
       return;
     }
 
-    // Validate password length
     if (passwordForm.new_password.length < 8) {
       toast.error('Password must be at least 8 characters');
       return;
@@ -151,7 +145,6 @@ const Profile = () => {
 
   const cancelEdit = () => {
     setIsEditing(false);
-    // Reset form to user data
     if (user) {
       setProfileForm({
         first_name: user.first_name || '',
@@ -163,16 +156,15 @@ const Profile = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+    <div className="min-h-screen" style={{ background: "var(--color-surface)" }}>
       <Navbar />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
+        <div style={{ animation: 'slide-up 0.4s ease-out both' }}>
+          <h1 className="text-3xl md:text-4xl font-bold text-white font-[Oswald] tracking-tight mb-1">
             My Profile
           </h1>
-          <p className="text-gray-400">
+          <p className="text-sm" style={{ color: '#64748b' }}>
             Manage your account information and settings
           </p>
         </div>
@@ -182,13 +174,14 @@ const Profile = () => {
         ) : (
           <>
             {/* Profile Information Card */}
-            <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 mb-6 shadow-xl">
+            <div className="card-glow rounded-xl p-6 mt-8 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)', animation: 'slide-up 0.4s ease-out 0.06s both' }}>
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-white">Personal Information</h2>
+                <h2 className="text-xl font-bold text-white font-[Oswald] tracking-tight">Personal Information</h2>
                 {!isEditing && (
                   <button
                     onClick={() => setIsEditing(true)}
-                    className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center gap-2"
+                    className="flex items-center gap-2 text-white px-4 py-2 rounded-lg font-semibold text-sm transition-all hover:opacity-90"
+                    style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -202,86 +195,98 @@ const Profile = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Email (Read-only) */}
                   <div>
-                    <label className="block text-gray-400 text-sm font-semibold mb-2">
-                      Email Address
-                    </label>
-                    <div className="bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-gray-500">
+                    <label className="block text-sm font-semibold mb-2" style={{ color: '#94a3b8' }}>Email Address</label>
+                    <div className="rounded-lg px-4 py-3" style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)', color: '#64748b' }}>
                       {user?.email}
                     </div>
-                    <p className="text-gray-500 text-xs mt-1">Email cannot be changed</p>
+                    <p className="text-xs mt-1" style={{ color: '#64748b' }}>Email cannot be changed</p>
                   </div>
 
                   {/* Date of Birth (Read-only) */}
                   <div>
-                    <label className="block text-gray-400 text-sm font-semibold mb-2">
-                      Date of Birth
-                    </label>
-                    <div className="bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-gray-500">
+                    <label className="block text-sm font-semibold mb-2" style={{ color: '#94a3b8' }}>Date of Birth</label>
+                    <div className="rounded-lg px-4 py-3" style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)', color: '#64748b' }}>
                       {user?.date_of_birth || 'Not set'}
                     </div>
-                    <p className="text-gray-500 text-xs mt-1">Cannot be modified</p>
+                    <p className="text-xs mt-1" style={{ color: '#64748b' }}>Cannot be modified</p>
                   </div>
 
                   {/* First Name */}
                   <div>
-                    <label className="block text-gray-400 text-sm font-semibold mb-2">
-                      First Name
-                    </label>
+                    <label className="block text-sm font-semibold mb-2" style={{ color: '#94a3b8' }}>First Name</label>
                     <input
                       type="text"
                       name="first_name"
                       value={profileForm.first_name}
                       onChange={handleProfileChange}
                       disabled={!isEditing}
-                      className={`w-full bg-gray-900 border ${isEditing ? 'border-gray-600' : 'border-gray-700'} rounded-lg px-4 py-3 text-white focus:outline-none focus:border-green-500 transition-colors ${!isEditing && 'cursor-not-allowed'}`}
+                      className="w-full rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 transition-all"
+                      style={{
+                        background: 'var(--color-card)',
+                        border: `1px solid ${isEditing ? 'var(--color-card-border-hover)' : 'var(--color-card-border)'}`,
+                        opacity: isEditing ? 1 : 0.6,
+                        '--tw-ring-color': '#10b981',
+                      }}
                       placeholder="Enter first name"
                     />
                   </div>
 
                   {/* Last Name */}
                   <div>
-                    <label className="block text-gray-400 text-sm font-semibold mb-2">
-                      Last Name
-                    </label>
+                    <label className="block text-sm font-semibold mb-2" style={{ color: '#94a3b8' }}>Last Name</label>
                     <input
                       type="text"
                       name="last_name"
                       value={profileForm.last_name}
                       onChange={handleProfileChange}
                       disabled={!isEditing}
-                      className={`w-full bg-gray-900 border ${isEditing ? 'border-gray-600' : 'border-gray-700'} rounded-lg px-4 py-3 text-white focus:outline-none focus:border-green-500 transition-colors ${!isEditing && 'cursor-not-allowed'}`}
+                      className="w-full rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 transition-all"
+                      style={{
+                        background: 'var(--color-card)',
+                        border: `1px solid ${isEditing ? 'var(--color-card-border-hover)' : 'var(--color-card-border)'}`,
+                        opacity: isEditing ? 1 : 0.6,
+                        '--tw-ring-color': '#10b981',
+                      }}
                       placeholder="Enter last name"
                     />
                   </div>
 
                   {/* Phone */}
                   <div>
-                    <label className="block text-gray-400 text-sm font-semibold mb-2">
-                      Phone Number
-                    </label>
+                    <label className="block text-sm font-semibold mb-2" style={{ color: '#94a3b8' }}>Phone Number</label>
                     <input
                       type="tel"
                       name="phone"
                       value={profileForm.phone}
                       onChange={handleProfileChange}
                       disabled={!isEditing}
-                      className={`w-full bg-gray-900 border ${isEditing ? 'border-gray-600' : 'border-gray-700'} rounded-lg px-4 py-3 text-white focus:outline-none focus:border-green-500 transition-colors ${!isEditing && 'cursor-not-allowed'}`}
+                      className="w-full rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 transition-all"
+                      style={{
+                        background: 'var(--color-card)',
+                        border: `1px solid ${isEditing ? 'var(--color-card-border-hover)' : 'var(--color-card-border)'}`,
+                        opacity: isEditing ? 1 : 0.6,
+                        '--tw-ring-color': '#10b981',
+                      }}
                       placeholder="+1 (555) 123-4567"
                     />
                   </div>
 
                   {/* Address */}
                   <div className="md:col-span-2">
-                    <label className="block text-gray-400 text-sm font-semibold mb-2">
-                      Address
-                    </label>
+                    <label className="block text-sm font-semibold mb-2" style={{ color: '#94a3b8' }}>Address</label>
                     <input
                       type="text"
                       name="address"
                       value={profileForm.address}
                       onChange={handleProfileChange}
                       disabled={!isEditing}
-                      className={`w-full bg-gray-900 border ${isEditing ? 'border-gray-600' : 'border-gray-700'} rounded-lg px-4 py-3 text-white focus:outline-none focus:border-green-500 transition-colors ${!isEditing && 'cursor-not-allowed'}`}
+                      className="w-full rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 transition-all"
+                      style={{
+                        background: 'var(--color-card)',
+                        border: `1px solid ${isEditing ? 'var(--color-card-border-hover)' : 'var(--color-card-border)'}`,
+                        opacity: isEditing ? 1 : 0.6,
+                        '--tw-ring-color': '#10b981',
+                      }}
                       placeholder="123 Main St, City, State 12345"
                     />
                   </div>
@@ -293,7 +298,8 @@ const Profile = () => {
                     <button
                       type="submit"
                       disabled={isSaving}
-                      className="flex-1 bg-green-500 hover:bg-green-600 disabled:bg-gray-600 disabled:cursor-not-allowed text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+                      className="flex-1 text-white px-6 py-3 rounded-lg font-semibold text-sm transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                      style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}
                     >
                       {isSaving ? 'Saving...' : 'Save Changes'}
                     </button>
@@ -301,7 +307,8 @@ const Profile = () => {
                       type="button"
                       onClick={cancelEdit}
                       disabled={isSaving}
-                      className="flex-1 bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:cursor-not-allowed text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+                      className="flex-1 text-white px-6 py-3 rounded-lg font-semibold text-sm transition-all card-glow disabled:opacity-50 disabled:cursor-not-allowed"
+                      style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)' }}
                     >
                       Cancel
                     </button>
@@ -311,21 +318,21 @@ const Profile = () => {
             </div>
 
             {/* Account Status Card */}
-            <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 mb-6 shadow-xl">
-              <h2 className="text-xl font-bold text-white mb-4">Account Status</h2>
+            <div className="card-glow rounded-xl p-6 mt-6 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)', animation: 'slide-up 0.4s ease-out 0.1s both' }}>
+              <h2 className="text-xl font-bold text-white font-[Oswald] tracking-tight mb-4">Account Status</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex items-center justify-between bg-gray-900 rounded-lg p-4">
-                  <span className="text-gray-400">Verification Status</span>
+                <div className="flex items-center justify-between rounded-lg p-4" style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)' }}>
+                  <span style={{ color: '#94a3b8' }}>Verification Status</span>
                   <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
                     user?.is_verified
                       ? 'bg-green-500/20 text-green-400'
                       : 'bg-yellow-500/20 text-yellow-400'
                   }`}>
-                    {user?.is_verified ? '✓ Verified' : 'Pending'}
+                    {user?.is_verified ? 'Verified' : 'Pending'}
                   </span>
                 </div>
-                <div className="flex items-center justify-between bg-gray-900 rounded-lg p-4">
-                  <span className="text-gray-400">Member Since</span>
+                <div className="flex items-center justify-between rounded-lg p-4" style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)' }}>
+                  <span style={{ color: '#94a3b8' }}>Member Since</span>
                   <span className="text-white font-semibold">
                     {user?.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A'}
                   </span>
@@ -334,16 +341,17 @@ const Profile = () => {
             </div>
 
             {/* Security Card */}
-            <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 shadow-xl">
-              <h2 className="text-xl font-bold text-white mb-4">Security</h2>
-              <div className="flex items-center justify-between bg-gray-900 rounded-lg p-4">
+            <div className="card-glow rounded-xl p-6 mt-6 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)', animation: 'slide-up 0.4s ease-out 0.14s both' }}>
+              <h2 className="text-xl font-bold text-white font-[Oswald] tracking-tight mb-4">Security</h2>
+              <div className="flex items-center justify-between rounded-lg p-4" style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)' }}>
                 <div>
                   <h3 className="text-white font-semibold mb-1">Password</h3>
-                  <p className="text-gray-400 text-sm">••••••••••••</p>
+                  <p className="text-sm" style={{ color: '#64748b' }}>Change your account password</p>
                 </div>
                 <button
                   onClick={() => setShowPasswordModal(true)}
-                  className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold transition-colors"
+                  className="text-white px-4 py-2 rounded-lg font-semibold text-sm transition-all hover:opacity-90"
+                  style={{ background: 'linear-gradient(135deg, #6366f1, #4f46e5)' }}
                 >
                   Change Password
                 </button>
@@ -355,13 +363,13 @@ const Profile = () => {
 
       {/* Password Change Modal */}
       {showPasswordModal && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 max-w-md w-full shadow-2xl">
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" style={{ animation: 'fade-in 0.2s ease-out' }}>
+          <div className="card-glow rounded-xl p-6 max-w-md w-full border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)', animation: 'scale-in 0.2s ease-out' }}>
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-white">Change Password</h3>
+              <h3 className="text-xl font-bold text-white font-[Oswald] tracking-tight">Change Password</h3>
               <button
                 onClick={() => setShowPasswordModal(false)}
-                className="text-gray-400 hover:text-white transition-colors"
+                className="transition-colors" style={{ color: '#64748b' }}
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -373,25 +381,22 @@ const Profile = () => {
               <div className="space-y-4">
                 {/* Current Password */}
                 <div>
-                  <label className="block text-gray-400 text-sm font-semibold mb-2">
-                    Current Password
-                  </label>
+                  <label className="block text-sm font-semibold mb-2" style={{ color: '#94a3b8' }}>Current Password</label>
                   <input
                     type="password"
                     name="current_password"
                     value={passwordForm.current_password}
                     onChange={handlePasswordChange}
                     required
-                    className="w-full bg-gray-900 border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors"
+                    className="w-full rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 transition-all"
+                    style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border-hover)', '--tw-ring-color': '#6366f1' }}
                     placeholder="Enter current password"
                   />
                 </div>
 
                 {/* New Password */}
                 <div>
-                  <label className="block text-gray-400 text-sm font-semibold mb-2">
-                    New Password
-                  </label>
+                  <label className="block text-sm font-semibold mb-2" style={{ color: '#94a3b8' }}>New Password</label>
                   <input
                     type="password"
                     name="new_password"
@@ -399,16 +404,15 @@ const Profile = () => {
                     onChange={handlePasswordChange}
                     required
                     minLength={8}
-                    className="w-full bg-gray-900 border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors"
+                    className="w-full rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 transition-all"
+                    style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border-hover)', '--tw-ring-color': '#6366f1' }}
                     placeholder="Enter new password (min 8 characters)"
                   />
                 </div>
 
                 {/* Confirm Password */}
                 <div>
-                  <label className="block text-gray-400 text-sm font-semibold mb-2">
-                    Confirm New Password
-                  </label>
+                  <label className="block text-sm font-semibold mb-2" style={{ color: '#94a3b8' }}>Confirm New Password</label>
                   <input
                     type="password"
                     name="confirm_password"
@@ -416,17 +420,18 @@ const Profile = () => {
                     onChange={handlePasswordChange}
                     required
                     minLength={8}
-                    className="w-full bg-gray-900 border border-gray-600 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition-colors"
+                    className="w-full rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 transition-all"
+                    style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border-hover)', '--tw-ring-color': '#6366f1' }}
                     placeholder="Confirm new password"
                   />
                 </div>
 
                 {/* Password Requirements */}
-                <div className="bg-blue-500/10 border border-blue-500/50 rounded-lg p-3">
-                  <p className="text-blue-300 text-xs font-semibold mb-2">Password Requirements:</p>
-                  <ul className="text-blue-200 text-xs space-y-1">
-                    <li>• At least 8 characters long</li>
-                    <li>• Mix of letters, numbers, and symbols recommended</li>
+                <div className="rounded-lg p-3 border" style={{ background: 'rgba(99, 102, 241, 0.08)', borderColor: 'rgba(99, 102, 241, 0.3)' }}>
+                  <p className="text-xs font-semibold mb-2" style={{ color: '#a5b4fc' }}>Password Requirements:</p>
+                  <ul className="text-xs space-y-1" style={{ color: '#c7d2fe' }}>
+                    <li>At least 8 characters long</li>
+                    <li>Mix of letters, numbers, and symbols recommended</li>
                   </ul>
                 </div>
               </div>
@@ -436,7 +441,8 @@ const Profile = () => {
                 <button
                   type="submit"
                   disabled={isSaving}
-                  className="flex-1 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-600 disabled:cursor-not-allowed text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+                  className="flex-1 text-white px-6 py-3 rounded-lg font-semibold text-sm transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{ background: 'linear-gradient(135deg, #6366f1, #4f46e5)' }}
                 >
                   {isSaving ? 'Changing...' : 'Change Password'}
                 </button>
@@ -444,7 +450,8 @@ const Profile = () => {
                   type="button"
                   onClick={() => setShowPasswordModal(false)}
                   disabled={isSaving}
-                  className="flex-1 bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:cursor-not-allowed text-white px-6 py-3 rounded-lg font-semibold transition-colors"
+                  className="flex-1 text-white px-6 py-3 rounded-lg font-semibold text-sm transition-all card-glow disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)' }}
                 >
                   Cancel
                 </button>

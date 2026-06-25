@@ -3,9 +3,7 @@ import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { api } from '../utils/api';
 
-// NCAA Team logos mapping - using ESPN CDN for team logos
 const NCAAB_TEAMS = {
-  // Top 25 + Major Programs
   'Duke': { id: '150', color: '#003087', conference: 'ACC' },
   'North Carolina': { id: '153', color: '#7BAFD4', conference: 'ACC' },
   'Kentucky': { id: '96', color: '#0033A0', conference: 'SEC' },
@@ -43,13 +41,11 @@ const NCAAB_TEAMS = {
   'Miami': { id: '2390', color: '#F47321', conference: 'ACC' },
 };
 
-// Get team logo URL from ESPN
 const getTeamLogo = (teamName) => {
   const team = NCAAB_TEAMS[teamName];
   if (team) {
     return `https://a.espncdn.com/i/teamlogos/ncaa/500/${team.id}.png`;
   }
-  // Fallback to a generic basketball icon
   return null;
 };
 
@@ -66,7 +62,7 @@ const CollegeSports = () => {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState(null);
-  const [filter, setFilter] = useState('all'); // 'all', 'live', 'upcoming', 'finished'
+  const [filter, setFilter] = useState('all');
   const [dataTimestamp, setDataTimestamp] = useState(null);
   const [isStale, setIsStale] = useState(false);
 
@@ -74,7 +70,6 @@ const CollegeSports = () => {
 
   useEffect(() => {
     fetchNcaabData();
-    // Auto-refresh every 60 seconds for live games
     const interval = setInterval(fetchNcaabData, 60000);
     return () => clearInterval(interval);
   }, []);
@@ -82,9 +77,7 @@ const CollegeSports = () => {
   const refreshNcaabData = async () => {
     try {
       setRefreshing(true);
-      // First refresh data from The Odds API
       await fetch(`${PIPELINE_API_URL}/ncaab/refresh`, { method: 'POST' });
-      // Then fetch the updated games
       await fetchNcaabData();
     } catch (err) {
       console.error('Failed to refresh NCAAB data:', err);
@@ -97,17 +90,16 @@ const CollegeSports = () => {
   const fetchNcaabData = async () => {
     try {
       setLoading(true);
-      // Fetch from pipeline NCAAB games endpoint
       const PIPELINE_API_URL = import.meta.env.VITE_PIPELINE_API_URL || 'http://localhost:5555/api/v1';
       const response = await fetch(`${PIPELINE_API_URL}/ncaab/games?limit=50`);
-      
+
       if (!response.ok) {
         throw new Error('Failed to fetch NCAAB games');
       }
-      
+
       const data = await response.json();
       const games = data?.games || [];
-      
+
       setNcaabGames(games);
       setDataTimestamp(data?.data_timestamp);
       setIsStale(data?.is_stale || false);
@@ -131,16 +123,22 @@ const CollegeSports = () => {
   const TeamCard = ({ teamName, score, isHome, isWinner }) => {
     const logoUrl = getTeamLogo(teamName);
     const teamColor = getTeamColor(teamName);
-    
+
     return (
-      <div className={`flex items-center gap-3 p-3 rounded-lg ${isWinner ? 'bg-green-900/30 border border-green-500/30' : 'bg-gray-800/50'}`}>
-        <div 
+      <div
+        className={`card-glow rounded-xl p-4 border flex items-center gap-3 ${isWinner ? '' : ''}`}
+        style={{
+          background: isWinner ? 'rgba(16, 185, 129, 0.08)' : 'var(--color-card)',
+          borderColor: isWinner ? 'rgba(16, 185, 129, 0.3)' : 'var(--color-card-border)'
+        }}
+      >
+        <div
           className="w-12 h-12 rounded-full flex items-center justify-center overflow-hidden"
           style={{ backgroundColor: teamColor + '20', border: `2px solid ${teamColor}` }}
         >
           {logoUrl ? (
-            <img 
-              src={logoUrl} 
+            <img
+              src={logoUrl}
               alt={teamName}
               className="w-10 h-10 object-contain"
               onError={(e) => {
@@ -149,7 +147,7 @@ const CollegeSports = () => {
               }}
             />
           ) : null}
-          <span 
+          <span
             className="text-white font-bold text-sm"
             style={{ display: logoUrl ? 'none' : 'flex' }}
           >
@@ -157,15 +155,15 @@ const CollegeSports = () => {
           </span>
         </div>
         <div className="flex-1">
-          <p className={`font-semibold ${isWinner ? 'text-green-400' : 'text-white'}`}>
+          <p style={{ color: isWinner ? '#10b981' : 'white' }} className="font-semibold">
             {teamName}
           </p>
-          <p className="text-xs text-gray-400">
+          <p className="text-xs" style={{ color: '#64748b' }}>
             {isHome ? 'Home' : 'Away'} • {getTeamConference(teamName)}
           </p>
         </div>
         {score !== null && score !== undefined && (
-          <span className={`text-2xl font-bold ${isWinner ? 'text-green-400' : 'text-white'}`}>
+          <span className="text-2xl font-bold" style={{ color: isWinner ? '#10b981' : 'white' }}>
             {score}
           </span>
         )}
@@ -182,43 +180,51 @@ const CollegeSports = () => {
     const awayWins = isFinished && awayScore > homeScore;
 
     return (
-      <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden hover:border-orange-500/50 transition-all">
-        {/* Header */}
-        <div className="px-4 py-2 bg-gray-900/50 flex items-center justify-between">
-          <span className="text-xs text-gray-400">
+      <div
+        className="card-glow rounded-xl p-4 border overflow-hidden hover:border-[#10b981]/50 transition-all"
+        style={{ background: 'var(--color-card)', borderColor: 'var(--color-card-border)' }}
+      >
+        <div
+          className="px-4 py-2 flex items-center justify-between"
+          style={{ background: 'rgba(0,0,0,0.2)', borderBottom: '1px solid var(--color-card-border)' }}
+        >
+          <span className="text-xs" style={{ color: '#64748b' }}>
             {game.competition || 'NCAA Basketball'}
           </span>
-          <span className={`px-2 py-1 rounded text-xs font-semibold ${
-            isLive ? 'bg-red-500 text-white animate-pulse' :
-            isFinished ? 'bg-gray-600 text-gray-300' :
-            'bg-orange-500/20 text-orange-400'
-          }`}>
+          <span
+            className="px-2 py-1 rounded text-xs font-semibold"
+            style={{
+              background: isLive ? '#ef4444' : isFinished ? 'var(--color-card)' : 'rgba(16,185,129,0.2)',
+              color: isLive ? 'white' : isFinished ? '#94a3b8' : '#10b981'
+            }}
+          >
             {isLive ? '🔴 LIVE' : isFinished ? 'Final' : 'Upcoming'}
           </span>
         </div>
 
-        {/* Teams */}
         <div className="p-4 space-y-2">
-          <TeamCard 
-            teamName={game.away_team} 
+          <TeamCard
+            teamName={game.away_team}
             score={awayScore}
             isHome={false}
             isWinner={awayWins}
           />
-          <div className="text-center text-gray-500 text-xs">VS</div>
-          <TeamCard 
-            teamName={game.home_team} 
+          <div className="text-center text-xs" style={{ color: '#64748b' }}>VS</div>
+          <TeamCard
+            teamName={game.home_team}
             score={homeScore}
             isHome={true}
             isWinner={homeWins}
           />
         </div>
 
-        {/* Prediction */}
         {!isFinished && game.prediction && (
-          <div className="px-4 py-3 bg-orange-500/10 border-t border-orange-500/20">
+          <div
+            className="px-4 py-3"
+            style={{ background: 'rgba(16, 185, 129, 0.08)', borderTop: '1px solid rgba(16, 185, 129, 0.2)' }}
+          >
             <div className="flex items-center justify-between">
-              <span className="text-xs text-orange-400 font-semibold">AI Prediction</span>
+              <span className="text-xs font-semibold" style={{ color: '#10b981' }}>AI Prediction</span>
               <span className={`px-2 py-0.5 rounded text-xs font-bold ${
                 game.prediction.confidence === 'High' ? 'bg-green-500/20 text-green-400' :
                 game.prediction.confidence === 'Medium' ? 'bg-yellow-500/20 text-yellow-400' :
@@ -228,15 +234,15 @@ const CollegeSports = () => {
               </span>
             </div>
             <div className="mt-1 text-sm">
-              <span className="text-white font-medium">{game.prediction.predicted_winner}</span>
-              <span className="text-gray-400 ml-2">
-                ({(game.prediction.home_win_prob > game.prediction.away_win_prob 
-                  ? game.prediction.home_win_prob 
+              <span className="font-medium" style={{ color: 'white' }}>{game.prediction.predicted_winner}</span>
+              <span className="ml-2" style={{ color: '#64748b' }}>
+                ({(game.prediction.home_win_prob > game.prediction.away_win_prob
+                  ? game.prediction.home_win_prob
                   : game.prediction.away_win_prob * 100).toFixed(0)}%)
               </span>
             </div>
             {game.prediction.best_bet && (
-              <div className="mt-1 text-xs text-green-400">
+              <div className="mt-1 text-xs" style={{ color: '#10b981' }}>
                 💡 Best Bet: {game.prediction.best_bet}
                 {game.prediction.edge_pct && ` (+${game.prediction.edge_pct}% edge)`}
               </div>
@@ -244,23 +250,27 @@ const CollegeSports = () => {
           </div>
         )}
 
-        {/* Footer with odds */}
         {!isFinished && game.odds && (
-          <div className="px-4 py-3 bg-gray-900/30 border-t border-gray-700">
+          <div
+            className="px-4 py-3"
+            style={{ background: 'rgba(0,0,0,0.2)', borderTop: '1px solid var(--color-card-border)' }}
+          >
             <div className="flex justify-between text-sm">
-              <span className="text-gray-400">Spread</span>
-              <span className="text-white font-medium">{game.odds.spread || 'N/A'}</span>
+              <span style={{ color: '#64748b' }}>Spread</span>
+              <span className="font-medium" style={{ color: 'white' }}>{game.odds.spread || 'N/A'}</span>
             </div>
             <div className="flex justify-between text-sm mt-1">
-              <span className="text-gray-400">Total</span>
-              <span className="text-white font-medium">{game.odds.total || 'N/A'}</span>
+              <span style={{ color: '#64748b' }}>Total</span>
+              <span className="font-medium" style={{ color: 'white' }}>{game.odds.total || 'N/A'}</span>
             </div>
           </div>
         )}
 
-        {/* Game time */}
-        <div className="px-4 py-2 bg-gray-900/50 text-center">
-          <span className="text-xs text-gray-400">
+        <div
+          className="px-4 py-2 text-center"
+          style={{ background: 'rgba(0,0,0,0.2)' }}
+        >
+          <span className="text-xs" style={{ color: '#64748b' }}>
             {new Date(game.commence_time || game.date).toLocaleString()}
           </span>
         </div>
@@ -269,70 +279,75 @@ const CollegeSports = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+    <div className="min-h-screen" style={{ background: "var(--color-surface)" }}>
       <Navbar />
-      
+
       <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="mb-8">
+        <header style={{ animation: 'slide-up 0.4s ease-out both' }}>
+          <p className="text-sm uppercase tracking-wide font-semibold mb-2" style={{ color: '#10b981' }}>NCAA Basketball</p>
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg">
                 <span className="text-3xl">🏀</span>
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-white">College Sports</h1>
-                <p className="text-gray-400">NCAA Basketball • March Madness</p>
+                <h1 className="text-3xl font-bold text-white font-[Oswald] tracking-tight">College Sports</h1>
+                <p className="text-sm" style={{ color: '#64748b' }}>NCAA Basketball • March Madness</p>
               </div>
             </div>
             <button
               onClick={refreshNcaabData}
               disabled={refreshing}
-              className="flex items-center gap-2 px-4 py-2 bg-orange-600 hover:bg-orange-700 disabled:bg-orange-800 text-white rounded-lg transition-colors"
+              className="text-white font-semibold rounded-lg py-3 px-4 transition-all hover:opacity-90 flex items-center gap-2"
+              style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}
             >
               <span className={refreshing ? 'animate-spin' : ''}>🔄</span>
               {refreshing ? 'Refreshing...' : 'Refresh Data'}
             </button>
           </div>
 
-          {/* Quick Links */}
           <div className="flex flex-wrap gap-3 mt-6">
-            <Link 
+            <Link
               to="/college/bracket"
-              className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-semibold transition-colors flex items-center gap-2"
+              className="text-white font-semibold rounded-lg py-3 px-4 transition-all hover:opacity-90 flex items-center gap-2"
+              style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}
             >
               <span>🏆</span> March Madness Bracket
             </Link>
-            <Link 
+            <Link
               to="/predictions?sport=ncaab"
-              className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-semibold transition-colors flex items-center gap-2"
+              className="card-glow rounded-lg py-3 px-4 font-semibold transition-all hover:opacity-90 flex items-center gap-2"
+              style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)', color: '#cbd5e1' }}
             >
               <span>📊</span> NCAAB Predictions
             </Link>
-            <Link 
+            <Link
               to="/odds?sport=basketball_ncaab"
-              className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-semibold transition-colors flex items-center gap-2"
+              className="card-glow rounded-lg py-3 px-4 font-semibold transition-all hover:opacity-90 flex items-center gap-2"
+              style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)', color: '#cbd5e1' }}
             >
               <span>💰</span> NCAAB Odds
             </Link>
           </div>
-        </div>
+        </header>
 
-        {/* Stale Data Warning */}
         {(isStale || (ncaabGames.length === 0 && !loading)) && (
-          <div className="mb-6 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-xl">
+          <div
+            className="card-glow rounded-xl p-6 border mb-6"
+            style={{ background: 'linear-gradient(135deg, rgba(234,179,8,0.06), rgba(234,179,8,0.02))', borderColor: 'rgba(234,179,8,0.3)' }}
+          >
             <div className="flex items-center gap-3">
               <span className="text-2xl">⚠️</span>
               <div>
-                <p className="text-yellow-400 font-semibold">Data may be outdated</p>
-                <p className="text-gray-400 text-sm">
-                  {dataTimestamp 
+                <p style={{ color: '#eab308' }} className="font-semibold">Data may be outdated</p>
+                <p className="text-sm" style={{ color: '#94a3b8' }}>
+                  {dataTimestamp
                     ? `Last updated: ${new Date(dataTimestamp).toLocaleString()}`
                     : 'No recent data available.'
                   }
                   {' '}Click "Refresh Data" to fetch the latest games.
                 </p>
-                <p className="text-gray-500 text-xs mt-1">
+                <p className="text-xs mt-1" style={{ color: '#64748b' }}>
                   Note: The Odds API has usage limits. If refresh fails, the quota may be exhausted.
                 </p>
               </div>
@@ -340,17 +355,16 @@ const CollegeSports = () => {
           </div>
         )}
 
-        {/* Filter Tabs */}
         <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
           {['all', 'live', 'upcoming', 'finished'].map(tab => (
             <button
               key={tab}
               onClick={() => setFilter(tab)}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap ${
-                filter === tab 
-                  ? 'bg-orange-500 text-white' 
-                  : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
-              }`}
+              className={`px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap ${filter === tab ? 'text-white font-semibold' : 'card-glow'}`}
+              style={filter === tab
+                ? { background: 'linear-gradient(135deg, #10b981, #059669)' }
+                : { background: 'var(--color-card)', border: '1px solid var(--color-card-border)', color: '#94a3b8' }
+              }
             >
               {tab === 'all' && '📋 All Games'}
               {tab === 'live' && '🔴 Live'}
@@ -360,43 +374,42 @@ const CollegeSports = () => {
           ))}
         </div>
 
-        {/* Stats Bar */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-gray-800 rounded-xl p-4 border border-gray-700">
-            <p className="text-gray-400 text-sm">Total Games</p>
-            <p className="text-2xl font-bold text-white">{ncaabGames.length}</p>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 stagger-children">
+          <div className="card-glow rounded-xl p-4 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
+            <p className="text-sm" style={{ color: '#64748b' }}>Total Games</p>
+            <p className="text-2xl font-bold text-white font-[Oswald] tracking-tight">{ncaabGames.length}</p>
           </div>
-          <div className="bg-gray-800 rounded-xl p-4 border border-gray-700">
-            <p className="text-gray-400 text-sm">Live Now</p>
-            <p className="text-2xl font-bold text-red-400">
+          <div className="card-glow rounded-xl p-4 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
+            <p className="text-sm" style={{ color: '#64748b' }}>Live Now</p>
+            <p className="text-2xl font-bold font-[Oswald] tracking-tight" style={{ color: '#fca5a5' }}>
               {ncaabGames.filter(g => g.status === 'LIVE' || g.status === 'IN_PROGRESS').length}
             </p>
           </div>
-          <div className="bg-gray-800 rounded-xl p-4 border border-gray-700">
-            <p className="text-gray-400 text-sm">Upcoming</p>
-            <p className="text-2xl font-bold text-orange-400">
+          <div className="card-glow rounded-xl p-4 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
+            <p className="text-sm" style={{ color: '#64748b' }}>Upcoming</p>
+            <p className="text-2xl font-bold font-[Oswald] tracking-tight" style={{ color: '#10b981' }}>
               {ncaabGames.filter(g => g.status === 'UPCOMING' || g.status === 'SCHEDULED').length}
             </p>
           </div>
-          <div className="bg-gray-800 rounded-xl p-4 border border-gray-700">
-            <p className="text-gray-400 text-sm">Completed</p>
-            <p className="text-2xl font-bold text-green-400">
+          <div className="card-glow rounded-xl p-4 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
+            <p className="text-sm" style={{ color: '#64748b' }}>Completed</p>
+            <p className="text-2xl font-bold font-[Oswald] tracking-tight" style={{ color: '#6ee7b7' }}>
               {ncaabGames.filter(g => g.status === 'FINISHED' || g.status === 'COMPLETED').length}
             </p>
           </div>
         </div>
 
-        {/* Games Grid */}
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500"></div>
+            <div className="animate-spin rounded-full h-12 w-12" style={{ border: '2px solid', borderColor: 'transparent transparent transparent #10b981' }}></div>
           </div>
         ) : error ? (
           <div className="text-center py-20">
-            <p className="text-red-400 mb-4">{error}</p>
-            <button 
+            <p className="mb-4" style={{ color: '#fca5a5' }}>{error}</p>
+            <button
               onClick={fetchNcaabData}
-              className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg"
+              className="text-white font-semibold rounded-lg py-3 px-4 transition-all hover:opacity-90"
+              style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}
             >
               Retry
             </button>
@@ -404,31 +417,31 @@ const CollegeSports = () => {
         ) : filteredGames.length === 0 ? (
           <div className="text-center py-20">
             <span className="text-6xl mb-4 block">🏀</span>
-            <p className="text-gray-400 text-lg">No {filter !== 'all' ? filter : ''} games found</p>
-            <p className="text-gray-500 text-sm mt-2">Check back later for more games</p>
+            <p className="text-lg" style={{ color: '#94a3b8' }}>No {filter !== 'all' ? filter : ''} games found</p>
+            <p className="text-sm mt-2" style={{ color: '#64748b' }}>Check back later for more games</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 stagger-children">
             {filteredGames.map((game, index) => (
               <GameCard key={game.id || index} game={game} />
             ))}
           </div>
         )}
 
-        {/* Top Teams Section */}
         <div className="mt-12">
-          <h2 className="text-2xl font-bold text-white mb-6">Top Programs</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+          <h2 className="text-2xl font-bold text-white font-[Oswald] tracking-tight mb-6">Top Programs</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 stagger-children">
             {Object.entries(NCAAB_TEAMS).slice(0, 12).map(([name, team]) => (
-              <div 
+              <div
                 key={name}
-                className="bg-gray-800 rounded-xl p-4 border border-gray-700 hover:border-orange-500/50 transition-all cursor-pointer text-center"
+                className="card-glow rounded-xl p-4 border hover:border-[#10b981]/50 transition-all cursor-pointer text-center"
+                style={{ background: 'var(--color-card)', borderColor: 'var(--color-card-border)' }}
               >
-                <div 
+                <div
                   className="w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-3 overflow-hidden"
                   style={{ backgroundColor: team.color + '20', border: `2px solid ${team.color}` }}
                 >
-                  <img 
+                  <img
                     src={`https://a.espncdn.com/i/teamlogos/ncaa/500/${team.id}.png`}
                     alt={name}
                     className="w-12 h-12 object-contain"
@@ -438,7 +451,7 @@ const CollegeSports = () => {
                   />
                 </div>
                 <p className="text-white font-semibold text-sm truncate">{name}</p>
-                <p className="text-gray-400 text-xs">{team.conference}</p>
+                <p className="text-xs" style={{ color: '#64748b' }}>{team.conference}</p>
               </div>
             ))}
           </div>

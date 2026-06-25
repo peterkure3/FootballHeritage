@@ -82,7 +82,7 @@ function App() {
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <Router>
-          <div className="min-h-screen bg-gray-900">
+          <div className="min-h-screen" style={{ background: 'var(--color-surface, #0d0d14)' }}>
           <Routes>
             {/* Public Routes */}
             <Route

@@ -47,7 +47,7 @@ const formatDateTime = (value) => {
 };
 
 const Predictions = () => {
-  const [activeTab, setActiveTab] = useState('upcoming'); // 'upcoming' or 'results'
+  const [activeTab, setActiveTab] = useState('upcoming');
   const [homeTeam, setHomeTeam] = useState('');
   const [awayTeam, setAwayTeam] = useState('');
   const [refreshKey, setRefreshKey] = useState(0);
@@ -77,12 +77,10 @@ const Predictions = () => {
         const time = dateValue ? new Date(dateValue).getTime() : null;
         const isFutureOrRecent = typeof time === 'number' && Number.isFinite(time) ? time > (now - graceMs) : null;
 
-        // If status says it's upcoming-like, trust it even if the time is missing/invalid.
         if (rawStatus && (allowedStatuses.has(rawStatus) || rawStatus === 'LIVE')) {
           return isFutureOrRecent === null ? true : isFutureOrRecent;
         }
 
-        // Otherwise: only keep if we have a valid time and it's not in the past (with grace)
         return isFutureOrRecent === null ? false : isFutureOrRecent;
       })
       .sort((a, b) => {
@@ -131,38 +129,38 @@ const Predictions = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+    <div className="min-h-screen" style={{ background: "var(--color-surface)" }}>
       <Navbar />
 
       <div className="max-w-7xl mx-auto px-4 py-8 space-y-10">
-        <header>
-          <p className="text-sm uppercase tracking-wide text-green-400 mb-2">AI Insights</p>
-          <h1 className="text-4xl font-bold text-white mb-3">Predictions & Betting Edge</h1>
-          <p className="text-gray-400 max-w-3xl">
+        <header style={{ animation: 'slide-up 0.4s ease-out both' }}>
+          <p className="text-sm uppercase tracking-wide font-semibold mb-2" style={{ color: '#10b981' }}>AI Insights</p>
+          <h1 className="text-3xl md:text-4xl font-bold text-white font-[Oswald] tracking-tight mb-2">Predictions & Betting Edge</h1>
+          <p className="text-sm max-w-3xl" style={{ color: '#64748b' }}>
             Explore upcoming fixtures powered by our ML pipeline, visualize probabilities, and run custom
             what-if matchups before placing a bet.
           </p>
         </header>
 
         {/* Tab Navigation */}
-        <div className="flex border-b border-gray-700">
+        <div className="flex border-b" style={{ borderColor: 'var(--color-card-border)' }}>
           <button
             onClick={() => setActiveTab('upcoming')}
-            className={`px-6 py-3 font-semibold text-sm transition ${
-              activeTab === 'upcoming'
-                ? 'text-green-400 border-b-2 border-green-400'
-                : 'text-gray-400 hover:text-white'
-            }`}
+            className={`px-6 py-3 font-semibold text-sm transition`}
+            style={{
+              color: activeTab === 'upcoming' ? '#10b981' : '#64748b',
+              borderBottom: activeTab === 'upcoming' ? '2px solid #10b981' : '2px solid transparent',
+            }}
           >
             Upcoming Predictions
           </button>
           <button
             onClick={() => setActiveTab('results')}
-            className={`px-6 py-3 font-semibold text-sm transition ${
-              activeTab === 'results'
-                ? 'text-green-400 border-b-2 border-green-400'
-                : 'text-gray-400 hover:text-white'
-            }`}
+            className={`px-6 py-3 font-semibold text-sm transition`}
+            style={{
+              color: activeTab === 'results' ? '#10b981' : '#64748b',
+              borderBottom: activeTab === 'results' ? '2px solid #10b981' : '2px solid transparent',
+            }}
           >
             Results & Accuracy
           </button>
@@ -173,26 +171,22 @@ const Predictions = () => {
           <PredictionResults />
         ) : (
         <>
-        <section className="bg-gray-900/60 border border-gray-800 rounded-2xl p-6 shadow-2xl shadow-black/30">
+        <section className="card-glow rounded-xl p-6 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)', animation: 'slide-up 0.4s ease-out 0.06s both' }}>
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-6">
             <div>
-              <h2 className="text-2xl font-semibold text-white">Upcoming Matches</h2>
-              <p className="text-gray-500 text-sm">Pulled directly from the pipeline API (auto-refreshes every minute)</p>
+              <h2 className="text-2xl font-bold text-white font-[Oswald] tracking-tight">Upcoming Matches</h2>
+              <p className="text-sm" style={{ color: '#64748b' }}>Pulled directly from the pipeline API (auto-refreshes every minute)</p>
             </div>
             <button
               onClick={() => {
                 setRefreshKey((value) => value + 1);
                 refetchMatches();
               }}
-              className="self-start md:self-auto inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-800 text-white font-semibold border border-gray-700 hover:bg-gray-700"
+              className="self-start md:self-auto inline-flex items-center gap-2 px-4 py-2 rounded-lg text-white font-semibold text-sm transition-all card-glow"
+              style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)' }}
             >
               <svg className={`w-4 h-4 ${matchesLoading ? 'animate-spin' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 4v5h.582m15.356 2a8.001 8.001 0 00-15.356-2m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2a8.001 8.001 0 00-15.356-2m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
               Refresh
             </button>
@@ -201,20 +195,20 @@ const Predictions = () => {
           {matchesLoading ? (
             <div className="grid gap-4 md:grid-cols-2">
               {[...Array(4)].map((_, index) => (
-                <div key={index} className="h-48 rounded-xl bg-gray-800 animate-pulse" />
+                <div key={index} className="h-48 rounded-xl animate-pulse" style={{ background: 'var(--color-card)' }} />
               ))}
             </div>
           ) : matchesError ? (
-            <div className="border border-red-500/60 bg-red-500/10 rounded-xl p-6 text-center">
-              <p className="text-red-300 font-semibold">Failed to load matches. Please try again.</p>
+            <div className="rounded-xl p-6 text-center border" style={{ background: 'rgba(239, 68, 68, 0.08)', borderColor: 'rgba(239, 68, 68, 0.2)' }}>
+              <p style={{ color: '#fca5a5' }} className="font-semibold">Failed to load matches. Please try again.</p>
             </div>
           ) : matches.length === 0 ? (
-            <div className="rounded-xl border border-gray-800 bg-gray-850 p-10 text-center text-gray-400">
-              No pipeline matches available right now. Check back shortly.
+            <div className="card-glow rounded-xl p-10 text-center border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
+              <p style={{ color: '#64748b' }}>No pipeline matches available right now. Check back shortly.</p>
             </div>
           ) : upcomingMatches.length === 0 ? (
-            <div className="rounded-xl border border-gray-800 bg-gray-850 p-10 text-center text-gray-400">
-              No upcoming matches found. Try refreshing after the next pipeline sync.
+            <div className="card-glow rounded-xl p-10 text-center border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
+              <p style={{ color: '#64748b' }}>No upcoming matches found. Try refreshing after the next pipeline sync.</p>
             </div>
           ) : (
             <div>
@@ -225,7 +219,7 @@ const Predictions = () => {
               </div>
 
               <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <p className="text-sm text-gray-500">
+                <p className="text-sm" style={{ color: '#64748b' }}>
                   Showing <span className="text-gray-200">{Math.min(upcomingMatches.length, startIndex + 1)}</span>-
                   <span className="text-gray-200">{Math.min(upcomingMatches.length, startIndex + pagedUpcomingMatches.length)}</span>{' '}
                   of <span className="text-gray-200">{upcomingMatches.length}</span>
@@ -236,7 +230,8 @@ const Predictions = () => {
                     type="button"
                     onClick={() => setMatchesPage((page) => Math.max(1, page - 1))}
                     disabled={clampedPage <= 1}
-                    className="px-3 py-2 rounded-lg bg-gray-800 text-white text-sm font-semibold border border-gray-700 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-3 py-2 rounded-lg text-white text-sm font-semibold transition-all card-glow disabled:opacity-50 disabled:cursor-not-allowed"
+                    style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)' }}
                   >
                     Prev
                   </button>
@@ -246,11 +241,16 @@ const Predictions = () => {
                       <button
                         type="button"
                         onClick={() => setMatchesPage(1)}
-                        className={`px-3 py-2 rounded-lg text-sm font-semibold border ${clampedPage === 1 ? 'bg-green-500 text-white border-green-500' : 'bg-gray-800 text-white border-gray-700 hover:bg-gray-700'}`}
+                        className="px-3 py-2 rounded-lg text-sm font-semibold transition-all"
+                        style={{
+                          background: clampedPage === 1 ? 'linear-gradient(135deg, #10b981, #059669)' : 'var(--color-card)',
+                          color: 'white',
+                          border: clampedPage === 1 ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid var(--color-card-border)',
+                        }}
                       >
                         1
                       </button>
-                      <span className="px-1 text-gray-600">…</span>
+                      <span className="px-1" style={{ color: '#64748b' }}>…</span>
                     </>
                   )}
 
@@ -259,7 +259,12 @@ const Predictions = () => {
                       key={page}
                       type="button"
                       onClick={() => setMatchesPage(page)}
-                      className={`px-3 py-2 rounded-lg text-sm font-semibold border ${clampedPage === page ? 'bg-green-500 text-white border-green-500' : 'bg-gray-800 text-white border-gray-700 hover:bg-gray-700'}`}
+                      className="px-3 py-2 rounded-lg text-sm font-semibold transition-all"
+                      style={{
+                        background: clampedPage === page ? 'linear-gradient(135deg, #10b981, #059669)' : 'var(--color-card)',
+                        color: 'white',
+                        border: clampedPage === page ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid var(--color-card-border)',
+                      }}
                     >
                       {page}
                     </button>
@@ -267,11 +272,16 @@ const Predictions = () => {
 
                   {pageNumbers[pageNumbers.length - 1] !== totalPages && (
                     <>
-                      <span className="px-1 text-gray-600">…</span>
+                      <span className="px-1" style={{ color: '#64748b' }}>…</span>
                       <button
                         type="button"
                         onClick={() => setMatchesPage(totalPages)}
-                        className={`px-3 py-2 rounded-lg text-sm font-semibold border ${clampedPage === totalPages ? 'bg-green-500 text-white border-green-500' : 'bg-gray-800 text-white border-gray-700 hover:bg-gray-700'}`}
+                        className="px-3 py-2 rounded-lg text-sm font-semibold transition-all"
+                        style={{
+                          background: clampedPage === totalPages ? 'linear-gradient(135deg, #10b981, #059669)' : 'var(--color-card)',
+                          color: 'white',
+                          border: clampedPage === totalPages ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid var(--color-card-border)',
+                        }}
                       >
                         {totalPages}
                       </button>
@@ -282,7 +292,8 @@ const Predictions = () => {
                     type="button"
                     onClick={() => setMatchesPage((page) => Math.min(totalPages, page + 1))}
                     disabled={clampedPage >= totalPages}
-                    className="px-3 py-2 rounded-lg bg-gray-800 text-white text-sm font-semibold border border-gray-700 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-3 py-2 rounded-lg text-white text-sm font-semibold transition-all card-glow disabled:opacity-50 disabled:cursor-not-allowed"
+                    style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)' }}
                   >
                     Next
                   </button>
@@ -292,45 +303,43 @@ const Predictions = () => {
           )}
         </section>
 
-        <section className="grid gap-6 md:grid-cols-2">
-          <div className="p-6 rounded-2xl border border-gray-800 bg-gray-900/60 shadow-xl shadow-black/20">
-            <h2 className="text-2xl font-semibold text-white mb-2">What-If Matchup</h2>
-            <p className="text-gray-400 text-sm mb-6">Compare any two teams and get instant probabilities plus an AI recommendation.</p>
+        <section className="grid gap-6 md:grid-cols-2 stagger-children">
+          <div className="card-glow rounded-xl p-6 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
+            <h2 className="text-2xl font-bold text-white font-[Oswald] tracking-tight mb-2">What-If Matchup</h2>
+            <p className="text-sm mb-6" style={{ color: '#64748b' }}>Compare any two teams and get instant probabilities plus an AI recommendation.</p>
 
             <form onSubmit={handleMatchupSubmit} className="space-y-4">
               <div>
-                <label className="text-gray-300 text-sm font-semibold mb-2 block">Home Team</label>
+                <label className="text-sm font-semibold mb-2 block" style={{ color: '#94a3b8' }}>Home Team</label>
                 <input
                   type="text"
                   value={homeTeam}
                   onChange={(event) => setHomeTeam(event.target.value)}
                   placeholder="e.g., Arsenal"
-                  className="w-full bg-gray-850 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="w-full rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 transition-all"
+                  style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)', '--tw-ring-color': '#10b981' }}
                 />
               </div>
               <div>
-                <label className="text-gray-300 text-sm font-semibold mb-2 block">Away Team</label>
+                <label className="text-sm font-semibold mb-2 block" style={{ color: '#94a3b8' }}>Away Team</label>
                 <input
                   type="text"
                   value={awayTeam}
                   onChange={(event) => setAwayTeam(event.target.value)}
                   placeholder="e.g., Chelsea"
-                  className="w-full bg-gray-850 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className="w-full rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 transition-all"
+                  style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)', '--tw-ring-color': '#10b981' }}
                 />
               </div>
               <button
                 type="submit"
                 disabled={matchupLoading}
-                className="w-full flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg py-3 transition disabled:opacity-70 disabled:cursor-not-allowed"
+                className="w-full flex items-center justify-center gap-2 text-white font-semibold rounded-lg py-3 transition-all hover:opacity-90 disabled:opacity-70 disabled:cursor-not-allowed"
+                style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}
               >
                 {matchupLoading && (
                   <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M4 4v5h.582m15.356 2a8.001 8.001 0 00-15.356-2m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                    />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2a8.001 8.001 0 00-15.356-2m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                   </svg>
                 )}
                 Generate Prediction
@@ -338,20 +347,20 @@ const Predictions = () => {
             </form>
           </div>
 
-          <div className="p-6 rounded-2xl border border-gray-800 bg-gray-900/60 shadow-xl shadow-black/20">
-            <h3 className="text-xl font-semibold text-white mb-4">Matchup Insights</h3>
+          <div className="card-glow rounded-xl p-6 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
+            <h3 className="text-xl font-bold text-white font-[Oswald] tracking-tight mb-4">Matchup Insights</h3>
             {!matchupPrediction ? (
-              <div className="h-full flex items-center justify-center text-gray-500 text-sm text-center">
-                Enter two teams and tap “Generate Prediction” to view AI analysis.
+              <div className="h-full flex items-center justify-center text-sm text-center" style={{ color: '#64748b' }}>
+                Enter two teams and tap "Generate Prediction" to view AI analysis.
               </div>
             ) : (
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-gray-400 text-sm">Predicted Winner</p>
-                    <p className="text-2xl font-bold text-white capitalize">{matchupPrediction.winner?.replace('_', ' ') || 'N/A'}</p>
+                    <p className="text-sm" style={{ color: '#64748b' }}>Predicted Winner</p>
+                    <p className="text-2xl font-bold text-white capitalize font-[Oswald] tracking-tight">{matchupPrediction.winner?.replace('_', ' ') || 'N/A'}</p>
                   </div>
-                  <span className="px-3 py-1 rounded-full border border-green-500/50 text-green-300 text-xs font-semibold">
+                  <span className="px-3 py-1 rounded-full border text-xs font-semibold" style={{ borderColor: 'rgba(16, 185, 129, 0.5)', color: '#6ee7b7' }}>
                     {matchupPrediction.confidence || 'Medium'} confidence
                   </span>
                 </div>
@@ -367,9 +376,9 @@ const Predictions = () => {
                 </div>
 
                 {matchupPrediction.recommendation && (
-                  <div className="bg-gray-850 border border-gray-700 rounded-xl p-4">
-                    <p className="text-sm text-gray-400 uppercase tracking-wide mb-2">Recommendation</p>
-                    <p className="text-gray-200 leading-relaxed">{matchupPrediction.recommendation}</p>
+                  <div className="card-glow rounded-xl p-4 border" style={{ background: 'var(--color-card)', borderColor: 'var(--color-card-border)' }}>
+                    <p className="text-xs uppercase tracking-wide mb-2" style={{ color: '#64748b' }}>Recommendation</p>
+                    <p className="leading-relaxed" style={{ color: '#cbd5e1' }}>{matchupPrediction.recommendation}</p>
                   </div>
                 )}
               </div>
@@ -387,12 +396,12 @@ const ProbabilityBar = ({ label, value }) => {
   const percentage = Math.round((value || 0) * 100);
   return (
     <div>
-      <div className="flex justify-between text-sm text-gray-400 mb-1">
+      <div className="flex justify-between text-sm mb-1" style={{ color: '#94a3b8' }}>
         <span>{label}</span>
         <span>{percentage}%</span>
       </div>
-      <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
-        <div className="h-full bg-green-500" style={{ width: `${percentage}%` }} />
+      <div className="h-2 rounded-full overflow-hidden" style={{ background: '#1a1a2e' }}>
+        <div className="h-full" style={{ width: `${percentage}%`, background: 'linear-gradient(90deg, #10b981, #059669)' }} />
       </div>
     </div>
   );
@@ -418,35 +427,35 @@ const PredictionCard = ({ match, refreshKey }) => {
   const bestBet = edge?.bestBet;
 
   return (
-    <div className="rounded-2xl border border-gray-800 bg-gray-850 p-5 flex flex-col gap-4">
+    <div className="card-glow rounded-xl p-5 border flex flex-col gap-4" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-xs uppercase tracking-wide text-gray-500">{match.competition || 'Competition'}</p>
-          <h3 className="text-xl font-semibold text-white">
+          <p className="text-xs uppercase tracking-wide" style={{ color: '#64748b' }}>{match.competition || 'Competition'}</p>
+          <h3 className="text-xl font-bold text-white font-[Oswald] tracking-tight">
             {match.home_team} vs {match.away_team}
           </h3>
-          <p className="text-gray-500 text-sm">{formatDateTime(match.date)}</p>
+          <p className="text-sm" style={{ color: '#64748b' }}>{formatDateTime(match.date)}</p>
         </div>
         {match.status && (
-          <span className="px-3 py-1 rounded-full border border-gray-700 text-gray-300 text-xs font-semibold">
+          <span className="px-3 py-1 rounded-full border text-xs font-semibold" style={{ borderColor: 'var(--color-card-border)', color: '#94a3b8' }}>
             {match.status}
           </span>
         )}
       </div>
 
       <div className="grid grid-cols-3 gap-3">
-        <div className="bg-gray-900/60 rounded-xl border border-gray-800 p-3 text-center">
-          <p className="text-xs uppercase text-gray-500 mb-1">Home ML</p>
-          <p className="text-white font-semibold text-lg">{formatAmericanOdds(odds.home)}</p>
-          <p className="text-gray-500 text-xs">moneyline</p>
+        <div className="card-glow rounded-xl p-3 text-center border" style={{ background: 'var(--color-card)', borderColor: 'var(--color-card-border)' }}>
+          <p className="text-xs uppercase mb-1" style={{ color: '#64748b' }}>Home ML</p>
+          <p className="text-white font-semibold text-lg font-[Oswald] tracking-tight">{formatAmericanOdds(odds.home)}</p>
+          <p className="text-xs" style={{ color: '#64748b' }}>moneyline</p>
         </div>
-        <div className="bg-gray-900/60 rounded-xl border border-gray-800 p-3 text-center">
-          <p className="text-xs uppercase text-gray-500 mb-1">Away ML</p>
-          <p className="text-white font-semibold text-lg">{formatAmericanOdds(odds.away)}</p>
-          <p className="text-gray-500 text-xs">moneyline</p>
+        <div className="card-glow rounded-xl p-3 text-center border" style={{ background: 'var(--color-card)', borderColor: 'var(--color-card-border)' }}>
+          <p className="text-xs uppercase mb-1" style={{ color: '#64748b' }}>Away ML</p>
+          <p className="text-white font-semibold text-lg font-[Oswald] tracking-tight">{formatAmericanOdds(odds.away)}</p>
+          <p className="text-xs" style={{ color: '#64748b' }}>moneyline</p>
         </div>
-        <div className="bg-gray-900/60 rounded-xl border border-gray-800 p-3 text-center">
-          <p className="text-xs uppercase text-gray-500 mb-1">Best Edge</p>
+        <div className="card-glow rounded-xl p-3 text-center border" style={{ background: 'var(--color-card)', borderColor: 'var(--color-card-border)' }}>
+          <p className="text-xs uppercase mb-1" style={{ color: '#64748b' }}>Best Edge</p>
           {(() => {
             const homeImplied = impliedProbabilityFromAmerican(odds.home);
             const awayImplied = impliedProbabilityFromAmerican(odds.away);
@@ -459,45 +468,45 @@ const PredictionCard = ({ match, refreshKey }) => {
               .sort((a, b) => b.value - a.value)[0];
 
             if (!best) {
-              return <p className="text-white font-semibold text-lg">--</p>;
+              return <p className="text-white font-semibold text-lg font-[Oswald] tracking-tight">--</p>;
             }
 
             const pct = Math.round(best.value * 1000) / 10;
             const color = best.value > 0 ? 'text-green-300' : 'text-gray-300';
             return (
-              <p className={`font-semibold text-lg ${color}`}>
+              <p className={`font-semibold text-lg font-[Oswald] tracking-tight ${color}`}>
                 {best.side === 'home' ? 'Home' : 'Away'} {pct > 0 ? '+' : ''}{pct}%
               </p>
             );
           })()}
-          <p className="text-gray-500 text-xs">model - implied</p>
+          <p className="text-xs" style={{ color: '#64748b' }}>model - implied</p>
         </div>
       </div>
 
       <div className="space-y-3">
         {isLoading ? (
-          <div className="h-4 bg-gray-800 rounded animate-pulse" />
+          <div className="h-4 rounded animate-pulse" style={{ background: '#1a1a2e' }} />
         ) : prediction ? (
           <>
             <ProbabilityBar label={`Home win (${match.home_team})`} value={prediction.home_prob} />
             <ProbabilityBar label={`Away win (${match.away_team})`} value={prediction.away_prob} />
           </>
         ) : (
-          <p className="text-gray-500 text-sm">Prediction unavailable for this match.</p>
+          <p className="text-sm" style={{ color: '#64748b' }}>Prediction unavailable for this match.</p>
         )}
       </div>
 
       {bestBet ? (
-        <div className="border border-green-600/40 bg-green-500/10 rounded-xl p-4">
-          <p className="text-xs uppercase text-green-300 tracking-wide mb-1">Top Value Bet</p>
+        <div className="rounded-xl p-4 border" style={{ background: 'rgba(16, 185, 129, 0.08)', borderColor: 'rgba(16, 185, 129, 0.3)' }}>
+          <p className="text-xs uppercase tracking-wide mb-1" style={{ color: '#6ee7b7' }}>Top Value Bet</p>
           <p className="text-white font-semibold">
             {bestBet.outcome === 'home' && match.home_team}
             {bestBet.outcome === 'away' && match.away_team}
-            <span className="text-green-300 text-sm font-normal"> · {Math.round(bestBet.edge * 100)}% edge</span>
+            <span className="text-sm font-normal" style={{ color: '#34d399' }}> · {Math.round(bestBet.edge * 100)}% edge</span>
           </p>
         </div>
       ) : (
-        <div className="border border-gray-800 rounded-xl p-4 text-sm text-gray-500">
+        <div className="rounded-xl p-4 text-sm border" style={{ background: 'var(--color-card)', borderColor: 'var(--color-card-border)', color: '#64748b' }}>
           No positive value edge detected for current odds.
         </div>
       )}

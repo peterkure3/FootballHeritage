@@ -6,6 +6,65 @@ import WalletModal from './WalletModal';
 import RoleSwitcher from './RoleSwitcher';
 import { SPORTS } from '../utils/constants';
 
+const NavDropdown = ({ label, children }) => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div
+      className="relative"
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+    >
+      <button
+        type="button"
+        className="text-gray-300 hover:text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-white/[0.04] transition-all inline-flex items-center gap-2"
+      >
+        {label}
+        <svg
+          className={`w-3.5 h-3.5 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      <div
+        className={`absolute left-0 mt-2 w-64 rounded-2xl shadow-2xl border transition-all duration-200 origin-top-left ${
+          open ? 'opacity-100 visible scale-100' : 'opacity-0 invisible scale-95'
+        }`}
+        style={{
+          background: '#0d0d14',
+          borderColor: '#1f1f35',
+          zIndex: 50,
+        }}
+      >
+        <div className="p-3 space-y-1">{children}</div>
+      </div>
+    </div>
+  );
+};
+
+const NavDropdownItem = ({ to, label, subtitle, accent, icon }) => (
+  <Link
+    to={to}
+    className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-all hover:bg-white/[0.04] ${
+      accent ? '' : ''
+    }`}
+  >
+    {icon && (
+      <span className="text-lg shrink-0 w-7 text-center">{icon}</span>
+    )}
+    <div>
+      <p className={`font-semibold leading-tight ${accent ? '' : 'text-gray-200'}`}
+         style={accent ? { color: accent } : {}}>
+        {label}
+      </p>
+      <p className="text-xs" style={{ color: '#64748b' }}>{subtitle}</p>
+    </div>
+  </Link>
+);
+
 const Navbar = memo(() => {
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuthStore();
@@ -35,271 +94,189 @@ const Navbar = memo(() => {
     return null;
   }
 
+  const navLinks = [
+    { to: '/dashboard', label: 'Dashboard' },
+    { to: '/odds', label: 'Odds' },
+    { to: '/sports', label: 'Sports' },
+    { to: '/bets', label: 'My Bets' },
+  ];
+
   return (
     <>
-      <nav className="bg-gray-900 border-b border-gray-800 sticky top-0 z-40 shadow-lg">
+      <nav
+        className="sticky top-0 z-40 border-b"
+        style={{
+          background: 'rgba(13, 13, 20, 0.92)',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+          borderColor: '#1a1a2e',
+        }}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <div className="flex items-center">
               <Link
                 to="/dashboard"
-                className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
+                className="flex items-center gap-2.5 hover:opacity-80 transition-opacity"
               >
-                <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center shadow-lg">
-                  <span className="text-white text-xl font-bold">🏈</span>
+                <div
+                  className="w-9 h-9 rounded-lg flex items-center justify-center shadow-lg"
+                  style={{
+                    background: 'linear-gradient(135deg, #10b981, #059669)',
+                  }}
+                >
+                  <span className="text-white text-lg font-bold">🏈</span>
                 </div>
-                <span className="text-white text-xl font-bold hidden sm:block">
-                  Sports<span className="text-green-400">Bet</span>
+                <span className="text-white text-lg font-bold hidden sm:block font-[Oswald] tracking-tight">
+                  Football<span style={{ color: '#10b981' }}>Heritage</span>
                 </span>
               </Link>
+
+              {/* Desktop Nav Links */}
+              <div className="hidden lg:flex items-center ml-8 space-x-1">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.to}
+                    to={link.to}
+                    className="text-gray-400 hover:text-white px-3.5 py-2 rounded-lg text-sm font-medium hover:bg-white/[0.04] transition-all"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
             </div>
 
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-4">
-              <Link
-                to="/dashboard"
-                className="text-gray-300 hover:text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-800 transition-colors"
-              >
-                Dashboard
-              </Link>
-              <div className="relative group">
-                <button
-                  type="button"
-                  className="text-gray-300 hover:text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-800 transition-colors inline-flex items-center gap-2"
-                >
-                  Explore
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-                <div className="absolute left-0 mt-2 w-64 bg-gray-900 border border-gray-800 rounded-2xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                  <div className="p-4 space-y-2">
-                    <Link to="/odds" className="flex flex-col rounded-lg px-3 py-2 text-sm text-gray-200 hover:bg-gray-800">
-                      <span className="font-semibold">All Odds</span>
-                      <span className="text-xs text-gray-500">Live & upcoming</span>
-                    </Link>
-                    <Link to="/sports" className="flex flex-col rounded-lg px-3 py-2 text-sm text-gray-200 hover:bg-gray-800">
-                      <span className="font-semibold">Sports Hub</span>
-                      <span className="text-xs text-gray-500">Leagues & markets</span>
-                    </Link>
-                    <Link to="/college" className="flex flex-col rounded-lg px-3 py-2 text-sm text-gray-200 hover:bg-gray-800 bg-orange-500/10 border border-orange-500/20">
-                      <span className="font-semibold text-orange-400">🏀 College Sports</span>
-                      <span className="text-xs text-gray-500">NCAAB & March Madness</span>
-                    </Link>
-                    <Link to="/fpl-advisor" className="flex flex-col rounded-lg px-3 py-2 text-sm text-gray-200 hover:bg-gray-800 bg-purple-500/10 border border-purple-500/20">
-                      <span className="font-semibold text-purple-400">⚽ FPL Advisor</span>
-                      <span className="text-xs text-gray-500">Fantasy Premier League</span>
-                    </Link>
-                  </div>
-                </div>
-              </div>
+            {/* Desktop Right Side */}
+            <div className="hidden md:flex items-center space-x-2">
+              <NavDropdown label="Explore">
+                <NavDropdownItem to="/odds" label="All Odds" subtitle="Live & upcoming" />
+                <NavDropdownItem to="/sports" label="Sports Hub" subtitle="Leagues & markets" />
+                <NavDropdownItem
+                  to="/college"
+                  label="College Sports"
+                  subtitle="NCAAB & March Madness"
+                  accent="#f97316"
+                  icon="🏀"
+                />
+                <NavDropdownItem
+                  to="/fpl-advisor"
+                  label="FPL Advisor"
+                  subtitle="Fantasy Premier League"
+                  accent="#a855f7"
+                  icon="⚽"
+                />
+              </NavDropdown>
 
-              <div className="relative group">
-                <button
-                  type="button"
-                  className="text-gray-300 hover:text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-800 transition-colors inline-flex items-center gap-2"
-                >
-                  AI Tools
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-                <div className="absolute left-0 mt-2 w-64 bg-gray-900 border border-gray-800 rounded-2xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                  <div className="p-4 space-y-2">
-                    <Link to="/best-bets" className="flex flex-col rounded-lg px-3 py-2 text-sm text-gray-200 hover:bg-gray-800 bg-green-500/10 border border-green-500/20">
-                      <span className="font-semibold text-green-400">⚡ Best Value Bets</span>
-                      <span className="text-xs text-gray-500">AI picks with Kelly sizing</span>
-                    </Link>
-                    <Link to="/predictions" className="flex flex-col rounded-lg px-3 py-2 text-sm text-gray-200 hover:bg-gray-800">
-                      <span className="font-semibold">Predictions</span>
-                      <span className="text-xs text-gray-500">Match insights</span>
-                    </Link>
-                    <Link to="/intelligence/ev-bets" className="flex flex-col rounded-lg px-3 py-2 text-sm text-gray-200 hover:bg-gray-800">
-                      <span className="font-semibold">+EV Bets</span>
-                      <span className="text-xs text-gray-500">Positive expected value feed</span>
-                    </Link>
-                    <Link to="/intelligence/arbitrage" className="flex flex-col rounded-lg px-3 py-2 text-sm text-gray-200 hover:bg-gray-800">
-                      <span className="font-semibold">Arbitrage</span>
-                      <span className="text-xs text-gray-500">Cross-book opportunities</span>
-                    </Link>
-                    <Link to="/intelligence/devigged-odds" className="flex flex-col rounded-lg px-3 py-2 text-sm text-gray-200 hover:bg-gray-800">
-                      <span className="font-semibold">Devigged Odds</span>
-                      <span className="text-xs text-gray-500">Fair probabilities</span>
-                    </Link>
-                    <Link to="/assistant" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-200 hover:bg-gray-800 bg-blue-500/10 border border-blue-500/20">
-                      <span className="text-lg">🤖</span>
-                      <div>
-                        <p className="font-semibold leading-tight text-blue-400">Smart Assistant</p>
-                        <p className="text-xs text-gray-500">AI picks & analysis</p>
-                      </div>
-                    </Link>
-                    <Link to="/player-props" className="flex flex-col rounded-lg px-3 py-2 text-sm text-gray-200 hover:bg-gray-800">
-                      <span className="font-semibold">Player Props</span>
-                      <span className="text-xs text-gray-500">Player-based betting</span>
-                    </Link>
-                    <Link to="/parlay-calculator" className="flex flex-col rounded-lg px-3 py-2 text-sm text-gray-200 hover:bg-gray-800">
-                      <span className="font-semibold">Parlay Builder</span>
-                      <span className="text-xs text-gray-500">Stack your slips</span>
-                    </Link>
-                  </div>
-                </div>
-              </div>
+              <NavDropdown label="AI Tools">
+                <NavDropdownItem
+                  to="/best-bets"
+                  label="Best Value Bets"
+                  subtitle="AI picks with Kelly sizing"
+                  accent="#10b981"
+                  icon="⚡"
+                />
+                <NavDropdownItem to="/predictions" label="Predictions" subtitle="Match insights" />
+                <NavDropdownItem to="/intelligence/ev-bets" label="+EV Bets" subtitle="Positive expected value" />
+                <NavDropdownItem to="/intelligence/arbitrage" label="Arbitrage" subtitle="Cross-book opportunities" />
+                <NavDropdownItem to="/intelligence/devigged-odds" label="Devigged Odds" subtitle="Fair probabilities" />
+                <NavDropdownItem
+                  to="/assistant"
+                  label="Smart Assistant"
+                  subtitle="AI picks & analysis"
+                  accent="#6366f1"
+                  icon="🤖"
+                />
+                <NavDropdownItem to="/player-props" label="Player Props" subtitle="Player-based betting" />
+                <NavDropdownItem to="/parlay-calculator" label="Parlay Builder" subtitle="Stack your slips" />
+              </NavDropdown>
 
-              <div className="relative group">
-                <button
-                  type="button"
-                  className="text-gray-300 hover:text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-800 transition-colors inline-flex items-center gap-2"
-                >
-                  Quick Filters
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-                <div className="absolute left-0 mt-2 w-72 bg-gray-900 border border-gray-800 rounded-2xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                  <div className="p-4 space-y-2">
-                    <Link to={`/odds?sport=${SPORTS.SOCCER.apiParam}`} className="flex items-center justify-between rounded-lg px-3 py-2 text-sm text-gray-200 hover:bg-gray-800">
-                      <span className="flex items-center gap-2">
-                        <span>{SPORTS.SOCCER.icon}</span>
-                        {SPORTS.SOCCER.displayName}
-                      </span>
-                      <span className="text-xs text-gray-500">Live</span>
-                    </Link>
-                    <Link to={`/odds?sport=${SPORTS.NFL.apiParam}`} className="flex items-center justify-between rounded-lg px-3 py-2 text-sm text-gray-200 hover:bg-gray-800">
-                      <span className="flex items-center gap-2">
-                        <span>{SPORTS.NFL.icon}</span>
-                        {SPORTS.NFL.displayName}
-                      </span>
-                      <span className="text-xs text-gray-500">Upcoming</span>
-                    </Link>
-                    <Link to={`/odds?sport=${SPORTS.BASKETBALL.apiParam}`} className="flex items-center justify-between rounded-lg px-3 py-2 text-sm text-gray-200 hover:bg-gray-800">
-                      <span className="flex items-center gap-2">
-                        <span>{SPORTS.BASKETBALL.icon}</span>
-                        {SPORTS.BASKETBALL.displayName}
-                      </span>
-                      <span className="text-xs text-gray-500">Trending</span>
-                    </Link>
-                    <Link to={`/odds?sport=${SPORTS.BASEBALL.apiParam}`} className="flex items-center justify-between rounded-lg px-3 py-2 text-sm text-gray-200 hover:bg-gray-800">
-                      <span className="flex items-center gap-2">
-                        <span>{SPORTS.BASEBALL.icon}</span>
-                        {SPORTS.BASEBALL.displayName}
-                      </span>
-                      <span className="text-xs text-gray-500">In Season</span>
-                    </Link>
-                    <Link to={`/odds?sport=${SPORTS.HOCKEY.apiParam}`} className="flex items-center justify-between rounded-lg px-3 py-2 text-sm text-gray-200 hover:bg-gray-800">
-                      <span className="flex items-center gap-2">
-                        <span>{SPORTS.HOCKEY.icon}</span>
-                        {SPORTS.HOCKEY.displayName}
-                      </span>
-                      <span className="text-xs text-gray-500">In Season</span>
-                    </Link>
-                  </div>
-                </div>
-              </div>
+              <NavDropdown label="Quick Filters">
+                {Object.values(SPORTS).filter(s => s.key !== 'NBA_CUP' && s.key !== 'TENNIS').map((sport) => (
+                  <Link
+                    key={sport.key}
+                    to={`/odds?sport=${sport.apiParam}`}
+                    className="flex items-center justify-between rounded-xl px-3 py-2.5 text-sm text-gray-200 hover:bg-white/[0.04] transition-all"
+                  >
+                    <span className="flex items-center gap-2.5">
+                      <span>{sport.icon}</span>
+                      {sport.displayName}
+                    </span>
+                    <span className="text-xs" style={{ color: '#64748b' }}>→</span>
+                  </Link>
+                ))}
+              </NavDropdown>
 
-              <Link
-                to="/profile"
-                className="text-gray-300 hover:text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-800 transition-colors inline-flex items-center gap-2"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-                Profile
-              </Link>
-            </div>
-
-            {/* User Menu */}
-            <div className="flex items-center space-x-3">
-              {/* Role Switcher (Admin Only) */}
               <RoleSwitcher />
-              
-              {/* Balance Display */}
-              <div className="hidden sm:flex items-center bg-gray-800 rounded-lg px-4 py-2 border border-gray-700">
-                <span className="text-gray-400 text-sm mr-2">Balance:</span>
-                <span className="text-green-400 font-bold text-lg">
-                  ${user?.balance?.toFixed(2) || '0.00'}
+
+              {/* Balance Pill */}
+              <div
+                className="flex items-center gap-2 rounded-lg px-3.5 py-1.5 border text-sm"
+                style={{
+                  background: 'rgba(16, 185, 129, 0.06)',
+                  borderColor: 'rgba(16, 185, 129, 0.2)',
+                }}
+              >
+                <span className="text-xs" style={{ color: '#64748b' }}>$</span>
+                <span className="font-semibold" style={{ color: '#10b981' }}>
+                  {user?.balance?.toFixed(2) || '0.00'}
                 </span>
               </div>
 
-              {/* Wallet Buttons */}
               <button
                 onClick={() => openWallet('deposit')}
-                className="hidden sm:flex items-center bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-semibold text-sm transition-colors shadow-lg shadow-green-500/30"
+                className="text-white px-4 py-2 rounded-lg font-semibold text-sm transition-all hover:opacity-90"
+                style={{
+                  background: 'linear-gradient(135deg, #10b981, #059669)',
+                }}
               >
-                <svg
-                  className="w-4 h-4 mr-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                  />
-                </svg>
                 Deposit
               </button>
 
-              {/* Mobile Balance (visible on small screens) */}
-              <button
-                onClick={() => openWallet('deposit')}
-                className="sm:hidden bg-gray-800 rounded-lg px-3 py-2 border border-gray-700"
+              <Link
+                to="/profile"
+                className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/[0.06] transition-all"
+                title="Profile"
               >
-                <span className="text-green-400 font-bold text-sm">
-                  ${user?.balance?.toFixed(2) || '0.00'}
-                </span>
-              </button>
+                <svg className="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </Link>
 
-              {/* Logout Button */}
               <button
                 onClick={handleLogout}
-                className="hidden md:flex items-center bg-red-500/20 hover:bg-red-500/30 text-red-400 px-4 py-2 rounded-lg font-semibold text-sm transition-colors border border-red-500/50"
+                className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-500 hover:text-red-400 hover:bg-red-500/10 transition-all"
+                title="Logout"
               >
-                <svg
-                  className="w-4 h-4 mr-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                  />
+                <svg className="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                 </svg>
-                Logout
               </button>
+            </div>
 
-              {/* Mobile Menu Button */}
+            {/* Mobile: Balance + Menu */}
+            <div className="flex md:hidden items-center gap-2">
+              <button
+                onClick={() => openWallet('deposit')}
+                className="rounded-lg px-3 py-1.5 border text-sm font-semibold"
+                style={{
+                  color: '#10b981',
+                  borderColor: 'rgba(16, 185, 129, 0.2)',
+                }}
+              >
+                ${user?.balance?.toFixed(2) || '0.00'}
+              </button>
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+                aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
                 aria-expanded={isMobileMenuOpen}
-                className="md:hidden text-gray-300 hover:text-white p-2"
+                className="text-gray-300 hover:text-white p-2 rounded-lg hover:bg-white/[0.04] transition-all"
               >
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   {isMobileMenuOpen ? (
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   ) : (
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 6h16M4 12h16M4 18h16"
-                    />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                   )}
                 </svg>
               </button>
@@ -309,92 +286,70 @@ const Navbar = memo(() => {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-gray-800 bg-gray-900">
-            <div className="px-2 pt-2 pb-3 space-y-1">
-              <button
-                onClick={() => handleNavigation('/dashboard')}
-                className="w-full text-left text-gray-300 hover:text-white hover:bg-gray-800 block px-3 py-2 rounded-lg text-base font-medium transition-colors"
-              >
-                Dashboard
-              </button>
-              <button
-                onClick={() => handleNavigation('/odds')}
-                className="w-full text-left text-gray-300 hover:text-white hover:bg-gray-800 block px-3 py-2 rounded-lg text-base font-medium transition-colors"
-              >
-                Odds
-              </button>
-              <button
-                onClick={() => handleNavigation('/sports')}
-                className="w-full text-left text-gray-300 hover:text-white hover:bg-gray-800 block px-3 py-2 rounded-lg text-base font-medium transition-colors"
-              >
-                Sports
-              </button>
-              <button
-                onClick={() => handleNavigation('/predictions')}
-                className="w-full text-left text-gray-300 hover:text-white hover:bg-gray-800 block px-3 py-2 rounded-lg text-base font-medium transition-colors"
-              >
-                Predictions
-              </button>
-              <button
-                onClick={() => handleNavigation('/intelligence/ev-bets')}
-                className="w-full text-left text-gray-300 hover:text-white hover:bg-gray-800 block px-3 py-2 rounded-lg text-base font-medium transition-colors"
-              >
-                +EV Bets
-              </button>
-              <button
-                onClick={() => handleNavigation('/intelligence/arbitrage')}
-                className="w-full text-left text-gray-300 hover:text-white hover:bg-gray-800 block px-3 py-2 rounded-lg text-base font-medium transition-colors"
-              >
-                Arbitrage
-              </button>
-              <button
-                onClick={() => handleNavigation('/intelligence/devigged-odds')}
-                className="w-full text-left text-gray-300 hover:text-white hover:bg-gray-800 block px-3 py-2 rounded-lg text-base font-medium transition-colors"
-              >
-                Devigged Odds
-              </button>
-              <button
-                onClick={() => handleNavigation('/bets')}
-                className="w-full text-left text-gray-300 hover:text-white hover:bg-gray-800 block px-3 py-2 rounded-lg text-base font-medium transition-colors"
-              >
-                My Bets
-              </button>
-              <button
-                onClick={() => handleNavigation('/chat')}
-                className="w-full text-left text-gray-300 hover:text-white hover:bg-gray-800 block px-3 py-2 rounded-lg text-base font-medium transition-colors"
-              >
-                🤖 AI Chat
-              </button>
-              <button
-                onClick={() => handleNavigation('/profile')}
-                className="w-full text-left text-gray-300 hover:text-white hover:bg-gray-800 block px-3 py-2 rounded-lg text-base font-medium transition-colors"
-              >
-                👤 Profile
-              </button>
+          <div
+            className="md:hidden border-t"
+            style={{
+              background: 'rgba(13, 13, 20, 0.98)',
+              borderColor: '#1a1a2e',
+              animation: 'fade-in 0.15s ease-out',
+            }}
+          >
+            <div className="px-3 pt-3 pb-4 space-y-0.5 max-h-[70vh] overflow-y-auto">
+              {[
+                { label: 'Dashboard', path: '/dashboard' },
+                { label: 'Odds', path: '/odds' },
+                { label: 'Sports', path: '/sports' },
+                { label: 'My Bets', path: '/bets' },
+                { label: 'Best Value Bets ⚡', path: '/best-bets' },
+                { label: 'Predictions', path: '/predictions' },
+                { label: '+EV Bets', path: '/intelligence/ev-bets' },
+                { label: 'Arbitrage', path: '/intelligence/arbitrage' },
+                { label: 'Devigged Odds', path: '/intelligence/devigged-odds' },
+                { label: 'Player Props', path: '/player-props' },
+                { label: 'Parlay Builder', path: '/parlay-calculator' },
+                { label: 'College Sports', path: '/college' },
+                { label: 'March Madness', path: '/college/bracket' },
+                { label: 'FPL Advisor', path: '/fpl-advisor' },
+              ].map((item) => (
+                <button
+                  key={item.path}
+                  onClick={() => handleNavigation(item.path)}
+                  className="w-full text-left text-gray-300 hover:text-white hover:bg-white/[0.04] block px-3 py-2.5 rounded-xl text-sm font-medium transition-all"
+                >
+                  {item.label}
+                </button>
+              ))}
+              <div className="border-t my-2" style={{ borderColor: '#1a1a2e' }} />
               <button
                 onClick={() => openWallet('deposit')}
-                className="w-full text-left text-green-400 hover:text-green-300 hover:bg-gray-800 block px-3 py-2 rounded-lg text-base font-medium transition-colors"
+                className="w-full text-left text-emerald-400 hover:text-emerald-300 hover:bg-white/[0.04] block px-3 py-2.5 rounded-xl text-sm font-medium transition-all"
               >
                 💰 Deposit
               </button>
               <button
                 onClick={() => openWallet('withdraw')}
-                className="w-full text-left text-blue-400 hover:text-blue-300 hover:bg-gray-800 block px-3 py-2 rounded-lg text-base font-medium transition-colors"
+                className="w-full text-left text-blue-400 hover:text-blue-300 hover:bg-white/[0.04] block px-3 py-2.5 rounded-xl text-sm font-medium transition-all"
               >
                 💸 Withdraw
               </button>
+              <div className="border-t my-2" style={{ borderColor: '#1a1a2e' }} />
+              <button
+                onClick={() => handleNavigation('/profile')}
+                className="w-full text-left text-gray-300 hover:text-white hover:bg-white/[0.04] block px-3 py-2.5 rounded-xl text-sm font-medium transition-all"
+              >
+                👤 Profile
+              </button>
               <button
                 onClick={handleLogout}
-                className="w-full text-left text-red-400 hover:text-red-300 hover:bg-gray-800 block px-3 py-2 rounded-lg text-base font-medium transition-colors"
+                className="w-full text-left text-red-400 hover:text-red-300 hover:bg-red-500/10 block px-3 py-2.5 rounded-xl text-sm font-medium transition-all"
               >
-                Logout
+                🚪 Logout
               </button>
             </div>
           </div>
         )}
       </nav>
 
-      {/* Wallet Modal */}
       <WalletModal
         isOpen={isWalletOpen}
         onClose={() => setIsWalletOpen(false)}

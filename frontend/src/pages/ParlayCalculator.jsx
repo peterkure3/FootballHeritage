@@ -10,21 +10,13 @@ import { useParlayCalculator } from "../hooks/useParlayCalculator";
 import { useParlayData } from "../hooks/useParlayData";
 import useParlayStore from "../stores/parlayStore";
 
-/**
- * SOLID Principles Applied:
- * - Single Responsibility: Main component only orchestrates child components
- * - Open/Closed: Extensible through props and composition
- * - Liskov Substitution: Components can be swapped with compatible interfaces
- * - Interface Segregation: Each component has focused, minimal interface
- * - Dependency Inversion: Depends on hooks (abstractions) not implementations
- */
 const ParlayCalculator = () => {
   const navigate = useNavigate();
   const [stake, setStake] = useState(100);
 
-  const { 
-    selectedBets, 
-    updateBet, 
+  const {
+    selectedBets,
+    updateBet,
     removeBet,
     enrichParlay,
     isEnriching,
@@ -36,7 +28,6 @@ const ParlayCalculator = () => {
   const { loading, result, calculateParlay, saveParlay } = useParlayCalculator();
   const { refreshSavedParlays, refreshHistory } = useParlayData();
 
-  // Auto-enrich when bets change
   useEffect(() => {
     if (selectedBets.length >= 2) {
       enrichParlay();
@@ -59,112 +50,117 @@ const ParlayCalculator = () => {
     }
   };
 
-  // Show suggested parlays if no bets selected
   if (selectedBets.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+      <div className="min-h-screen" style={{ background: "var(--color-surface)" }}>
         <Navbar />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 flex items-center">
-              <Calculator className="w-10 h-10 mr-3 text-blue-400" />
-              Parlay Builder
-            </h1>
-            <p className="text-gray-400">
+          <div style={{ animation: 'slide-up 0.4s ease-out both' }}>
+            <div className="flex items-center gap-3 mb-1">
+              <h1 className="text-3xl md:text-4xl font-bold text-white font-[Oswald] tracking-tight">
+                Parlay Builder
+              </h1>
+              <Calculator className="w-8 h-8" style={{ color: '#6366f1' }} />
+            </div>
+            <p className="text-sm" style={{ color: '#64748b' }}>
               Build your own parlay or use our AI-suggested picks
             </p>
           </div>
 
-          {/* Empty State Card */}
-          <div className="bg-gray-800 border border-gray-700 rounded-xl p-8 text-center mb-8">
-            <AlertCircle className="w-12 h-12 mx-auto mb-4 text-gray-600" />
-            <h2 className="text-xl font-bold text-white mb-2">No Bets Selected</h2>
-            <p className="text-gray-400 mb-4">
+          <div className="card-glow rounded-xl p-8 text-center mt-8 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)', animation: 'slide-up 0.4s ease-out 0.06s both' }}>
+            <AlertCircle className="w-12 h-12 mx-auto mb-4" style={{ color: '#64748b' }} />
+            <h2 className="text-xl font-bold text-white font-[Oswald] tracking-tight mb-2">No Bets Selected</h2>
+            <p className="mb-4" style={{ color: '#94a3b8' }}>
               Go to the Odds page to build your own parlay, or use a suggested parlay below
             </p>
             <div className="flex items-center justify-center gap-4">
               <button
                 onClick={() => navigate('/odds')}
-                className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition"
+                className="px-6 py-3 text-white rounded-lg font-semibold text-sm transition-all hover:opacity-90"
+                style={{ background: 'linear-gradient(135deg, #6366f1, #4f46e5)' }}
               >
                 Browse Odds
               </button>
               <button
                 onClick={() => navigate('/best-bets')}
-                className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition"
+                className="px-6 py-3 text-white rounded-lg font-semibold text-sm transition-all hover:opacity-90"
+                style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}
               >
                 Best Value Bets
               </button>
             </div>
           </div>
 
-          {/* Suggested Parlays */}
-          <SuggestedParlays />
+          <div style={{ animation: 'slide-up 0.4s ease-out 0.1s both' }}>
+            <SuggestedParlays />
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+    <div className="min-h-screen" style={{ background: "var(--color-surface)" }}>
       <Navbar />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 flex items-center">
-            <Calculator className="w-10 h-10 mr-3 text-blue-400" />
-            Parlay Expected Value Calculator
-          </h1>
-          <p className="text-gray-400">
+        <div style={{ animation: 'slide-up 0.4s ease-out both' }}>
+          <div className="flex items-center gap-3 mb-1">
+            <h1 className="text-3xl md:text-4xl font-bold text-white font-[Oswald] tracking-tight">
+              Parlay Calculator
+            </h1>
+            <Calculator className="w-8 h-8" style={{ color: '#6366f1' }} />
+          </div>
+          <p className="text-sm" style={{ color: '#64748b' }}>
             Calculate combined odds, probabilities, and expected value for your parlays
           </p>
         </div>
 
         {/* Correlation Warnings */}
         {correlationWarnings && correlationWarnings.length > 0 && (
-          <div className="mb-6 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-xl">
+          <div className="mt-6 mb-6 p-4 rounded-xl border card-glow" style={{ background: 'rgba(245, 158, 11, 0.08)', borderColor: 'rgba(245, 158, 11, 0.2)', animation: 'fade-in 0.3s ease-out' }}>
             <div className="flex items-center gap-2 mb-2">
-              <AlertTriangle className="w-5 h-5 text-yellow-400" />
-              <h3 className="font-semibold text-yellow-400">Correlation Warnings</h3>
+              <AlertTriangle className="w-5 h-5" style={{ color: '#f59e0b' }} />
+              <h3 className="font-semibold" style={{ color: '#f59e0b' }}>Correlation Warnings</h3>
             </div>
             {correlationWarnings.map((warning, idx) => (
-              <p key={idx} className="text-sm text-yellow-300 ml-7">{warning}</p>
+              <p key={idx} className="text-sm ml-7" style={{ color: '#fcd34d' }}>{warning}</p>
             ))}
           </div>
         )}
 
         {/* ML Insights Summary */}
         {combinedModelProb !== null && (
-          <div className={`mb-6 p-4 rounded-xl border ${
-            combinedEdge > 0 
-              ? 'bg-green-900/20 border-green-500/30' 
-              : 'bg-yellow-900/20 border-yellow-500/30'
-          }`}>
+          <div className={`mt-6 mb-6 p-4 rounded-xl border card-glow`}
+            style={{
+              background: combinedEdge > 0 ? 'rgba(16, 185, 129, 0.08)' : 'rgba(245, 158, 11, 0.08)',
+              borderColor: combinedEdge > 0 ? 'rgba(16, 185, 129, 0.2)' : 'rgba(245, 158, 11, 0.2)',
+              animation: 'fade-in 0.3s ease-out',
+            }}
+          >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <Brain className="w-6 h-6 text-blue-400" />
+                <Brain className="w-6 h-6" style={{ color: '#6366f1' }} />
                 <div>
                   <h3 className="font-semibold text-white">ML Analysis</h3>
-                  <p className="text-sm text-gray-400">Combined parlay probability from our model</p>
+                  <p className="text-sm" style={{ color: '#64748b' }}>Combined parlay probability from our model</p>
                 </div>
               </div>
               <div className="flex items-center gap-6 text-right">
                 <div>
-                  <p className="text-xs text-gray-400">Win Probability</p>
-                  <p className="text-xl font-bold text-white">{(combinedModelProb * 100).toFixed(1)}%</p>
+                  <p className="text-xs" style={{ color: '#64748b' }}>Win Probability</p>
+                  <p className="text-xl font-bold text-white font-[Oswald] tracking-tight">{(combinedModelProb * 100).toFixed(1)}%</p>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-400">Edge</p>
-                  <p className={`text-xl font-bold ${combinedEdge > 0 ? 'text-green-400' : 'text-yellow-400'}`}>
+                  <p className="text-xs" style={{ color: '#64748b' }}>Edge</p>
+                  <p className={`text-xl font-bold font-[Oswald] tracking-tight ${combinedEdge > 0 ? 'text-green-400' : 'text-yellow-400'}`}>
                     {combinedEdge > 0 ? '+' : ''}{combinedEdge?.toFixed(1)}%
                   </p>
                 </div>
                 {parlayEV !== null && (
                   <div>
-                    <p className="text-xs text-gray-400">Expected Value</p>
-                    <p className={`text-xl font-bold ${parlayEV > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                    <p className="text-xs" style={{ color: '#64748b' }}>Expected Value</p>
+                    <p className={`text-xl font-bold font-[Oswald] tracking-tight ${parlayEV > 0 ? 'text-green-400' : 'text-red-400'}`}>
                       {parlayEV > 0 ? '+' : ''}{parlayEV}%
                     </p>
                   </div>
@@ -172,7 +168,7 @@ const ParlayCalculator = () => {
               </div>
             </div>
             {combinedEdge > 0 && (
-              <div className="mt-3 flex items-center gap-2 text-green-400 text-sm">
+              <div className="mt-3 flex items-center gap-2 text-sm" style={{ color: '#34d399' }}>
                 <TrendingUp className="w-4 h-4" />
                 <span>This parlay has positive expected value based on our ML model</span>
               </div>
@@ -182,30 +178,31 @@ const ParlayCalculator = () => {
 
         {/* Refresh ML Button */}
         {isEnriching && (
-          <div className="mb-6 flex items-center justify-center gap-2 text-blue-400">
+          <div className="mb-6 flex items-center justify-center gap-2" style={{ color: '#818cf8', animation: 'fade-in 0.2s ease-out' }}>
             <RefreshCw className="w-5 h-5 animate-spin" />
             <span>Analyzing parlay with ML model...</span>
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
           {/* Left Column - Bet Input */}
-          <div className="lg:col-span-2 space-y-4">
-            <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 shadow-xl">
+          <div className="lg:col-span-2 space-y-4 stagger-children">
+            <div className="card-glow rounded-xl p-6 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold text-white">
+                <h2 className="text-xl font-bold text-white font-[Oswald] tracking-tight">
                   Parlay Legs ({selectedBets.length})
                 </h2>
                 <button
                   onClick={() => enrichParlay()}
                   disabled={isEnriching}
-                  className="flex items-center gap-2 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 text-white rounded-lg text-sm font-semibold transition"
+                  className="flex items-center gap-2 px-3 py-1.5 text-white rounded-lg text-sm font-semibold transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{ background: 'linear-gradient(135deg, #6366f1, #4f46e5)' }}
                 >
                   <Brain className="w-4 h-4" />
                   {isEnriching ? 'Analyzing...' : 'Refresh ML'}
                 </button>
               </div>
-              
+
               {selectedBets.map((bet, index) => (
                 <ParlayBetLeg
                   key={index}
@@ -219,15 +216,16 @@ const ParlayCalculator = () => {
             </div>
 
             {/* Stake Input */}
-            <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 shadow-xl">
-              <label className="block text-sm font-semibold text-gray-400 mb-2">
+            <div className="card-glow rounded-xl p-6 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
+              <label className="block text-sm font-semibold mb-2" style={{ color: '#94a3b8' }}>
                 Stake Amount ($)
               </label>
               <input
                 type="number"
                 value={stake}
                 onChange={(e) => setStake(e.target.value)}
-                className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg font-semibold"
+                className="w-full px-4 py-3 rounded-lg text-white text-lg font-semibold focus:outline-none focus:ring-2 transition-all"
+                style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)', '--tw-ring-color': '#6366f1' }}
                 placeholder="100"
               />
             </div>
@@ -236,7 +234,8 @@ const ParlayCalculator = () => {
             <button
               onClick={handleCalculate}
               disabled={loading}
-              className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition font-bold text-lg shadow-lg disabled:opacity-50"
+              className="w-full flex items-center justify-center gap-2 px-6 py-4 text-white rounded-lg font-bold text-lg transition-all hover:opacity-90 shadow-lg disabled:opacity-50"
+              style={{ background: 'linear-gradient(135deg, #6366f1, #4f46e5)' }}
             >
               <Calculator className="w-6 h-6" />
               {loading ? "Calculating..." : "Calculate Expected Value"}
@@ -244,17 +243,16 @@ const ParlayCalculator = () => {
           </div>
 
           {/* Right Column - Results & Quick Add */}
-          <div className="space-y-4">
+          <div className="space-y-4 stagger-children">
             {result ? (
               <ParlayResults result={result} onSave={handleSave} />
             ) : (
-              <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 text-center text-gray-500">
-                <Calculator className="w-16 h-16 mx-auto mb-4 text-gray-600" />
-                <p>Enter your bets and calculate to see results</p>
+              <div className="card-glow rounded-xl p-6 text-center border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
+                <Calculator className="w-16 h-16 mx-auto mb-4" style={{ color: '#64748b' }} />
+                <p style={{ color: '#64748b' }}>Enter your bets and calculate to see results</p>
               </div>
             )}
-            
-            {/* Quick Add Search */}
+
             <QuickAddSearch />
           </div>
         </div>

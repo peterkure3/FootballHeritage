@@ -50,10 +50,17 @@ const PlayerCard = ({ player, showCaptainBadge = false, isCaptain = false, isVic
 
   return (
     <div
-      className={`bg-gray-800/50 border rounded-lg p-3 hover:bg-gray-800/70 transition-colors cursor-pointer ${
-        isCaptain ? "border-yellow-500/60 ring-1 ring-yellow-500/30" : 
-        isViceCaptain ? "border-blue-500/60" : "border-gray-700/50"
+      className={`card-glow rounded-xl p-4 border transition-colors cursor-pointer ${
+        isCaptain ? "ring-1 ring-yellow-500/30" : ""
       }`}
+      style={{
+        background: 'var(--color-card)',
+        borderColor: isCaptain
+          ? 'rgba(234, 179, 8, 0.6)'
+          : isViceCaptain
+            ? 'rgba(59, 130, 246, 0.6)'
+            : 'var(--color-card-border)'
+      }}
       onClick={() => setExpanded(!expanded)}
     >
       <div className="flex items-center justify-between">
@@ -76,41 +83,41 @@ const PlayerCard = ({ player, showCaptainBadge = false, isCaptain = false, isVic
               )}
               {statusIcons[player.status]}
             </div>
-            <span className="text-sm text-gray-400">{player.team_name}</span>
+            <span className="text-sm" style={{ color: '#94a3b8' }}>{player.team_name}</span>
           </div>
         </div>
         <div className="text-right">
           <div className="text-lg font-bold text-green-400">
             {player.expected_points?.toFixed(1)} xPts
           </div>
-          <div className="text-sm text-gray-400">£{player.price}m</div>
+          <div className="text-sm" style={{ color: '#94a3b8' }}>£{player.price}m</div>
         </div>
       </div>
 
       {expanded && (
-        <div className="mt-3 pt-3 border-t border-gray-700/50 grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+        <div className="mt-3 pt-3 border-t grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm" style={{ borderColor: 'var(--color-card-border)' }}>
           <div>
-            <span className="text-gray-500">Form</span>
+            <span style={{ color: '#64748b' }}>Form</span>
             <div className="font-semibold text-white">{player.form}</div>
           </div>
           <div>
-            <span className="text-gray-500">PPG</span>
+            <span style={{ color: '#64748b' }}>PPG</span>
             <div className="font-semibold text-white">{player.points_per_game}</div>
           </div>
           <div>
-            <span className="text-gray-500">Total Pts</span>
+            <span style={{ color: '#64748b' }}>Total Pts</span>
             <div className="font-semibold text-white">{player.total_points}</div>
           </div>
           <div>
-            <span className="text-gray-500">Ownership</span>
+            <span style={{ color: '#64748b' }}>Ownership</span>
             <div className="font-semibold text-white">{player.selected_by_percent}%</div>
           </div>
           <div>
-            <span className="text-gray-500">Value Score</span>
+            <span style={{ color: '#64748b' }}>Value Score</span>
             <div className="font-semibold text-green-400">{player.value_score?.toFixed(2)}</div>
           </div>
           <div>
-            <span className="text-gray-500">Fixture Diff</span>
+            <span style={{ color: '#64748b' }}>Fixture Diff</span>
             <div className={`font-semibold ${
               player.fixture_difficulty_avg <= 2.5 ? "text-green-400" :
               player.fixture_difficulty_avg <= 3.5 ? "text-yellow-400" : "text-red-400"
@@ -120,7 +127,7 @@ const PlayerCard = ({ player, showCaptainBadge = false, isCaptain = false, isVic
           </div>
           {player.news && (
             <div className="col-span-2 sm:col-span-4">
-              <span className="text-gray-500">News</span>
+              <span style={{ color: '#64748b' }}>News</span>
               <div className="text-yellow-400 text-xs">{player.news}</div>
             </div>
           )}
@@ -148,17 +155,17 @@ const TeamFormation = ({ team }) => {
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-white">Formation: {formationStr}</h3>
         <div className="flex items-center gap-4 text-sm">
-          <span className="text-gray-400">
+          <span style={{ color: '#94a3b8' }}>
             Cost: <span className="text-white font-semibold">£{team.total_cost}m</span>
           </span>
-          <span className="text-gray-400">
+          <span style={{ color: '#94a3b8' }}>
             Expected: <span className="text-green-400 font-semibold">{team.expected_points} pts</span>
           </span>
         </div>
       </div>
 
       {/* Pitch visualization */}
-      <div className="bg-gradient-to-b from-green-900/30 to-green-800/20 rounded-xl p-4 border border-green-700/30">
+      <div className="card-glow rounded-xl p-4 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
         {/* Forwards */}
         <div className="flex justify-center gap-2 mb-4">
           {groupedPlayers.FWD.map((p) => (
@@ -205,7 +212,7 @@ const TeamFormation = ({ team }) => {
 
       {/* Bench */}
       <div>
-        <h4 className="text-sm font-semibold text-gray-400 mb-2">Bench</h4>
+        <h4 className="text-sm font-semibold mb-2" style={{ color: '#64748b' }}>Bench</h4>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
           {team.bench?.map((p) => (
             <PlayerCard key={p.id} player={p} />
@@ -221,12 +228,12 @@ const PlayerList = ({ title, players, icon: Icon, description }) => {
   const displayPlayers = showAll ? players : players?.slice(0, 5);
 
   return (
-    <div className="bg-gray-800/30 rounded-xl border border-gray-700/50 p-4">
+    <div className="card-glow rounded-xl p-4 border" style={{ animation: 'slide-up 0.4s ease-out 0.06s both', background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
       <div className="flex items-center gap-2 mb-3">
         {Icon && <Icon className="w-5 h-5 text-green-400" />}
         <h3 className="text-lg font-semibold text-white">{title}</h3>
       </div>
-      {description && <p className="text-sm text-gray-400 mb-3">{description}</p>}
+      {description && <p className="text-sm mb-3" style={{ color: '#94a3b8' }}>{description}</p>}
 
       <div className="space-y-2">
         {displayPlayers?.map((player) => (
@@ -237,7 +244,8 @@ const PlayerList = ({ title, players, icon: Icon, description }) => {
       {players?.length > 5 && (
         <button
           onClick={() => setShowAll(!showAll)}
-          className="mt-3 w-full py-2 text-sm text-gray-400 hover:text-white flex items-center justify-center gap-1"
+          className="mt-3 w-full py-2 text-sm flex items-center justify-center gap-1 hover:text-white transition-colors"
+          style={{ color: '#64748b' }}
         >
           {showAll ? (
             <>
@@ -269,14 +277,13 @@ const FPLAdvisor = () => {
       const response = await fetch(`${PIPELINE_API_URL}/fpl/advice`);
       if (!response.ok) {
         if (response.status === 404) {
-          // Data not found, need to refresh
           return null;
         }
         throw new Error("Failed to fetch FPL advice");
       }
       return response.json();
     },
-    staleTime: 300000, // 5 minutes
+    staleTime: 300000,
     retry: 1,
   });
 
@@ -306,20 +313,21 @@ const FPLAdvisor = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+    <div className="min-h-screen" style={{ background: "var(--color-surface)" }}>
       <Navbar />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 bg-purple-500/20 rounded-lg">
-                <Trophy className="w-6 h-6 text-purple-400" />
+        <header style={{ animation: 'slide-up 0.4s ease-out both' }}>
+          <p className="text-sm uppercase tracking-wide font-semibold mb-4" style={{ color: '#10b981' }}>FPL Advisor</p>
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-green-500/20 rounded-lg">
+                <Trophy className="w-6 h-6 text-green-400" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-white">FPL Advisor</h1>
-                <p className="text-gray-400">
+                <h1 className="text-2xl font-[Oswald] tracking-tight text-white">FPL Advisor</h1>
+                <p style={{ color: '#64748b' }}>
                   Fantasy Premier League team optimization
                 </p>
               </div>
@@ -327,7 +335,8 @@ const FPLAdvisor = () => {
             <button
               onClick={() => refreshMutation.mutate()}
               disabled={refreshMutation.isPending}
-              className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-800 text-white rounded-lg transition-colors"
+              className="card-glow rounded-lg px-4 py-2 border text-white font-semibold transition-all hover:opacity-90 flex items-center gap-2"
+              style={{ background: 'var(--color-card)', borderColor: 'var(--color-card-border)' }}
             >
               <RefreshCw
                 className={`w-4 h-4 ${refreshMutation.isPending ? "animate-spin" : ""}`}
@@ -342,25 +351,30 @@ const FPLAdvisor = () => {
                 Gameweek {advice.gameweek}
               </span>
               {advice.generated_at && (
-                <span className="text-sm text-gray-500">
+                <span className="text-sm" style={{ color: '#64748b' }}>
                   Updated: {new Date(advice.generated_at).toLocaleString()}
                 </span>
               )}
             </div>
           )}
-        </div>
+        </header>
 
         {/* Tabs */}
-        <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+        <div className="flex gap-2 mb-6 overflow-x-auto pb-2" style={{ animation: 'slide-up 0.4s ease-out 0.06s both' }}>
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors whitespace-nowrap ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap ${
                 activeTab === tab.id
-                  ? "bg-purple-600 text-white"
-                  : "bg-gray-800/50 text-gray-400 hover:text-white hover:bg-gray-700/50"
+                  ? 'text-white'
+                  : 'text-gray-400 hover:text-white'
               }`}
+              style={
+                activeTab === tab.id
+                  ? { background: 'linear-gradient(135deg, #10b981, #059669)' }
+                  : { background: 'var(--color-card)', border: '1px solid var(--color-card-border)' }
+              }
             >
               <tab.icon className="w-4 h-4" />
               {tab.label}
@@ -375,10 +389,11 @@ const FPLAdvisor = () => {
           <div className="text-center py-12">
             <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-white mb-2">Error Loading Data</h3>
-            <p className="text-gray-400 mb-4">{error?.message}</p>
+            <p className="text-sm mb-4" style={{ color: '#64748b' }}>{error?.message}</p>
             <button
               onClick={() => refreshMutation.mutate()}
-              className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg"
+              style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}
+              className="text-white font-semibold rounded-lg py-3 px-4 transition-all hover:opacity-90"
             >
               Fetch FPL Data
             </button>
@@ -387,11 +402,12 @@ const FPLAdvisor = () => {
           <div className="text-center py-12">
             <Trophy className="w-12 h-12 text-gray-600 mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-white mb-2">No FPL Data Available</h3>
-            <p className="text-gray-400 mb-4">Click the button below to fetch the latest FPL data.</p>
+            <p className="text-sm mb-4" style={{ color: '#64748b' }}>Click the button below to fetch the latest FPL data.</p>
             <button
               onClick={() => refreshMutation.mutate()}
               disabled={refreshMutation.isPending}
-              className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg"
+              style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}
+              className="text-white font-semibold rounded-lg py-3 px-4 transition-all hover:opacity-90"
             >
               {refreshMutation.isPending ? "Fetching..." : "Fetch FPL Data"}
             </button>
@@ -400,30 +416,30 @@ const FPLAdvisor = () => {
           <div>
             {/* Optimal Team Tab */}
             {activeTab === "team" && advice.optimal_team && (
-              <div className="space-y-6">
+              <div className="space-y-6" style={{ animation: 'slide-up 0.4s ease-out 0.12s both' }}>
                 {/* Summary Cards */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700/50">
-                    <div className="text-sm text-gray-400">Expected Points</div>
-                    <div className="text-2xl font-bold text-green-400">
+                  <div className="card-glow rounded-xl p-4 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
+                    <div className="text-sm" style={{ color: '#64748b' }}>Expected Points</div>
+                    <div className="text-2xl font-[Oswald] tracking-tight text-green-400">
                       {advice.optimal_team.expected_points}
                     </div>
                   </div>
-                  <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700/50">
-                    <div className="text-sm text-gray-400">Team Cost</div>
-                    <div className="text-2xl font-bold text-white">
+                  <div className="card-glow rounded-xl p-4 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
+                    <div className="text-sm" style={{ color: '#64748b' }}>Team Cost</div>
+                    <div className="text-2xl font-[Oswald] tracking-tight text-white">
                       £{advice.optimal_team.total_cost}m
                     </div>
                   </div>
-                  <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700/50">
-                    <div className="text-sm text-gray-400">Budget Left</div>
-                    <div className="text-2xl font-bold text-blue-400">
+                  <div className="card-glow rounded-xl p-4 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
+                    <div className="text-sm" style={{ color: '#64748b' }}>Budget Left</div>
+                    <div className="text-2xl font-[Oswald] tracking-tight" style={{ color: '#34d399' }}>
                       £{advice.optimal_team.budget_remaining}m
                     </div>
                   </div>
-                  <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700/50">
-                    <div className="text-sm text-gray-400">Captain</div>
-                    <div className="text-xl font-bold text-yellow-400">
+                  <div className="card-glow rounded-xl p-4 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
+                    <div className="text-sm" style={{ color: '#64748b' }}>Captain</div>
+                    <div className="text-xl font-[Oswald] tracking-tight text-yellow-400">
                       {advice.optimal_team.captain?.web_name}
                     </div>
                   </div>

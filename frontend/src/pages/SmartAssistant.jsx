@@ -39,46 +39,52 @@ const formatTime = (date) => {
 };
 
 const BetCardComponent = ({ bet }) => {
-  const confidenceColors = {
-    High: 'bg-green-500/20 text-green-400 border-green-500/40',
-    Medium: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/40',
-    Low: 'bg-gray-500/20 text-gray-400 border-gray-500/40',
+  const confidenceBadgeStyle = {
+    High: { borderColor: 'rgba(16, 185, 129, 0.4)', color: '#34d399', background: 'rgba(16, 185, 129, 0.1)' },
+    Medium: { borderColor: 'rgba(234, 179, 8, 0.4)', color: '#facc15', background: 'rgba(234, 179, 8, 0.1)' },
+    Low: { borderColor: 'rgba(148, 163, 184, 0.4)', color: '#94a3b8', background: 'rgba(148, 163, 184, 0.1)' },
   };
 
   return (
-    <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700 hover:border-green-500/30 transition">
+    <div className="card-glow rounded-xl p-4 border transition-all hover:opacity-90"
+      style={{ background: 'var(--color-card)', borderColor: 'var(--color-card-border)' }}
+    >
       <div className="flex justify-between items-start mb-2">
         <div>
-          <p className="text-xs text-gray-500">{bet.competition || 'Football'}</p>
+          <p className="text-xs" style={{ color: '#64748b' }}>{bet.competition || 'Football'}</p>
           <p className="text-sm font-semibold text-white">{bet.home_team} vs {bet.away_team}</p>
-          <p className="text-xs text-gray-400">{formatDate(bet.match_date)}</p>
+          <p className="text-xs" style={{ color: '#94a3b8' }}>{formatDate(bet.match_date)}</p>
         </div>
-        <span className={`px-2 py-0.5 rounded text-xs font-semibold border ${confidenceColors[bet.confidence]}`}>
+        <span className="px-2 py-0.5 rounded text-xs font-semibold border"
+          style={confidenceBadgeStyle[bet.confidence]}
+        >
           {bet.confidence}
         </span>
       </div>
-      <div className="flex items-center justify-between mt-2 pt-2 border-t border-gray-700">
+      <div className="flex items-center justify-between mt-2 pt-2 border-t"
+        style={{ borderColor: 'var(--color-card-border)' }}
+      >
         <div>
-          <p className="text-xs text-gray-500">Bet On</p>
-          <p className="text-sm font-bold text-green-400">{bet.selection}</p>
+          <p className="text-xs" style={{ color: '#64748b' }}>Bet On</p>
+          <p className="text-sm font-bold" style={{ color: '#34d399' }}>{bet.selection}</p>
         </div>
         <div className="text-right">
-          <p className="text-xs text-gray-500">Edge</p>
-          <p className="text-lg font-bold text-green-400">+{bet.edge_pct}%</p>
+          <p className="text-xs" style={{ color: '#64748b' }}>Edge</p>
+          <p className="text-lg font-bold" style={{ color: '#34d399' }}>+{bet.edge_pct}%</p>
         </div>
       </div>
       <div className="grid grid-cols-3 gap-2 mt-2 text-center">
-        <div className="bg-gray-900/50 rounded p-1">
-          <p className="text-xs text-gray-500">Odds</p>
+        <div className="rounded p-1" style={{ background: 'rgba(0, 0, 0, 0.2)' }}>
+          <p className="text-xs" style={{ color: '#64748b' }}>Odds</p>
           <p className="text-sm font-semibold text-white">{bet.decimal_odds}</p>
         </div>
-        <div className="bg-gray-900/50 rounded p-1">
-          <p className="text-xs text-gray-500">Stake</p>
+        <div className="rounded p-1" style={{ background: 'rgba(0, 0, 0, 0.2)' }}>
+          <p className="text-xs" style={{ color: '#64748b' }}>Stake</p>
           <p className="text-sm font-semibold text-white">${bet.recommended_stake}</p>
         </div>
-        <div className="bg-gray-900/50 rounded p-1">
-          <p className="text-xs text-gray-500">EV</p>
-          <p className="text-sm font-semibold text-green-400">${bet.expected_value}</p>
+        <div className="rounded p-1" style={{ background: 'rgba(0, 0, 0, 0.2)' }}>
+          <p className="text-xs" style={{ color: '#64748b' }}>EV</p>
+          <p className="text-sm font-semibold" style={{ color: '#34d399' }}>${bet.expected_value}</p>
         </div>
       </div>
     </div>
@@ -89,20 +95,24 @@ const PredictionCardComponent = ({ prediction }) => {
   const maxProb = Math.max(prediction.home_prob, prediction.draw_prob, prediction.away_prob);
   
   return (
-    <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+    <div className="card-glow rounded-xl p-4 border"
+      style={{ background: 'var(--color-card)', borderColor: 'var(--color-card-border)' }}
+    >
       <div className="text-center mb-3">
         <p className="text-lg font-bold text-white">
           {prediction.home_team} vs {prediction.away_team}
         </p>
-        <p className="text-sm text-gray-400">Confidence: {prediction.confidence}</p>
+        <p className="text-sm" style={{ color: '#94a3b8' }}>Confidence: {prediction.confidence}</p>
       </div>
       <div className="space-y-2">
         <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-400 w-20">{prediction.home_team.split(' ')[0]}</span>
-          <div className="flex-1 bg-gray-700 rounded-full h-4 overflow-hidden">
-            <div 
-              className={`h-full rounded-full ${prediction.home_prob === maxProb ? 'bg-green-500' : 'bg-gray-600'}`}
-              style={{ width: `${prediction.home_prob * 100}%` }}
+          <span className="text-sm w-20" style={{ color: '#94a3b8' }}>{prediction.home_team.split(' ')[0]}</span>
+          <div className="flex-1 rounded-full h-4 overflow-hidden" style={{ background: 'rgba(148, 163, 184, 0.15)' }}>
+            <div className="h-full rounded-full"
+              style={{
+                width: `${prediction.home_prob * 100}%`,
+                background: prediction.home_prob === maxProb ? '#10b981' : 'rgba(71, 85, 105, 0.5)'
+              }}
             />
           </div>
           <span className="text-sm font-semibold text-white w-12 text-right">
@@ -110,11 +120,13 @@ const PredictionCardComponent = ({ prediction }) => {
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-400 w-20">Draw</span>
-          <div className="flex-1 bg-gray-700 rounded-full h-4 overflow-hidden">
-            <div 
-              className={`h-full rounded-full ${prediction.draw_prob === maxProb ? 'bg-green-500' : 'bg-gray-600'}`}
-              style={{ width: `${prediction.draw_prob * 100}%` }}
+          <span className="text-sm w-20" style={{ color: '#94a3b8' }}>Draw</span>
+          <div className="flex-1 rounded-full h-4 overflow-hidden" style={{ background: 'rgba(148, 163, 184, 0.15)' }}>
+            <div className="h-full rounded-full"
+              style={{
+                width: `${prediction.draw_prob * 100}%`,
+                background: prediction.draw_prob === maxProb ? '#10b981' : 'rgba(71, 85, 105, 0.5)'
+              }}
             />
           </div>
           <span className="text-sm font-semibold text-white w-12 text-right">
@@ -122,11 +134,13 @@ const PredictionCardComponent = ({ prediction }) => {
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-400 w-20">{prediction.away_team.split(' ')[0]}</span>
-          <div className="flex-1 bg-gray-700 rounded-full h-4 overflow-hidden">
-            <div 
-              className={`h-full rounded-full ${prediction.away_prob === maxProb ? 'bg-green-500' : 'bg-gray-600'}`}
-              style={{ width: `${prediction.away_prob * 100}%` }}
+          <span className="text-sm w-20" style={{ color: '#94a3b8' }}>{prediction.away_team.split(' ')[0]}</span>
+          <div className="flex-1 rounded-full h-4 overflow-hidden" style={{ background: 'rgba(148, 163, 184, 0.15)' }}>
+            <div className="h-full rounded-full"
+              style={{
+                width: `${prediction.away_prob * 100}%`,
+                background: prediction.away_prob === maxProb ? '#10b981' : 'rgba(71, 85, 105, 0.5)'
+              }}
             />
           </div>
           <span className="text-sm font-semibold text-white w-12 text-right">
@@ -139,14 +153,16 @@ const PredictionCardComponent = ({ prediction }) => {
 };
 
 const MatchCardComponent = ({ match }) => (
-  <div className="bg-gray-800/50 rounded-lg p-3 border border-gray-700 flex items-center justify-between">
+  <div className="card-glow rounded-xl p-4 border flex items-center justify-between"
+    style={{ background: 'var(--color-card)', borderColor: 'var(--color-card-border)' }}
+  >
     <div>
       <p className="text-sm font-semibold text-white">{match.home_team} vs {match.away_team}</p>
-      <p className="text-xs text-gray-500">{match.competition || 'Football'}</p>
+      <p className="text-xs" style={{ color: '#64748b' }}>{match.competition || 'Football'}</p>
     </div>
     <div className="text-right">
-      <p className="text-sm text-gray-400">{formatDate(match.match_date)}</p>
-      <p className="text-xs text-gray-500">{match.status || 'Scheduled'}</p>
+      <p className="text-sm" style={{ color: '#94a3b8' }}>{formatDate(match.match_date)}</p>
+      <p className="text-xs" style={{ color: '#64748b' }}>{match.status || 'Scheduled'}</p>
     </div>
   </div>
 );
@@ -154,9 +170,10 @@ const MatchCardComponent = ({ match }) => (
 const SuggestionButton = ({ text, onClick }) => (
   <button
     onClick={() => onClick(text)}
-    className="flex items-center gap-1 px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-gray-300 text-sm rounded-full border border-gray-700 transition"
+    className="flex items-center gap-1 px-3 py-1.5 card-glow rounded-xl border text-sm transition-all hover:opacity-90"
+    style={{ background: 'var(--color-card)', borderColor: 'var(--color-card-border)', color: '#cbd5e1' }}
   >
-    <ChevronRight className="w-3 h-3" />
+    <ChevronRight className="w-3 h-3" style={{ color: '#10b981' }} />
     {text}
   </button>
 );
@@ -272,79 +289,96 @@ const SmartAssistant = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
+    <div className="min-h-screen" style={{ background: "var(--color-surface)" }}>
       <Navbar />
 
       <div className="max-w-4xl mx-auto px-4 py-6">
-        {/* Header */}
-        <div className="mb-4">
+        <header style={{ animation: 'slide-up 0.4s ease-out both' }} className="mb-6">
+          <p className="text-sm uppercase tracking-wide font-semibold mb-2" style={{ color: '#10b981' }}>AI Assistant</p>
           <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 bg-green-500/20 rounded-lg">
-              <Bot className="w-6 h-6 text-green-400" />
+            <div className="p-2 rounded-lg" style={{ background: 'rgba(16, 185, 129, 0.2)' }}>
+              <Bot className="w-6 h-6" style={{ color: '#10b981' }} />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-white">Smart Betting Assistant</h1>
-              <p className="text-sm text-gray-400">AI-powered picks, predictions & analysis</p>
+              <h1 className="text-2xl font-[Oswald] tracking-tight text-white">Smart Betting Assistant</h1>
+              <p className="text-sm" style={{ color: '#64748b' }}>AI-powered picks, predictions & analysis</p>
             </div>
           </div>
-        </div>
+        </header>
 
-        {/* Quick Actions */}
         {messages.length <= 1 && (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4 stagger-children"
+            style={{ animation: 'slide-up 0.4s ease-out 0.06s both' }}
+          >
             {quickActions.map((action, idx) => (
               <button
                 key={idx}
                 onClick={() => handleSuggestionClick(action.query)}
-                className="flex flex-col items-center gap-2 p-4 bg-gray-800/60 hover:bg-gray-800 border border-gray-700 hover:border-green-500/30 rounded-xl transition"
+                className="card-glow rounded-xl p-4 border flex flex-col items-center gap-2 transition-all hover:opacity-90"
+                style={{
+                  background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))',
+                  borderColor: 'var(--color-card-border)',
+                }}
               >
-                <action.icon className="w-6 h-6 text-green-400" />
-                <span className="text-sm text-gray-300">{action.label}</span>
+                <action.icon className="w-6 h-6" style={{ color: '#10b981' }} />
+                <span className="text-sm" style={{ color: '#cbd5e1' }}>{action.label}</span>
               </button>
             ))}
           </div>
         )}
 
-        {/* Chat Container */}
-        <div className="bg-gray-800/40 rounded-2xl border border-gray-700 flex flex-col h-[calc(100vh-280px)] min-h-[400px]">
-          {/* Messages Area */}
+        <div className="card-glow rounded-xl p-6 border flex flex-col h-[calc(100vh-280px)] min-h-[400px]"
+          style={{
+            background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))',
+            borderColor: 'var(--color-card-border)',
+            animation: 'slide-up 0.4s ease-out 0.12s both'
+          }}
+        >
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
             {messages.map((message) => (
               <div key={message.id}>
                 <div className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
                   <div className={`flex gap-2 max-w-[90%] ${message.type === 'user' ? 'flex-row-reverse' : ''}`}>
-                    {/* Avatar */}
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                      message.type === 'user' ? 'bg-green-500' : 'bg-gray-700'
-                    }`}>
+                      message.type === 'user' ? 'bg-green-500' : ''
+                    }`}
+                      style={message.type === 'user' ? {} : { background: 'var(--color-card)' }}
+                    >
                       {message.type === 'user' ? (
                         <User className="w-4 h-4 text-white" />
                       ) : (
-                        <Bot className="w-4 h-4 text-green-400" />
+                        <Bot className="w-4 h-4" style={{ color: '#10b981' }} />
                       )}
                     </div>
 
-                    {/* Message Content */}
-                    <div className={`rounded-2xl p-4 ${
-                      message.type === 'user'
-                        ? 'bg-green-500 text-white'
-                        : message.type === 'error'
-                        ? 'bg-red-500/20 text-red-300 border border-red-500/30'
-                        : 'bg-gray-700/80 text-gray-100'
-                    }`}>
+                    <div
+                      className={`rounded-2xl p-4 ${
+                        message.type === 'user'
+                          ? 'bg-green-500 text-white'
+                          : message.type === 'error'
+                          ? 'border'
+                          : ''
+                      }`}
+                      style={
+                        message.type === 'user'
+                          ? {}
+                          : message.type === 'error'
+                          ? { background: 'rgba(239, 68, 68, 0.08)', color: '#fca5a5', borderColor: 'rgba(239, 68, 68, 0.2)' }
+                          : { background: 'var(--color-card)', color: '#cbd5e1' }
+                      }
+                    >
                       <div className="whitespace-pre-wrap break-words text-sm">
                         {message.content}
                       </div>
-                      <div className={`text-xs mt-2 ${
-                        message.type === 'user' ? 'text-green-100' : 'text-gray-500'
-                      }`}>
+                      <div className="text-xs mt-2"
+                        style={{ color: message.type === 'user' ? '#86efac' : '#64748b' }}
+                      >
                         {formatTime(message.timestamp)}
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Bet Cards */}
                 {message.bets && message.bets.length > 0 && (
                   <div className="mt-3 ml-10 grid gap-3 md:grid-cols-2">
                     {message.bets.slice(0, 6).map((bet, idx) => (
@@ -353,7 +387,6 @@ const SmartAssistant = () => {
                   </div>
                 )}
 
-                {/* Prediction Cards */}
                 {message.predictions && message.predictions.length > 0 && (
                   <div className="mt-3 ml-10 space-y-3">
                     {message.predictions.map((pred, idx) => (
@@ -362,7 +395,6 @@ const SmartAssistant = () => {
                   </div>
                 )}
 
-                {/* Match Cards */}
                 {message.matches && message.matches.length > 0 && (
                   <div className="mt-3 ml-10 space-y-2">
                     {message.matches.slice(0, 8).map((match, idx) => (
@@ -371,13 +403,12 @@ const SmartAssistant = () => {
                   </div>
                 )}
 
-                {/* Suggestions */}
                 {message.suggestions && message.suggestions.length > 0 && message.type !== 'user' && (
                   <div className="mt-3 ml-10 flex flex-wrap gap-2">
                     {message.suggestions.map((suggestion, idx) => (
-                      <SuggestionButton 
-                        key={idx} 
-                        text={suggestion} 
+                      <SuggestionButton
+                        key={idx}
+                        text={suggestion}
                         onClick={handleSuggestionClick}
                       />
                     ))}
@@ -386,18 +417,19 @@ const SmartAssistant = () => {
               </div>
             ))}
 
-            {/* Loading Indicator */}
             {isLoading && (
               <div className="flex justify-start">
                 <div className="flex gap-2">
-                  <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center">
-                    <Bot className="w-4 h-4 text-green-400" />
+                  <div className="w-8 h-8 rounded-full flex items-center justify-center"
+                    style={{ background: 'var(--color-card)' }}
+                  >
+                    <Bot className="w-4 h-4" style={{ color: '#10b981' }} />
                   </div>
-                  <div className="bg-gray-700/80 rounded-2xl p-4">
+                  <div className="rounded-2xl p-4" style={{ background: 'var(--color-card)' }}>
                     <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                      <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                      <div className="w-2 h-2 bg-green-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                      <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: '#10b981', animationDelay: '0ms' }} />
+                      <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: '#10b981', animationDelay: '150ms' }} />
+                      <div className="w-2 h-2 rounded-full animate-bounce" style={{ background: '#10b981', animationDelay: '300ms' }} />
                     </div>
                   </div>
                 </div>
@@ -407,8 +439,7 @@ const SmartAssistant = () => {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Input Area */}
-          <div className="p-4 border-t border-gray-700">
+          <div className="p-4 border-t" style={{ borderColor: 'var(--color-card-border)' }}>
             <form onSubmit={handleSubmit} className="flex gap-3">
               <input
                 ref={inputRef}
@@ -416,14 +447,16 @@ const SmartAssistant = () => {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ask about bets, predictions, or teams..."
-                className="flex-1 bg-gray-700/50 text-white px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 placeholder-gray-500 border border-gray-600"
+                className="flex-1 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all"
+                style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)', '--tw-ring-color': '#10b981' }}
                 disabled={isLoading}
                 maxLength={500}
               />
               <button
                 type="submit"
                 disabled={!input.trim() || isLoading}
-                className="bg-green-500 hover:bg-green-600 disabled:bg-gray-600 disabled:cursor-not-allowed text-white px-5 py-3 rounded-xl font-semibold transition flex items-center gap-2"
+                className="text-white font-semibold rounded-lg py-3 px-4 transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}
               >
                 <Send className="w-5 h-5" />
               </button>
@@ -431,9 +464,14 @@ const SmartAssistant = () => {
           </div>
         </div>
 
-        {/* Disclaimer */}
-        <div className="mt-4 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
-          <p className="text-xs text-yellow-400">
+        <div className="mt-4 p-3 card-glow rounded-xl border"
+          style={{
+            background: 'rgba(234, 179, 8, 0.08)',
+            borderColor: 'rgba(234, 179, 8, 0.2)',
+            animation: 'slide-up 0.4s ease-out 0.18s both'
+          }}
+        >
+          <p className="text-xs" style={{ color: '#fbbf24' }}>
             ⚠️ <strong>Disclaimer:</strong> AI predictions are for informational purposes only. 
             Always bet responsibly and within your limits.
           </p>
