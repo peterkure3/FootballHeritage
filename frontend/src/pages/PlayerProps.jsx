@@ -1,6 +1,13 @@
 import { useState } from 'react';
 import { SPORTS } from '../utils/constants';
 
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8080/api/v1';
+
+const SPORT_PARAM_MAP = {
+  nfl: 'americanfootball',
+  hockey: 'icehockey',
+};
+
 const PlayerProps = () => {
   const [selectedSport, setSelectedSport] = useState('all');
   const [props, setProps] = useState([]);
@@ -13,8 +20,9 @@ const PlayerProps = () => {
     setLoading(true);
     setError(null);
     try {
-      const params = sport !== 'all' ? `?sport=${sport}` : '';
-      const res = await fetch(`/api/v1/player-props${params}`);
+      const dbSport = SPORT_PARAM_MAP[sport] || sport;
+      const params = sport !== 'all' ? `?sport=${dbSport}` : '';
+      const res = await fetch(`${API_BASE}/player-props${params}`);
       if (!res.ok) throw new Error('Failed to fetch');
       const data = await res.json();
       setProps(data);
