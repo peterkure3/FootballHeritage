@@ -41,7 +41,9 @@ pub fn validate_age(date_of_birth: &NaiveDate) -> AppResult<()> {
     let age = today.years_since(*date_of_birth).unwrap_or(0);
 
     if age < 21 {
-        return Err(AppError::Validation("Must be 21 years or older to register".to_string()));
+        return Err(AppError::Validation(
+            "Must be 21 years or older to register".to_string(),
+        ));
     }
 
     Ok(())
@@ -76,14 +78,21 @@ pub fn sanitize_string(input: &str) -> String {
     input
         .trim()
         .chars()
-        .filter(|c| c.is_alphanumeric() || c.is_whitespace() || *c == '@' || *c == '.' || *c == '-' || *c == '_')
+        .filter(|c| {
+            c.is_alphanumeric()
+                || c.is_whitespace()
+                || *c == '@'
+                || *c == '.'
+                || *c == '-'
+                || *c == '_'
+        })
         .collect()
 }
 
 /// Generate session ID
 pub fn generate_session_id() -> String {
-    use rand::{thread_rng, Rng};
     use rand::distributions::Alphanumeric;
+    use rand::{thread_rng, Rng};
 
     let session_id: String = thread_rng()
         .sample_iter(&Alphanumeric)

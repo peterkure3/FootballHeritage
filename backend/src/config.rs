@@ -1,7 +1,7 @@
 #![allow(dead_code)]
+use anyhow::Result;
 use serde::Deserialize;
 use std::env;
-use anyhow::Result;
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct AppConfig {

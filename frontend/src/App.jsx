@@ -38,6 +38,7 @@ import SmartAssistant from "./pages/SmartAssistant";
 import CollegeSports from "./pages/CollegeSports";
 import MarchMadnessBracket from "./pages/MarchMadnessBracket";
 import FPLAdvisor from "./pages/FPLAdvisor";
+import PlayerProps from "./pages/PlayerProps";
 
 // Create React Query client with optimized settings
 const queryClient = new QueryClient({
@@ -190,6 +191,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <BestBets />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/player-props"
+              element={
+                <ProtectedRoute>
+                  <PlayerProps />
                 </ProtectedRoute>
               }
             />

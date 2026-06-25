@@ -1,9 +1,8 @@
 /**
  * Admin Monitoring API
- * 
+ *
  * Fraud alerts, audit logs, and system monitoring
  */
-
 use actix_web::{web, HttpRequest, HttpResponse};
 use serde::Serialize;
 use sqlx::PgPool;
@@ -33,13 +32,10 @@ pub struct AdminLog {
 
 /**
  * GET /api/v1/admin/monitoring/fraud-alerts
- * 
+ *
  * Get fraud alerts
  */
-pub async fn get_fraud_alerts(
-    pool: web::Data<PgPool>,
-    req: HttpRequest,
-) -> HttpResponse {
+pub async fn get_fraud_alerts(pool: web::Data<PgPool>, req: HttpRequest) -> HttpResponse {
     if get_admin_claims(&req).is_none() {
         return HttpResponse::Unauthorized().json(serde_json::json!({"error": "Unauthorized"}));
     }
@@ -67,7 +63,10 @@ pub async fn get_fraud_alerts(
                     severity: r.severity,
                     description: r.description,
                     status: r.status.unwrap_or_else(|| "pending".to_string()),
-                    created_at: r.created_at.map(|dt: chrono::DateTime<chrono::Utc>| dt.to_rfc3339()).unwrap_or_default(),
+                    created_at: r
+                        .created_at
+                        .map(|dt: chrono::DateTime<chrono::Utc>| dt.to_rfc3339())
+                        .unwrap_or_default(),
                 })
                 .collect();
 
@@ -75,20 +74,18 @@ pub async fn get_fraud_alerts(
         }
         Err(e) => {
             eprintln!("Error fetching fraud alerts: {}", e);
-            HttpResponse::InternalServerError().json(serde_json::json!({"error": "Failed to fetch alerts"}))
+            HttpResponse::InternalServerError()
+                .json(serde_json::json!({"error": "Failed to fetch alerts"}))
         }
     }
 }
 
 /**
  * GET /api/v1/admin/monitoring/audit-logs
- * 
+ *
  * Get admin activity logs
  */
-pub async fn get_audit_logs(
-    pool: web::Data<PgPool>,
-    req: HttpRequest,
-) -> HttpResponse {
+pub async fn get_audit_logs(pool: web::Data<PgPool>, req: HttpRequest) -> HttpResponse {
     if get_admin_claims(&req).is_none() {
         return HttpResponse::Unauthorized().json(serde_json::json!({"error": "Unauthorized"}));
     }
@@ -117,7 +114,10 @@ pub async fn get_audit_logs(
                     action: r.action,
                     target_type: r.target_type,
                     target_id: r.target_id.map(|id: uuid::Uuid| id.to_string()),
-                    created_at: r.created_at.map(|dt: chrono::DateTime<chrono::Utc>| dt.to_rfc3339()).unwrap_or_default(),
+                    created_at: r
+                        .created_at
+                        .map(|dt: chrono::DateTime<chrono::Utc>| dt.to_rfc3339())
+                        .unwrap_or_default(),
                 })
                 .collect();
 
@@ -125,7 +125,8 @@ pub async fn get_audit_logs(
         }
         Err(e) => {
             eprintln!("Error fetching audit logs: {}", e);
-            HttpResponse::InternalServerError().json(serde_json::json!({"error": "Failed to fetch logs"}))
+            HttpResponse::InternalServerError()
+                .json(serde_json::json!({"error": "Failed to fetch logs"}))
         }
     }
 }

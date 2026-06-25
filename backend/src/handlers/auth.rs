@@ -7,8 +7,8 @@ use crate::monitoring::MonitoringService;
 use crate::rates::RateLimiters;
 use crate::utils::{extract_ip_address, extract_user_agent, generate_session_id, validate_age};
 use actix_web::{web, HttpRequest, HttpResponse};
-use argon2::{Argon2, PasswordHash, PasswordHasher, PasswordVerifier};
 use argon2::password_hash::{rand_core::OsRng, SaltString};
+use argon2::{Argon2, PasswordHash, PasswordHasher, PasswordVerifier};
 use chrono::Utc;
 use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
@@ -56,7 +56,8 @@ pub async fn register(
     body: web::Json<RegisterRequestHandler>,
 ) -> AppResult<HttpResponse> {
     // Validate input
-    body.validate().map_err(|e| AppError::Validation(e.to_string()))?;
+    body.validate()
+        .map_err(|e| AppError::Validation(e.to_string()))?;
 
     // Check rate limit
     let ip_address = extract_ip_address(&req);
@@ -66,16 +67,14 @@ pub async fn register(
     validate_age(&body.date_of_birth)?;
 
     // Check if user already exists
-    let existing_user = sqlx::query_as::<_, User>(
-        "SELECT * FROM users WHERE email = $1"
-    )
-    .bind(&body.email)
-    .fetch_optional(pool.as_ref())
-    .await
-    .map_err(|e| {
-        error!("Database error checking existing user: {}", e);
-        AppError::Database(e)
-    })?;
+    let existing_user = sqlx::query_as::<_, User>("SELECT * FROM users WHERE email = $1")
+        .bind(&body.email)
+        .fetch_optional(pool.as_ref())
+        .await
+        .map_err(|e| {
+            error!("Database error checking existing user: {}", e);
+            AppError::Database(e)
+        })?;
 
     if existing_user.is_some() {
         return Err(AppError::Validation("Email already registered".to_string()));
@@ -125,7 +124,7 @@ pub async fn register(
         r#"
         INSERT INTO wallets (id, user_id, encrypted_balance, encryption_iv, created_at, updated_at)
         VALUES ($1, $2, $3, $4, NOW(), NOW())
-        "#
+        "#,
     )
     .bind(Uuid::new_v4())
     .bind(user_id)
@@ -199,17 +198,15 @@ pub async fn login(
     rate_limiters.check_login_limit(&ip_address)?;
 
     // Fetch user
-    let user = sqlx::query_as::<_, User>(
-        "SELECT * FROM users WHERE email = $1"
-    )
-    .bind(&body.email)
-    .fetch_optional(pool.as_ref())
-    .await
-    .map_err(|e| {
-        error!("Database error fetching user: {}", e);
-        AppError::Database(e)
-    })?
-    .ok_or_else(|| AppError::Authentication("Invalid credentials".to_string()))?;
+    let user = sqlx::query_as::<_, User>("SELECT * FROM users WHERE email = $1")
+        .bind(&body.email)
+        .fetch_optional(pool.as_ref())
+        .await
+        .map_err(|e| {
+            error!("Database error fetching user: {}", e);
+            AppError::Database(e)
+        })?
+        .ok_or_else(|| AppError::Authentication("Invalid credentials".to_string()))?;
 
     // Check if account is locked
     if let Some(locked_until) = user.locked_until {
@@ -219,14 +216,16 @@ pub async fn login(
     }
 
     // Verify password
-    let parsed_hash = PasswordHash::new(&user.password_hash)
-        .map_err(|e| {
-            error!("Failed to parse password hash: {}", e);
-            AppError::Internal("Authentication error".to_string())
-        })?;
+    let parsed_hash = PasswordHash::new(&user.password_hash).map_err(|e| {
+        error!("Failed to parse password hash: {}", e);
+        AppError::Internal("Authentication error".to_string())
+    })?;
 
     let argon2 = Argon2::default();
-    if argon2.verify_password(body.password.as_bytes(), &parsed_hash).is_err() {
+    if argon2
+        .verify_password(body.password.as_bytes(), &parsed_hash)
+        .is_err()
+    {
         // Increment failed login attempts
         sqlx::query(
             "UPDATE users SET failed_login_attempts = failed_login_attempts + 1, updated_at = NOW() WHERE id = $1"
@@ -239,14 +238,12 @@ pub async fn login(
         // Lock account if max attempts exceeded
         if user.failed_login_attempts + 1 >= config.max_login_attempts as i32 {
             let lock_duration = chrono::Duration::minutes(config.account_lock_minutes as i64);
-            sqlx::query(
-                "UPDATE users SET locked_until = $1, updated_at = NOW() WHERE id = $2"
-            )
-            .bind(Utc::now() + lock_duration)
-            .bind(user.id)
-            .execute(pool.as_ref())
-            .await
-            .ok();
+            sqlx::query("UPDATE users SET locked_until = $1, updated_at = NOW() WHERE id = $2")
+                .bind(Utc::now() + lock_duration)
+                .bind(user.id)
+                .execute(pool.as_ref())
+                .await
+                .ok();
         }
 
         return Err(AppError::Authentication("Invalid credentials".to_string()));
@@ -287,30 +284,21 @@ pub async fn login(
     }))
 }
 
-pub async fn logout(
-    _req: HttpRequest,
-    _pool: web::Data<PgPool>,
-) -> AppResult<HttpResponse> {
+pub async fn logout(_req: HttpRequest, _pool: web::Data<PgPool>) -> AppResult<HttpResponse> {
     // In a real implementation, invalidate the session
     Ok(HttpResponse::Ok().json(serde_json::json!({
         "message": "Logged out successfully"
     })))
 }
 
-pub async fn refresh(
-    _req: HttpRequest,
-    _pool: web::Data<PgPool>,
-) -> AppResult<HttpResponse> {
+pub async fn refresh(_req: HttpRequest, _pool: web::Data<PgPool>) -> AppResult<HttpResponse> {
     // Implement token refresh logic
     Ok(HttpResponse::Ok().json(serde_json::json!({
         "message": "Token refreshed"
     })))
 }
 
-pub async fn verify_email(
-    _req: HttpRequest,
-    _pool: web::Data<PgPool>,
-) -> AppResult<HttpResponse> {
+pub async fn verify_email(_req: HttpRequest, _pool: web::Data<PgPool>) -> AppResult<HttpResponse> {
     // Implement email verification logic
     Ok(HttpResponse::Ok().json(serde_json::json!({
         "message": "Email verified"

@@ -1,10 +1,9 @@
 /**
  * Admin Authentication Middleware
- * 
+ *
  * Provides role-based access control (RBAC) for admin endpoints
  * Verifies JWT token and checks user role
  */
-
 use actix_web::{
     body::BoxBody,
     dev::{forward_ready, Service, ServiceRequest, ServiceResponse, Transform},
@@ -13,7 +12,7 @@ use actix_web::{
 use futures_util::future::LocalBoxFuture;
 use std::future::{ready, Ready};
 use std::rc::Rc;
-use tracing::{info, warn, error};
+use tracing::{error, info, warn};
 
 use crate::auth::AuthService;
 
@@ -84,34 +83,44 @@ where
                 // Extract token
                 if let Some(token) = auth_header.strip_prefix("Bearer ") {
                     // Validate token
-                    info!("Validating token for admin access: {}...", &token[..20.min(token.len())]);
+                    info!(
+                        "Validating token for admin access: {}...",
+                        &token[..20.min(token.len())]
+                    );
                     match auth_service.validate_token(token) {
                         Ok(claims) => {
-                            info!("Token validated successfully. User: {}, Role: {}", claims.email, claims.role);
+                            info!(
+                                "Token validated successfully. User: {}, Role: {}",
+                                claims.email, claims.role
+                            );
                             // Check if user has admin or superadmin role
                             if claims.role == "admin" || claims.role == "superadmin" {
                                 // Store claims in request extensions for later use
                                 req.extensions_mut().insert(claims.clone());
-                                
+
                                 // Continue to the actual handler
-                                return service.call(req).await.map(|res| res.map_into_boxed_body());
+                                return service
+                                    .call(req)
+                                    .await
+                                    .map(|res| res.map_into_boxed_body());
                             } else {
                                 // User is not an admin
-                                warn!("User {} attempted admin access with role: {}", claims.email, claims.role);
-                                let response = HttpResponse::Forbidden()
-                                    .json(serde_json::json!({
-                                        "error": "Admin access required"
-                                    }));
+                                warn!(
+                                    "User {} attempted admin access with role: {}",
+                                    claims.email, claims.role
+                                );
+                                let response = HttpResponse::Forbidden().json(serde_json::json!({
+                                    "error": "Admin access required"
+                                }));
                                 return Ok(req.into_response(response).map_into_boxed_body());
                             }
                         }
                         Err(e) => {
                             // Invalid token
                             error!("Token validation failed: {:?}", e);
-                            let response = HttpResponse::Unauthorized()
-                                .json(serde_json::json!({
-                                    "error": "Invalid token"
-                                }));
+                            let response = HttpResponse::Unauthorized().json(serde_json::json!({
+                                "error": "Invalid token"
+                            }));
                             return Ok(req.into_response(response).map_into_boxed_body());
                         }
                     }
@@ -119,10 +128,9 @@ where
             }
 
             // No authorization header or invalid format
-            let response = HttpResponse::Unauthorized()
-                .json(serde_json::json!({
-                    "error": "Missing or invalid authorization header"
-                }));
+            let response = HttpResponse::Unauthorized().json(serde_json::json!({
+                "error": "Missing or invalid authorization header"
+            }));
             Ok(req.into_response(response).map_into_boxed_body())
         })
     }
@@ -201,24 +209,25 @@ where
                             if claims.role == "superadmin" {
                                 // Store claims in request extensions
                                 req.extensions_mut().insert(claims.clone());
-                                
+
                                 // Continue to the actual handler
-                                return service.call(req).await.map(|res| res.map_into_boxed_body());
+                                return service
+                                    .call(req)
+                                    .await
+                                    .map(|res| res.map_into_boxed_body());
                             } else {
                                 // User is not a superadmin
-                                let response = HttpResponse::Forbidden()
-                                    .json(serde_json::json!({
-                                        "error": "Superadmin access required"
-                                    }));
+                                let response = HttpResponse::Forbidden().json(serde_json::json!({
+                                    "error": "Superadmin access required"
+                                }));
                                 return Ok(req.into_response(response).map_into_boxed_body());
                             }
                         }
                         Err(_) => {
                             // Invalid token
-                            let response = HttpResponse::Unauthorized()
-                                .json(serde_json::json!({
-                                    "error": "Invalid token"
-                                }));
+                            let response = HttpResponse::Unauthorized().json(serde_json::json!({
+                                "error": "Invalid token"
+                            }));
                             return Ok(req.into_response(response).map_into_boxed_body());
                         }
                     }
@@ -226,10 +235,9 @@ where
             }
 
             // No authorization header or invalid format
-            let response = HttpResponse::Unauthorized()
-                .json(serde_json::json!({
-                    "error": "Missing or invalid authorization header"
-                }));
+            let response = HttpResponse::Unauthorized().json(serde_json::json!({
+                "error": "Missing or invalid authorization header"
+            }));
             Ok(req.into_response(response).map_into_boxed_body())
         })
     }

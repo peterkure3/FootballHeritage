@@ -56,7 +56,8 @@ pub async fn get_devigged_odds(
     if let Some(ref pipeline_match_id) = query.pipeline_match_id {
         qb.push(if !has_where { " WHERE " } else { " AND " });
         has_where = true;
-        qb.push("d.pipeline_match_id = ").push_bind(pipeline_match_id);
+        qb.push("d.pipeline_match_id = ")
+            .push_bind(pipeline_match_id);
     }
 
     if let Some(ref bookmaker) = query.bookmaker {
@@ -111,7 +112,10 @@ pub struct EvBetsQuery {
     pub limit: Option<i64>,
 }
 
-pub async fn get_ev_bets(pool: web::Data<PgPool>, query: web::Query<EvBetsQuery>) -> AppResult<HttpResponse> {
+pub async fn get_ev_bets(
+    pool: web::Data<PgPool>,
+    query: web::Query<EvBetsQuery>,
+) -> AppResult<HttpResponse> {
     let mut qb: QueryBuilder<Postgres> = QueryBuilder::new(
         "SELECT b.id, b.event_id, b.pipeline_match_id, e.home_team as event_home_team, e.away_team as event_away_team, e.event_date as event_date, e.league as league, b.bookmaker, b.market, b.selection, b.odds, b.stake, b.true_probability, b.expected_value, b.expected_value_pct, b.source_updated_at, b.created_at FROM ev_bets b LEFT JOIN events e ON e.id = b.event_id",
     );
@@ -127,7 +131,8 @@ pub async fn get_ev_bets(pool: web::Data<PgPool>, query: web::Query<EvBetsQuery>
     if let Some(ref pipeline_match_id) = query.pipeline_match_id {
         qb.push(if !has_where { " WHERE " } else { " AND " });
         has_where = true;
-        qb.push("b.pipeline_match_id = ").push_bind(pipeline_match_id);
+        qb.push("b.pipeline_match_id = ")
+            .push_bind(pipeline_match_id);
     }
 
     if let Some(ref bookmaker) = query.bookmaker {
@@ -194,7 +199,10 @@ pub struct ArbitrageQuery {
     pub limit: Option<i64>,
 }
 
-pub async fn get_arbitrage(pool: web::Data<PgPool>, query: web::Query<ArbitrageQuery>) -> AppResult<HttpResponse> {
+pub async fn get_arbitrage(
+    pool: web::Data<PgPool>,
+    query: web::Query<ArbitrageQuery>,
+) -> AppResult<HttpResponse> {
     let mut qb: QueryBuilder<Postgres> = QueryBuilder::new(
         "SELECT a.id, a.event_id, a.pipeline_match_id, e.home_team as event_home_team, e.away_team as event_away_team, e.event_date as event_date, a.market, a.selection_a, a.selection_b, a.book_a, a.book_b, a.odds_a, a.odds_b, a.arb_percentage, a.total_stake, a.stake_a, a.stake_b, a.source_updated_at, a.created_at FROM arbitrage a LEFT JOIN events e ON e.id = a.event_id",
     );
@@ -210,7 +218,8 @@ pub async fn get_arbitrage(pool: web::Data<PgPool>, query: web::Query<ArbitrageQ
     if let Some(ref pipeline_match_id) = query.pipeline_match_id {
         qb.push(if !has_where { " WHERE " } else { " AND " });
         has_where = true;
-        qb.push("a.pipeline_match_id = ").push_bind(pipeline_match_id);
+        qb.push("a.pipeline_match_id = ")
+            .push_bind(pipeline_match_id);
     }
 
     if let Some(ref market) = query.market {
@@ -240,17 +249,17 @@ pub struct RefreshIntelligenceResponse {
 }
 
 /// POST /api/v1/intelligence/refresh
-/// 
+///
 /// Triggers the compute_intelligence pipeline script to refresh EV bets, devigged odds, and arbitrage data.
 pub async fn refresh_intelligence() -> HttpResponse {
     // Run the compute_intelligence script from the pipeline directory
     let pipeline_dir = std::env::var("PIPELINE_DIR").unwrap_or_else(|_| "../pipeline".to_string());
-    
+
     let result = Command::new("python")
         .args(["-m", "etl.compute_intelligence"])
         .current_dir(&pipeline_dir)
         .output();
-    
+
     match result {
         Ok(output) => {
             if output.status.success() {

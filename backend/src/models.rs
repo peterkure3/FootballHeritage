@@ -1,11 +1,11 @@
 #![allow(dead_code)]
+use bigdecimal::BigDecimal;
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
-use uuid::Uuid;
-use chrono::{DateTime, Utc};
-use validator::Validate;
-use bigdecimal::BigDecimal;
 use std::collections::HashMap;
+use uuid::Uuid;
+use validator::Validate;
 
 // User models
 #[derive(Debug, Serialize, Deserialize, FromRow)]
@@ -20,7 +20,7 @@ pub struct User {
     pub address: Option<String>,
     pub is_verified: bool,
     pub is_active: bool,
-    pub role: Option<String>,  // 'user', 'admin', 'superadmin'
+    pub role: Option<String>, // 'user', 'admin', 'superadmin'
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
     pub last_login: Option<DateTime<Utc>>,
@@ -553,7 +553,7 @@ pub struct ParlayBet {
 pub struct CalculateParlayRequest {
     #[validate(length(min = 2, max = 15, message = "Parlay must have 2-15 legs"))]
     pub bets: Vec<ParlayBet>,
-    
+
     #[validate(range(min = 0.01, message = "Stake must be at least 0.01"))]
     pub stake: f64,
 }
@@ -577,10 +577,10 @@ pub struct ParlayCalculationResponse {
 pub struct SaveParlayRequest {
     #[validate(length(max = 100))]
     pub name: Option<String>,
-    
+
     #[validate(length(min = 2, max = 15))]
     pub bets: Vec<ParlayBet>,
-    
+
     #[validate(range(min = 0.01))]
     pub stake: f64,
 }

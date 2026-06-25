@@ -48,7 +48,8 @@ impl SimpleBettingService {
         }
 
         // Step 5: Check responsible gambling limits
-        self.check_gambling_limits(&mut tx, user_id, &bet_request.amount).await?;
+        self.check_gambling_limits(&mut tx, user_id, &bet_request.amount)
+            .await?;
 
         // Step 6: Verify odds haven't changed significantly
         self.verify_odds(&event, &bet_request)?;
@@ -57,11 +58,14 @@ impl SimpleBettingService {
         let potential_win = self.calculate_potential_win(&bet_request.amount, &bet_request.odds);
 
         // Step 8: Create the bet record
-        let bet = self.create_bet_record(&mut tx, user_id, &bet_request, &potential_win).await?;
+        let bet = self
+            .create_bet_record(&mut tx, user_id, &bet_request, &potential_win)
+            .await?;
 
         // Step 9: Update wallet balance (encrypted)
         let new_balance = &current_balance - &bet_request.amount;
-        self.update_wallet_balance(&mut tx, user_id, &new_balance).await?;
+        self.update_wallet_balance(&mut tx, user_id, &new_balance)
+            .await?;
 
         // Step 10: Create transaction record for audit trail
         self.create_transaction_record(
@@ -141,9 +145,8 @@ impl SimpleBettingService {
 
     /// Validate bet amount
     fn validate_bet_amount(&self, amount: &BigDecimal) -> AppResult<()> {
-        let min_bet = BigDecimal::from_str("1.00").map_err(|e| {
-            AppError::Internal(format!("Failed to parse minimum bet: {}", e))
-        })?;
+        let min_bet = BigDecimal::from_str("1.00")
+            .map_err(|e| AppError::Internal(format!("Failed to parse minimum bet: {}", e)))?;
 
         if amount < &min_bet {
             return Err(AppError::InvalidBetAmount);
@@ -284,7 +287,8 @@ impl SimpleBettingService {
 
     /// Verify odds haven't changed significantly
     fn verify_odds(&self, event: &Event, bet_request: &PlaceBetRequest) -> AppResult<()> {
-        let current_odds = self.get_current_odds(event, &bet_request.bet_type, &bet_request.selection)?;
+        let current_odds =
+            self.get_current_odds(event, &bet_request.bet_type, &bet_request.selection)?;
 
         // Allow 5% variance in odds
         let odds_diff = (&bet_request.odds - &current_odds).abs();
@@ -573,10 +577,10 @@ impl SimpleBettingService {
     }
 
     /// Get available events
-    /// 
+    ///
     /// Filters out expired events (event_date <= NOW())
     /// Only returns future events to prevent betting on past games
-    /// 
+    ///
     /// # Arguments
     /// * `sport` - Filter by sport (e.g., "basketball", "football")
     /// * `league` - Filter by league (e.g., "nba_cup", "nba", "nfl")
@@ -675,10 +679,47 @@ struct GamblingLimitsData {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::config::AppConfig;
+
+    fn get_test_config() -> AppConfig {
+        AppConfig {
+            app_env: "test".to_string(),
+            database_url: "test".to_string(),
+            jwt_secret: "test_jwt_secret_that_is_long_enough_for_security_purposes".to_string(),
+            jwt_expiration_hours: 24,
+            encryption_key: "32_byte_long_encryption_key_test".to_string(),
+            host: "127.0.0.1".to_string(),
+            port: 8080,
+            https_enabled: false,
+            tls_cert_path: "".to_string(),
+            tls_key_path: "".to_string(),
+            bet_rate_limit_per_minute: 5,
+            login_rate_limit_per_minute: 10,
+            register_rate_limit_per_hour: 5,
+            bcrypt_cost: 12,
+            session_timeout_minutes: 30,
+            max_login_attempts: 5,
+            account_lock_minutes: 15,
+            default_daily_loss_limit: 1000.0,
+            default_weekly_loss_limit: 5000.0,
+            default_monthly_loss_limit: 15000.0,
+            default_daily_bet_limit: 2000.0,
+            default_weekly_bet_limit: 10000.0,
+            default_monthly_bet_limit: 30000.0,
+            default_max_single_bet: 500.0,
+            log_level: "info".to_string(),
+            fraud_alert_email: "test@example.com".to_string(),
+            allowed_origins: vec!["http://localhost:3000".to_string()],
+            metrics_enabled: true,
+            health_check_interval_seconds: 30,
+        }
+    }
 
     #[test]
     fn test_calculate_potential_win() {
-        let service = SimpleBettingService::new(Arc::new(CryptoService::new(&[0u8; 32])));
+        let config = get_test_config();
+        let crypto = Arc::new(CryptoService::new(&config).unwrap());
+        let service = SimpleBettingService::new(crypto);
         let amount = BigDecimal::from_str("100.00").unwrap();
         let odds = BigDecimal::from_str("2.5").unwrap();
         let potential_win = service.calculate_potential_win(&amount, &odds);
@@ -687,7 +728,9 @@ mod tests {
 
     #[test]
     fn test_validate_bet_amount() {
-        let service = SimpleBettingService::new(Arc::new(CryptoService::new(&[0u8; 32])));
+        let config = get_test_config();
+        let crypto = Arc::new(CryptoService::new(&config).unwrap());
+        let service = SimpleBettingService::new(crypto);
 
         // Valid amount
         let valid = BigDecimal::from_str("10.00").unwrap();

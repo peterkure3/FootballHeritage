@@ -141,8 +141,14 @@ ODDS_API_SPORTS = [
     "soccer_germany_bundesliga", # Bundesliga
     "soccer_italy_serie_a",    # Serie A
     "soccer_france_ligue_one", # Ligue 1
+    "soccer_netherlands_eredivisie", # Eredivisie
+    "soccer_portugal_primeira_liga", # Primeira Liga
     "basketball_nba",          # NBA
     "basketball_ncaab",        # NCAA Men's Basketball (March Madness)
+    "americanfootball_nfl",    # NFL
+    "americanfootball_ncaaf",  # NCAA Football
+    "baseball_mlb",            # MLB
+    "icehockey_nhl",           # NHL
 ]
 
 # NCAA Basketball Odds Configuration (The Odds API)
@@ -180,6 +186,21 @@ SPORT_CONFIGS = {
         "num_classes": 2,  # home win, away win (no draws)
         "has_draw": False,
         "form_window": 10,  # Basketball teams play more games
+    },
+    "americanfootball": {
+        "num_classes": 2,  # home win, away win (no draws)
+        "has_draw": False,
+        "form_window": 5,  # NFL plays weekly
+    },
+    "baseball": {
+        "num_classes": 2,  # home win, away win (no draws)
+        "has_draw": False,
+        "form_window": 10,  # MLB plays daily
+    },
+    "icehockey": {
+        "num_classes": 2,  # home win, away win (draws rare, resolved in OT)
+        "has_draw": False,
+        "form_window": 7,
     },
 }
 

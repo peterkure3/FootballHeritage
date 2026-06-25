@@ -35,10 +35,7 @@ pub struct SelfExcludeRequest {
     pub duration_days: i64,
 }
 
-pub async fn get_limits(
-    _req: HttpRequest,
-    pool: web::Data<PgPool>,
-) -> AppResult<HttpResponse> {
+pub async fn get_limits(_req: HttpRequest, pool: web::Data<PgPool>) -> AppResult<HttpResponse> {
     // TODO: Extract user_id from JWT token
     let user_id = Uuid::new_v4();
 
@@ -58,7 +55,7 @@ pub async fn get_limits(
                max_single_bet, self_excluded_until
         FROM gambling_limits
         WHERE user_id = $1
-        "#
+        "#,
     )
     .bind(user_id)
     .fetch_one(pool.as_ref())
@@ -100,7 +97,7 @@ pub async fn update_limits(
             max_single_bet = COALESCE($7, max_single_bet),
             updated_at = NOW()
         WHERE user_id = $8
-        "#
+        "#,
     )
     .bind(&body.daily_bet_limit)
     .bind(&body.weekly_bet_limit)
@@ -137,7 +134,7 @@ pub async fn self_exclude(
         UPDATE gambling_limits
         SET self_excluded_until = $1, updated_at = NOW()
         WHERE user_id = $2
-        "#
+        "#,
     )
     .bind(excluded_until)
     .bind(user_id)

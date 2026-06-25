@@ -2,8 +2,8 @@ use crate::config::AppConfig;
 use crate::crypto::CryptoService;
 use crate::errors::{AppError, AppResult};
 use crate::monitoring::MonitoringService;
-use crate::utils::extract_user_id;
 use crate::rates::RateLimiters;
+use crate::utils::extract_user_id;
 use actix_web::{web, HttpRequest, HttpResponse};
 use bigdecimal::BigDecimal;
 use serde::{Deserialize, Serialize};
@@ -50,12 +50,11 @@ pub async fn get_balance(
     let crypto_service = CryptoService::from_string(&config.encryption_key);
 
     // Try to fetch wallet, create if doesn't exist
-    let wallet_result: Result<(String, String), sqlx::Error> = sqlx::query_as(
-        "SELECT encrypted_balance, encryption_iv FROM wallets WHERE user_id = $1"
-    )
-    .bind(user_id)
-    .fetch_one(pool.as_ref())
-    .await;
+    let wallet_result: Result<(String, String), sqlx::Error> =
+        sqlx::query_as("SELECT encrypted_balance, encryption_iv FROM wallets WHERE user_id = $1")
+            .bind(user_id)
+            .fetch_one(pool.as_ref())
+            .await;
 
     let wallet = match wallet_result {
         Ok(w) => w,
@@ -64,7 +63,7 @@ pub async fn get_balance(
             info!("Creating new wallet for user_id={}", user_id);
             let initial_balance = BigDecimal::from_str("0.00").unwrap();
             let (encrypted_balance, iv) = crypto_service.encrypt_balance(&initial_balance)?;
-            
+
             sqlx::query(
                 "INSERT INTO wallets (id, user_id, encrypted_balance, encryption_iv, created_at, updated_at) VALUES (gen_random_uuid(), $1, $2, $3, NOW(), NOW())"
             )
@@ -77,7 +76,7 @@ pub async fn get_balance(
                 error!("Failed to create wallet: {}", e);
                 AppError::Database(e)
             })?;
-            
+
             (encrypted_balance, iv)
         }
         Err(e) => {
@@ -102,7 +101,8 @@ pub async fn deposit(
     monitoring: web::Data<MonitoringService>,
     body: web::Json<DepositRequest>,
 ) -> AppResult<HttpResponse> {
-    body.validate().map_err(|e| AppError::Validation(e.to_string()))?;
+    body.validate()
+        .map_err(|e| AppError::Validation(e.to_string()))?;
 
     let user_id = extract_user_id(&req)?;
 
@@ -119,12 +119,11 @@ pub async fn deposit(
     })?;
 
     // Get current balance or create wallet if doesn't exist
-    let wallet_result: Result<(String, String), sqlx::Error> = sqlx::query_as(
-        "SELECT encrypted_balance, encryption_iv FROM wallets WHERE user_id = $1"
-    )
-    .bind(user_id)
-    .fetch_one(&mut *tx)
-    .await;
+    let wallet_result: Result<(String, String), sqlx::Error> =
+        sqlx::query_as("SELECT encrypted_balance, encryption_iv FROM wallets WHERE user_id = $1")
+            .bind(user_id)
+            .fetch_one(&mut *tx)
+            .await;
 
     let current_balance = match wallet_result {
         Ok(wallet) => crypto_service.decrypt_balance(&wallet.0, &wallet.1)?,
@@ -133,7 +132,7 @@ pub async fn deposit(
             info!("Creating new wallet for user_id={} during deposit", user_id);
             let initial_balance = BigDecimal::from_str("0.00").unwrap();
             let (encrypted_balance, iv) = crypto_service.encrypt_balance(&initial_balance)?;
-            
+
             sqlx::query(
                 "INSERT INTO wallets (id, user_id, encrypted_balance, encryption_iv, created_at, updated_at) VALUES (gen_random_uuid(), $1, $2, $3, NOW(), NOW())"
             )
@@ -146,7 +145,7 @@ pub async fn deposit(
                 error!("Failed to create wallet: {}", e);
                 AppError::Database(e)
             })?;
-            
+
             initial_balance
         }
         Err(e) => {
@@ -177,7 +176,7 @@ pub async fn deposit(
         r#"
         INSERT INTO transactions (id, user_id, transaction_type, amount, status, created_at)
         VALUES ($1, $2, 'deposit', $3, 'completed', NOW())
-        "#
+        "#,
     )
     .bind(transaction_id)
     .bind(user_id)
@@ -212,7 +211,8 @@ pub async fn withdraw(
     monitoring: web::Data<MonitoringService>,
     body: web::Json<WithdrawRequest>,
 ) -> AppResult<HttpResponse> {
-    body.validate().map_err(|e| AppError::Validation(e.to_string()))?;
+    body.validate()
+        .map_err(|e| AppError::Validation(e.to_string()))?;
 
     let user_id = extract_user_id(&req)?;
 
@@ -229,21 +229,23 @@ pub async fn withdraw(
     })?;
 
     // Get current balance or create wallet if doesn't exist
-    let wallet_result: Result<(String, String), sqlx::Error> = sqlx::query_as(
-        "SELECT encrypted_balance, encryption_iv FROM wallets WHERE user_id = $1"
-    )
-    .bind(user_id)
-    .fetch_one(&mut *tx)
-    .await;
+    let wallet_result: Result<(String, String), sqlx::Error> =
+        sqlx::query_as("SELECT encrypted_balance, encryption_iv FROM wallets WHERE user_id = $1")
+            .bind(user_id)
+            .fetch_one(&mut *tx)
+            .await;
 
     let current_balance = match wallet_result {
         Ok(wallet) => crypto_service.decrypt_balance(&wallet.0, &wallet.1)?,
         Err(sqlx::Error::RowNotFound) => {
             // Create wallet with 0.00 balance
-            info!("Creating new wallet for user_id={} during withdraw", user_id);
+            info!(
+                "Creating new wallet for user_id={} during withdraw",
+                user_id
+            );
             let initial_balance = BigDecimal::from_str("0.00").unwrap();
             let (encrypted_balance, iv) = crypto_service.encrypt_balance(&initial_balance)?;
-            
+
             sqlx::query(
                 "INSERT INTO wallets (id, user_id, encrypted_balance, encryption_iv, created_at, updated_at) VALUES (gen_random_uuid(), $1, $2, $3, NOW(), NOW())"
             )
@@ -256,7 +258,7 @@ pub async fn withdraw(
                 error!("Failed to create wallet: {}", e);
                 AppError::Database(e)
             })?;
-            
+
             initial_balance
         }
         Err(e) => {
@@ -292,7 +294,7 @@ pub async fn withdraw(
         r#"
         INSERT INTO transactions (id, user_id, transaction_type, amount, status, created_at)
         VALUES ($1, $2, 'withdrawal', $3, 'completed', NOW())
-        "#
+        "#,
     )
     .bind(transaction_id)
     .bind(user_id)
@@ -309,7 +311,10 @@ pub async fn withdraw(
         AppError::Database(e)
     })?;
 
-    info!("Withdrawal successful: user_id={}, amount={}", user_id, amount);
+    info!(
+        "Withdrawal successful: user_id={}, amount={}",
+        user_id, amount
+    );
 
     Ok(HttpResponse::Ok().json(BalanceResponse {
         balance: new_balance,
@@ -323,14 +328,20 @@ pub async fn get_transactions(
 ) -> AppResult<HttpResponse> {
     let user_id = extract_user_id(&req)?;
 
-    let transactions: Vec<(Uuid, String, BigDecimal, String, chrono::DateTime<chrono::Utc>)> = sqlx::query_as(
+    let transactions: Vec<(
+        Uuid,
+        String,
+        BigDecimal,
+        String,
+        chrono::DateTime<chrono::Utc>,
+    )> = sqlx::query_as(
         r#"
         SELECT id, transaction_type, amount, status, created_at
         FROM transactions
         WHERE user_id = $1
         ORDER BY created_at DESC
         LIMIT 50
-        "#
+        "#,
     )
     .bind(user_id)
     .fetch_all(pool.as_ref())
@@ -342,13 +353,15 @@ pub async fn get_transactions(
 
     let transaction_responses: Vec<TransactionResponse> = transactions
         .into_iter()
-        .map(|(id, transaction_type, amount, status, created_at)| TransactionResponse {
-            id,
-            transaction_type,
-            amount,
-            status,
-            created_at,
-        })
+        .map(
+            |(id, transaction_type, amount, status, created_at)| TransactionResponse {
+                id,
+                transaction_type,
+                amount,
+                status,
+                created_at,
+            },
+        )
         .collect();
 
     Ok(HttpResponse::Ok().json(transaction_responses))

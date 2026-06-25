@@ -134,6 +134,10 @@ const Navbar = memo(() => {
                         <p className="text-xs text-gray-500">AI picks & analysis</p>
                       </div>
                     </Link>
+                    <Link to="/player-props" className="flex flex-col rounded-lg px-3 py-2 text-sm text-gray-200 hover:bg-gray-800">
+                      <span className="font-semibold">Player Props</span>
+                      <span className="text-xs text-gray-500">Player-based betting</span>
+                    </Link>
                     <Link to="/parlay-calculator" className="flex flex-col rounded-lg px-3 py-2 text-sm text-gray-200 hover:bg-gray-800">
                       <span className="font-semibold">Parlay Builder</span>
                       <span className="text-xs text-gray-500">Stack your slips</span>
@@ -174,6 +178,20 @@ const Navbar = memo(() => {
                         {SPORTS.BASKETBALL.displayName}
                       </span>
                       <span className="text-xs text-gray-500">Trending</span>
+                    </Link>
+                    <Link to={`/odds?sport=${SPORTS.BASEBALL.apiParam}`} className="flex items-center justify-between rounded-lg px-3 py-2 text-sm text-gray-200 hover:bg-gray-800">
+                      <span className="flex items-center gap-2">
+                        <span>{SPORTS.BASEBALL.icon}</span>
+                        {SPORTS.BASEBALL.displayName}
+                      </span>
+                      <span className="text-xs text-gray-500">In Season</span>
+                    </Link>
+                    <Link to={`/odds?sport=${SPORTS.HOCKEY.apiParam}`} className="flex items-center justify-between rounded-lg px-3 py-2 text-sm text-gray-200 hover:bg-gray-800">
+                      <span className="flex items-center gap-2">
+                        <span>{SPORTS.HOCKEY.icon}</span>
+                        {SPORTS.HOCKEY.displayName}
+                      </span>
+                      <span className="text-xs text-gray-500">In Season</span>
                     </Link>
                   </div>
                 </div>

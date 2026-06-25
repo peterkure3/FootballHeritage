@@ -1,3 +1,5 @@
+use crate::auth::AuthService;
+use crate::models::Claims;
 use actix_web::{
     body::BoxBody,
     dev::{forward_ready, Service, ServiceRequest, ServiceResponse, Transform},
@@ -6,8 +8,6 @@ use actix_web::{
 use futures_util::future::LocalBoxFuture;
 use std::future::{ready, Ready};
 use std::sync::Arc;
-use crate::auth::AuthService;
-use crate::models::Claims;
 
 /// Middleware to require JWT authentication for protected routes
 pub struct RequireAuth {
@@ -76,12 +76,15 @@ where
                                 req.extensions_mut().insert(claims);
 
                                 // Continue to the actual handler
-                                return service.call(req).await.map(|res| res.map_into_boxed_body());
+                                return service
+                                    .call(req)
+                                    .await
+                                    .map(|res| res.map_into_boxed_body());
                             }
                             Err(_) => {
                                 // Invalid token
-                                let response = HttpResponse::Unauthorized()
-                                    .json(serde_json::json!({
+                                let response =
+                                    HttpResponse::Unauthorized().json(serde_json::json!({
                                         "error": "Invalid or expired token"
                                     }));
                                 return Ok(req.into_response(response).map_into_boxed_body());
@@ -92,10 +95,9 @@ where
             }
 
             // No valid authorization header
-            let response = HttpResponse::Unauthorized()
-                .json(serde_json::json!({
-                    "error": "Missing or invalid authorization header"
-                }));
+            let response = HttpResponse::Unauthorized().json(serde_json::json!({
+                "error": "Missing or invalid authorization header"
+            }));
             Ok(req.into_response(response).map_into_boxed_body())
         })
     }

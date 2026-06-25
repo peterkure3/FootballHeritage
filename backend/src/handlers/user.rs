@@ -1,8 +1,8 @@
 use crate::errors::{AppError, AppResult};
 use crate::models::Claims;
 use actix_web::{web, HttpMessage, HttpRequest, HttpResponse};
-use argon2::{Argon2, PasswordHash, PasswordHasher, PasswordVerifier};
 use argon2::password_hash::{rand_core::OsRng, SaltString};
+use argon2::{Argon2, PasswordHash, PasswordHasher, PasswordVerifier};
 use chrono::{DateTime, NaiveDate, Utc};
 use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
@@ -46,13 +46,10 @@ pub struct UserActivity {
     pub win_rate: f64,
 }
 
-pub async fn get_profile(
-    req: HttpRequest,
-    pool: web::Data<PgPool>,
-) -> AppResult<HttpResponse> {
+pub async fn get_profile(req: HttpRequest, pool: web::Data<PgPool>) -> AppResult<HttpResponse> {
     let claims = get_user_claims(&req)
         .ok_or_else(|| AppError::Authentication("Unauthorized".to_string()))?;
-    
+
     let user_id = Uuid::parse_str(&claims.sub)
         .map_err(|_| AppError::Authentication("Invalid user ID".to_string()))?;
 
@@ -97,7 +94,7 @@ pub async fn update_profile(
 ) -> AppResult<HttpResponse> {
     let claims = get_user_claims(&req)
         .ok_or_else(|| AppError::Authentication("Unauthorized".to_string()))?;
-    
+
     let user_id = Uuid::parse_str(&claims.sub)
         .map_err(|_| AppError::Authentication("Invalid user ID".to_string()))?;
 
@@ -110,7 +107,7 @@ pub async fn update_profile(
             address = COALESCE($4, address),
             updated_at = NOW()
         WHERE id = $5
-        "#
+        "#,
     )
     .bind(&body.first_name)
     .bind(&body.last_name)
@@ -129,13 +126,10 @@ pub async fn update_profile(
     })))
 }
 
-pub async fn get_activity(
-    req: HttpRequest,
-    pool: web::Data<PgPool>,
-) -> AppResult<HttpResponse> {
+pub async fn get_activity(req: HttpRequest, pool: web::Data<PgPool>) -> AppResult<HttpResponse> {
     let claims = get_user_claims(&req)
         .ok_or_else(|| AppError::Authentication("Unauthorized".to_string()))?;
-    
+
     let user_id = Uuid::parse_str(&claims.sub)
         .map_err(|_| AppError::Authentication("Invalid user ID".to_string()))?;
 
@@ -144,7 +138,7 @@ pub async fn get_activity(
         SELECT COUNT(*), COALESCE(SUM(amount), 0)
         FROM bets
         WHERE user_id = $1
-        "#
+        "#,
     )
     .bind(user_id)
     .fetch_one(pool.as_ref())
@@ -159,7 +153,7 @@ pub async fn get_activity(
         SELECT COALESCE(SUM(potential_win), 0)
         FROM bets
         WHERE user_id = $1 AND status = 'won'
-        "#
+        "#,
     )
     .bind(user_id)
     .fetch_one(pool.as_ref())
@@ -174,7 +168,7 @@ pub async fn get_activity(
         SELECT COUNT(*)
         FROM bets
         WHERE user_id = $1 AND status = 'won'
-        "#
+        "#,
     )
     .bind(user_id)
     .fetch_one(pool.as_ref())
@@ -192,7 +186,9 @@ pub async fn get_activity(
 
     Ok(HttpResponse::Ok().json(UserActivity {
         total_bets: activity.0,
-        total_wagered: activity.1.unwrap_or_else(|| bigdecimal::BigDecimal::from(0)),
+        total_wagered: activity
+            .1
+            .unwrap_or_else(|| bigdecimal::BigDecimal::from(0)),
         total_won: total_won.unwrap_or_else(|| bigdecimal::BigDecimal::from(0)),
         win_rate,
     }))
@@ -205,37 +201,41 @@ pub async fn change_password(
 ) -> AppResult<HttpResponse> {
     let claims = get_user_claims(&req)
         .ok_or_else(|| AppError::Authentication("Unauthorized".to_string()))?;
-    
+
     let user_id = Uuid::parse_str(&claims.sub)
         .map_err(|_| AppError::Authentication("Invalid user ID".to_string()))?;
 
     // Validate password strength
     if body.new_password.len() < 8 {
-        return Err(AppError::Validation("Password must be at least 8 characters".to_string()));
+        return Err(AppError::Validation(
+            "Password must be at least 8 characters".to_string(),
+        ));
     }
 
     // Get current password hash
-    let current_hash: String = sqlx::query_scalar(
-        "SELECT password_hash FROM users WHERE id = $1"
-    )
-    .bind(user_id)
-    .fetch_one(pool.as_ref())
-    .await
-    .map_err(|e| {
-        error!("Failed to fetch user password: {}", e);
-        AppError::Database(e)
-    })?;
-
-    // Verify current password
-    let parsed_hash = PasswordHash::new(&current_hash)
+    let current_hash: String = sqlx::query_scalar("SELECT password_hash FROM users WHERE id = $1")
+        .bind(user_id)
+        .fetch_one(pool.as_ref())
+        .await
         .map_err(|e| {
-            error!("Failed to parse password hash: {}", e);
-            AppError::Internal("Authentication error".to_string())
+            error!("Failed to fetch user password: {}", e);
+            AppError::Database(e)
         })?;
 
+    // Verify current password
+    let parsed_hash = PasswordHash::new(&current_hash).map_err(|e| {
+        error!("Failed to parse password hash: {}", e);
+        AppError::Internal("Authentication error".to_string())
+    })?;
+
     let argon2 = Argon2::default();
-    if argon2.verify_password(body.current_password.as_bytes(), &parsed_hash).is_err() {
-        return Err(AppError::Authentication("Current password is incorrect".to_string()));
+    if argon2
+        .verify_password(body.current_password.as_bytes(), &parsed_hash)
+        .is_err()
+    {
+        return Err(AppError::Authentication(
+            "Current password is incorrect".to_string(),
+        ));
     }
 
     // Hash new password
@@ -249,17 +249,15 @@ pub async fn change_password(
         .to_string();
 
     // Update password
-    sqlx::query(
-        "UPDATE users SET password_hash = $1, updated_at = NOW() WHERE id = $2"
-    )
-    .bind(&new_hash)
-    .bind(user_id)
-    .execute(pool.as_ref())
-    .await
-    .map_err(|e| {
-        error!("Failed to update password: {}", e);
-        AppError::Database(e)
-    })?;
+    sqlx::query("UPDATE users SET password_hash = $1, updated_at = NOW() WHERE id = $2")
+        .bind(&new_hash)
+        .bind(user_id)
+        .execute(pool.as_ref())
+        .await
+        .map_err(|e| {
+            error!("Failed to update password: {}", e);
+            AppError::Database(e)
+        })?;
 
     Ok(HttpResponse::Ok().json(serde_json::json!({
         "message": "Password changed successfully"

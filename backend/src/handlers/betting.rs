@@ -4,8 +4,8 @@ use crate::crypto::CryptoService;
 use crate::errors::{AppError, AppResult};
 use crate::models::{BetResponse, EventResponse, PlaceBetRequest};
 use crate::monitoring::MonitoringService;
-use crate::utils::extract_user_id;
 use crate::rates::RateLimiters;
+use crate::utils::extract_user_id;
 use actix_web::{web, HttpRequest, HttpResponse};
 use serde::Deserialize;
 use sqlx::PgPool;
@@ -17,7 +17,7 @@ use validator::Validate;
 #[derive(Debug, Deserialize)]
 pub struct EventQuery {
     pub sport: Option<String>,
-    pub league: Option<String>,  // Filter by league (e.g., "nba_cup", "nba", "nfl")
+    pub league: Option<String>, // Filter by league (e.g., "nba_cup", "nba", "nfl")
     pub status: Option<String>,
 }
 
@@ -30,7 +30,12 @@ pub async fn get_events(
     let betting_service = SimpleBettingService::new(crypto_service);
 
     let events = betting_service
-        .get_events(pool.as_ref(), query.sport.clone(), query.league.clone(), query.status.clone())
+        .get_events(
+            pool.as_ref(),
+            query.sport.clone(),
+            query.league.clone(),
+            query.status.clone(),
+        )
         .await?;
 
     let event_responses: Vec<EventResponse> = events
@@ -101,7 +106,8 @@ pub async fn place_bet(
     body: web::Json<PlaceBetRequest>,
 ) -> AppResult<HttpResponse> {
     // Validate input
-    body.validate().map_err(|e| AppError::Validation(e.to_string()))?;
+    body.validate()
+        .map_err(|e| AppError::Validation(e.to_string()))?;
 
     let user_id = extract_user_id(&req)?;
 

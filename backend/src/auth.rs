@@ -1,11 +1,11 @@
-use crate::models::{Claims, User};
-use crate::errors::{AppError, AppResult};
 use crate::config::AppConfig;
+use crate::errors::{AppError, AppResult};
+use crate::models::{Claims, User};
 use chrono::{Duration, Utc};
-use jsonwebtoken::{encode, decode, Header, Validation, EncodingKey, DecodingKey};
-use uuid::Uuid;
-use std::sync::Arc;
 use dashmap::DashMap;
+use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, Validation};
+use std::sync::Arc;
+use uuid::Uuid;
 
 #[derive(Clone)]
 pub struct AuthService {
@@ -54,8 +54,7 @@ impl AuthService {
         let header = Header::default();
         let key = EncodingKey::from_secret(self.jwt_secret.as_ref());
 
-        encode(&header, &claims, &key)
-            .map_err(|e| AppError::JWT(e))
+        encode(&header, &claims, &key).map_err(|e| AppError::JWT(e))
     }
 
     /// Validate and decode JWT token
@@ -66,8 +65,8 @@ impl AuthService {
         validation.set_audience(&["football-heritage-client"]);
         validation.set_required_spec_claims(&["exp", "sub"]);
 
-        let token_data = decode::<Claims>(token, &key, &validation)
-            .map_err(|e| AppError::JWT(e))?;
+        let token_data =
+            decode::<Claims>(token, &key, &validation).map_err(|e| AppError::JWT(e))?;
         let claims = token_data.claims;
 
         self.ensure_active_session(&claims)?;
@@ -79,7 +78,9 @@ impl AuthService {
     #[allow(dead_code)]
     pub fn extract_token_from_header(&self, auth_header: &str) -> AppResult<String> {
         if !auth_header.starts_with("Bearer ") {
-            return Err(AppError::Authentication("Invalid authorization header format".to_string()));
+            return Err(AppError::Authentication(
+                "Invalid authorization header format".to_string(),
+            ));
         }
 
         let token = auth_header[7..].trim();
@@ -91,7 +92,13 @@ impl AuthService {
     }
 
     /// Create new session
-    pub fn create_session(&self, user: &User, session_id: &str, ip_address: &str, user_agent: &str) {
+    pub fn create_session(
+        &self,
+        user: &User,
+        session_id: &str,
+        ip_address: &str,
+        user_agent: &str,
+    ) {
         let session_info = SessionInfo {
             user_id: user.id,
             email: user.email.clone(),
@@ -102,13 +109,16 @@ impl AuthService {
             is_active: true,
         };
 
-        self.active_sessions.insert(session_id.to_string(), session_info);
+        self.active_sessions
+            .insert(session_id.to_string(), session_info);
     }
 
     /// Get session information
     #[allow(dead_code)]
     pub fn get_session(&self, session_id: &str) -> Option<SessionInfo> {
-        self.active_sessions.get(session_id).map(|session| session.clone())
+        self.active_sessions
+            .get(session_id)
+            .map(|session| session.clone())
     }
 
     /// Update session activity
@@ -133,11 +143,13 @@ impl AuthService {
         let now = Utc::now();
         let timeout_duration = Duration::minutes(self.config.session_timeout_minutes as i64);
 
-        let expired_sessions: Vec<String> = self.active_sessions
+        let expired_sessions: Vec<String> = self
+            .active_sessions
             .iter()
             .filter(|entry| {
                 let session = entry.value();
-                now.signed_duration_since(session.last_activity) > timeout_duration || !session.is_active
+                now.signed_duration_since(session.last_activity) > timeout_duration
+                    || !session.is_active
             })
             .map(|entry| entry.key().clone())
             .collect();
@@ -158,7 +170,8 @@ impl AuthService {
     /// Invalidate all sessions for a user
     #[allow(dead_code)]
     pub fn invalidate_user_sessions(&self, user_id: &Uuid) {
-        let sessions_to_remove: Vec<String> = self.active_sessions
+        let sessions_to_remove: Vec<String> = self
+            .active_sessions
             .iter()
             .filter(|entry| entry.value().user_id == *user_id)
             .map(|entry| entry.key().clone())
@@ -181,7 +194,8 @@ impl AuthService {
     /// Detect suspicious login patterns
     #[allow(dead_code)]
     pub fn detect_suspicious_login(&self, user_id: &Uuid, ip_address: &str) -> bool {
-        let user_sessions: Vec<SessionInfo> = self.active_sessions
+        let user_sessions: Vec<SessionInfo> = self
+            .active_sessions
             .iter()
             .filter(|entry| entry.value().user_id == *user_id)
             .map(|entry| entry.value().clone())
@@ -200,9 +214,7 @@ impl AuthService {
         // Check for rapid successive logins
         let recent_logins: Vec<_> = user_sessions
             .iter()
-            .filter(|s| {
-                Utc::now().signed_duration_since(s.created_at).num_minutes() < 10
-            })
+            .filter(|s| Utc::now().signed_duration_since(s.created_at).num_minutes() < 10)
             .collect();
 
         if recent_logins.len() > 2 {
@@ -223,8 +235,8 @@ impl AuthService {
     /// Generate secure refresh token
     #[allow(dead_code)]
     pub fn generate_refresh_token(&self) -> String {
-        use base64::{Engine as _, engine::general_purpose};
-        use rand::{RngCore, thread_rng};
+        use base64::{engine::general_purpose, Engine as _};
+        use rand::{thread_rng, RngCore};
 
         let mut token_bytes = [0u8; 32];
         thread_rng().fill_bytes(&mut token_bytes);
@@ -273,8 +285,8 @@ impl AuthService {
     /// Generate password reset token
     #[allow(dead_code)]
     pub fn generate_password_reset_token(&self) -> String {
-        use base64::{Engine as _, engine::general_purpose};
-        use rand::{RngCore, thread_rng};
+        use base64::{engine::general_purpose, Engine as _};
+        use rand::{thread_rng, RngCore};
 
         let mut token_bytes = [0u8; 32];
         thread_rng().fill_bytes(&mut token_bytes);
@@ -290,8 +302,8 @@ impl AuthService {
     /// Generate email verification token
     #[allow(dead_code)]
     pub fn generate_email_verification_token(&self) -> String {
-        use base64::{Engine as _, engine::general_purpose};
-        use rand::{RngCore, thread_rng};
+        use base64::{engine::general_purpose, Engine as _};
+        use rand::{thread_rng, RngCore};
 
         let mut token_bytes = [0u8; 32];
         thread_rng().fill_bytes(&mut token_bytes);
@@ -357,7 +369,8 @@ impl JwtMiddleware {
             }
 
             // Update session activity
-            self.auth_service.update_session_activity(&claims.session_id)?;
+            self.auth_service
+                .update_session_activity(&claims.session_id)?;
         } else {
             return Err(AppError::SessionExpired);
         }
@@ -374,6 +387,7 @@ mod tests {
 
     fn get_test_config() -> AppConfig {
         AppConfig {
+            app_env: "test".to_string(),
             database_url: "test".to_string(),
             jwt_secret: "test_jwt_secret_that_is_long_enough_for_security_purposes".to_string(),
             jwt_expiration_hours: 24,
@@ -431,6 +445,7 @@ mod tests {
         };
 
         let session_id = "test_session_123";
+        auth_service.create_session(&user, session_id, "127.0.0.1", "test-agent");
         let token = auth_service.generate_token(&user, session_id).unwrap();
 
         let claims = auth_service.validate_token(&token).unwrap();
@@ -455,6 +470,7 @@ mod tests {
             address: None,
             is_verified: true,
             is_active: true,
+            role: Some("user".to_string()),
             created_at: Utc::now(),
             updated_at: Utc::now(),
             last_login: None,
@@ -482,8 +498,7 @@ pub fn verify_jwt(token: &str, secret: &str) -> AppResult<Claims> {
     let key = DecodingKey::from_secret(secret.as_ref());
     let validation = Validation::default();
 
-    let token_data = decode::<Claims>(token, &key, &validation)
-        .map_err(|e| AppError::JWT(e))?;
+    let token_data = decode::<Claims>(token, &key, &validation).map_err(|e| AppError::JWT(e))?;
 
     Ok(token_data.claims)
 }

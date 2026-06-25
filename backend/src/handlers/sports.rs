@@ -51,7 +51,7 @@ pub struct BetCategory {
 
 /**
  * GET /api/v1/sports
- * 
+ *
  * Get all supported sports with event counts and leagues
  */
 pub async fn get_sports(pool: web::Data<PgPool>) -> HttpResponse {
@@ -133,7 +133,7 @@ pub async fn get_sports(pool: web::Data<PgPool>) -> HttpResponse {
         .iter()
         .map(|sport| {
             let (display_name, icon) = get_sport_metadata(&sport.sport);
-            
+
             SportInfo {
                 name: sport.sport.clone(),
                 display_name,
@@ -158,7 +158,7 @@ pub async fn get_sports(pool: web::Data<PgPool>) -> HttpResponse {
 
 /**
  * GET /api/v1/sports/categories
- * 
+ *
  * Get all bet categories/types
  */
 pub async fn get_bet_categories() -> HttpResponse {
@@ -212,13 +212,10 @@ pub async fn get_bet_categories() -> HttpResponse {
 
 /**
  * GET /api/v1/sports/:sport/leagues
- * 
+ *
  * Get leagues for a specific sport
  */
-pub async fn get_sport_leagues(
-    pool: web::Data<PgPool>,
-    sport: web::Path<String>,
-) -> HttpResponse {
+pub async fn get_sport_leagues(pool: web::Data<PgPool>, sport: web::Path<String>) -> HttpResponse {
     let sport_name = sport.into_inner();
 
     // Filter out expired events (event_date <= NOW())
@@ -281,7 +278,7 @@ fn get_sport_metadata(sport: &str) -> (String, String) {
     match sport.to_uppercase().as_str() {
         "NFL" | "FOOTBALL" => ("NFL Football".to_string(), "🏈".to_string()),
         "NBA" | "BASKETBALL" => ("NBA Basketball".to_string(), "🏀".to_string()),
-        "NBA_CUP" => ("NBA Cup".to_string(), "🏆".to_string()),  // NBA In-Season Tournament
+        "NBA_CUP" => ("NBA Cup".to_string(), "🏆".to_string()), // NBA In-Season Tournament
         "MLB" | "BASEBALL" => ("MLB Baseball".to_string(), "⚾".to_string()),
         "NHL" | "HOCKEY" => ("NHL Hockey".to_string(), "🏒".to_string()),
         "SOCCER" | "FOOTBALL_SOCCER" => ("Soccer".to_string(), "⚽".to_string()),

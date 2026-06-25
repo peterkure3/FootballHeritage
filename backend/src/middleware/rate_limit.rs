@@ -1,8 +1,8 @@
 #![allow(dead_code)]
 use actix_web::{
+    body::BoxBody,
     dev::{forward_ready, Service, ServiceRequest, ServiceResponse, Transform},
     Error, HttpResponse,
-    body::BoxBody,
 };
 use futures_util::future::LocalBoxFuture;
 use std::future::{ready, Ready};
@@ -66,14 +66,15 @@ where
                 .to_string();
 
             // Get rate limiters from app data
-            if let Some(rate_limiters) = req.app_data::<actix_web::web::Data<crate::rates::RateLimiters>>() {
+            if let Some(rate_limiters) =
+                req.app_data::<actix_web::web::Data<crate::rates::RateLimiters>>()
+            {
                 // Check general API rate limit
                 if let Err(e) = rate_limiters.check_api_limit(&ip_address) {
-                    let response = HttpResponse::TooManyRequests()
-                        .json(serde_json::json!({
-                            "error": "Rate limit exceeded",
-                            "message": e.to_string()
-                        }));
+                    let response = HttpResponse::TooManyRequests().json(serde_json::json!({
+                        "error": "Rate limit exceeded",
+                        "message": e.to_string()
+                    }));
                     return Ok(req.into_response(response).map_into_boxed_body());
                 }
             }

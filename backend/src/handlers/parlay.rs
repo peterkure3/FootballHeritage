@@ -2,14 +2,17 @@ use actix_web::{web, HttpRequest, HttpResponse};
 use bigdecimal::{BigDecimal, FromPrimitive};
 use serde_json;
 use sqlx::PgPool;
-use tracing::{info, error};
+use tracing::{error, info};
 use uuid::Uuid;
 use validator::Validate;
 
 use crate::{
     errors::AppError,
-    models::{CalculateParlayRequest, Parlay, ParlayCalculation, ParlayLeg, ParlayWithLegs, SaveParlayRequest, Claims, ParlayBet, ParlayCalculationResponse},
     middleware::jwt_auth::get_claims,
+    models::{
+        CalculateParlayRequest, Claims, Parlay, ParlayBet, ParlayCalculation,
+        ParlayCalculationResponse, ParlayLeg, ParlayWithLegs, SaveParlayRequest,
+    },
 };
 
 type AppResult<T> = Result<T, AppError>;
@@ -35,7 +38,8 @@ fn assess_risk(num_legs: usize, prob: f64, ev: f64) -> String {
         (_, p, e) if p < 0.25 || e < -0.10 => "HIGH",
         (_, p, e) if p < 0.50 || e < 0.0 => "MEDIUM",
         _ => "LOW",
-    }.to_string()
+    }
+    .to_string()
 }
 
 /// Generate recommendation based on EV, risk, and Kelly Criterion
@@ -53,7 +57,8 @@ fn generate_recommendation(ev: f64, risk_level: &str, kelly: f64) -> String {
     } else if ev < 0.05 {
         format!(
             "⚡ NEUTRAL - Low positive EV ({:.1}%). Risk level: {}. Proceed with caution.",
-            ev * 100.0, risk_level
+            ev * 100.0,
+            risk_level
         )
     } else if ev < 0.15 {
         format!(
@@ -72,35 +77,36 @@ fn generate_recommendation(ev: f64, risk_level: &str, kelly: f64) -> String {
 fn calculate_parlay_metrics(bets: &[ParlayBet], stake: f64) -> ParlayCalculationResponse {
     // 1. Combined odds = odds1 × odds2 × odds3 × ...
     let combined_odds: f64 = bets.iter().map(|b| b.odds).product();
-    
+
     // 2. Combined probability = prob1 × prob2 × prob3 × ...
-    let combined_prob: f64 = bets.iter()
+    let combined_prob: f64 = bets
+        .iter()
         .map(|b| b.win_prob.unwrap_or_else(|| implied_probability(b.odds)))
         .product();
-    
+
     // 3. Projected payout = stake × combined_odds
     let payout = stake * combined_odds;
-    
+
     // 4. Expected profit = (combined_prob × payout) - stake
     let expected_profit = (combined_prob * payout) - stake;
-    
+
     // 5. Expected value = expected_profit / stake
     let ev = expected_profit / stake;
-    
+
     // 6. Break-even probability = 1 / combined_odds
     let break_even_prob = 1.0 / combined_odds;
-    
+
     // 7. Kelly Criterion = (prob × odds - 1) / (odds - 1)
     // Capped at 25% to prevent over-betting
     let kelly_raw = ((combined_prob * combined_odds) - 1.0) / (combined_odds - 1.0);
     let kelly = kelly_raw.max(0.0).min(0.25);
-    
+
     // 8. Risk assessment
     let risk_level = assess_risk(bets.len(), combined_prob, ev);
-    
+
     // 9. Recommendation
     let recommendation = generate_recommendation(ev, &risk_level, kelly);
-    
+
     ParlayCalculationResponse {
         combined_odds,
         combined_probability: combined_prob,
@@ -128,7 +134,7 @@ pub async fn calculate_parlay(
     // Extract user_id from JWT claims
     let claims = get_claims(&req)
         .ok_or_else(|| AppError::Authentication("User not authenticated".to_string()))?;
-    
+
     let user_id = Uuid::parse_str(&claims.sub)
         .map_err(|_| AppError::Authentication("Invalid user ID in token".to_string()))?;
 
@@ -136,20 +142,23 @@ pub async fn calculate_parlay(
     body.validate()
         .map_err(|e| AppError::Validation(e.to_string()))?;
 
-    info!("Calculating parlay for user {} with {} legs", user_id, body.bets.len());
+    info!(
+        "Calculating parlay for user {} with {} legs",
+        user_id,
+        body.bets.len()
+    );
 
     // Validate that all events exist
     for bet in &body.bets {
-        let event_exists = sqlx::query_scalar::<_, bool>(
-            "SELECT EXISTS(SELECT 1 FROM events WHERE id = $1)"
-        )
-        .bind(bet.event_id)
-        .fetch_one(pool.get_ref())
-        .await
-        .map_err(|e| {
-            error!("Database error checking event: {}", e);
-            AppError::Database(e)
-        })?;
+        let event_exists =
+            sqlx::query_scalar::<_, bool>("SELECT EXISTS(SELECT 1 FROM events WHERE id = $1)")
+                .bind(bet.event_id)
+                .fetch_one(pool.get_ref())
+                .await
+                .map_err(|e| {
+                    error!("Database error checking event: {}", e);
+                    AppError::Database(e)
+                })?;
 
         if !event_exists {
             return Err(AppError::EventNotFound);
@@ -161,13 +170,12 @@ pub async fn calculate_parlay(
 
     // Save to calculation history (skip if user_id is invalid)
     // TODO: Remove this check once proper JWT extraction is implemented
-    let user_exists = sqlx::query_scalar::<_, bool>(
-        "SELECT EXISTS(SELECT 1 FROM users WHERE id = $1)"
-    )
-    .bind(user_id)
-    .fetch_one(pool.get_ref())
-    .await
-    .unwrap_or(false);
+    let user_exists =
+        sqlx::query_scalar::<_, bool>("SELECT EXISTS(SELECT 1 FROM users WHERE id = $1)")
+            .bind(user_id)
+            .fetch_one(pool.get_ref())
+            .await
+            .unwrap_or(false);
 
     if user_exists {
         let calculation_data = serde_json::to_value(&body.bets)
@@ -180,7 +188,7 @@ pub async fn calculate_parlay(
                 expected_value, expected_profit, potential_payout, break_even_probability,
                 kelly_criterion, risk_level, recommendation, calculation_data
             ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
-            "#
+            "#,
         )
         .bind(user_id)
         .bind(body.bets.len() as i32)
@@ -200,7 +208,11 @@ pub async fn calculate_parlay(
         // Ignore errors in history saving - it's not critical
     }
 
-    info!("Parlay calculation completed: EV={:.2}%, Risk={}", result.expected_value * 100.0, result.risk_level);
+    info!(
+        "Parlay calculation completed: EV={:.2}%, Risk={}",
+        result.expected_value * 100.0,
+        result.risk_level
+    );
 
     Ok(HttpResponse::Ok().json(result))
 }
@@ -215,7 +227,7 @@ pub async fn save_parlay(
     // Extract user_id from JWT claims
     let claims = get_claims(&req)
         .ok_or_else(|| AppError::Authentication("User not authenticated".to_string()))?;
-    
+
     let user_id = Uuid::parse_str(&claims.sub)
         .map_err(|_| AppError::Authentication("Invalid user ID in token".to_string()))?;
 
@@ -228,8 +240,7 @@ pub async fn save_parlay(
     let metrics = calculate_parlay_metrics(&body.bets, body.stake);
 
     // Start transaction
-    let mut tx = pool.begin().await
-        .map_err(|e| AppError::Database(e))?;
+    let mut tx = pool.begin().await.map_err(|e| AppError::Database(e))?;
 
     // Insert parlay
     let parlay_id = sqlx::query_scalar::<_, Uuid>(
@@ -239,7 +250,7 @@ pub async fn save_parlay(
             expected_value, potential_payout, risk_level, status
         ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'DRAFT')
         RETURNING id
-        "#
+        "#,
     )
     .bind(user_id)
     .bind(&body.name)
@@ -264,7 +275,7 @@ pub async fn save_parlay(
                 parlay_id, event_id, team_name, bet_type, selection,
                 odds, win_probability, leg_order
             ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-            "#
+            "#,
         )
         .bind(parlay_id)
         .bind(bet.event_id)
@@ -282,8 +293,7 @@ pub async fn save_parlay(
         })?;
     }
 
-    tx.commit().await
-        .map_err(|e| AppError::Database(e))?;
+    tx.commit().await.map_err(|e| AppError::Database(e))?;
 
     info!("Parlay saved successfully: {}", parlay_id);
 
@@ -302,14 +312,14 @@ pub async fn get_saved_parlays(
     // Extract user_id from JWT claims
     let claims = get_claims(&req)
         .ok_or_else(|| AppError::Authentication("User not authenticated".to_string()))?;
-    
+
     let user_id = Uuid::parse_str(&claims.sub)
         .map_err(|_| AppError::Authentication("Invalid user ID in token".to_string()))?;
 
     info!("Fetching saved parlays for user {}", user_id);
 
     let parlays = sqlx::query_as::<_, Parlay>(
-        "SELECT * FROM parlays WHERE user_id = $1 ORDER BY created_at DESC LIMIT 50"
+        "SELECT * FROM parlays WHERE user_id = $1 ORDER BY created_at DESC LIMIT 50",
     )
     .bind(user_id)
     .fetch_all(pool.get_ref())
@@ -332,28 +342,27 @@ pub async fn get_parlay(
     // Extract user_id from JWT claims
     let claims = get_claims(&req)
         .ok_or_else(|| AppError::Authentication("User not authenticated".to_string()))?;
-    
+
     let user_id = Uuid::parse_str(&claims.sub)
         .map_err(|_| AppError::Authentication("Invalid user ID in token".to_string()))?;
 
     let parlay_id = parlay_id.into_inner();
-    
+
     info!("Fetching parlay {} for user {}", parlay_id, user_id);
 
     // Fetch parlay
-    let parlay = sqlx::query_as::<_, Parlay>(
-        "SELECT * FROM parlays WHERE id = $1 AND user_id = $2"
-    )
-    .bind(parlay_id)
-    .bind(user_id)
-    .fetch_optional(pool.get_ref())
-    .await
-    .map_err(|e| AppError::Database(e))?
-    .ok_or_else(|| AppError::UserNotFound)?;
+    let parlay =
+        sqlx::query_as::<_, Parlay>("SELECT * FROM parlays WHERE id = $1 AND user_id = $2")
+            .bind(parlay_id)
+            .bind(user_id)
+            .fetch_optional(pool.get_ref())
+            .await
+            .map_err(|e| AppError::Database(e))?
+            .ok_or_else(|| AppError::UserNotFound)?;
 
     // Fetch legs
     let legs = sqlx::query_as::<_, ParlayLeg>(
-        "SELECT * FROM parlay_legs WHERE parlay_id = $1 ORDER BY leg_order"
+        "SELECT * FROM parlay_legs WHERE parlay_id = $1 ORDER BY leg_order",
     )
     .bind(parlay_id)
     .fetch_all(pool.get_ref())
@@ -373,10 +382,11 @@ pub async fn get_calculation_history(
     // Extract user_id from JWT claims
     let claims = get_claims(&req)
         .ok_or_else(|| AppError::Authentication("User not authenticated".to_string()))?;
-    
+
     let user_id = Uuid::parse_str(&claims.sub)
         .map_err(|_| AppError::Authentication("Invalid user ID in token".to_string()))?;
-    let limit: i64 = query.get("limit")
+    let limit: i64 = query
+        .get("limit")
         .and_then(|s| s.parse().ok())
         .unwrap_or(20)
         .min(100);
@@ -384,7 +394,7 @@ pub async fn get_calculation_history(
     info!("Fetching calculation history for user {}", user_id);
 
     let calculations = sqlx::query_as::<_, ParlayCalculation>(
-        "SELECT * FROM parlay_calculations WHERE user_id = $1 ORDER BY created_at DESC LIMIT $2"
+        "SELECT * FROM parlay_calculations WHERE user_id = $1 ORDER BY created_at DESC LIMIT $2",
     )
     .bind(user_id)
     .bind(limit)
@@ -408,22 +418,20 @@ pub async fn delete_parlay(
     // Extract user_id from JWT claims
     let claims = get_claims(&req)
         .ok_or_else(|| AppError::Authentication("User not authenticated".to_string()))?;
-    
+
     let user_id = Uuid::parse_str(&claims.sub)
         .map_err(|_| AppError::Authentication("Invalid user ID in token".to_string()))?;
 
     let parlay_id = parlay_id.into_inner();
-    
+
     info!("Deleting parlay {} for user {}", parlay_id, user_id);
 
-    let result = sqlx::query(
-        "DELETE FROM parlays WHERE id = $1 AND user_id = $2"
-    )
-    .bind(parlay_id)
-    .bind(user_id)
-    .execute(pool.get_ref())
-    .await
-    .map_err(|e| AppError::Database(e))?;
+    let result = sqlx::query("DELETE FROM parlays WHERE id = $1 AND user_id = $2")
+        .bind(parlay_id)
+        .bind(user_id)
+        .execute(pool.get_ref())
+        .await
+        .map_err(|e| AppError::Database(e))?;
 
     if result.rows_affected() == 0 {
         return Err(AppError::UserNotFound);

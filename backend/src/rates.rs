@@ -80,7 +80,10 @@ impl RateLimiter {
 
 /// Per-user rate limiters for tracking individual user activity
 pub struct UserRateLimiter {
-    user_limiters: DashMap<Uuid, Arc<GovernorRateLimiter<NotKeyed, InMemoryState, DefaultClock, NoOpMiddleware>>>,
+    user_limiters: DashMap<
+        Uuid,
+        Arc<GovernorRateLimiter<NotKeyed, InMemoryState, DefaultClock, NoOpMiddleware>>,
+    >,
     max_requests: u32,
     window_seconds: u64,
     limit_type: RateLimitType,
@@ -146,7 +149,10 @@ impl UserRateLimiter {
 
 /// IP-based rate limiter for preventing abuse from specific IPs
 pub struct IpRateLimiter {
-    ip_limiters: DashMap<String, Arc<GovernorRateLimiter<NotKeyed, InMemoryState, DefaultClock, NoOpMiddleware>>>,
+    ip_limiters: DashMap<
+        String,
+        Arc<GovernorRateLimiter<NotKeyed, InMemoryState, DefaultClock, NoOpMiddleware>>,
+    >,
     max_requests: u32,
     window_seconds: u64,
     limit_type: RateLimitType,
@@ -170,12 +176,15 @@ impl IpRateLimiter {
 
     /// Check if a request is allowed from a specific IP
     pub fn check(&self, ip_address: &str) -> AppResult<()> {
-        let limiter = self.ip_limiters.entry(ip_address.to_string()).or_insert_with(|| {
-            let quota = Quota::with_period(Duration::from_secs(self.window_seconds))
-                .unwrap()
-                .allow_burst(NonZeroU32::new(self.max_requests).unwrap());
-            Arc::new(GovernorRateLimiter::direct(quota))
-        });
+        let limiter = self
+            .ip_limiters
+            .entry(ip_address.to_string())
+            .or_insert_with(|| {
+                let quota = Quota::with_period(Duration::from_secs(self.window_seconds))
+                    .unwrap()
+                    .allow_burst(NonZeroU32::new(self.max_requests).unwrap());
+                Arc::new(GovernorRateLimiter::direct(quota))
+            });
 
         match limiter.check() {
             Ok(_) => Ok(()),
@@ -243,25 +252,13 @@ impl RateLimiters {
             )),
 
             // Deposit rate limiter: 10 deposits per hour per user
-            deposit_limiter: Arc::new(UserRateLimiter::new(
-                RateLimitType::Deposit,
-                10,
-                3600,
-            )),
+            deposit_limiter: Arc::new(UserRateLimiter::new(RateLimitType::Deposit, 10, 3600)),
 
             // Withdraw rate limiter: 5 withdrawals per hour per user
-            withdraw_limiter: Arc::new(UserRateLimiter::new(
-                RateLimitType::Withdraw,
-                5,
-                3600,
-            )),
+            withdraw_limiter: Arc::new(UserRateLimiter::new(RateLimitType::Withdraw, 5, 3600)),
 
             // General API rate limiter: 100 requests per minute per IP
-            api_general_limiter: Arc::new(IpRateLimiter::new(
-                RateLimitType::ApiGeneral,
-                100,
-                60,
-            )),
+            api_general_limiter: Arc::new(IpRateLimiter::new(RateLimitType::ApiGeneral, 100, 60)),
         }
     }
 

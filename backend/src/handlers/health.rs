@@ -11,10 +11,8 @@ pub struct HealthCheckResponse {
     pub version: String,
 }
 
-pub async fn health_check(
-    monitoring: web::Data<MonitoringService>,
-) -> AppResult<HttpResponse> {
+pub async fn health_check(monitoring: web::Data<MonitoringService>) -> AppResult<HttpResponse> {
     let health = monitoring.get_health_status();
-    
+
     Ok(HttpResponse::Ok().json(health))
 }

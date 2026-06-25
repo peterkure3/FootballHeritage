@@ -1,9 +1,8 @@
 /**
  * Admin Analytics API
- * 
+ *
  * Dashboard metrics and analytics for admins
  */
-
 use actix_web::{web, HttpRequest, HttpResponse};
 use bigdecimal::BigDecimal;
 use serde::Serialize;
@@ -27,13 +26,10 @@ pub struct DashboardMetrics {
 
 /**
  * GET /api/v1/admin/analytics/dashboard
- * 
+ *
  * Get dashboard overview metrics
  */
-pub async fn get_dashboard_metrics(
-    pool: web::Data<PgPool>,
-    req: HttpRequest,
-) -> HttpResponse {
+pub async fn get_dashboard_metrics(pool: web::Data<PgPool>, req: HttpRequest) -> HttpResponse {
     if get_admin_claims(&req).is_none() {
         return HttpResponse::Unauthorized().json(serde_json::json!({
             "error": "Unauthorized"
@@ -41,9 +37,21 @@ pub async fn get_dashboard_metrics(
     }
 
     // Use the view we created in migration
-    let metrics = sqlx::query_as::<_, (i64, i64, i64, i64, BigDecimal, BigDecimal, i64, i64, i64, i64)>(
-        "SELECT * FROM admin_dashboard_summary"
-    )
+    let metrics = sqlx::query_as::<
+        _,
+        (
+            i64,
+            i64,
+            i64,
+            i64,
+            BigDecimal,
+            BigDecimal,
+            i64,
+            i64,
+            i64,
+            i64,
+        ),
+    >("SELECT * FROM admin_dashboard_summary")
     .fetch_one(pool.get_ref())
     .await;
 

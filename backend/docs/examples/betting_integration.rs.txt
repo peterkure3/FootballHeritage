@@ -11,25 +11,19 @@ use std::sync::Arc;
 use uuid::Uuid;
 
 // Import your application modules
-use backend::betting_simple::SimpleBettingService;
-use backend::crypto::CryptoService;
-use backend::errors::AppError;
-use backend::models::{Event, PlaceBetRequest};
+use football_heritage_backend::betting_simple::SimpleBettingService;
+use football_heritage_backend::config::AppConfig;
+use football_heritage_backend::crypto::CryptoService;
+use football_heritage_backend::errors::AppError;
+use football_heritage_backend::models::{Event, PlaceBetRequest};
 
 /// Example: Initialize the betting service
 async fn initialize_service() -> SimpleBettingService {
-    // Load encryption key from environment
-    let encryption_key = std::env::var("ENCRYPTION_KEY")
-        .expect("ENCRYPTION_KEY must be set")
-        .as_bytes()
-        .to_vec();
-
-    // Ensure key is 32 bytes for AES-256
-    let mut key = [0u8; 32];
-    key.copy_from_slice(&encryption_key[..32]);
+    // Load config from environment
+    let config = AppConfig::from_env().expect("Failed to load AppConfig from environment");
 
     // Create crypto service
-    let crypto_service = Arc::new(CryptoService::new(&key));
+    let crypto_service = Arc::new(CryptoService::new(&config).expect("Failed to create CryptoService"));
 
     // Create betting service
     SimpleBettingService::new(crypto_service)
@@ -143,14 +137,24 @@ async fn example_fetch_upcoming_games(
 
     println!("Found {} upcoming games:", events.len());
     for event in &events {
-        println!("  {} vs {} on {}",
+        println!(
+            "  {} vs {} on {}",
             event.home_team,
             event.away_team,
             event.event_date.format("%Y-%m-%d %H:%M")
         );
-        println!("    Moneyline: Home {} / Away {}",
-            event.moneyline_home.as_ref().map(|o| o.to_string()).unwrap_or("N/A".to_string()),
-            event.moneyline_away.as_ref().map(|o| o.to_string()).unwrap_or("N/A".to_string())
+        println!(
+            "    Moneyline: Home {} / Away {}",
+            event
+                .moneyline_home
+                .as_ref()
+                .map(|o| o.to_string())
+                .unwrap_or("N/A".to_string()),
+            event
+                .moneyline_away
+                .as_ref()
+                .map(|o| o.to_string())
+                .unwrap_or("N/A".to_string())
         );
     }
 
@@ -176,7 +180,10 @@ async fn example_fetch_bet_history(
         println!("    Odds: {}", bet.odds);
         println!("    Potential Win: ${}", bet.potential_win);
         println!("    Status: {}", bet.status);
-        println!("    Created: {}", bet.created_at.format("%Y-%m-%d %H:%M:%S"));
+        println!(
+            "    Created: {}",
+            bet.created_at.format("%Y-%m-%d %H:%M:%S")
+        );
         println!();
     }
 
@@ -264,7 +271,9 @@ async fn example_paginated_history(
 
     loop {
         let offset = page * page_size;
-        let bets = service.get_user_bets(pool, user_id, page_size, offset).await?;
+        let bets = service
+            .get_user_bets(pool, user_id, page_size, offset)
+            .await?;
 
         if bets.is_empty() {
             break;
@@ -274,7 +283,8 @@ async fn example_paginated_history(
         println!("Page {}: {} bets", page + 1, bets.len());
 
         for bet in bets {
-            println!("  - {} on {} (${}) - {}",
+            println!(
+                "  - {} on {} (${}) - {}",
                 bet.bet_type,
                 bet.created_at.format("%Y-%m-%d"),
                 bet.amount,

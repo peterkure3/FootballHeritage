@@ -1,6 +1,6 @@
 /**
  * Admin User Management API
- * 
+ *
  * Endpoints for admins to manage users:
  * - List users with pagination and filters
  * - View user details
@@ -9,7 +9,6 @@
  * - Update user limits
  * - Delete users (superadmin only)
  */
-
 use actix_web::{web, HttpRequest, HttpResponse};
 use bigdecimal::BigDecimal;
 use serde::{Deserialize, Serialize};
@@ -26,11 +25,11 @@ use crate::middleware::admin_auth::get_admin_claims;
 pub struct ListUsersQuery {
     pub page: Option<i64>,
     pub limit: Option<i64>,
-    pub status: Option<String>,  // active, suspended, locked
-    pub role: Option<String>,    // user, admin, superadmin
+    pub status: Option<String>, // active, suspended, locked
+    pub role: Option<String>,   // user, admin, superadmin
     pub verified: Option<bool>,
-    pub search: Option<String>,  // Search by email or name
-    pub sort_by: Option<String>, // created_at, last_login, total_bets
+    pub search: Option<String>,     // Search by email or name
+    pub sort_by: Option<String>,    // created_at, last_login, total_bets
     pub sort_order: Option<String>, // asc, desc
 }
 
@@ -110,7 +109,7 @@ pub struct UpdateUserLimitsRequest {
 
 /**
  * GET /api/v1/admin/users
- * 
+ *
  * List all users with pagination and filters
  * Requires: admin or superadmin role
  */
@@ -191,9 +190,25 @@ pub async fn list_users(
     sql.push_str(&format!(" LIMIT {} OFFSET {}", limit, offset));
 
     // Execute query
-    let users_result = sqlx::query_as::<_, (Uuid, String, String, String, String, bool, bool, chrono::DateTime<chrono::Utc>, Option<chrono::DateTime<chrono::Utc>>, i32, i64, BigDecimal)>(&sql)
-        .fetch_all(pool.get_ref())
-        .await;
+    let users_result = sqlx::query_as::<
+        _,
+        (
+            Uuid,
+            String,
+            String,
+            String,
+            String,
+            bool,
+            bool,
+            chrono::DateTime<chrono::Utc>,
+            Option<chrono::DateTime<chrono::Utc>>,
+            i32,
+            i64,
+            BigDecimal,
+        ),
+    >(&sql)
+    .fetch_all(pool.get_ref())
+    .await;
 
     let users = match users_result {
         Ok(rows) => rows
@@ -251,7 +266,7 @@ pub async fn list_users(
 
 /**
  * GET /api/v1/admin/users/:id
- * 
+ *
  * Get detailed information about a specific user
  * Requires: admin or superadmin role
  */
@@ -308,7 +323,7 @@ pub async fn get_user_details(
 
     let total_bets = user.total_bets;
     let wins = sqlx::query_scalar::<_, i64>(
-        "SELECT COUNT(*) FROM bets WHERE user_id = $1 AND status = 'WON'"
+        "SELECT COUNT(*) FROM bets WHERE user_id = $1 AND status = 'WON'",
     )
     .bind(user_id)
     .fetch_one(pool.get_ref())
@@ -343,26 +358,48 @@ pub async fn get_user_details(
         role: user.role.unwrap_or_else(|| "user".to_string()),
         is_verified: user.is_verified.unwrap_or(false),
         is_active: user.is_active.unwrap_or(false),
-        created_at: user.created_at.map(|dt: chrono::DateTime<chrono::Utc>| dt.to_rfc3339()).unwrap_or_default(),
-        updated_at: user.updated_at.map(|dt: chrono::DateTime<chrono::Utc>| dt.to_rfc3339()).unwrap_or_default(),
-        last_login: user.last_login.map(|dt: chrono::DateTime<chrono::Utc>| dt.to_rfc3339()),
+        created_at: user
+            .created_at
+            .map(|dt: chrono::DateTime<chrono::Utc>| dt.to_rfc3339())
+            .unwrap_or_default(),
+        updated_at: user
+            .updated_at
+            .map(|dt: chrono::DateTime<chrono::Utc>| dt.to_rfc3339())
+            .unwrap_or_default(),
+        last_login: user
+            .last_login
+            .map(|dt: chrono::DateTime<chrono::Utc>| dt.to_rfc3339()),
         login_count: user.login_count.unwrap_or(0),
         failed_login_attempts: user.failed_login_attempts.unwrap_or(0),
-        locked_until: user.locked_until.map(|dt: chrono::DateTime<chrono::Utc>| dt.to_rfc3339()),
+        locked_until: user
+            .locked_until
+            .map(|dt: chrono::DateTime<chrono::Utc>| dt.to_rfc3339()),
         wallet_balance,
-        total_deposits: user.total_deposits.map(|d: sqlx::types::BigDecimal| d.to_string().parse::<f64>().unwrap_or(0.0)).unwrap_or(0.0),
-        total_withdrawals: user.total_withdrawals.map(|d: sqlx::types::BigDecimal| d.to_string().parse::<f64>().unwrap_or(0.0)).unwrap_or(0.0),
+        total_deposits: user
+            .total_deposits
+            .map(|d: sqlx::types::BigDecimal| d.to_string().parse::<f64>().unwrap_or(0.0))
+            .unwrap_or(0.0),
+        total_withdrawals: user
+            .total_withdrawals
+            .map(|d: sqlx::types::BigDecimal| d.to_string().parse::<f64>().unwrap_or(0.0))
+            .unwrap_or(0.0),
         total_bets,
         total_bet_amount: user.total_bet_amount.to_string().parse().unwrap_or(0.0),
-        total_winnings: user.total_winnings.map(|d: sqlx::types::BigDecimal| d.to_string().parse::<f64>().unwrap_or(0.0)).unwrap_or(0.0),
-        total_losses: user.total_losses.map(|d: sqlx::types::BigDecimal| d.to_string().parse::<f64>().unwrap_or(0.0)).unwrap_or(0.0),
+        total_winnings: user
+            .total_winnings
+            .map(|d: sqlx::types::BigDecimal| d.to_string().parse::<f64>().unwrap_or(0.0))
+            .unwrap_or(0.0),
+        total_losses: user
+            .total_losses
+            .map(|d: sqlx::types::BigDecimal| d.to_string().parse::<f64>().unwrap_or(0.0))
+            .unwrap_or(0.0),
         win_rate,
     })
 }
 
 /**
  * PUT /api/v1/admin/users/:id/status
- * 
+ *
  * Suspend or activate a user account
  * Requires: admin or superadmin role
  */
@@ -429,7 +466,7 @@ pub async fn update_user_status(
 
 /**
  * PUT /api/v1/admin/users/:id/verify
- * 
+ *
  * Verify a user account
  * Requires: admin or superadmin role
  */

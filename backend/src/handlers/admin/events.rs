@@ -1,9 +1,8 @@
 /**
  * Admin Event Management API
- * 
+ *
  * Create, update, and manage sports events
  */
-
 use actix_web::{web, HttpRequest, HttpResponse};
 use bigdecimal::BigDecimal;
 use chrono::{DateTime, Utc};
@@ -47,7 +46,7 @@ pub struct CreateEventRequest {
     pub league: String,
     pub home_team: String,
     pub away_team: String,
-    pub event_date: String,  // ISO 8601 format
+    pub event_date: String, // ISO 8601 format
     pub moneyline_home: Option<f64>,
     pub moneyline_away: Option<f64>,
     pub point_spread: Option<f64>,
@@ -71,7 +70,7 @@ pub struct EventResponse {
 
 /**
  * POST /api/v1/admin/events
- * 
+ *
  * Create a new sports event
  */
 pub async fn create_event(
@@ -81,7 +80,9 @@ pub async fn create_event(
 ) -> HttpResponse {
     let admin_claims = match get_admin_claims(&req) {
         Some(claims) => claims,
-        None => return HttpResponse::Unauthorized().json(serde_json::json!({"error": "Unauthorized"})),
+        None => {
+            return HttpResponse::Unauthorized().json(serde_json::json!({"error": "Unauthorized"}))
+        }
     };
 
     let admin_id: Uuid = admin_claims.sub.parse().unwrap();
@@ -113,14 +114,30 @@ pub async fn create_event(
         body.home_team,
         body.away_team,
         event_date,
-        body.moneyline_home.map(|v| BigDecimal::from_str(&v.to_string()).ok()).flatten(),
-        body.moneyline_away.map(|v| BigDecimal::from_str(&v.to_string()).ok()).flatten(),
-        body.point_spread.map(|v| BigDecimal::from_str(&v.to_string()).ok()).flatten(),
-        body.spread_home_odds.map(|v| BigDecimal::from_str(&v.to_string()).ok()).flatten(),
-        body.spread_away_odds.map(|v| BigDecimal::from_str(&v.to_string()).ok()).flatten(),
-        body.total_points.map(|v| BigDecimal::from_str(&v.to_string()).ok()).flatten(),
-        body.over_odds.map(|v| BigDecimal::from_str(&v.to_string()).ok()).flatten(),
-        body.under_odds.map(|v| BigDecimal::from_str(&v.to_string()).ok()).flatten(),
+        body.moneyline_home
+            .map(|v| BigDecimal::from_str(&v.to_string()).ok())
+            .flatten(),
+        body.moneyline_away
+            .map(|v| BigDecimal::from_str(&v.to_string()).ok())
+            .flatten(),
+        body.point_spread
+            .map(|v| BigDecimal::from_str(&v.to_string()).ok())
+            .flatten(),
+        body.spread_home_odds
+            .map(|v| BigDecimal::from_str(&v.to_string()).ok())
+            .flatten(),
+        body.spread_away_odds
+            .map(|v| BigDecimal::from_str(&v.to_string()).ok())
+            .flatten(),
+        body.total_points
+            .map(|v| BigDecimal::from_str(&v.to_string()).ok())
+            .flatten(),
+        body.over_odds
+            .map(|v| BigDecimal::from_str(&v.to_string()).ok())
+            .flatten(),
+        body.under_odds
+            .map(|v| BigDecimal::from_str(&v.to_string()).ok())
+            .flatten(),
         admin_id
     )
     .fetch_one(pool.get_ref())
@@ -158,7 +175,7 @@ pub async fn create_event(
 
 /**
  * GET /api/v1/admin/events
- * 
+ *
  * Get all events with pagination
  */
 pub async fn get_all_events(
@@ -168,7 +185,9 @@ pub async fn get_all_events(
 ) -> HttpResponse {
     let _admin_claims = match get_admin_claims(&req) {
         Some(claims) => claims,
-        None => return HttpResponse::Unauthorized().json(serde_json::json!({"error": "Unauthorized"})),
+        None => {
+            return HttpResponse::Unauthorized().json(serde_json::json!({"error": "Unauthorized"}))
+        }
     };
 
     let limit: i64 = query.get("limit").and_then(|v| v.as_i64()).unwrap_or(50);
@@ -188,7 +207,7 @@ pub async fn get_all_events(
         .await
     } else if let Some(sport_val) = sport {
         sqlx::query_as::<_, EventRecord>(
-            r#"SELECT * FROM events WHERE sport = $1 ORDER BY event_date DESC LIMIT $2 OFFSET $3"#
+            r#"SELECT * FROM events WHERE sport = $1 ORDER BY event_date DESC LIMIT $2 OFFSET $3"#,
         )
         .bind(sport_val)
         .bind(limit)
@@ -197,7 +216,7 @@ pub async fn get_all_events(
         .await
     } else if let Some(status_val) = status {
         sqlx::query_as::<_, EventRecord>(
-            r#"SELECT * FROM events WHERE status = $1 ORDER BY event_date DESC LIMIT $2 OFFSET $3"#
+            r#"SELECT * FROM events WHERE status = $1 ORDER BY event_date DESC LIMIT $2 OFFSET $3"#,
         )
         .bind(status_val)
         .bind(limit)
@@ -206,7 +225,7 @@ pub async fn get_all_events(
         .await
     } else {
         sqlx::query_as::<_, EventRecord>(
-            r#"SELECT * FROM events ORDER BY event_date DESC LIMIT $1 OFFSET $2"#
+            r#"SELECT * FROM events ORDER BY event_date DESC LIMIT $1 OFFSET $2"#,
         )
         .bind(limit)
         .bind(offset)
@@ -221,14 +240,15 @@ pub async fn get_all_events(
         })),
         Err(e) => {
             eprintln!("Error fetching events: {}", e);
-            HttpResponse::InternalServerError().json(serde_json::json!({"error": "Failed to fetch events"}))
+            HttpResponse::InternalServerError()
+                .json(serde_json::json!({"error": "Failed to fetch events"}))
         }
     }
 }
 
 /**
  * GET /api/v1/admin/events/:id
- * 
+ *
  * Get single event by ID
  */
 pub async fn get_event(
@@ -238,15 +258,15 @@ pub async fn get_event(
 ) -> HttpResponse {
     let _admin_claims = match get_admin_claims(&req) {
         Some(claims) => claims,
-        None => return HttpResponse::Unauthorized().json(serde_json::json!({"error": "Unauthorized"})),
+        None => {
+            return HttpResponse::Unauthorized().json(serde_json::json!({"error": "Unauthorized"}))
+        }
     };
 
-    let result = sqlx::query_as::<_, EventRecord>(
-        r#"SELECT * FROM events WHERE id = $1"#
-    )
-    .bind(event_id.into_inner())
-    .fetch_one(pool.get_ref())
-    .await;
+    let result = sqlx::query_as::<_, EventRecord>(r#"SELECT * FROM events WHERE id = $1"#)
+        .bind(event_id.into_inner())
+        .fetch_one(pool.get_ref())
+        .await;
 
     match result {
         Ok(event) => HttpResponse::Ok().json(event),
@@ -259,7 +279,7 @@ pub async fn get_event(
 
 /**
  * PUT /api/v1/admin/events/:id
- * 
+ *
  * Update an event
  */
 #[derive(Debug, Deserialize)]
@@ -290,7 +310,9 @@ pub async fn update_event(
 ) -> HttpResponse {
     let admin_claims = match get_admin_claims(&req) {
         Some(claims) => claims,
-        None => return HttpResponse::Unauthorized().json(serde_json::json!({"error": "Unauthorized"})),
+        None => {
+            return HttpResponse::Unauthorized().json(serde_json::json!({"error": "Unauthorized"}))
+        }
     };
 
     let admin_id: Uuid = admin_claims.sub.parse().unwrap();
@@ -330,7 +352,8 @@ pub async fn update_event(
     }
 
     if query_parts.is_empty() {
-        return HttpResponse::BadRequest().json(serde_json::json!({"error": "No fields to update"}));
+        return HttpResponse::BadRequest()
+            .json(serde_json::json!({"error": "No fields to update"}));
     }
 
     query_parts.push(format!("updated_by = ${}", param_count));
@@ -382,18 +405,20 @@ pub async fn update_event(
             .execute(pool.get_ref())
             .await;
 
-            HttpResponse::Ok().json(serde_json::json!({"success": true, "message": "Event updated"}))
+            HttpResponse::Ok()
+                .json(serde_json::json!({"success": true, "message": "Event updated"}))
         }
         Err(e) => {
             eprintln!("Error updating event: {}", e);
-            HttpResponse::InternalServerError().json(serde_json::json!({"error": "Failed to update event"}))
+            HttpResponse::InternalServerError()
+                .json(serde_json::json!({"error": "Failed to update event"}))
         }
     }
 }
 
 /**
  * DELETE /api/v1/admin/events/:id
- * 
+ *
  * Delete an event
  */
 pub async fn delete_event(
@@ -403,7 +428,9 @@ pub async fn delete_event(
 ) -> HttpResponse {
     let admin_claims = match get_admin_claims(&req) {
         Some(claims) => claims,
-        None => return HttpResponse::Unauthorized().json(serde_json::json!({"error": "Unauthorized"})),
+        None => {
+            return HttpResponse::Unauthorized().json(serde_json::json!({"error": "Unauthorized"}))
+        }
     };
 
     let admin_id: Uuid = admin_claims.sub.parse().unwrap();
@@ -440,18 +467,20 @@ pub async fn delete_event(
             .execute(pool.get_ref())
             .await;
 
-            HttpResponse::Ok().json(serde_json::json!({"success": true, "message": "Event deleted"}))
+            HttpResponse::Ok()
+                .json(serde_json::json!({"success": true, "message": "Event deleted"}))
         }
         Err(e) => {
             eprintln!("Error deleting event: {}", e);
-            HttpResponse::InternalServerError().json(serde_json::json!({"error": "Failed to delete event"}))
+            HttpResponse::InternalServerError()
+                .json(serde_json::json!({"error": "Failed to delete event"}))
         }
     }
 }
 
 /**
  * PUT /api/v1/admin/events/:id/status
- * 
+ *
  * Update event status (UPCOMING, LIVE, FINISHED)
  */
 pub async fn update_event_status(
@@ -462,12 +491,17 @@ pub async fn update_event_status(
 ) -> HttpResponse {
     let admin_claims = match get_admin_claims(&req) {
         Some(claims) => claims,
-        None => return HttpResponse::Unauthorized().json(serde_json::json!({"error": "Unauthorized"})),
+        None => {
+            return HttpResponse::Unauthorized().json(serde_json::json!({"error": "Unauthorized"}))
+        }
     };
 
     let status = match body.get("status").and_then(|v| v.as_str()) {
         Some(s) => s,
-        None => return HttpResponse::BadRequest().json(serde_json::json!({"error": "Missing status field"})),
+        None => {
+            return HttpResponse::BadRequest()
+                .json(serde_json::json!({"error": "Missing status field"}))
+        }
     };
 
     let result = sqlx::query!(
@@ -480,10 +514,12 @@ pub async fn update_event_status(
     .await;
 
     match result {
-        Ok(_) => HttpResponse::Ok().json(serde_json::json!({"success": true, "message": "Event status updated"})),
+        Ok(_) => HttpResponse::Ok()
+            .json(serde_json::json!({"success": true, "message": "Event status updated"})),
         Err(e) => {
             eprintln!("Error updating event status: {}", e);
-            HttpResponse::InternalServerError().json(serde_json::json!({"error": "Failed to update event"}))
+            HttpResponse::InternalServerError()
+                .json(serde_json::json!({"error": "Failed to update event"}))
         }
     }
 }

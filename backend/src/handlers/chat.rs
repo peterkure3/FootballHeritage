@@ -1,10 +1,9 @@
 /**
  * Chat Handler - Proxy to Node.js Chatbot Service
- * 
+ *
  * This handler forwards authenticated chat requests to the Node.js
  * Genkit-powered chatbot microservice running on localhost:3000
  */
-
 use actix_web::{web, HttpRequest, HttpResponse};
 use reqwest;
 use serde::{Deserialize, Serialize};
@@ -46,14 +45,14 @@ pub struct ErrorResponse {
 
 /**
  * POST /api/v1/chat
- * 
+ *
  * Proxies authenticated chat requests to Node.js chatbot service
- * 
+ *
  * Security:
  * - Validates JWT token
  * - Forwards token to chatbot service for user identification
  * - Sanitizes input/output
- * 
+ *
  * Performance:
  * - Async HTTP client with connection pooling
  * - Timeout protection (30 seconds)
@@ -145,10 +144,7 @@ pub async fn chat(
                 message: "Failed to get response from chatbot service".to_string(),
             });
 
-        error!(
-            "Chatbot service error ({}): {}",
-            status, error_body.message
-        );
+        error!("Chatbot service error ({}): {}", status, error_body.message);
 
         return match status.as_u16() {
             400 => Err(ApiError::BadRequest(error_body.message)),
@@ -184,7 +180,7 @@ pub async fn chat(
 
 /**
  * GET /api/v1/chat/health
- * 
+ *
  * Checks if the chatbot service is available
  * Useful for monitoring and debugging
  */

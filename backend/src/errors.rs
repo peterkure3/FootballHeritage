@@ -106,22 +106,24 @@ pub enum AppError {
 
 impl AppError {
     pub fn is_fraud_related(&self) -> bool {
-        matches!(self,
-            AppError::SuspiciousActivity |
-            AppError::RateLimit |
-            AppError::RateLimitExceeded(_) |
-            AppError::TooManyLoginAttempts
+        matches!(
+            self,
+            AppError::SuspiciousActivity
+                | AppError::RateLimit
+                | AppError::RateLimitExceeded(_)
+                | AppError::TooManyLoginAttempts
         )
     }
 
     pub fn requires_logging(&self) -> bool {
-        matches!(self,
-            AppError::Authentication(_) |
-            AppError::Authorization(_) |
-            AppError::SuspiciousActivity |
-            AppError::InsufficientFunds |
-            AppError::AccountLocked |
-            AppError::TooManyLoginAttempts
+        matches!(
+            self,
+            AppError::Authentication(_)
+                | AppError::Authorization(_)
+                | AppError::SuspiciousActivity
+                | AppError::InsufficientFunds
+                | AppError::AccountLocked
+                | AppError::TooManyLoginAttempts
         )
     }
 
@@ -134,7 +136,9 @@ impl AppError {
             AppError::RateLimit => "Too many requests. Please try again later".to_string(),
             AppError::RateLimitExceeded(msg) => format!("Rate limit exceeded: {}", msg),
             AppError::Internal(msg) => format!("Internal error: {}", msg),
-            AppError::AccountLocked => "Account temporarily locked. Please try again later".to_string(),
+            AppError::AccountLocked => {
+                "Account temporarily locked. Please try again later".to_string()
+            }
             AppError::InsufficientFunds => "Insufficient funds for this operation".to_string(),
             AppError::BetLimitExceeded => "Bet amount exceeds limit".to_string(),
             AppError::EventNotFound => "Event not found".to_string(),
@@ -142,15 +146,21 @@ impl AppError {
             AppError::UserNotFound => "User not found".to_string(),
             AppError::InvalidBetAmount => "Invalid bet amount".to_string(),
             AppError::OddsChanged => "Odds have changed since you last viewed them".to_string(),
-            AppError::EventNotAvailable => "This event is no longer available for betting".to_string(),
+            AppError::EventNotAvailable => {
+                "This event is no longer available for betting".to_string()
+            }
             AppError::Encryption(_) => "Encryption error occurred".to_string(),
             AppError::JWT(_) => "Authentication token error".to_string(),
             AppError::IO(_) => "File operation failed".to_string(),
             AppError::Configuration(_) => "Server configuration error".to_string(),
             AppError::AgeVerificationFailed => "You must be 21 or older to register".to_string(),
             AppError::SelfExclusionActive => "Account is currently self-excluded".to_string(),
-            AppError::ResponsibleGamblingLimit(msg) => format!("Responsible gambling limit: {}", msg),
-            AppError::SuspiciousActivity => "Suspicious activity detected. Action blocked".to_string(),
+            AppError::ResponsibleGamblingLimit(msg) => {
+                format!("Responsible gambling limit: {}", msg)
+            }
+            AppError::SuspiciousActivity => {
+                "Suspicious activity detected. Action blocked".to_string()
+            }
             AppError::SessionExpired => "Session has expired".to_string(),
             AppError::InvalidCSRFToken => "Invalid security token".to_string(),
             AppError::TooManyLoginAttempts => "Too many failed login attempts".to_string(),

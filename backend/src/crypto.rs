@@ -1,17 +1,17 @@
 #![allow(dead_code)]
 #![allow(deprecated)]
-use aes_gcm::{Aes256Gcm, KeyInit};
-use aes_gcm::aead::{Aead, generic_array::GenericArray};
-use rand::rngs::OsRng;
-use argon2::{Argon2, PasswordHash, PasswordHasher, PasswordVerifier};
-use argon2::password_hash::{rand_core::OsRng as ArgonRng, SaltString};
-use ring::hmac;
-use base64::{Engine as _, engine::general_purpose};
-use rand::{RngCore, thread_rng};
-use std::error::Error;
-use crate::errors::AppError;
 use crate::config::AppConfig;
+use crate::errors::AppError;
+use aes_gcm::aead::{generic_array::GenericArray, Aead};
+use aes_gcm::{Aes256Gcm, KeyInit};
+use argon2::password_hash::{rand_core::OsRng as ArgonRng, SaltString};
+use argon2::{Argon2, PasswordHash, PasswordHasher, PasswordVerifier};
+use base64::{engine::general_purpose, Engine as _};
 use bigdecimal::BigDecimal;
+use rand::rngs::OsRng;
+use rand::{thread_rng, RngCore};
+use ring::hmac;
+use std::error::Error;
 use std::str::FromStr;
 
 pub struct CryptoService {
@@ -97,7 +97,10 @@ impl CryptoService {
         match argon2.verify_password(password.as_bytes(), &parsed_hash) {
             Ok(()) => Ok(true),
             Err(argon2::password_hash::Error::Password) => Ok(false),
-            Err(e) => Err(AppError::Encryption(format!("Password verification error: {}", e))),
+            Err(e) => Err(AppError::Encryption(format!(
+                "Password verification error: {}",
+                e
+            ))),
         }
     }
 
@@ -124,7 +127,11 @@ impl CryptoService {
     }
 
     /// Decrypt wallet balance
-    pub fn decrypt_balance(&self, encrypted_balance: &str, iv: &str) -> Result<BigDecimal, AppError> {
+    pub fn decrypt_balance(
+        &self,
+        encrypted_balance: &str,
+        iv: &str,
+    ) -> Result<BigDecimal, AppError> {
         let cipher = Aes256Gcm::new_from_slice(&self.encryption_key)
             .map_err(|e| AppError::Encryption(format!("Cipher creation failed: {}", e)))?;
 
@@ -221,7 +228,12 @@ impl CryptoService {
     }
 
     /// Derive a key from password using PBKDF2 (for additional security)
-    pub fn derive_key(&self, password: &str, salt: &[u8], iterations: u32) -> Result<[u8; 32], AppError> {
+    pub fn derive_key(
+        &self,
+        password: &str,
+        salt: &[u8],
+        iterations: u32,
+    ) -> Result<[u8; 32], AppError> {
         use ring::pbkdf2;
 
         let mut key = [0u8; 32];
@@ -275,7 +287,7 @@ impl CryptoService {
         if card.len() <= 4 {
             "****".to_string()
         } else {
-            format!("****-****-****-{}", &card[card.len()-4..])
+            format!("****-****-****-{}", &card[card.len() - 4..])
         }
     }
 }
@@ -287,6 +299,7 @@ mod tests {
 
     fn get_test_config() -> AppConfig {
         AppConfig {
+            app_env: "test".to_string(),
             database_url: "test".to_string(),
             jwt_secret: "test_jwt_secret_that_is_long_enough".to_string(),
             jwt_expiration_hours: 24,

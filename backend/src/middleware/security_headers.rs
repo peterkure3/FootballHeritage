@@ -70,7 +70,9 @@ where
             // Strict Transport Security (HSTS) - force HTTPS
             headers.insert(
                 actix_web::http::header::HeaderName::from_static("strict-transport-security"),
-                actix_web::http::header::HeaderValue::from_static("max-age=31536000; includeSubDomains"),
+                actix_web::http::header::HeaderValue::from_static(
+                    "max-age=31536000; includeSubDomains",
+                ),
             );
 
             // Content Security Policy
@@ -84,14 +86,16 @@ where
             // Referrer Policy
             headers.insert(
                 actix_web::http::header::HeaderName::from_static("referrer-policy"),
-                actix_web::http::header::HeaderValue::from_static("strict-origin-when-cross-origin"),
+                actix_web::http::header::HeaderValue::from_static(
+                    "strict-origin-when-cross-origin",
+                ),
             );
 
             // Permissions Policy (formerly Feature Policy)
             headers.insert(
                 actix_web::http::header::HeaderName::from_static("permissions-policy"),
                 actix_web::http::header::HeaderValue::from_static(
-                    "geolocation=(), microphone=(), camera=(), payment=()"
+                    "geolocation=(), microphone=(), camera=(), payment=()",
                 ),
             );
 

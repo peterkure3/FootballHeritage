@@ -7,6 +7,7 @@ pub mod intelligence;
 pub mod limits;
 pub mod monitoring;
 pub mod not_found;
+pub mod player_props;
 pub mod parlay;
 pub mod sports;
 pub mod user;

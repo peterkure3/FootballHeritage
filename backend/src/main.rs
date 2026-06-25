@@ -2,9 +2,9 @@ use actix_cors::Cors;
 use actix_web::{web, App, HttpServer};
 use rustls::pki_types::CertificateDer;
 use sqlx::postgres::PgPoolOptions;
+use std::rc::Rc;
 use tracing::{debug, error, info, warn};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
-use std::rc::Rc;
 
 mod auth;
 mod betting_simple;
@@ -20,7 +20,6 @@ mod utils;
 
 use config::AppConfig;
 
-
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     // Initialize tracing
@@ -34,14 +33,20 @@ async fn main() -> std::io::Result<()> {
 
     // Load configuration
     dotenvy::dotenv().ok();
-    let config = AppConfig::from_env()
-        .map_err(|e| {
-            error!("Failed to load configuration: {}", e);
-            std::io::Error::new(std::io::ErrorKind::Other, e)
-        })?;
+    let config = AppConfig::from_env().map_err(|e| {
+        error!("Failed to load configuration: {}", e);
+        std::io::Error::new(std::io::ErrorKind::Other, e)
+    })?;
 
     info!("Starting Football Heritage Betting API Server");
-    info!("Environment: {}", if config.is_development() { "Development" } else { "Production" });
+    info!(
+        "Environment: {}",
+        if config.is_development() {
+            "Development"
+        } else {
+            "Production"
+        }
+    );
 
     // Initialize database connection pool
     let db_pool = PgPoolOptions::new()
@@ -159,14 +164,16 @@ async fn main() -> std::io::Result<()> {
             ])
             .supports_credentials()
             .max_age(3600);
-        
+
         App::new()
             .app_data(web::Data::new(config.clone()))
             .app_data(web::Data::new(db_pool.clone()))
             .app_data(web::Data::new(auth_service_for_app.clone()))
             .app_data(rate_limiters.clone())
             .app_data(monitoring_service.clone())
-            .wrap(middleware::monitoring::Metrics::new(monitoring_service.clone()))
+            .wrap(middleware::monitoring::Metrics::new(
+                monitoring_service.clone(),
+            ))
             .wrap(middleware::rate_limit::RateLimitMiddleware::new())
             .wrap(cors)
             .wrap(actix_web::middleware::Logger::default())
@@ -181,22 +188,42 @@ async fn main() -> std::io::Result<()> {
                             .route("/login", web::post().to(handlers::auth::login))
                             .route("/logout", web::post().to(handlers::auth::logout))
                             .route("/refresh", web::post().to(handlers::auth::refresh))
-                            .route("/verify-email", web::post().to(handlers::auth::verify_email))
+                            .route(
+                                "/verify-email",
+                                web::post().to(handlers::auth::verify_email),
+                            ),
                     )
                     .service(
                         web::scope("/intelligence")
-                            .route("/devigged-odds", web::get().to(handlers::intelligence::get_devigged_odds))
-                            .route("/ev-bets", web::get().to(handlers::intelligence::get_ev_bets))
-                            .route("/arbitrage", web::get().to(handlers::intelligence::get_arbitrage))
-                            .route("/refresh", web::post().to(handlers::intelligence::refresh_intelligence))
+                            .route(
+                                "/devigged-odds",
+                                web::get().to(handlers::intelligence::get_devigged_odds),
+                            )
+                            .route(
+                                "/ev-bets",
+                                web::get().to(handlers::intelligence::get_ev_bets),
+                            )
+                            .route(
+                                "/arbitrage",
+                                web::get().to(handlers::intelligence::get_arbitrage),
+                            )
+                            .route(
+                                "/refresh",
+                                web::post().to(handlers::intelligence::refresh_intelligence),
+                            ),
                     )
                     .service(
                         web::scope("/wallet")
-                            .wrap(middleware::jwt_auth::RequireAuth::new(auth_service_for_app.clone()))
+                            .wrap(middleware::jwt_auth::RequireAuth::new(
+                                auth_service_for_app.clone(),
+                            ))
                             .route("/balance", web::get().to(handlers::wallet::get_balance))
                             .route("/deposit", web::post().to(handlers::wallet::deposit))
                             .route("/withdraw", web::post().to(handlers::wallet::withdraw))
-                            .route("/transactions", web::get().to(handlers::wallet::get_transactions))
+                            .route(
+                                "/transactions",
+                                web::get().to(handlers::wallet::get_transactions),
+                            ),
                     )
                     .service(
                         web::scope("/betting")
@@ -204,62 +231,117 @@ async fn main() -> std::io::Result<()> {
                             .route("/events/{id}", web::get().to(handlers::betting::get_event))
                             .service(
                                 web::scope("")
-                                    .wrap(middleware::jwt_auth::RequireAuth::new(auth_service_for_app.clone()))
+                                    .wrap(middleware::jwt_auth::RequireAuth::new(
+                                        auth_service_for_app.clone(),
+                                    ))
                                     .route("/bets", web::post().to(handlers::betting::place_bet))
                                     .route("/bets", web::get().to(handlers::betting::get_user_bets))
-                                    .route("/bets/{id}", web::get().to(handlers::betting::get_bet))
-                            )
+                                    .route("/bets/{id}", web::get().to(handlers::betting::get_bet)),
+                            ),
                     )
                     .service(
                         web::scope("/limits")
-                            .wrap(middleware::jwt_auth::RequireAuth::new(auth_service_for_app.clone()))
+                            .wrap(middleware::jwt_auth::RequireAuth::new(
+                                auth_service_for_app.clone(),
+                            ))
                             .route("/", web::get().to(handlers::limits::get_limits))
                             .route("/", web::put().to(handlers::limits::update_limits))
-                            .route("/self-exclude", web::post().to(handlers::limits::self_exclude))
+                            .route(
+                                "/self-exclude",
+                                web::post().to(handlers::limits::self_exclude),
+                            ),
                     )
                     .service(
                         web::scope("/user")
-                            .wrap(middleware::jwt_auth::RequireAuth::new(auth_service_for_app.clone()))
+                            .wrap(middleware::jwt_auth::RequireAuth::new(
+                                auth_service_for_app.clone(),
+                            ))
                             .route("/profile", web::get().to(handlers::user::get_profile))
                             .route("/profile", web::put().to(handlers::user::update_profile))
                             .route("/activity", web::get().to(handlers::user::get_activity))
-                            .route("/password", web::put().to(handlers::user::change_password))
+                            .route("/password", web::put().to(handlers::user::change_password)),
                     )
                     .service(
                         web::scope("/chat")
                             .route("", web::post().to(handlers::chat::chat))
-                            .route("/health", web::get().to(handlers::chat::chat_health))
+                            .route("/health", web::get().to(handlers::chat::chat_health)),
                     )
                     .service(
                         web::scope("/sports")
                             .route("", web::get().to(handlers::sports::get_sports))
-                            .route("/categories", web::get().to(handlers::sports::get_bet_categories))
-                            .route("/{sport}/leagues", web::get().to(handlers::sports::get_sport_leagues))
+                            .route(
+                                "/categories",
+                                web::get().to(handlers::sports::get_bet_categories),
+                            )
+                            .route(
+                                "/{sport}/leagues",
+                                web::get().to(handlers::sports::get_sport_leagues),
+                            ),
+                    )
+                    .service(
+                        web::scope("/player-props")
+                            .route("", web::get().to(handlers::player_props::get_player_props))
+                            .route("/event/{id}", web::get().to(handlers::player_props::get_player_props_by_event)),
                     )
                     .service(
                         web::scope("/parlay")
-                            .route("/calculate", web::post().to(handlers::parlay::calculate_parlay))
+                            .route(
+                                "/calculate",
+                                web::post().to(handlers::parlay::calculate_parlay),
+                            )
                             .route("/save", web::post().to(handlers::parlay::save_parlay))
                             .route("/saved", web::get().to(handlers::parlay::get_saved_parlays))
-                            .route("/history", web::get().to(handlers::parlay::get_calculation_history))
+                            .route(
+                                "/history",
+                                web::get().to(handlers::parlay::get_calculation_history),
+                            )
                             .route("/{id}", web::get().to(handlers::parlay::get_parlay))
-                            .route("/{id}", web::delete().to(handlers::parlay::delete_parlay))
+                            .route("/{id}", web::delete().to(handlers::parlay::delete_parlay)),
                     )
                     .service(
                         web::scope("/admin")
-                            .wrap(middleware::admin_auth::RequireAdmin::new(Rc::new(auth_service_for_app.clone())))
+                            .wrap(middleware::admin_auth::RequireAdmin::new(Rc::new(
+                                auth_service_for_app.clone(),
+                            )))
                             // User management
                             .route("/users", web::get().to(handlers::admin::users::list_users))
-                            .route("/users/{id}", web::get().to(handlers::admin::users::get_user_details))
-                            .route("/users/{id}/status", web::put().to(handlers::admin::users::update_user_status))
-                            .route("/users/{id}/verify", web::put().to(handlers::admin::users::verify_user))
+                            .route(
+                                "/users/{id}",
+                                web::get().to(handlers::admin::users::get_user_details),
+                            )
+                            .route(
+                                "/users/{id}/status",
+                                web::put().to(handlers::admin::users::update_user_status),
+                            )
+                            .route(
+                                "/users/{id}/verify",
+                                web::put().to(handlers::admin::users::verify_user),
+                            )
                             // Event management
-                            .route("/events", web::get().to(handlers::admin::events::get_all_events))
-                            .route("/events", web::post().to(handlers::admin::events::create_event))
-                            .route("/events/{id}", web::get().to(handlers::admin::events::get_event))
-                            .route("/events/{id}", web::put().to(handlers::admin::events::update_event))
-                            .route("/events/{id}", web::delete().to(handlers::admin::events::delete_event))
-                            .route("/events/{id}/status", web::put().to(handlers::admin::events::update_event_status))
+                            .route(
+                                "/events",
+                                web::get().to(handlers::admin::events::get_all_events),
+                            )
+                            .route(
+                                "/events",
+                                web::post().to(handlers::admin::events::create_event),
+                            )
+                            .route(
+                                "/events/{id}",
+                                web::get().to(handlers::admin::events::get_event),
+                            )
+                            .route(
+                                "/events/{id}",
+                                web::put().to(handlers::admin::events::update_event),
+                            )
+                            .route(
+                                "/events/{id}",
+                                web::delete().to(handlers::admin::events::delete_event),
+                            )
+                            .route(
+                                "/events/{id}/status",
+                                web::put().to(handlers::admin::events::update_event_status),
+                            )
                             // Bet management - Temporarily disabled
                             // .route("/bets", web::get().to(handlers::admin::bets::get_all_bets))
                             // .route("/bets/{id}", web::get().to(handlers::admin::bets::get_bet))
@@ -267,11 +349,20 @@ async fn main() -> std::io::Result<()> {
                             // .route("/bets/{id}/settle", web::put().to(handlers::admin::bets::settle_bet))
                             // .route("/bets/{id}/void", web::put().to(handlers::admin::bets::void_bet))
                             // Analytics
-                            .route("/analytics/dashboard", web::get().to(handlers::admin::analytics::get_dashboard_metrics))
+                            .route(
+                                "/analytics/dashboard",
+                                web::get().to(handlers::admin::analytics::get_dashboard_metrics),
+                            )
                             // Monitoring
-                            .route("/monitoring/fraud-alerts", web::get().to(handlers::admin::monitoring::get_fraud_alerts))
-                            .route("/monitoring/audit-logs", web::get().to(handlers::admin::monitoring::get_audit_logs))
-                    )
+                            .route(
+                                "/monitoring/fraud-alerts",
+                                web::get().to(handlers::admin::monitoring::get_fraud_alerts),
+                            )
+                            .route(
+                                "/monitoring/audit-logs",
+                                web::get().to(handlers::admin::monitoring::get_audit_logs),
+                            ),
+                    ),
             )
             .route("/health", web::get().to(handlers::health::health_check))
             .route("/metrics", web::get().to(handlers::monitoring::metrics))
