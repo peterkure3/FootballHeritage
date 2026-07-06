@@ -431,6 +431,7 @@ def get_prediction_versions():
                 p.model_version,
                 COUNT(*) AS prediction_count,
                 SUM(CASE WHEN m.result = p.winner THEN 1 ELSE 0 END) AS correct_count,
+                COUNT(*) FILTER (WHERE m.result IS NOT NULL) AS settled_count,
                 MIN(p.created_at) AS first_used,
                 MAX(p.created_at) AS last_used
             FROM predictions p
@@ -453,10 +454,12 @@ def get_prediction_versions():
             version = str(row[0]) if row[0] else "unknown"
             prediction_count = int(row[1]) if row[1] else 0
             correct_count = int(row[2]) if row[2] else 0
-            first_used = row[3]
-            last_used = row[4]
-            
-            accuracy_pct = (correct_count / prediction_count * 100) if prediction_count > 0 else 0
+            settled_count = int(row[3]) if row[3] else 0
+            first_used = row[4]
+            last_used = row[5]
+
+            # Accuracy over settled matches only — unsettled predictions are not "wrong yet"
+            accuracy_pct = (correct_count / settled_count * 100) if settled_count > 0 else 0
             is_current = (i == 0)  # Most recent version is current
             
             if is_current:
