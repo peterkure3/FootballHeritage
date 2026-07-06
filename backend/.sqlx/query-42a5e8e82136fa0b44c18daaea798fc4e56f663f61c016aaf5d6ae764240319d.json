@@ -1,0 +1,40 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT \n            league,\n            COUNT(*) as event_count,\n            COUNT(*) FILTER (WHERE status = 'UPCOMING') as upcoming_count,\n            MIN(event_date) as next_event\n        FROM events\n        WHERE sport = $1 \n        AND status IN ('UPCOMING', 'LIVE')\n        AND event_date > NOW()\n        GROUP BY league\n        ORDER BY event_count DESC\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "league",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 1,
+        "name": "event_count",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 2,
+        "name": "upcoming_count",
+        "type_info": "Int8"
+      },
+      {
+        "ordinal": 3,
+        "name": "next_event",
+        "type_info": "Timestamptz"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      null,
+      null,
+      null
+    ]
+  },
+  "hash": "42a5e8e82136fa0b44c18daaea798fc4e56f663f61c016aaf5d6ae764240319d"
+}

@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "INSERT INTO admin_logs (admin_id, action, target_type, target_id) VALUES ($1, 'update_event', 'event', $2)",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Uuid"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "db3e4ac32e30cc141b0c1777b8fdd9559519a4c391da6a11cf3c73e929fc9a50"
+}

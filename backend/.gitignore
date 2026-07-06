@@ -51,8 +51,8 @@ tls/
 .classpath
 .settings/
 
-# SQLx offline mode (generated)
-.sqlx/
+# SQLx offline query cache — COMMITTED so CI/fresh clones build with SQLX_OFFLINE=true
+# .sqlx/ intentionally tracked
 sqlx-data.json
 
 # Backup files

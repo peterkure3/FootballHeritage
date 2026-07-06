@@ -1,0 +1,50 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT \n            l.id, l.action, l.target_type, l.target_id, l.created_at,\n            u.email as admin_email\n        FROM admin_logs l\n        JOIN users u ON l.admin_id = u.id\n        ORDER BY l.created_at DESC\n        LIMIT 100\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "action",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 2,
+        "name": "target_type",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 3,
+        "name": "target_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 4,
+        "name": "created_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 5,
+        "name": "admin_email",
+        "type_info": "Varchar"
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      false,
+      false,
+      true,
+      true,
+      true,
+      false
+    ]
+  },
+  "hash": "da82ca10fe48f3ae54ed09872f446103d24c3609180f55abaa3e8bc2c2ad7b1c"
+}

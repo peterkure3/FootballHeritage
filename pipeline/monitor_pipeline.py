@@ -189,5 +189,5 @@ def main() -> None:
     sys.exit(0 if not overall_errors else 1)
 
 
-+if __name__ == "__main__":
-+    main()
+if __name__ == "__main__":
+    main()
