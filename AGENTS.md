@@ -23,6 +23,10 @@ You are operating in the **FootballHeritage** workspace. A comprehensive AI-powe
 4. **L3** — _config/*, stages/{current}/references/*: stable rules
 5. **L4** — stages/{current}/output/*: working artifacts
 
+Before executing any nontrivial task, load `shared/WORKFLOW.md` (Claude Code: run
+the `/workflow` skill) — the engineering operating manual: investigate→verify→record
+loop, verification gates, project commands, known failure patterns.
+
 ## Stage Pipeline
 | Stage | Job | Gate |
 |-------|-----|------|
