@@ -66,9 +66,9 @@ def calculate_elo_ratings(df: pd.DataFrame) -> pd.DataFrame:
     # Initialize ELO ratings
     elo_ratings: Dict[str, float] = {}
     
-    # Add columns for ELO
-    df["home_elo"] = ELO_INITIAL
-    df["away_elo"] = ELO_INITIAL
+    # Add columns for ELO - float, or pandas 2.x raises LossySetitemError on fractional updates
+    df["home_elo"] = float(ELO_INITIAL)
+    df["away_elo"] = float(ELO_INITIAL)
     df["elo_diff"] = 0.0
     df["home_expected"] = 0.5
     
@@ -649,8 +649,8 @@ def create_ensemble_model() -> StackingClassifier:
     ]
     
     # Meta-learner (logistic regression works well for stacking)
+    # multi_class kwarg removed in scikit-learn 1.7; multinomial is the lbfgs default
     meta_learner = LogisticRegression(
-        multi_class="multinomial",
         solver="lbfgs",
         max_iter=1000,
         random_state=42,
@@ -698,10 +698,12 @@ def train_calibrated_ensemble(
     
     # Apply probability calibration (isotonic regression)
     logger.info("Calibrating probabilities with isotonic regression...")
+    # cv="prefit" was removed in scikit-learn 1.6+; FrozenEstimator is the replacement
+    from sklearn.frozen import FrozenEstimator
+
     calibrated = CalibratedClassifierCV(
-        ensemble,
+        FrozenEstimator(ensemble),
         method="isotonic",
-        cv="prefit",  # Already fitted
     )
     calibrated.fit(X_val, y_val_encoded)
     
