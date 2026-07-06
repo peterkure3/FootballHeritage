@@ -65,9 +65,9 @@ FootballHeritage/
 - **No root .gitignore** — root `target/`, `backups/`, `.vscode/`, pipeline data JSONs untracked/uncommitted clutter; ICM files themselves not yet committed
 - **Migrations disabled** in backend main.rs; ad-hoc fix SQL files at backend root (fix_migrations.sql, reset_migrations.sql, update_admin_role.sql, …) and a migrations.disabled/ folder
 - **backend/package.json** ("pg" only) — used by backend/scripts/import_betpawa_data.js and import_sample_data.js data-import scripts (not stray; node_modules correctly untracked)
-- **Versioned-file duplication** — compute_intelligence/_v2, train_model/_v2, predict/_v2, fetch_basketball_reference/_async all coexist; scheduler.py imports both v1 and v2
+- ~~Versioned-file duplication~~ — v1 train/predict + sync scraper deleted 2026-07-06; compute_intelligence(_v2) both kept intentionally (v2 wraps v1)
 - ~~pipeline/api/routes.py monolith~~ — split 2026-07-06 into api/routers/{intelligence,predictions,core,matchup,assistant,parlay,fpl,ncaab}.py + api/db.py + api/odds_math.py; fixed shadowed /predictions/* routes and blocking-sync-in-async endpoints
-- **4 competing schedulers** — scheduler.py, Airflow DAG, .bat files, Windows Task Scheduler docs
+- Scheduler: Windows Task Scheduler + .bat files is the single supported path (scheduler.py and Airflow DAG deleted 2026-07-06)
 - **Thin test coverage** — one Playwright E2E spec (API-mocked); chatbot has no tests; pipeline test_*.py are manual scripts, not a pytest suite; backend has unit tests in 5 modules
 - **Doc sprawl** — 18 loose .md status files in pipeline/, 13 .md/.sql at backend root
 
