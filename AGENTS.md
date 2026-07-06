@@ -26,6 +26,8 @@ You are operating in the **FootballHeritage** workspace. A comprehensive AI-powe
 Before executing any nontrivial task, load `shared/WORKFLOW.md` (Claude Code: run
 the `/workflow` skill) — the engineering operating manual: investigate→verify→record
 loop, verification gates, project commands, known failure patterns.
+For judgment, history, and risk context, load `shared/HANDOVER.md` (`/handover`) —
+incident case studies, heuristics, and institutional knowledge no code comment holds.
 
 ## Stage Pipeline
 | Stage | Job | Gate |
