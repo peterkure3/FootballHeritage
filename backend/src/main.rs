@@ -64,16 +64,14 @@ async fn main() -> std::io::Result<()> {
 
     info!("Database connection pool initialized successfully");
 
-    // Run database migrations
-    // Disabled: Migrations already applied - uncomment if you need to run new migrations
-    // sqlx::migrate!("./migrations")
-    //     .run(&db_pool)
-    //     .await
-    //     .map_err(|e| {
-    //         error!("Failed to run database migrations: {}", e);
-    //         std::io::Error::new(std::io::ErrorKind::Other, "Migration failed")
-    //     })?;
-    info!("Auto-migrations disabled (already applied to database)");
+    // Run database migrations (no-ops for already-applied versions)
+    sqlx::migrate!("./migrations")
+        .run(&db_pool)
+        .await
+        .map_err(|e| {
+            error!("Failed to run database migrations: {}", e);
+            std::io::Error::new(std::io::ErrorKind::Other, "Migration failed")
+        })?;
 
     info!("Database migrations completed successfully");
 
