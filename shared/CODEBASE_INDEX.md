@@ -35,7 +35,7 @@ FootballHeritage/
 ├── pipeline/                  # Python ML pipeline (~16K+ lines)
 │   ├── etl/                   # 31 modules (fetch/ingest/transform/load, elo, devig, backtesting)
 │   ├── models/                # train/predict v1 + v2, evaluate
-│   ├── api/                   # FastAPI — routes.py is a 3,502-line monolith
+│   ├── api/                   # FastAPI — routes.py aggregates api/routers/* domain modules
 │   └── dags/                  # Airflow DAG (one of 4 competing schedulers)
 ├── chatbot/                   # Express + Genkit RAG service (JWT-validated, Redis-cached)
 └── scripts/                   # DB backup/restore utilities
@@ -66,7 +66,7 @@ FootballHeritage/
 - **Migrations disabled** in backend main.rs; ad-hoc fix SQL files at backend root (fix_migrations.sql, reset_migrations.sql, update_admin_role.sql, …) and a migrations.disabled/ folder
 - **backend/package.json** ("pg" only) — used by backend/scripts/import_betpawa_data.js and import_sample_data.js data-import scripts (not stray; node_modules correctly untracked)
 - **Versioned-file duplication** — compute_intelligence/_v2, train_model/_v2, predict/_v2, fetch_basketball_reference/_async all coexist; scheduler.py imports both v1 and v2
-- **pipeline/api/routes.py = 3,502 lines** — all routers, Pydantic models, odds math, and an intent-detection assistant in one file
+- ~~pipeline/api/routes.py monolith~~ — split 2026-07-06 into api/routers/{intelligence,predictions,core,matchup,assistant,parlay,fpl,ncaab}.py + api/db.py + api/odds_math.py; fixed shadowed /predictions/* routes and blocking-sync-in-async endpoints
 - **4 competing schedulers** — scheduler.py, Airflow DAG, .bat files, Windows Task Scheduler docs
 - **Thin test coverage** — one Playwright E2E spec (API-mocked); chatbot has no tests; pipeline test_*.py are manual scripts, not a pytest suite; backend has unit tests in 5 modules
 - **Doc sprawl** — 18 loose .md status files in pipeline/, 13 .md/.sql at backend root
