@@ -102,7 +102,7 @@ const BetManagement = () => {
       ));
       toast.success(`Bet settled as ${result}`);
       setShowDetailsModal(false);
-    } catch (error) {
+    } catch {
       toast.error('Failed to settle bet');
     }
   };
@@ -115,7 +115,7 @@ const BetManagement = () => {
       ));
       toast.success('Bet voided successfully');
       setShowDetailsModal(false);
-    } catch (error) {
+    } catch {
       toast.error('Failed to void bet');
     }
   };

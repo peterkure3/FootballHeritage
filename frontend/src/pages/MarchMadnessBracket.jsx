@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 
@@ -95,12 +95,12 @@ const ROUNDS = ['All Rounds', 'Round of 64', 'Round of 32', 'Sweet 16', 'Elite 8
 const GAME_STATUS = ['All Games', 'Live', 'Upcoming', 'Finished'];
 
 const MarchMadnessBracket = () => {
-  const [bracket, setBracket] = useState(generateSampleBracket());
-  const [finalFour, setFinalFour] = useState([
+  const [bracket] = useState(generateSampleBracket());
+  const [finalFour] = useState([
     { id: 'ff-1', team1: null, team2: null, winner: null, status: 'pending' },
     { id: 'ff-2', team1: null, team2: null, winner: null, status: 'pending' }
   ]);
-  const [championship, setChampionship] = useState({
+  const [championship] = useState({
     id: 'championship',
     team1: null,
     team2: null,
@@ -274,7 +274,7 @@ const MarchMadnessBracket = () => {
     );
   };
 
-  const GameCard = ({ game, roundName }) => {
+  const GameCard = ({ game }) => {
     const isFinished = game.status === 'finished';
     const isLive = game.status === 'live';
     const team1Wins = isFinished && game.winner === game.team1?.name;
@@ -358,7 +358,7 @@ const MarchMadnessBracket = () => {
                       className="w-48"
                       style={{ marginTop: gameIndex > 0 ? `${Math.pow(2, roundIndex) * 8}px` : 0 }}
                     >
-                      <GameCard game={game} roundName={round.name} />
+                      <GameCard game={game} />
                     </div>
                   ))}
                 </div>

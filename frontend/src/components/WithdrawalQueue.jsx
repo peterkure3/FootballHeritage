@@ -53,7 +53,7 @@ const WithdrawalQueue = () => {
       // TODO: API call to approve withdrawal
       setWithdrawals(withdrawals.filter(w => w.id !== withdrawal.id));
       toast.success(`Withdrawal of $${withdrawal.amount} approved`);
-    } catch (error) {
+    } catch {
       toast.error('Failed to approve withdrawal');
     }
   };
@@ -71,7 +71,7 @@ const WithdrawalQueue = () => {
       setShowRejectModal(false);
       setRejectReason('');
       setSelectedWithdrawal(null);
-    } catch (error) {
+    } catch {
       toast.error('Failed to reject withdrawal');
     }
   };

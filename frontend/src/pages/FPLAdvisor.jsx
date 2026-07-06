@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
 import Navbar from "../components/Navbar";
@@ -29,13 +29,6 @@ const positionColors = {
   FWD: "bg-red-500/20 text-red-400 border-red-500/40",
 };
 
-const difficultyColors = {
-  1: "bg-green-600",
-  2: "bg-green-500",
-  3: "bg-yellow-500",
-  4: "bg-orange-500",
-  5: "bg-red-500",
-};
 
 const statusIcons = {
   a: null,
@@ -45,7 +38,7 @@ const statusIcons = {
   u: <AlertCircle className="w-4 h-4 text-gray-400" />,
 };
 
-const PlayerCard = ({ player, showCaptainBadge = false, isCaptain = false, isViceCaptain = false }) => {
+const PlayerCard = ({ player, isCaptain = false, isViceCaptain = false }) => {
   const [expanded, setExpanded] = useState(false);
 
   return (

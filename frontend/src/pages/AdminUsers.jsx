@@ -33,7 +33,6 @@ const AdminUsers = () => {
   ]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!user?.is_admin && !user?.is_super_admin) {

@@ -20,7 +20,7 @@ const UserDetailsModal = ({ user, isOpen, onClose, onUpdate }) => {
       onUpdate(editedUser);
       setIsEditing(false);
       toast.success('User updated successfully');
-    } catch (error) {
+    } catch {
       toast.error('Failed to update user');
     }
   };
@@ -30,7 +30,7 @@ const UserDetailsModal = ({ user, isOpen, onClose, onUpdate }) => {
       // TODO: API call to verify user
       toast.success('User verified successfully');
       onUpdate({ ...user, is_verified: true });
-    } catch (error) {
+    } catch {
       toast.error('Failed to verify user');
     }
   };
@@ -40,7 +40,7 @@ const UserDetailsModal = ({ user, isOpen, onClose, onUpdate }) => {
       // TODO: API call to ban user
       toast.success('User banned successfully');
       onUpdate({ ...user, is_active: false });
-    } catch (error) {
+    } catch {
       toast.error('Failed to ban user');
     }
   };
@@ -50,7 +50,7 @@ const UserDetailsModal = ({ user, isOpen, onClose, onUpdate }) => {
       // TODO: API call to unban user
       toast.success('User unbanned successfully');
       onUpdate({ ...user, is_active: true });
-    } catch (error) {
+    } catch {
       toast.error('Failed to unban user');
     }
   };

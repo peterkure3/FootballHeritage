@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
-import { api } from '../utils/api';
 
 const NCAAB_TEAMS = {
   'Duke': { id: '150', color: '#003087', conference: 'ACC' },

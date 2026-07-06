@@ -132,25 +132,6 @@ const AdminSportsGPT = () => {
     }
   };
 
-  // Mock response generator (replace with Genkit API)
-  const generateMockResponse = (query) => {
-    const lowerQuery = query.toLowerCase();
-
-    if (lowerQuery.includes("predict") || lowerQuery.includes("match")) {
-      return "📊 Based on historical data and current form:\n\n**Match Analysis:**\n• Home team win probability: 58%\n• Draw probability: 24%\n• Away team win probability: 18%\n\n**Recommended Bet:** Home team to win @ 1.85 odds\n**Confidence Level:** High (78%)\n**Suggested Stake:** 3-4% of bankroll";
-    }
-
-    if (lowerQuery.includes("strategy") || lowerQuery.includes("betting")) {
-      return "💡 **Betting Strategy Recommendation:**\n\n1. **Value Betting:** Focus on odds above 2.0 with 60%+ win probability\n2. **Bankroll Management:** Never stake more than 5% on a single bet\n3. **Diversification:** Spread bets across multiple matches\n4. **Track Performance:** Monitor ROI and adjust strategy monthly\n\nWould you like me to analyze specific matches?";
-    }
-
-    if (lowerQuery.includes("odds") || lowerQuery.includes("value")) {
-      return "🎯 **Value Bet Opportunities:**\n\n1. **Liverpool vs Arsenal** - Over 2.5 goals @ 1.95 (Expected: 2.10)\n2. **Man City -1** @ 1.75 (Expected: 1.85)\n3. **Chelsea Draw No Bet** @ 1.65 (Expected: 1.72)\n\nAll bets show 8-12% value based on my models.";
-    }
-
-    return "I can help you with match predictions, betting strategies, odds analysis, and risk assessment. What specific information would you like?";
-  };
-
   const handleKeyPress = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();

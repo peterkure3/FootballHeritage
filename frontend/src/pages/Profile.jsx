@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../hooks/useAuth';
 import useAuthStore from '../stores/authStore';
-import { api, tokenManager } from '../utils/api';
+import { tokenManager } from '../utils/api';
 import Navbar from '../components/Navbar';
 import LoadingSkeleton from '../components/LoadingSkeleton';
 import { toast } from 'react-hot-toast';

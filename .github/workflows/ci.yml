@@ -41,9 +41,7 @@ jobs:
       - name: Install
         run: npm ci
       - name: Lint
-        # TODO: make blocking once the 28 pre-existing no-unused-vars errors are fixed
         run: npm run lint
-        continue-on-error: true
       - name: Build
         run: npm run build
 

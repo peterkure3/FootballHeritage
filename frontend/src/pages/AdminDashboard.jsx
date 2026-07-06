@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import useAuthStore from '../stores/authStore';
-import { tokenManager } from '../utils/api';
 import UserDetailsModal from '../components/UserDetailsModal';
 import WithdrawalQueue from '../components/WithdrawalQueue';
 import FraudAlerts from '../components/FraudAlerts';
@@ -40,7 +39,7 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuthStore();
   const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState({
+  const [stats] = useState({
     totalUsers: 1247,
     activeUsers: 342,
     totalBets: 8934,
@@ -55,7 +54,6 @@ const AdminDashboard = () => {
     { id: 4, email: 'user4@example.com', created_at: '2025-10-23', is_verified: true, balance: 890.25 },
     { id: 5, email: 'user5@example.com', created_at: '2025-10-22', is_verified: false, balance: 150.00 },
   ]);
-  const [recentBets, setRecentBets] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedUser, setSelectedUser] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -74,7 +72,6 @@ const AdminDashboard = () => {
 
   const fetchDashboardData = async () => {
     try {
-      const token = tokenManager.getToken();
       
       // TODO: Fetch real data from backend
       // For now using mock data

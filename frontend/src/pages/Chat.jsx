@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
-import useAuthStore from '../stores/authStore';
 import { tokenManager } from '../utils/api';
 import Navbar from '../components/Navbar';
 
@@ -17,7 +16,6 @@ const Chat = () => {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
-  const { user } = useAuthStore();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });

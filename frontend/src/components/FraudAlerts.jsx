@@ -73,7 +73,7 @@ const FraudAlerts = () => {
       ));
       toast.success(`Alert marked as ${resolution}`);
       setShowDetailsModal(false);
-    } catch (error) {
+    } catch {
       toast.error('Failed to update alert');
     }
   };
@@ -83,7 +83,7 @@ const FraudAlerts = () => {
       // TODO: API call to dismiss alert
       setAlerts(alerts.filter(a => a.id !== alertId));
       toast.success('Alert dismissed');
-    } catch (error) {
+    } catch {
       toast.error('Failed to dismiss alert');
     }
   };
