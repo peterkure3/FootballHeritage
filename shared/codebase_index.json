@@ -1,0 +1,272 @@
+{
+  "project_name": "Football Heritage Sports Betting Platform",
+  "generated_at": "2026-05-29T00:00:00Z",
+  "repository": "peterkure3/FootballHeritage",
+  "overview": {
+    "description": "A comprehensive full-stack sports betting platform with AI-powered betting advice, real-time odds, responsible gambling features, ML-driven matchup predictions, and a RAG-enhanced chatbot assistant.",
+    "architecture_pattern": "Full-stack monorepo with microservices",
+    "communication": "RESTful API with JSON (dual backend: Rust + Python pipeline)",
+    "authentication": "JWT bearer tokens (shared secret between Rust backend and Node.js chatbot)",
+    "data_encryption": "AES-256-GCM for sensitive wallet balances at rest"
+  },
+  "stack": {
+    "backend": {
+      "language": "Rust (edition 2021)",
+      "framework": "Actix-web 4.4.0",
+      "runtime": "Tokio async runtime (multi-threaded)",
+      "database": "PostgreSQL with SQLx 0.7.4",
+      "authentication": "JWT with Argon2id password hashing",
+      "security": [
+        "AES-256-GCM encryption for wallet balances",
+        "Rate limiting with Governor (per-IP and per-user)",
+        "HTTPS with Rustls TLS termination",
+        "Security headers middleware (HSTS, CSP, X-Frame, etc.)",
+        "Role-based access control (user/admin/superadmin)",
+        "Account lockout on failed login attempts",
+        "Password strength estimation (zxcvbn)"
+      ]
+    },
+    "ml_pipeline": {
+      "language": "Python 3",
+      "framework": "FastAPI with SQLAlchemy 2.0",
+      "endpoints": "Port 5555 under /api/v1 prefix",
+      "models": "XGBoost (v1.0.0) → Stacking Ensemble with CalibratedClassifierCV (v2.0.0)",
+      "performance": "Validation 47.7%, Live 72.74%, High Confidence 94.86%"
+    },
+    "frontend": {
+      "framework": "React 19.1.1",
+      "build_tool": "Vite 7.1.7 with SWC plugin",
+      "routing": "React Router DOM 7.9.4",
+      "styling": "TailwindCSS 4.1.14",
+      "state_management": "Zustand 5.0.8 (4 stores, 2 with persist)",
+      "data_fetching": "TanStack React Query 5.90.5"
+    },
+    "chatbot": {
+      "language": "Node.js / Express",
+      "ai_framework": "Google Gemini 2.0 Flash + text-embedding-004",
+      "rag": "Hybrid search (pgvector + PostgreSQL full-text) with Reciprocal Rank Fusion",
+      "caching": "Redis with intent-aware TTL",
+      "port": "3000"
+    },
+    "database": {
+      "primary": "PostgreSQL 14+",
+      "databases": ["football_betting (pipeline)", "football_heritage (backend/canonical)"],
+      "extensions": ["pgvector", "adminpack"]
+    }
+  },
+  "directories": {
+    "backend/": {
+      "purpose": "Rust Actix-web API server",
+      "subdirs": {
+        "src/": "Application source (main.rs, handlers/, middleware/, models, services)",
+        "src/handlers/": "HTTP handlers for all API routes (auth, betting, wallet, parlay, chat, intelligence, admin)",
+        "src/handlers/admin/": "Admin-specific handlers (users, events, analytics, monitoring)",
+        "src/middleware/": "Middleware (jwt_auth, admin_auth, rate_limit, security_headers, monitoring)",
+        "src/bin/": "CLI binaries (init_admin, init_wallets, reset_wallets)",
+        "migrations/": "SQLx timestamped migrations (12 migration files)",
+        "scripts/": "Helper scripts (migration runner, TLS cert generator)",
+        "docs/": "Documentation files",
+        "data/": "Data files",
+        "certs/": "TLS certificate storage",
+        "backup/": "Database backups"
+      }
+    },
+    "frontend/": {
+      "purpose": "React SPA for sports betting UI",
+      "subdirs": {
+        "src/pages/": "27 page components (Login, Register, Dashboard, Odds, BetHistory, Predictions, ParlayCalculator, DeviggedOdds, EVBets, Arbitrage, BestBets, SmartAssistant, CollegeSports, MarchMadnessBracket, FPLAdvisor, 9 admin pages)",
+        "src/components/": "17+ reusable components (Navbar, ErrorBoundary, BetCard, BetConfirmationModal, WalletModal, AgeVerificationModal, RoleSwitcher, WhatIfPredictor, plus admin/ and parlay/ subdirs)",
+        "src/components/admin/": "Admin UI components (AdminLayout, AdminSidebar, AdminNavbar)",
+        "src/components/parlay/": "Parlay components (ParlayBuilderSidebar, ParlayBetLeg, ParlayResults, SuggestedParlays, QuickAddSearch)",
+        "src/components/predictions/": "PredictionResults component",
+        "src/stores/": "Zustand stores (authStore, bettingStore, parlayStore, settingsStore)",
+        "src/hooks/": "React Query hooks (useAuth, useBetting, useIntelligence, usePredictions, useParlayCalculator, useParlayData)",
+        "src/utils/": "Utilities (api.js, constants.js, validation.js with Zod schemas)",
+        "src/services/": "predictionService.js (pipeline API client)",
+        "docs/": "Frontend documentation files",
+        "tests/": "Playwright E2E tests (currently disabled)",
+        "public/": "Static assets",
+        "dist/": "Build output"
+      }
+    },
+    "pipeline/": {
+      "purpose": "ML data pipeline (ETL + predictions + API)",
+      "subdirs": {
+        "etl/": "23 ETL modules (fetch_raw_data, ingest_oddsapi_offers, match_oddsapi_events, compute_intelligence, compute_intelligence_v2, transform, load_to_db, update_results, fetch_nba_data_wrapper, fetch_basketball_reference*, fetch_ncaa*, fetch_fpl_data, fetch_nba_cup_data, elo_model, true_probability, backtesting, ncaab_predictor, data_validator, utils, cache, fpl_optimizer)",
+        "models/": "ML training and prediction (train_model.py, train_model_v2.py, predict.py, predict_v2.py, model_store/)",
+        "api/": "FastAPI server exposing ML predictions and betting intelligence endpoints",
+        "dags/": "Airflow DAG definition (betting_pipeline.py)",
+        "migrations/": "Database migration SQL files",
+        "data/": "Raw fetched data and processed Parquet files",
+        "logs/": "Pipeline execution logs",
+        "scripts/": "Data cleanup and standardization utilities"
+      }
+    },
+    "chatbot/": {
+      "purpose": "RAG-enhanced AI chatbot microservice",
+      "subdirs": {
+        "flows/": "Conversation flow implementations (chat.js - legacy Genkit, chat-rag.js - active RAG flow)",
+        "services/": "Backing services (cache.js - Redis, embeddings.js, retrieval.js, knowledge-retrieval.js, router.js)",
+        "scripts/": "Utility scripts (setup-rag.ps1)"
+      }
+    },
+    "scripts/": {
+      "purpose": "Database backup/restore utilities",
+      "files": ["backup_databases.py", "backup_databases.bat", "restore_databases.py", "restore_databases.bat"]
+    }
+  },
+  "data_flow": {
+    "odds_ingestion": "The Odds API → fetch_raw_data (raw JSON) → ingest_oddsapi_offers (provider_events + odds_offers) → match_oddsapi_events (canonical events) → compute_intelligence (devigged_odds, ev_bets, arbitrage)",
+    "ml_pipeline": "fetch_raw_data → transform (feature engineering → Parquet) → load_to_db (football_betting) → train_model (XGBoost/Ensemble) → predict (predictions table) → sync_to_backend (canonical events)",
+    "chatbot_request": "Frontend → Rust backend (JWT proxy) → Node.js chatbot → query route → Redis cache check → PostgreSQL hybrid retrieval → Gemini 2.0 Flash → cache response → return",
+    "betting_flow": "User → select odds → place bet → validate event/limits → deduct wallet → create bet record → settle on event completion"
+  },
+  "state_management": {
+    "backend": "Stateless REST (JWT sessions tracked via in-memory DashMap)",
+    "frontend": "Zustand stores (auth, betting, parlay with localStorage persist, settings with localStorage persist) + TanStack Query cache",
+    "chatbot": "Redis cache for RAG responses + PostgreSQL for persistent data"
+  },
+  "storage": {
+    "primary_database": "PostgreSQL with two databases: football_betting (pipeline data) and football_heritage (user data, canonical events, betting intelligence)",
+    "cache": "Redis for chatbot response caching and RAG acceleration",
+    "file_cache": "File-based JSON cache for API responses in pipeline (with TTL and SHA-256 key hashing)",
+    "model_store": "Serialized ML models in pipeline/models/model_store/ (.pkl format)"
+  },
+  "rebuild_steps": {
+    "prerequisites": ["Rust 1.70+", "Node.js 18+", "PostgreSQL 14+", "Redis 7+", "Python 3.10+", "Gemini API key (free tier)"],
+    "backend": "cd backend; cp .env.example .env; cargo sqlx database create; cargo sqlx migrate run; cargo run --release",
+    "frontend": "cd frontend; npm install; npm run dev",
+    "chatbot": "cd chatbot; npm install; npm run dev",
+    "pipeline": "cd pipeline; pip install -r requirements.txt; python -m api.main",
+    "rag_setup": "cd chatbot; node scripts/sync-embeddings.js",
+    "database_backup": "cd scripts; python backup_databases.py --db-password YOUR_PASSWORD"
+  },
+  "security_notes": [
+    "All .env files contain secrets (DB passwords, API keys, JWT secrets, encryption keys) - ensure they are never committed",
+    "Wallet balances are encrypted with AES-256-GCM - the ENCRYPTION_KEY must be 32 bytes and backed up safely",
+    "JWT_SECRET must match across backend/ and chatbot/ for auth to work",
+    "CORS is configured explicitly via ALLOWED_ORIGINS in all services (no wildcard origins)",
+    "Rate limiting is applied at multiple levels: global IP (100/min), per-user betting (5/min), per-IP login (10/min)",
+    "Playwright tests are written but config is disabled - re-enable for E2E testing",
+    ".env port mismatch: frontend uses 8888 but .env.example/docs reference 8080",
+    "VITE_PIPELINE_API_URL missing from frontend .env (defined in .env.example but not in .env)",
+    "Frontend README references React 18/React Router v6 - outdated vs actual React 19/React Router v7"
+  ],
+  "backend": {
+    "core_modules": [
+      "auth.rs - JWT auth service with session management (DashMap)",
+      "betting_simple.rs - Betting service with transactional safety",
+      "crypto.rs - AES-256-GCM encryption + Argon2id password hashing",
+      "config.rs - Environment-based configuration",
+      "models.rs - All data models and DTOs",
+      "errors.rs - Centralized error handling (AppError enum)",
+      "monitoring.rs - Atomic metrics counters",
+      "rates.rs - Governor-based rate limiters",
+      "utils.rs - IP extraction, age validation, session helpers"
+    ],
+    "handlers": {
+      "auth": "Register, login, logout, refresh token, verify email",
+      "betting": "Place bet, get events, get bets",
+      "wallet": "Balance, deposit, withdraw, transactions",
+      "user": "Profile CRUD, activity, change password",
+      "limits": "Gambling limits get/update, self-exclusion",
+      "sports": "Sports/leagues/categories metadata",
+      "parlay": "Calculate, save, get, delete parlays",
+      "chat": "Proxy to Node.js chatbot microservice",
+      "intelligence": "Devigged odds, EV bets, arbitrage queries + refresh trigger",
+      "admin/users": "User management (list, detail, status, verify)",
+      "admin/events": "Event CRUD with status management",
+      "admin/analytics": "Dashboard metrics from materialized view",
+      "admin/monitoring": "Fraud alerts and audit logs"
+    },
+    "middleware": [
+      "jwt_auth::RequireAuth - Bearer JWT validation",
+      "admin_auth::RequireAdmin/RequireSuperAdmin - RBAC",
+      "rate_limit - Global per-IP rate limiting (100 req/min)",
+      "security_headers - HSTS, CSP, X-Frame-Options, etc.",
+      "monitoring - Request/error counters"
+    ],
+    "migrations": [
+      "20241019_initial_schema.sql - Core tables (users, wallets, transactions, events, bets, limits, activity)",
+      "20251023_real_sports_data.sql - Real sports data",
+      "20251024_add_admin_system.sql - Admin tables, roles, fraud detection",
+      "20251025_add_external_tracking.sql - External tracking",
+      "20251027_add_parlay_calculator.sql - Parlay system",
+      "20251101_add_event_date_index.sql - Performance index",
+      "20251104_add_nba_cup_support.sql - NBA Cup support",
+      "20260124_add_betting_intelligence.sql - Devigged odds, EV bets, arbitrage",
+      "20260127_intelligence_odds_decimal.sql - Decimal odds conversion",
+      "20260127_add_sportsbook_registry.sql - Sportsbook mapping",
+      "20260209_add_devigged_odds_archive.sql - Historical archive"
+    ]
+  },
+  "frontend": {
+    "routes": {
+      "public": ["/login", "/register"],
+      "user": ["/dashboard", "/profile", "/odds", "/sports", "/bet-history", "/chat", "/predictions", "/parlay-calculator", "/devigged-odds", "/ev-bets", "/arbitrage", "/best-bets", "/smart-assistant", "/college-sports", "/march-madness", "/fpl-advisor"],
+      "admin": ["/admin/dashboard", "/admin/events", "/admin/bets", "/admin/users", "/admin/analytics", "/admin/revenue", "/admin/sportsgpt", "/admin/settings", "/admin/logs"]
+    },
+    "component_tree": {
+      "layout": "BrowserRouter > QueryClientProvider > ErrorBoundary > Toaster > Routes",
+      "shared": ["Navbar", "ErrorBoundary", "EmptyState", "LoadingSkeleton", "RoleSwitcher"],
+      "betting": ["OddsRow", "BetCard", "BetConfirmationModal"],
+      "wallet": ["WalletModal"],
+      "parlay": ["ParlayBuilderSidebar", "ParlayBetLeg", "ParlayResults", "SuggestedParlays", "QuickAddSearch"],
+      "admin": ["AdminLayout (Navbar + Sidebar + Outlet)", "AdminNavbar", "AdminSidebar"],
+      "predictions": ["PredictionResults", "WhatIfPredictor"]
+    }
+  },
+  "ml_pipeline": {
+    "model_v1": {
+      "algorithm": "XGBoost Classifier",
+      "params": "max_depth=6, learning_rate=0.1, n_estimators=100",
+      "classes": "3 (home_win/draw/away_win) for football, 2 for basketball",
+      "training_samples": "500,862 train + 125,216 validation",
+      "validation_accuracy": "46.0%"
+    },
+    "model_v2": {
+      "algorithm": "Stacking Ensemble (XGBoost, RandomForest, GradientBoosting, LightGBM + LogisticRegression meta)",
+      "calibration": "Isotonic Regression via CalibratedClassifierCV",
+      "training_samples": "874,522 train + 218,631 validation",
+      "features": "38 features (base form + ELO + odds engineering + head-to-head + venue)",
+      "validation_accuracy": "47.7%",
+      "live_accuracy": "72.74%",
+      "high_confidence_accuracy": "94.86%"
+    },
+    "etl_modules": [
+      "fetch_raw_data - Odds API + football-data.org fetching with file cache",
+      "ingest_oddsapi_offers - Inserts provider events and odds offers into Heritage DB",
+      "match_oddsapi_events - Links provider events to canonical events",
+      "compute_intelligence - Devigs 2-way markets, computes EV, detects arbitrage",
+      "compute_intelligence_v2 - Enhanced with Elo + true probability ensemble",
+      "transform - Feature engineering to Parquet files",
+      "load_to_db - Batch upserts into football_betting database",
+      "elo_model - League-specific Elo ratings with form adjustments",
+      "true_probability - Ensemble estimator (sharp 40%, consensus 25%, Elo 20%, power 10%, Shin 5%)",
+      "backtesting - Brier Score, Log Loss, ROI, calibration curves"
+    ],
+    "scheduling": ["Python scheduler (schedule library) - daily at 08:00, weekly retrain Sunday 02:00", "Airflow DAG - weekly Sunday midnight", "Windows batch scripts for Task Scheduler"]
+  },
+  "chatbot": {
+    "architecture": "RAG-enhanced microservice with intent routing",
+    "rag_pipeline": "Query routing → Redis cache check → PostgreSQL hybrid retrieval (pgvector + full-text) → Knowledge base retrieval → User context → Gemini 2.0 Flash → Cache storage",
+    "intent_routing": "Classifies queries as games, betting, statistics, account, help, or general with team/sport/time extraction",
+    "services": ["Redis caching (ioredis)", "PostgreSQL (pg) with pgvector", "Google Gemini (REST API)", "Embeddings (text-embedding-004)"]
+  },
+  "api_endpoints": {
+    "backend_rust": {
+      "port": "8080 (or 8888 per frontend .env)",
+      "prefix": "/api/v1",
+      "endpoints": "~40+ endpoints covering auth, betting, wallet, user, limits, sports, parlay, chat, intelligence, admin"
+    },
+    "pipeline_python": {
+      "port": "5555",
+      "prefix": "/api/v1",
+      "endpoints": "~12 endpoints: health, matches, predictions, history-data, accuracy-data, versions, best-value-bets, predict-matchup, update-results, intelligence (devig/ev/arbitrage)"
+    },
+    "chatbot": {
+      "port": "3000",
+      "endpoints": "POST /chat, GET /health"
+    }
+  }
+}

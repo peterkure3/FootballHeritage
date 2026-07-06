@@ -1,0 +1,29 @@
+# Build artifacts
+target/
+dist/
+node_modules/
+
+# Local backups & data dumps (73MB+, never commit)
+backups/
+
+# Logs
+*.log
+logs/
+
+# Environment files (per-service .env.example files are tracked instead)
+.env
+.env.local
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Admin credential scripts (contain password hashes — keep local only)
+backend/scripts/fix_admin_role.sql
+backend/scripts/reset_admin_password.sql
