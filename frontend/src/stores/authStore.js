@@ -1,8 +1,9 @@
 import { create } from 'zustand';
 import { tokenManager } from '../utils/api';
 
-// Session timeout: 15 minutes in milliseconds
-const SESSION_TIMEOUT = 15 * 60 * 1000;
+// Session timeout in milliseconds (VITE_SESSION_TIMEOUT is in minutes, default 15)
+const SESSION_TIMEOUT =
+  (parseInt(import.meta.env.VITE_SESSION_TIMEOUT, 10) || 15) * 60 * 1000;
 
 const useAuthStore = create((set, get) => {
   let logoutTimer = null;

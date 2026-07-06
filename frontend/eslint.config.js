@@ -26,4 +26,11 @@ export default defineConfig([
       'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
     },
   },
+  {
+    // Node-run config files (Playwright, Vite) use process/env globals
+    files: ['*.config.js'],
+    languageOptions: {
+      globals: globals.node,
+    },
+  },
 ])

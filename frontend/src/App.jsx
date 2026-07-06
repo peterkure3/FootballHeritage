@@ -66,6 +66,21 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
+// Admin Route Component (requires authenticated user with admin/superadmin role)
+const AdminRoute = ({ children }) => {
+  const { isAuthenticated, user } = useAuthStore();
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (!user?.is_admin && !user?.is_super_admin) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return children;
+};
+
 // Public Route Component (redirect to dashboard if already logged in)
 const PublicRoute = ({ children }) => {
   const { isAuthenticated } = useAuthStore();
@@ -246,9 +261,9 @@ function App() {
             <Route
               path="/admin"
               element={
-                <ProtectedRoute>
+                <AdminRoute>
                   <AdminLayout />
-                </ProtectedRoute>
+                </AdminRoute>
               }
             >
               <Route index element={<Navigate to="/admin/dashboard" replace />} />

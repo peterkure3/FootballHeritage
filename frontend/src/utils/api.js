@@ -77,6 +77,16 @@ const makeRequest = async (endpoint, options = {}) => {
   }
 };
 
+// Build a query string from a params object, skipping empty values
+const buildQuery = (params = {}) => {
+  const qs = new URLSearchParams();
+  Object.entries(params || {}).forEach(([k, v]) => {
+    if (v === undefined || v === null || v === "") return;
+    qs.set(k, String(v));
+  });
+  return qs.toString() ? `?${qs.toString()}` : "";
+};
+
 // API endpoints
 export const api = {
   // Authentication
@@ -177,37 +187,19 @@ export const api = {
   },
 
   getDeviggedOdds: async (params = {}) => {
-    const qs = new URLSearchParams();
-    Object.entries(params || {}).forEach(([k, v]) => {
-      if (v === undefined || v === null || v === "") return;
-      qs.set(k, String(v));
-    });
-    const suffix = qs.toString() ? `?${qs.toString()}` : "";
-    return await makeRequest(`/intelligence/devigged-odds${suffix}`, {
+    return await makeRequest(`/intelligence/devigged-odds${buildQuery(params)}`, {
       method: "GET",
     });
   },
 
   getEvBets: async (params = {}) => {
-    const qs = new URLSearchParams();
-    Object.entries(params || {}).forEach(([k, v]) => {
-      if (v === undefined || v === null || v === "") return;
-      qs.set(k, String(v));
-    });
-    const suffix = qs.toString() ? `?${qs.toString()}` : "";
-    return await makeRequest(`/intelligence/ev-bets${suffix}`, {
+    return await makeRequest(`/intelligence/ev-bets${buildQuery(params)}`, {
       method: "GET",
     });
   },
 
   getArbitrage: async (params = {}) => {
-    const qs = new URLSearchParams();
-    Object.entries(params || {}).forEach(([k, v]) => {
-      if (v === undefined || v === null || v === "") return;
-      qs.set(k, String(v));
-    });
-    const suffix = qs.toString() ? `?${qs.toString()}` : "";
-    return await makeRequest(`/intelligence/arbitrage${suffix}`, {
+    return await makeRequest(`/intelligence/arbitrage${buildQuery(params)}`, {
       method: "GET",
     });
   },

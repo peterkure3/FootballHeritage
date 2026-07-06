@@ -68,7 +68,7 @@ FootballHeritage/
 - **Versioned-file duplication** — compute_intelligence/_v2, train_model/_v2, predict/_v2, fetch_basketball_reference/_async all coexist; scheduler.py imports both v1 and v2
 - **pipeline/api/routes.py = 3,502 lines** — all routers, Pydantic models, odds math, and an intent-detection assistant in one file
 - **4 competing schedulers** — scheduler.py, Airflow DAG, .bat files, Windows Task Scheduler docs
-- **Playwright config fully commented out** — tests/betting-flow.spec.js cannot run; chatbot has no tests; pipeline test_*.py are manual scripts, not a pytest suite
+- **Thin test coverage** — one Playwright E2E spec (API-mocked); chatbot has no tests; pipeline test_*.py are manual scripts, not a pytest suite; backend has unit tests in 5 modules
 - **Doc sprawl** — 18 loose .md status files in pipeline/, 13 .md/.sql at backend root
 
 ## Rebuild Checklist
