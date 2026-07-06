@@ -63,8 +63,8 @@ def run_full_pipeline():
         ("Transform data", "etl.transform", "main"),
         ("Clean processed data", None, clean_processed_data),  # Custom cleaning step
         ("Load to database", "etl.load_to_db", "main"),
-        ("Train model", "models.train_model", "main"),
-        ("Generate predictions", "models.predict", "main"),
+        ("Train model", "models.train_model_v2", "main"),
+        ("Generate predictions", "models.predict_v2", "main"),
     ]
     
     for step_name, module_name, func in steps:

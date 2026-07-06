@@ -22,7 +22,7 @@ try:
     from etl.fetch_raw_data import main as fetch_data
     from etl.transform import main as transform_data
     from etl.load_to_db import main as load_data
-    from models.predict import main as predict_matches
+    from models.predict_v2 import main as predict_matches
     print("✓ All imports successful")
 except Exception as e:
     print(f"✗ Import failed: {e}")
@@ -66,13 +66,13 @@ except Exception as e:
 
 print()
 
-# Test schedule package (for Python scheduler)
-print("[4/5] Testing schedule package...")
-try:
-    import schedule
-    print("✓ Schedule package installed")
-except ImportError:
-    print("⚠ Schedule package not installed (run: pip install schedule)")
+# Test v2 model artifacts exist
+print("[4/5] Testing model artifacts...")
+from config import MODEL_PATH
+if MODEL_PATH.exists():
+    print(f"✓ Model artifact found: {MODEL_PATH.name}")
+else:
+    print(f"⚠ Model artifact missing ({MODEL_PATH.name}) — run: python -m models.train_model_v2")
 
 print()
 
@@ -96,8 +96,7 @@ print("=" * 60)
 print()
 print("Next steps:")
 print("1. Review AUTOMATION_SETUP.md for setup instructions")
-print("2. Choose your automation method:")
-print("   - Windows Task Scheduler (recommended)")
-print("   - Python Scheduler (cross-platform)")
-print("   - Apache Airflow (production)")
+print("2. Schedule the .bat files with Windows Task Scheduler:")
+print("   - run_daily_fetch_with_sync.bat (daily)")
+print("   - run_weekly_retrain.bat (weekly)")
 print()

@@ -584,7 +584,89 @@ def save_predictions_to_db(predictions: pd.DataFrame, engine) -> None:
         raise
 
 
+def get_upcoming_matches(engine) -> pd.DataFrame:
+    """Fetch upcoming matches with average bookmaker odds."""
+    query = """
+        SELECT
+            m.match_id,
+            m.home_team,
+            m.away_team,
+            AVG(o.home_win) AS home_win,
+            AVG(o.draw) AS draw,
+            AVG(o.away_win) AS away_win
+        FROM matches m
+        LEFT JOIN odds o ON m.match_id = o.match_id
+        WHERE m.status IN ('SCHEDULED', 'TIMED')
+            AND m.date > NOW()
+        GROUP BY m.match_id, m.home_team, m.away_team
+        ORDER BY m.match_id
+    """
+    return pd.read_sql(query, engine)
+
+
+def predict_upcoming_matches() -> None:
+    """Batch prediction over all upcoming matches using the v2 feature pipeline.
+
+    Loads model artifacts and Elo ratings once, then builds the enhanced
+    feature vector per match (unlike predict_match, which reloads per call).
+    """
+    logger.info("Starting v2 batch prediction generation")
+
+    model, label_encoder, feature_names, scaler = load_model_artifacts()
+    engine = create_engine(DATABASE_URI)
+    elo_ratings = get_team_elo_ratings(engine)
+
+    matches = get_upcoming_matches(engine)
+    if matches.empty:
+        logger.warning("No upcoming matches found")
+        return
+
+    rows = []
+    for m in matches.itertuples():
+        odds = None
+        if m.home_win is not None:
+            odds = {
+                "home_win": float(m.home_win),
+                "draw": float(m.draw) if m.draw is not None else 3.2,
+                "away_win": float(m.away_win) if m.away_win is not None else 2.8,
+            }
+        try:
+            X = build_feature_vector(
+                m.home_team, m.away_team, engine, elo_ratings, odds, feature_names
+            )
+            if scaler is not None:
+                X = pd.DataFrame(scaler.transform(X), columns=X.columns)
+            proba = model.predict_proba(X)[0]
+            winner = label_encoder.inverse_transform([model.predict(X)[0]])[0]
+            prob = dict(zip(label_encoder.classes_, proba))
+            rows.append({
+                "match_id": m.match_id,
+                "model_version": MODEL_VERSION,
+                "winner": winner,
+                "home_prob": float(prob.get("home_win", 0.0)),
+                "draw_prob": float(prob.get("draw", 0.0)),
+                "away_prob": float(prob.get("away_win", 0.0)),
+                "created_at": datetime.now(),
+            })
+        except Exception as e:
+            logger.error(f"Prediction failed for {m.home_team} vs {m.away_team}: {e}")
+
+    if not rows:
+        logger.warning("No predictions generated")
+        return
+
+    save_predictions_to_db(pd.DataFrame(rows), engine)
+    logger.info(f"Batch prediction completed: {len(rows)}/{len(matches)} matches")
+
+
+def main() -> None:
+    """Main entry point."""
+    try:
+        predict_upcoming_matches()
+    except Exception as e:
+        logger.error(f"Prediction generation failed: {str(e)}", exc_info=True)
+        sys.exit(1)
+
+
 if __name__ == "__main__":
-    # Test prediction
-    result = predict_match("Arsenal", "Chelsea")
-    print(f"Prediction: {result}")
+    main()

@@ -42,7 +42,7 @@ if %errorlevel% neq 0 (
 REM Generate predictions
 echo.
 echo [4/4] Generating predictions...
-python -m models.predict
+python -m models.predict_v2
 if %errorlevel% neq 0 (
     echo ERROR: Prediction generation failed
     exit /b 1

@@ -264,7 +264,7 @@ def main():
     print("\nNext steps:")
     print("1. Run: python -m etl.transform")
     print("2. Run: python -m etl.load_to_db")
-    print("3. Run: python -m models.train_model")
+    print("3. Run: python -m models.train_model_v2")
     print("="*80)
 
 

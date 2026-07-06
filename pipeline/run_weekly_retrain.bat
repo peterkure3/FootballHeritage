@@ -42,7 +42,7 @@ if %errorlevel% neq 0 (
 REM Train model
 echo.
 echo [4/5] Training model...
-python -m models.train_model
+python -m models.train_model_v2
 if %errorlevel% neq 0 (
     echo ERROR: Model training failed
     exit /b 1
@@ -51,7 +51,7 @@ if %errorlevel% neq 0 (
 REM Generate predictions
 echo.
 echo [5/5] Generating predictions...
-python -m models.predict
+python -m models.predict_v2
 if %errorlevel% neq 0 (
     echo ERROR: Prediction generation failed
     exit /b 1

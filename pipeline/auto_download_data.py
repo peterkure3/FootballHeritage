@@ -189,8 +189,8 @@ def download_and_normalize():
     print("="*80)
     print("1. Transform data:    python -m etl.transform")
     print("2. Load to database:  python -m etl.load_to_db")
-    print("3. Train model:       python -m models.train_model")
-    print("4. Generate predictions: python -m models.predict")
+    print("3. Train model:       python -m models.train_model_v2")
+    print("4. Generate predictions: python -m models.predict_v2")
     print("="*80)
     
     return total_downloaded + len(df_sample)
