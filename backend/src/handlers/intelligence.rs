@@ -248,6 +248,26 @@ pub struct RefreshIntelligenceResponse {
     pub message: String,
 }
 
+/// Resolve a working Python interpreter: prefer "python", fall back to "py -3".
+/// Must actually run it — on Windows the Microsoft Store "python" alias sits on
+/// PATH but exits non-zero with an install prompt, so a lookup is not enough.
+/// (Same probe as the pipeline .bat scripts.)
+fn python_command() -> Command {
+    let python_works = Command::new("python")
+        .arg("--version")
+        .output()
+        .map(|output| output.status.success())
+        .unwrap_or(false);
+
+    if python_works {
+        Command::new("python")
+    } else {
+        let mut command = Command::new("py");
+        command.arg("-3");
+        command
+    }
+}
+
 /// POST /api/v1/intelligence/refresh
 ///
 /// Triggers the compute_intelligence pipeline script to refresh EV bets, devigged odds, and arbitrage data.
@@ -255,7 +275,7 @@ pub async fn refresh_intelligence() -> HttpResponse {
     // Run the compute_intelligence script from the pipeline directory
     let pipeline_dir = std::env::var("PIPELINE_DIR").unwrap_or_else(|_| "../pipeline".to_string());
 
-    let result = Command::new("python")
+    let result = python_command()
         .args(["-m", "etl.compute_intelligence"])
         .current_dir(&pipeline_dir)
         .output();
