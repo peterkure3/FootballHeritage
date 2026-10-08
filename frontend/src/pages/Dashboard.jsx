@@ -25,8 +25,8 @@ const StatCard = ({ title, value, subtitle, icon, accent, delay = 0 }) => (
         </svg>
       </div>
     </div>
-    <p className="text-3xl font-bold text-white mb-0.5 font-[Oswald] tracking-tight">{value}</p>
-    <p className="text-xs" style={{ color: 'var(--color-muted, #64748b)' }}>{subtitle}</p>
+    <p className="text-3xl font-bold text-heritage-ink mb-0.5 font-display tracking-tight">{value}</p>
+    <p className="text-xs" style={{ color: 'var(--color-muted, #69746c)' }}>{subtitle}</p>
   </div>
 );
 
@@ -66,7 +66,7 @@ const Dashboard = () => {
       desc: 'Browse odds and place wagers',
       icon: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6',
       path: '/odds',
-      gradient: 'linear-gradient(135deg, #10b981, #059669)',
+      gradient: 'linear-gradient(135deg, #177c4c, #147b4c)',
       accent: '#10b981',
     },
     {
@@ -95,12 +95,12 @@ const Dashboard = () => {
         {/* Welcome Section */}
         <div style={{ animation: 'slide-up 0.4s ease-out both' }}>
           <div className="flex items-center gap-3 mb-1">
-            <h1 className="text-3xl md:text-4xl font-bold text-white font-[Oswald] tracking-tight">
+            <h1 className="text-3xl md:text-4xl font-bold text-heritage-ink font-display tracking-tight">
               Welcome back{user?.email ? `, ${user.email.split('@')[0]}` : ''}
             </h1>
             <span className="text-2xl">🏈</span>
           </div>
-          <p className="text-sm" style={{ color: '#64748b' }}>
+          <p className="text-sm" style={{ color: '#69746c' }}>
             Check your balance, active bets, and betting statistics
           </p>
         </div>
@@ -149,13 +149,13 @@ const Dashboard = () => {
         <div
           className="rounded-xl p-6 mb-8 border card-glow stagger-children"
           style={{
-            background: 'linear-gradient(135deg, var(--card, #14141f), #16162a)',
+            background: 'linear-gradient(135deg, var(--card, #ffffff), #f4f6f2)',
             borderColor: 'var(--color-card-border)',
             animation: 'slide-up 0.5s ease-out 0.18s both',
           }}
         >
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-white font-semibold font-[Oswald] tracking-tight text-lg">
+            <h3 className="text-heritage-ink font-semibold font-display tracking-tight text-lg">
               Session Limit
             </h3>
             <span
@@ -176,7 +176,7 @@ const Dashboard = () => {
               {sessionStats.percentUsed}% Used
             </span>
           </div>
-          <div className="rounded-full h-2 mb-3 overflow-hidden" style={{ background: '#1a1a2e' }}>
+          <div className="rounded-full h-2 mb-3 overflow-hidden" style={{ background: '#e4eee1' }}>
             <div
               className="h-full transition-all duration-700 ease-out rounded-full"
               style={{
@@ -189,13 +189,13 @@ const Dashboard = () => {
               }}
             />
           </div>
-          <div className="flex justify-between text-xs" style={{ color: '#64748b' }}>
-            <span>Used: <span className="text-white font-semibold">${sessionStats.total.toFixed(2)}</span></span>
-            <span>Remaining: <span className="text-white font-semibold">${sessionStats.remaining.toFixed(2)}</span></span>
-            <span>Limit: <span className="text-white font-semibold">${sessionStats.limit}</span></span>
+          <div className="flex justify-between text-xs" style={{ color: '#69746c' }}>
+            <span>Used: <span className="text-heritage-ink font-semibold">${sessionStats.total.toFixed(2)}</span></span>
+            <span>Remaining: <span className="text-heritage-ink font-semibold">${sessionStats.remaining.toFixed(2)}</span></span>
+            <span>Limit: <span className="text-heritage-ink font-semibold">${sessionStats.limit}</span></span>
           </div>
           {sessionStats.percentUsed >= 80 && (
-            <div className="mt-4 rounded-lg p-3 flex items-center gap-2 text-sm" style={{ background: 'rgba(245, 158, 11, 0.1)', border: '1px solid rgba(245, 158, 11, 0.2)', color: '#fbb84d' }}>
+            <div className="mt-4 rounded-lg p-3 flex items-center gap-2 text-sm" style={{ background: 'rgba(245, 158, 11, 0.1)', border: '1px solid rgba(245, 158, 11, 0.2)', color: '#976207' }}>
               <svg className="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
               </svg>
@@ -217,7 +217,7 @@ const Dashboard = () => {
               }}
             >
               <div className="flex items-center justify-between mb-2">
-                <h3 className="text-lg font-bold text-white font-[Oswald] tracking-tight">{action.label}</h3>
+                <h3 className="text-lg font-normal text-white font-display tracking-tight">{action.label}</h3>
                 <svg className="w-7 h-7 opacity-60" fill="none" stroke="white" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                 </svg>
@@ -231,11 +231,11 @@ const Dashboard = () => {
         {activeBets.length > 0 && (
           <div className="mb-8" style={{ animation: 'slide-up 0.5s ease-out 0.3s both' }}>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-white font-[Oswald] tracking-tight flex items-center gap-3">
+              <h2 className="text-xl font-bold text-heritage-ink font-display tracking-tight flex items-center gap-3">
                 <span className="w-2 h-2 rounded-full animate-pulse-glow" style={{ background: '#10b981' }}></span>
                 Active Bets
               </h2>
-              <span className="text-xs" style={{ color: '#64748b' }}>{activeBets.length} pending</span>
+              <span className="text-xs" style={{ color: '#69746c' }}>{activeBets.length} pending</span>
             </div>
             {betsLoading ? (
               <LoadingSkeleton type="card" count={2} />
@@ -263,7 +263,7 @@ const Dashboard = () => {
         {/* Recent Bets Section */}
         <div className="mb-8" style={{ animation: 'slide-up 0.5s ease-out 0.35s both' }}>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-white font-[Oswald] tracking-tight">Recent Bets</h2>
+            <h2 className="text-xl font-bold text-heritage-ink font-display tracking-tight">Recent Bets</h2>
             <button
               onClick={() => navigate('/bets')}
               className="font-semibold text-sm transition-colors hover:underline"
@@ -293,13 +293,13 @@ const Dashboard = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                 </svg>
               </div>
-              <h3 className="text-white text-lg font-bold mb-2 font-[Oswald]">No Bets Yet</h3>
-              <p className="text-sm mb-6" style={{ color: '#64748b' }}>Start betting to see your history here</p>
+              <h3 className="text-heritage-ink text-lg font-bold mb-2 font-display">No Bets Yet</h3>
+              <p className="text-sm mb-6" style={{ color: '#69746c' }}>Start betting to see your history here</p>
               <button
                 onClick={() => navigate('/odds')}
                 className="font-semibold px-6 py-2.5 rounded-lg text-sm transition-all hover:opacity-90"
                 style={{
-                  background: 'linear-gradient(135deg, #10b981, #059669)',
+                  background: 'linear-gradient(135deg, #177c4c, #147b4c)',
                   color: 'white',
                 }}
               >
@@ -318,7 +318,7 @@ const Dashboard = () => {
             animation: 'slide-up 0.5s ease-out 0.4s both',
           }}
         >
-          <h3 className="font-bold mb-2 font-[Oswald] text-lg" style={{ color: '#818cf8' }}>Play Responsibly</h3>
+          <h3 className="font-bold mb-2 font-display text-lg" style={{ color: '#818cf8' }}>Play Responsibly</h3>
           <p className="text-sm mb-3" style={{ color: '#a5b4fc' }}>
             Set limits, know when to stop, and never bet more than you can afford to lose.
           </p>

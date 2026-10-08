@@ -147,7 +147,7 @@ const CollegeSports = () => {
             />
           ) : null}
           <span
-            className="text-white font-bold text-sm"
+            className="text-heritage-ink font-bold text-sm"
             style={{ display: logoUrl ? 'none' : 'flex' }}
           >
             {teamName?.substring(0, 2).toUpperCase()}
@@ -157,7 +157,7 @@ const CollegeSports = () => {
           <p style={{ color: isWinner ? '#10b981' : 'white' }} className="font-semibold">
             {teamName}
           </p>
-          <p className="text-xs" style={{ color: '#64748b' }}>
+          <p className="text-xs" style={{ color: '#69746c' }}>
             {isHome ? 'Home' : 'Away'} • {getTeamConference(teamName)}
           </p>
         </div>
@@ -187,14 +187,14 @@ const CollegeSports = () => {
           className="px-4 py-2 flex items-center justify-between"
           style={{ background: 'rgba(0,0,0,0.2)', borderBottom: '1px solid var(--color-card-border)' }}
         >
-          <span className="text-xs" style={{ color: '#64748b' }}>
+          <span className="text-xs" style={{ color: '#69746c' }}>
             {game.competition || 'NCAA Basketball'}
           </span>
           <span
             className="px-2 py-1 rounded text-xs font-semibold"
             style={{
               background: isLive ? '#ef4444' : isFinished ? 'var(--color-card)' : 'rgba(16,185,129,0.2)',
-              color: isLive ? 'white' : isFinished ? '#94a3b8' : '#10b981'
+              color: isLive ? 'white' : isFinished ? '#69746c' : '#10b981'
             }}
           >
             {isLive ? '🔴 LIVE' : isFinished ? 'Final' : 'Upcoming'}
@@ -208,7 +208,7 @@ const CollegeSports = () => {
             isHome={false}
             isWinner={awayWins}
           />
-          <div className="text-center text-xs" style={{ color: '#64748b' }}>VS</div>
+          <div className="text-center text-xs" style={{ color: '#69746c' }}>VS</div>
           <TeamCard
             teamName={game.home_team}
             score={homeScore}
@@ -225,16 +225,16 @@ const CollegeSports = () => {
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold" style={{ color: '#10b981' }}>AI Prediction</span>
               <span className={`px-2 py-0.5 rounded text-xs font-bold ${
-                game.prediction.confidence === 'High' ? 'bg-green-500/20 text-green-400' :
-                game.prediction.confidence === 'Medium' ? 'bg-yellow-500/20 text-yellow-400' :
-                'bg-gray-500/20 text-gray-400'
+                game.prediction.confidence === 'High' ? 'bg-green-500/20 text-green-700' :
+                game.prediction.confidence === 'Medium' ? 'bg-yellow-500/20 text-yellow-700' :
+                'bg-gray-500/20 text-heritage-muted'
               }`}>
                 {game.prediction.confidence}
               </span>
             </div>
             <div className="mt-1 text-sm">
               <span className="font-medium" style={{ color: 'white' }}>{game.prediction.predicted_winner}</span>
-              <span className="ml-2" style={{ color: '#64748b' }}>
+              <span className="ml-2" style={{ color: '#69746c' }}>
                 ({(game.prediction.home_win_prob > game.prediction.away_win_prob
                   ? game.prediction.home_win_prob
                   : game.prediction.away_win_prob * 100).toFixed(0)}%)
@@ -255,11 +255,11 @@ const CollegeSports = () => {
             style={{ background: 'rgba(0,0,0,0.2)', borderTop: '1px solid var(--color-card-border)' }}
           >
             <div className="flex justify-between text-sm">
-              <span style={{ color: '#64748b' }}>Spread</span>
+              <span style={{ color: '#69746c' }}>Spread</span>
               <span className="font-medium" style={{ color: 'white' }}>{game.odds.spread || 'N/A'}</span>
             </div>
             <div className="flex justify-between text-sm mt-1">
-              <span style={{ color: '#64748b' }}>Total</span>
+              <span style={{ color: '#69746c' }}>Total</span>
               <span className="font-medium" style={{ color: 'white' }}>{game.odds.total || 'N/A'}</span>
             </div>
           </div>
@@ -269,7 +269,7 @@ const CollegeSports = () => {
           className="px-4 py-2 text-center"
           style={{ background: 'rgba(0,0,0,0.2)' }}
         >
-          <span className="text-xs" style={{ color: '#64748b' }}>
+          <span className="text-xs" style={{ color: '#69746c' }}>
             {new Date(game.commence_time || game.date).toLocaleString()}
           </span>
         </div>
@@ -290,15 +290,15 @@ const CollegeSports = () => {
                 <span className="text-3xl">🏀</span>
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-white font-[Oswald] tracking-tight">College Sports</h1>
-                <p className="text-sm" style={{ color: '#64748b' }}>NCAA Basketball • March Madness</p>
+                <h1 className="text-3xl font-bold text-heritage-ink font-display tracking-tight">College Sports</h1>
+                <p className="text-sm" style={{ color: '#69746c' }}>NCAA Basketball • March Madness</p>
               </div>
             </div>
             <button
               onClick={refreshNcaabData}
               disabled={refreshing}
               className="text-white font-semibold rounded-lg py-3 px-4 transition-all hover:opacity-90 flex items-center gap-2"
-              style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}
+              style={{ background: 'linear-gradient(135deg, #177c4c, #147b4c)' }}
             >
               <span className={refreshing ? 'animate-spin' : ''}>🔄</span>
               {refreshing ? 'Refreshing...' : 'Refresh Data'}
@@ -309,7 +309,7 @@ const CollegeSports = () => {
             <Link
               to="/college/bracket"
               className="text-white font-semibold rounded-lg py-3 px-4 transition-all hover:opacity-90 flex items-center gap-2"
-              style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}
+              style={{ background: 'linear-gradient(135deg, #177c4c, #147b4c)' }}
             >
               <span>🏆</span> March Madness Bracket
             </Link>
@@ -338,15 +338,15 @@ const CollegeSports = () => {
             <div className="flex items-center gap-3">
               <span className="text-2xl">⚠️</span>
               <div>
-                <p style={{ color: '#eab308' }} className="font-semibold">Data may be outdated</p>
-                <p className="text-sm" style={{ color: '#94a3b8' }}>
+                <p style={{ color: '#976207' }} className="font-semibold">Data may be outdated</p>
+                <p className="text-sm" style={{ color: '#69746c' }}>
                   {dataTimestamp
                     ? `Last updated: ${new Date(dataTimestamp).toLocaleString()}`
                     : 'No recent data available.'
                   }
                   {' '}Click "Refresh Data" to fetch the latest games.
                 </p>
-                <p className="text-xs mt-1" style={{ color: '#64748b' }}>
+                <p className="text-xs mt-1" style={{ color: '#69746c' }}>
                   Note: The Odds API has usage limits. If refresh fails, the quota may be exhausted.
                 </p>
               </div>
@@ -361,8 +361,8 @@ const CollegeSports = () => {
               onClick={() => setFilter(tab)}
               className={`px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap ${filter === tab ? 'text-white font-semibold' : 'card-glow'}`}
               style={filter === tab
-                ? { background: 'linear-gradient(135deg, #10b981, #059669)' }
-                : { background: 'var(--color-card)', border: '1px solid var(--color-card-border)', color: '#94a3b8' }
+                ? { background: 'linear-gradient(135deg, #177c4c, #147b4c)' }
+                : { background: 'var(--color-card)', border: '1px solid var(--color-card-border)', color: '#69746c' }
               }
             >
               {tab === 'all' && '📋 All Games'}
@@ -375,24 +375,24 @@ const CollegeSports = () => {
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 stagger-children">
           <div className="card-glow rounded-xl p-4 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
-            <p className="text-sm" style={{ color: '#64748b' }}>Total Games</p>
-            <p className="text-2xl font-bold text-white font-[Oswald] tracking-tight">{ncaabGames.length}</p>
+            <p className="text-sm" style={{ color: '#69746c' }}>Total Games</p>
+            <p className="text-2xl font-bold text-heritage-ink font-display tracking-tight">{ncaabGames.length}</p>
           </div>
           <div className="card-glow rounded-xl p-4 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
-            <p className="text-sm" style={{ color: '#64748b' }}>Live Now</p>
-            <p className="text-2xl font-bold font-[Oswald] tracking-tight" style={{ color: '#fca5a5' }}>
+            <p className="text-sm" style={{ color: '#69746c' }}>Live Now</p>
+            <p className="text-2xl font-bold font-display tracking-tight" style={{ color: '#b42318' }}>
               {ncaabGames.filter(g => g.status === 'LIVE' || g.status === 'IN_PROGRESS').length}
             </p>
           </div>
           <div className="card-glow rounded-xl p-4 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
-            <p className="text-sm" style={{ color: '#64748b' }}>Upcoming</p>
-            <p className="text-2xl font-bold font-[Oswald] tracking-tight" style={{ color: '#10b981' }}>
+            <p className="text-sm" style={{ color: '#69746c' }}>Upcoming</p>
+            <p className="text-2xl font-bold font-display tracking-tight" style={{ color: '#10b981' }}>
               {ncaabGames.filter(g => g.status === 'UPCOMING' || g.status === 'SCHEDULED').length}
             </p>
           </div>
           <div className="card-glow rounded-xl p-4 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
-            <p className="text-sm" style={{ color: '#64748b' }}>Completed</p>
-            <p className="text-2xl font-bold font-[Oswald] tracking-tight" style={{ color: '#6ee7b7' }}>
+            <p className="text-sm" style={{ color: '#69746c' }}>Completed</p>
+            <p className="text-2xl font-bold font-display tracking-tight" style={{ color: '#6ee7b7' }}>
               {ncaabGames.filter(g => g.status === 'FINISHED' || g.status === 'COMPLETED').length}
             </p>
           </div>
@@ -404,11 +404,11 @@ const CollegeSports = () => {
           </div>
         ) : error ? (
           <div className="text-center py-20">
-            <p className="mb-4" style={{ color: '#fca5a5' }}>{error}</p>
+            <p className="mb-4" style={{ color: '#b42318' }}>{error}</p>
             <button
               onClick={fetchNcaabData}
               className="text-white font-semibold rounded-lg py-3 px-4 transition-all hover:opacity-90"
-              style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}
+              style={{ background: 'linear-gradient(135deg, #177c4c, #147b4c)' }}
             >
               Retry
             </button>
@@ -416,8 +416,8 @@ const CollegeSports = () => {
         ) : filteredGames.length === 0 ? (
           <div className="text-center py-20">
             <span className="text-6xl mb-4 block">🏀</span>
-            <p className="text-lg" style={{ color: '#94a3b8' }}>No {filter !== 'all' ? filter : ''} games found</p>
-            <p className="text-sm mt-2" style={{ color: '#64748b' }}>Check back later for more games</p>
+            <p className="text-lg" style={{ color: '#69746c' }}>No {filter !== 'all' ? filter : ''} games found</p>
+            <p className="text-sm mt-2" style={{ color: '#69746c' }}>Check back later for more games</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 stagger-children">
@@ -428,7 +428,7 @@ const CollegeSports = () => {
         )}
 
         <div className="mt-12">
-          <h2 className="text-2xl font-bold text-white font-[Oswald] tracking-tight mb-6">Top Programs</h2>
+          <h2 className="text-2xl font-bold text-heritage-ink font-display tracking-tight mb-6">Top Programs</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 stagger-children">
             {Object.entries(NCAAB_TEAMS).slice(0, 12).map(([name, team]) => (
               <div
@@ -449,8 +449,8 @@ const CollegeSports = () => {
                     }}
                   />
                 </div>
-                <p className="text-white font-semibold text-sm truncate">{name}</p>
-                <p className="text-xs" style={{ color: '#64748b' }}>{team.conference}</p>
+                <p className="text-heritage-ink font-semibold text-sm truncate">{name}</p>
+                <p className="text-xs" style={{ color: '#69746c' }}>{team.conference}</p>
               </div>
             ))}
           </div>

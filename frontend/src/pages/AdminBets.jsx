@@ -27,8 +27,8 @@ const AdminBets = () => {
       <div className="max-w-[1800px] mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-white">Bet Management</h1>
-          <p className="text-gray-400 mt-1 text-sm">
+          <h1 className="text-2xl font-bold text-heritage-ink">Bet Management</h1>
+          <p className="text-heritage-muted mt-1 text-sm">
             View and manage all platform bets
           </p>
         </div>

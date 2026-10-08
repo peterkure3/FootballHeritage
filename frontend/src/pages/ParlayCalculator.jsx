@@ -57,20 +57,20 @@ const ParlayCalculator = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div style={{ animation: 'slide-up 0.4s ease-out both' }}>
             <div className="flex items-center gap-3 mb-1">
-              <h1 className="text-3xl md:text-4xl font-bold text-white font-[Oswald] tracking-tight">
+              <h1 className="text-3xl md:text-4xl font-bold text-heritage-ink font-display tracking-tight">
                 Parlay Builder
               </h1>
               <Calculator className="w-8 h-8" style={{ color: '#6366f1' }} />
             </div>
-            <p className="text-sm" style={{ color: '#64748b' }}>
+            <p className="text-sm" style={{ color: '#69746c' }}>
               Build your own parlay or use our AI-suggested picks
             </p>
           </div>
 
           <div className="card-glow rounded-xl p-8 text-center mt-8 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)', animation: 'slide-up 0.4s ease-out 0.06s both' }}>
-            <AlertCircle className="w-12 h-12 mx-auto mb-4" style={{ color: '#64748b' }} />
-            <h2 className="text-xl font-bold text-white font-[Oswald] tracking-tight mb-2">No Bets Selected</h2>
-            <p className="mb-4" style={{ color: '#94a3b8' }}>
+            <AlertCircle className="w-12 h-12 mx-auto mb-4" style={{ color: '#69746c' }} />
+            <h2 className="text-xl font-bold text-heritage-ink font-display tracking-tight mb-2">No Bets Selected</h2>
+            <p className="mb-4" style={{ color: '#69746c' }}>
               Go to the Odds page to build your own parlay, or use a suggested parlay below
             </p>
             <div className="flex items-center justify-center gap-4">
@@ -84,7 +84,7 @@ const ParlayCalculator = () => {
               <button
                 onClick={() => navigate('/best-bets')}
                 className="px-6 py-3 text-white rounded-lg font-semibold text-sm transition-all hover:opacity-90"
-                style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}
+                style={{ background: 'linear-gradient(135deg, #177c4c, #147b4c)' }}
               >
                 Best Value Bets
               </button>
@@ -106,12 +106,12 @@ const ParlayCalculator = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div style={{ animation: 'slide-up 0.4s ease-out both' }}>
           <div className="flex items-center gap-3 mb-1">
-            <h1 className="text-3xl md:text-4xl font-bold text-white font-[Oswald] tracking-tight">
+            <h1 className="text-3xl md:text-4xl font-bold text-heritage-ink font-display tracking-tight">
               Parlay Calculator
             </h1>
             <Calculator className="w-8 h-8" style={{ color: '#6366f1' }} />
           </div>
-          <p className="text-sm" style={{ color: '#64748b' }}>
+          <p className="text-sm" style={{ color: '#69746c' }}>
             Calculate combined odds, probabilities, and expected value for your parlays
           </p>
         </div>
@@ -124,7 +124,7 @@ const ParlayCalculator = () => {
               <h3 className="font-semibold" style={{ color: '#f59e0b' }}>Correlation Warnings</h3>
             </div>
             {correlationWarnings.map((warning, idx) => (
-              <p key={idx} className="text-sm ml-7" style={{ color: '#fcd34d' }}>{warning}</p>
+              <p key={idx} className="text-sm ml-7" style={{ color: '#976207' }}>{warning}</p>
             ))}
           </div>
         )}
@@ -142,25 +142,25 @@ const ParlayCalculator = () => {
               <div className="flex items-center gap-3">
                 <Brain className="w-6 h-6" style={{ color: '#6366f1' }} />
                 <div>
-                  <h3 className="font-semibold text-white">ML Analysis</h3>
-                  <p className="text-sm" style={{ color: '#64748b' }}>Combined parlay probability from our model</p>
+                  <h3 className="font-semibold text-heritage-ink">ML Analysis</h3>
+                  <p className="text-sm" style={{ color: '#69746c' }}>Combined parlay probability from our model</p>
                 </div>
               </div>
               <div className="flex items-center gap-6 text-right">
                 <div>
-                  <p className="text-xs" style={{ color: '#64748b' }}>Win Probability</p>
-                  <p className="text-xl font-bold text-white font-[Oswald] tracking-tight">{(combinedModelProb * 100).toFixed(1)}%</p>
+                  <p className="text-xs" style={{ color: '#69746c' }}>Win Probability</p>
+                  <p className="text-xl font-bold text-heritage-ink font-display tracking-tight">{(combinedModelProb * 100).toFixed(1)}%</p>
                 </div>
                 <div>
-                  <p className="text-xs" style={{ color: '#64748b' }}>Edge</p>
-                  <p className={`text-xl font-bold font-[Oswald] tracking-tight ${combinedEdge > 0 ? 'text-green-400' : 'text-yellow-400'}`}>
+                  <p className="text-xs" style={{ color: '#69746c' }}>Edge</p>
+                  <p className={`text-xl font-bold font-display tracking-tight ${combinedEdge > 0 ? 'text-green-700' : 'text-yellow-700'}`}>
                     {combinedEdge > 0 ? '+' : ''}{combinedEdge?.toFixed(1)}%
                   </p>
                 </div>
                 {parlayEV !== null && (
                   <div>
-                    <p className="text-xs" style={{ color: '#64748b' }}>Expected Value</p>
-                    <p className={`text-xl font-bold font-[Oswald] tracking-tight ${parlayEV > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                    <p className="text-xs" style={{ color: '#69746c' }}>Expected Value</p>
+                    <p className={`text-xl font-bold font-display tracking-tight ${parlayEV > 0 ? 'text-green-700' : 'text-red-700'}`}>
                       {parlayEV > 0 ? '+' : ''}{parlayEV}%
                     </p>
                   </div>
@@ -189,7 +189,7 @@ const ParlayCalculator = () => {
           <div className="lg:col-span-2 space-y-4 stagger-children">
             <div className="card-glow rounded-xl p-6 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold text-white font-[Oswald] tracking-tight">
+                <h2 className="text-xl font-bold text-heritage-ink font-display tracking-tight">
                   Parlay Legs ({selectedBets.length})
                 </h2>
                 <button
@@ -217,14 +217,14 @@ const ParlayCalculator = () => {
 
             {/* Stake Input */}
             <div className="card-glow rounded-xl p-6 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
-              <label className="block text-sm font-semibold mb-2" style={{ color: '#94a3b8' }}>
+              <label className="block text-sm font-semibold mb-2" style={{ color: '#69746c' }}>
                 Stake Amount ($)
               </label>
               <input
                 type="number"
                 value={stake}
                 onChange={(e) => setStake(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg text-white text-lg font-semibold focus:outline-none focus:ring-2 transition-all"
+                className="w-full px-4 py-3 rounded-lg text-heritage-ink text-lg font-semibold focus:outline-none focus:ring-2 transition-all"
                 style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)', '--tw-ring-color': '#6366f1' }}
                 placeholder="100"
               />
@@ -248,8 +248,8 @@ const ParlayCalculator = () => {
               <ParlayResults result={result} onSave={handleSave} />
             ) : (
               <div className="card-glow rounded-xl p-6 text-center border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
-                <Calculator className="w-16 h-16 mx-auto mb-4" style={{ color: '#64748b' }} />
-                <p style={{ color: '#64748b' }}>Enter your bets and calculate to see results</p>
+                <Calculator className="w-16 h-16 mx-auto mb-4" style={{ color: '#69746c' }} />
+                <p style={{ color: '#69746c' }}>Enter your bets and calculate to see results</p>
               </div>
             )}
 

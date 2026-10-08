@@ -119,23 +119,29 @@ pub async fn deposit(
     })?;
 
     // Get current balance or create wallet if doesn't exist
-    let wallet_result: Result<(String, String), sqlx::Error> =
-        sqlx::query_as("SELECT encrypted_balance, encryption_iv FROM wallets WHERE user_id = $1")
-            .bind(user_id)
-            .fetch_one(&mut *tx)
-            .await;
+    let wallet_result: Result<(Uuid, String, String), sqlx::Error> = sqlx::query_as(
+        "SELECT id, encrypted_balance, encryption_iv FROM wallets WHERE user_id = $1",
+    )
+    .bind(user_id)
+    .fetch_one(&mut *tx)
+    .await;
 
-    let current_balance = match wallet_result {
-        Ok(wallet) => crypto_service.decrypt_balance(&wallet.0, &wallet.1)?,
+    let (wallet_id, current_balance) = match wallet_result {
+        Ok((wallet_id, encrypted_balance, iv)) => (
+            wallet_id,
+            crypto_service.decrypt_balance(&encrypted_balance, &iv)?,
+        ),
         Err(sqlx::Error::RowNotFound) => {
             // Create wallet with 0.00 balance
             info!("Creating new wallet for user_id={} during deposit", user_id);
+            let wallet_id = Uuid::new_v4();
             let initial_balance = BigDecimal::from_str("0.00").unwrap();
             let (encrypted_balance, iv) = crypto_service.encrypt_balance(&initial_balance)?;
 
             sqlx::query(
-                "INSERT INTO wallets (id, user_id, encrypted_balance, encryption_iv, created_at, updated_at) VALUES (gen_random_uuid(), $1, $2, $3, NOW(), NOW())"
+                "INSERT INTO wallets (id, user_id, encrypted_balance, encryption_iv, created_at, updated_at) VALUES ($1, $2, $3, $4, NOW(), NOW())"
             )
+            .bind(wallet_id)
             .bind(user_id)
             .bind(&encrypted_balance)
             .bind(&iv)
@@ -146,14 +152,14 @@ pub async fn deposit(
                 AppError::Database(e)
             })?;
 
-            initial_balance
+            (wallet_id, initial_balance)
         }
         Err(e) => {
             error!("Failed to fetch wallet: {}", e);
             return Err(AppError::Database(e));
         }
     };
-    let new_balance = current_balance + &amount;
+    let new_balance = &current_balance + &amount;
     let (encrypted_balance, iv) = crypto_service.encrypt_balance(&new_balance)?;
 
     // Update wallet
@@ -170,17 +176,20 @@ pub async fn deposit(
         AppError::Database(e)
     })?;
 
-    // Create transaction record
+    // Create transaction record (transaction_type must match the schema CHECK: uppercase)
     let transaction_id = Uuid::new_v4();
     sqlx::query(
         r#"
-        INSERT INTO transactions (id, user_id, transaction_type, amount, status, created_at)
-        VALUES ($1, $2, 'deposit', $3, 'completed', NOW())
+        INSERT INTO transactions (id, user_id, wallet_id, transaction_type, amount, balance_before, balance_after, status, created_at)
+        VALUES ($1, $2, $3, 'DEPOSIT', $4, $5, $6, 'completed', NOW())
         "#,
     )
     .bind(transaction_id)
     .bind(user_id)
+    .bind(wallet_id)
     .bind(&amount)
+    .bind(&current_balance)
+    .bind(&new_balance)
     .execute(&mut *tx)
     .await
     .map_err(|e| {
@@ -229,26 +238,32 @@ pub async fn withdraw(
     })?;
 
     // Get current balance or create wallet if doesn't exist
-    let wallet_result: Result<(String, String), sqlx::Error> =
-        sqlx::query_as("SELECT encrypted_balance, encryption_iv FROM wallets WHERE user_id = $1")
-            .bind(user_id)
-            .fetch_one(&mut *tx)
-            .await;
+    let wallet_result: Result<(Uuid, String, String), sqlx::Error> = sqlx::query_as(
+        "SELECT id, encrypted_balance, encryption_iv FROM wallets WHERE user_id = $1",
+    )
+    .bind(user_id)
+    .fetch_one(&mut *tx)
+    .await;
 
-    let current_balance = match wallet_result {
-        Ok(wallet) => crypto_service.decrypt_balance(&wallet.0, &wallet.1)?,
+    let (wallet_id, current_balance) = match wallet_result {
+        Ok((wallet_id, encrypted_balance, iv)) => (
+            wallet_id,
+            crypto_service.decrypt_balance(&encrypted_balance, &iv)?,
+        ),
         Err(sqlx::Error::RowNotFound) => {
             // Create wallet with 0.00 balance
             info!(
                 "Creating new wallet for user_id={} during withdraw",
                 user_id
             );
+            let wallet_id = Uuid::new_v4();
             let initial_balance = BigDecimal::from_str("0.00").unwrap();
             let (encrypted_balance, iv) = crypto_service.encrypt_balance(&initial_balance)?;
 
             sqlx::query(
-                "INSERT INTO wallets (id, user_id, encrypted_balance, encryption_iv, created_at, updated_at) VALUES (gen_random_uuid(), $1, $2, $3, NOW(), NOW())"
+                "INSERT INTO wallets (id, user_id, encrypted_balance, encryption_iv, created_at, updated_at) VALUES ($1, $2, $3, $4, NOW(), NOW())"
             )
+            .bind(wallet_id)
             .bind(user_id)
             .bind(&encrypted_balance)
             .bind(&iv)
@@ -259,7 +274,7 @@ pub async fn withdraw(
                 AppError::Database(e)
             })?;
 
-            initial_balance
+            (wallet_id, initial_balance)
         }
         Err(e) => {
             error!("Failed to fetch wallet: {}", e);
@@ -271,7 +286,7 @@ pub async fn withdraw(
         return Err(AppError::InsufficientFunds);
     }
 
-    let new_balance = current_balance - &amount;
+    let new_balance = &current_balance - &amount;
     let (encrypted_balance, iv) = crypto_service.encrypt_balance(&new_balance)?;
 
     // Update wallet
@@ -288,17 +303,20 @@ pub async fn withdraw(
         AppError::Database(e)
     })?;
 
-    // Create transaction record
+    // Create transaction record (transaction_type must match the schema CHECK: uppercase)
     let transaction_id = Uuid::new_v4();
     sqlx::query(
         r#"
-        INSERT INTO transactions (id, user_id, transaction_type, amount, status, created_at)
-        VALUES ($1, $2, 'withdrawal', $3, 'completed', NOW())
+        INSERT INTO transactions (id, user_id, wallet_id, transaction_type, amount, balance_before, balance_after, status, created_at)
+        VALUES ($1, $2, $3, 'WITHDRAWAL', $4, $5, $6, 'completed', NOW())
         "#,
     )
     .bind(transaction_id)
     .bind(user_id)
+    .bind(wallet_id)
     .bind(&amount)
+    .bind(&current_balance)
+    .bind(&new_balance)
     .execute(&mut *tx)
     .await
     .map_err(|e| {

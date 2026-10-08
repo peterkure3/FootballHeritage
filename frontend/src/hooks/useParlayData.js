@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '../utils/api';
 import { useState, useEffect } from "react";
 import useAuthStore from "../stores/authStore";
 
@@ -12,7 +13,7 @@ export const useParlayData = () => {
 
   const fetchSavedParlays = async () => {
     try {
-      const response = await fetch("http://localhost:8080/api/v1/parlay/saved", {
+      const response = await fetch(`${API_BASE_URL}/parlay/saved`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -28,7 +29,7 @@ export const useParlayData = () => {
 
   const fetchHistory = async () => {
     try {
-      const response = await fetch("http://localhost:8080/api/v1/parlay/history?limit=10", {
+      const response = await fetch(`${API_BASE_URL}/parlay/history?limit=10`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

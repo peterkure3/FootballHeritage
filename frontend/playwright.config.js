@@ -11,7 +11,7 @@ export default defineConfig({
   reporter: 'html',  // Nice reports
   use: {
     trace: 'on-first-retry',  // Debug failures
-    baseURL: 'http://localhost:5173',  // Your Vite dev port
+    baseURL: 'http://127.0.0.1:5187', // Isolated test server, separate from a user's dev session.
   },
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
@@ -19,8 +19,8 @@ export default defineConfig({
     // Add more for cross-browser
   ],
   webServer: {
-    command: 'npm run dev',  // Starts Vite automatically
-    port: 5173,
-    reuseExistingServer: !process.env.CI,
+    command: 'npm run dev -- --host 127.0.0.1 --port 5187 --strictPort',
+    port: 5187,
+    reuseExistingServer: false,
   },
 });

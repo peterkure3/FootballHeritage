@@ -107,7 +107,7 @@ const Sports = () => {
         <div className="flex items-center justify-center h-screen">
           <div className="text-center">
             <div className="w-16 h-16 border-4 border-green-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-gray-400">Loading sports...</p>
+            <p className="text-heritage-muted">Loading sports...</p>
           </div>
         </div>
       </div>
@@ -121,12 +121,12 @@ const Sports = () => {
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div style={{ animation: 'slide-up 0.4s ease-out both' }}>
           <div className="flex items-center gap-3 mb-1">
-            <h1 className="text-3xl md:text-4xl font-bold text-white font-[Oswald] tracking-tight">
+            <h1 className="text-3xl md:text-4xl font-bold text-heritage-ink font-display tracking-tight">
               Sports & Betting Markets
             </h1>
             <span className="text-2xl">🏆</span>
           </div>
-          <p className="text-sm" style={{ color: '#64748b' }}>Explore our wide range of sports and betting options</p>
+          <p className="text-sm" style={{ color: '#69746c' }}>Explore our wide range of sports and betting options</p>
         </div>
 
         {/* View Toggle */}
@@ -135,8 +135,8 @@ const Sports = () => {
             onClick={() => setSelectedView('sports')}
             className="px-6 py-3 rounded-lg font-semibold text-sm transition-all"
             style={{
-              background: selectedView === 'sports' ? 'linear-gradient(135deg, #10b981, #059669)' : 'var(--color-card)',
-              color: selectedView === 'sports' ? 'white' : '#94a3b8',
+              background: selectedView === 'sports' ? 'linear-gradient(135deg, #177c4c, #147b4c)' : 'var(--color-card)',
+              color: selectedView === 'sports' ? 'white' : '#69746c',
               border: selectedView === 'sports' ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid var(--color-card-border)',
             }}
             type="button"
@@ -148,8 +148,8 @@ const Sports = () => {
             onClick={() => setSelectedView('categories')}
             className="px-6 py-3 rounded-lg font-semibold text-sm transition-all"
             style={{
-              background: selectedView === 'categories' ? 'linear-gradient(135deg, #10b981, #059669)' : 'var(--color-card)',
-              color: selectedView === 'categories' ? 'white' : '#94a3b8',
+              background: selectedView === 'categories' ? 'linear-gradient(135deg, #177c4c, #147b4c)' : 'var(--color-card)',
+              color: selectedView === 'categories' ? 'white' : '#69746c',
               border: selectedView === 'categories' ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid var(--color-card-border)',
             }}
             type="button"
@@ -162,7 +162,7 @@ const Sports = () => {
             className="px-6 py-3 rounded-lg font-semibold text-sm transition-all card-glow flex items-center gap-2"
             style={{
               background: 'var(--color-card)',
-              color: '#94a3b8',
+              color: '#69746c',
               border: '1px solid var(--color-card-border)',
             }}
             type="button"
@@ -182,8 +182,8 @@ const Sports = () => {
               <div className="card-glow rounded-xl p-6 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs mb-1" style={{ color: '#64748b' }}>Total Sports</p>
-                    <p className="text-3xl font-bold text-white font-[Oswald] tracking-tight">{totals.totalSports}</p>
+                    <p className="text-xs mb-1" style={{ color: '#69746c' }}>Total Sports</p>
+                    <p className="text-3xl font-bold text-heritage-ink font-display tracking-tight">{totals.totalSports}</p>
                   </div>
                   <span className="text-4xl">🏅</span>
                 </div>
@@ -191,8 +191,8 @@ const Sports = () => {
               <div className="card-glow rounded-xl p-6 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs mb-1" style={{ color: '#64748b' }}>Total Events</p>
-                    <p className="text-3xl font-bold font-[Oswald] tracking-tight" style={{ color: '#10b981' }}>
+                    <p className="text-xs mb-1" style={{ color: '#69746c' }}>Total Events</p>
+                    <p className="text-3xl font-bold font-display tracking-tight" style={{ color: '#10b981' }}>
                       {totals.totalEvents}
                     </p>
                   </div>
@@ -202,8 +202,8 @@ const Sports = () => {
               <div className="card-glow rounded-xl p-6 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs mb-1" style={{ color: '#64748b' }}>Active Leagues</p>
-                    <p className="text-3xl font-bold font-[Oswald] tracking-tight" style={{ color: '#6366f1' }}>
+                    <p className="text-xs mb-1" style={{ color: '#69746c' }}>Active Leagues</p>
+                    <p className="text-3xl font-bold font-display tracking-tight" style={{ color: '#6366f1' }}>
                       {totals.totalLeagues}
                     </p>
                   </div>
@@ -215,15 +215,15 @@ const Sports = () => {
             {/* Sports Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 stagger-children">
               {sportsError && (
-                <div className="col-span-full rounded-xl p-4 text-center border" style={{ background: 'rgba(239, 68, 68, 0.08)', borderColor: 'rgba(239, 68, 68, 0.2)', color: '#fca5a5' }}>
+                <div className="col-span-full rounded-xl p-4 text-center border" style={{ background: 'rgba(239, 68, 68, 0.08)', borderColor: 'rgba(239, 68, 68, 0.2)', color: '#b42318' }}>
                   {sportsError}
                 </div>
               )}
               {!sportsError && sports.length === 0 && !sportsLoading && (
                 <div className="col-span-full text-center py-16">
                   <div className="text-6xl mb-4">🏅</div>
-                  <h3 className="text-xl font-semibold mb-2" style={{ color: '#94a3b8' }}>No Sports Available</h3>
-                  <p style={{ color: '#64748b' }}>Check back soon for upcoming events</p>
+                  <h3 className="text-xl font-semibold mb-2" style={{ color: '#69746c' }}>No Sports Available</h3>
+                  <p style={{ color: '#69746c' }}>Check back soon for upcoming events</p>
                 </div>
               )}
               {sports.map((sport) => {
@@ -245,10 +245,10 @@ const Sports = () => {
                         <div className="flex items-center gap-3">
                           <span className="text-4xl">{sport.icon}</span>
                           <div>
-                            <h3 className="text-xl font-bold text-white font-[Oswald] tracking-tight group-hover:text-green-400 transition-colors">
+                            <h3 className="text-xl font-bold text-heritage-ink font-display tracking-tight group-hover:text-green-700 transition-colors">
                               {sport.display_name}
                             </h3>
-                            <p className="text-xs" style={{ color: '#64748b' }}>
+                            <p className="text-xs" style={{ color: '#69746c' }}>
                               {sport.event_count} {sport.event_count === 1 ? 'event' : 'events'}
                             </p>
                           </div>
@@ -260,7 +260,7 @@ const Sports = () => {
                         )}
                       </div>
                       <div className="flex items-center gap-3">
-                        <p className="text-xs uppercase" style={{ color: '#64748b' }}>
+                        <p className="text-xs uppercase" style={{ color: '#69746c' }}>
                           Leagues Available: {sport.leagues.length}
                         </p>
                         {sport.leagues.length > 0 && (
@@ -282,7 +282,7 @@ const Sports = () => {
                       {/* Leagues */}
                       {isExpanded && sport.leagues.length > 0 && (
                         <div className="space-y-2 mt-4">
-                          <p className="text-xs uppercase font-semibold" style={{ color: '#64748b' }}>
+                          <p className="text-xs uppercase font-semibold" style={{ color: '#69746c' }}>
                             Leagues ({sport.leagues.length})
                           </p>
                           <div className="space-y-2">
@@ -314,7 +314,7 @@ const Sports = () => {
                       <button
                         onClick={() => handleSportClick(sport.name)}
                         className="w-full text-white py-2.5 rounded-lg font-semibold text-sm transition-all hover:opacity-90"
-                        style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}
+                        style={{ background: 'linear-gradient(135deg, #177c4c, #147b4c)' }}
                         type="button"
                       >
                         View All {sport.display_name} Odds
@@ -325,7 +325,7 @@ const Sports = () => {
                         style={{
                           background: 'rgba(255,255,255,0.04)',
                           border: '1px solid var(--color-card-border)',
-                          color: '#94a3b8',
+                          color: '#69746c',
                         }}
                         type="button"
                       >
@@ -346,8 +346,8 @@ const Sports = () => {
         {selectedView === 'categories' && (
           <div>
             <div className="mb-6" style={{ animation: 'slide-up 0.4s ease-out 0.1s both' }}>
-              <h2 className="text-2xl font-bold text-white font-[Oswald] tracking-tight mb-1">Bet Types & Categories</h2>
-              <p className="text-sm" style={{ color: '#64748b' }}>Learn about different ways to bet on your favorite sports</p>
+              <h2 className="text-2xl font-bold text-heritage-ink font-display tracking-tight mb-1">Bet Types & Categories</h2>
+              <p className="text-sm" style={{ color: '#69746c' }}>Learn about different ways to bet on your favorite sports</p>
             </div>
             {categoriesLoading ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 stagger-children">
@@ -356,14 +356,14 @@ const Sports = () => {
                 ))}
               </div>
             ) : categoriesError ? (
-              <div className="rounded-xl p-6 text-center border" style={{ background: 'rgba(239, 68, 68, 0.08)', borderColor: 'rgba(239, 68, 68, 0.2)', color: '#fca5a5' }}>
+              <div className="rounded-xl p-6 text-center border" style={{ background: 'rgba(239, 68, 68, 0.08)', borderColor: 'rgba(239, 68, 68, 0.2)', color: '#b42318' }}>
                 {categoriesError}
               </div>
             ) : categories.length === 0 ? (
               <div className="text-center py-16">
                 <div className="text-6xl mb-4">📊</div>
-                <h3 className="text-xl font-semibold mb-2" style={{ color: '#94a3b8' }}>No Bet Categories Available</h3>
-                <p style={{ color: '#64748b' }}>Check back soon for more betting education.</p>
+                <h3 className="text-xl font-semibold mb-2" style={{ color: '#69746c' }}>No Bet Categories Available</h3>
+                <p style={{ color: '#69746c' }}>Check back soon for more betting education.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 stagger-children">
@@ -376,18 +376,18 @@ const Sports = () => {
                     <div className="flex items-start gap-4 mb-4">
                       <span className="text-4xl">{category.icon}</span>
                       <div className="flex-1">
-                        <h3 className="text-xl font-bold text-white font-[Oswald] tracking-tight group-hover:text-green-400 transition-colors mb-2">
+                        <h3 className="text-xl font-bold text-heritage-ink font-display tracking-tight group-hover:text-green-700 transition-colors mb-2">
                           {category.name}
                         </h3>
-                        <p className="text-sm" style={{ color: '#94a3b8' }}>
+                        <p className="text-sm" style={{ color: '#69746c' }}>
                           {category.description}
                         </p>
                       </div>
                     </div>
 
                     <div className="rounded-lg p-4 border card-glow" style={{ background: 'rgba(255,255,255,0.03)', borderColor: 'var(--color-card-border)' }}>
-                      <p className="text-xs uppercase font-semibold mb-2" style={{ color: '#64748b' }}>Example</p>
-                      <p className="text-sm font-mono" style={{ color: '#94a3b8' }}>
+                      <p className="text-xs uppercase font-semibold mb-2" style={{ color: '#69746c' }}>Example</p>
+                      <p className="text-sm font-mono" style={{ color: '#69746c' }}>
                         {category.example}
                       </p>
                     </div>

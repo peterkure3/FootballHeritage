@@ -67,10 +67,38 @@ FootballHeritage/
 - ~~Versioned-file duplication~~ — v1 train/predict + sync scraper deleted 2026-07-06; compute_intelligence(_v2) both kept intentionally (v2 wraps v1)
 - ~~pipeline/api/routes.py monolith~~ — split 2026-07-06 into api/routers/{intelligence,predictions,core,matchup,assistant,parlay,fpl,ncaab}.py + api/db.py + api/odds_math.py; fixed shadowed /predictions/* routes and blocking-sync-in-async endpoints
 - Scheduler: Windows Task Scheduler + .bat files is the single supported path (scheduler.py and Airflow DAG deleted 2026-07-06)
-- **Thin test coverage** — one Playwright E2E spec (API-mocked); chatbot has no tests; pipeline test_*.py are manual scripts, not a pytest suite; backend has unit tests in 5 modules
+- **Uneven test coverage** — frontend coverage updated below; chatbot has no tests; pipeline test_*.py are manual scripts, not a pytest suite; backend has unit tests in 5 modules
 - **Doc sprawl** — 18 loose .md status files in pipeline/, 13 .md/.sql at backend root
 
-## Rebuild Checklist
+## Frontend routing update — 2026-10-08
+
+- Public `/` now renders the supplied landing design with a separate Register/Login
+  navbar. `/app` preserves the general sports homepage; sport, AI Picks, account,
+  betting and administration URLs remain. SPA fallback is required for direct links.
+- React 19.2, TypeScript 7 (strict new TS/TSX; legacy JSX remains JS), Vite 7 and
+  Tailwind 4 are verified by the frontend build. The existing Zustand/React Query/API
+  authentication flow remains; no template identity or hash router is imported.
+- Default authentication redirect remains `/dashboard`. Internal `returnTo` and
+  protected-route destinations are validated; external/looping paths are rejected.
+- Current browser tests include `betting-flow`, `heritage-navigation`, `landing` and
+  `template-reference` specs. Test API fixtures are explicitly mocked. Opt-in
+  `frontend/scripts/smoke-live-auth.mjs` exercises real local registration/login.
+- Final landing integration run: 76 browser checks passed in Chromium/Firefox; strict
+  TypeScript/build passed, lint zero errors with one existing admin warning, audit zero
+  vulnerabilities. Real local registration/login and validated profile return succeeded.
+- Standings/newsroom and synchronized preferences remain unavailable; generation only
+  enables Football and still requires statistical/model services. Refer to
+  `frontend/UI_INTEGRATION.md` for current frontend contracts and coverage limitations.
+
+## Rebuild Checklist (original service setup)
+
+Auth-header follow-up: `/login` and `/register` reuse
+`frontend/src/landing/LandingNavbar.tsx` without the scoreboard or sports navbar.
+Landing styles are scoped to the header wrapper, not the existing auth forms;
+account links preserve return URL/state. Application navigation remains on `/app`
+and existing sports/protected pages.
+Login/registration presentation now reuses typed `landing/AuthForms.tsx` components
+and scoped `auth.css`, with existing hooks/schemas/age confirmation unchanged.
 
 1. Install prerequisites: Rust 1.70+, Node.js 18+, PostgreSQL 14+, Redis 7+, Python 3.10+
 2. Configure `.env` files in backend/, frontend/, pipeline/, chatbot/

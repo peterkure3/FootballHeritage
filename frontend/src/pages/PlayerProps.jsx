@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { SPORTS } from '../utils/constants';
 import Navbar from '../components/Navbar';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8080/api/v1';
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8888/api/v1';
 
 const SPORT_PARAM_MAP = {
   nfl: 'americanfootball',
@@ -35,16 +35,16 @@ const PlayerProps = () => {
   };
 
   return (
-    <div className="min-h-screen" style={{ background: 'var(--color-surface, #0d0d14)' }}>
+    <div className="min-h-screen" style={{ background: 'var(--color-surface, #f0f2ef)' }}>
       <Navbar />
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
         <div style={{ animation: 'slide-up 0.4s ease-out both' }}>
           <div className="flex items-center gap-3 mb-1">
-            <h1 className="text-3xl font-bold text-white font-[Oswald] tracking-tight">Player Props</h1>
+            <h1 className="text-3xl font-bold text-heritage-ink font-display tracking-tight">Player Props</h1>
             <span className="text-xl">⭐</span>
           </div>
-          <p className="text-sm" style={{ color: '#64748b' }}>Player-specific betting markets across all sports</p>
+          <p className="text-sm" style={{ color: '#69746c' }}>Player-specific betting markets across all sports</p>
         </div>
 
         {/* Sport Filters */}
@@ -54,9 +54,9 @@ const PlayerProps = () => {
             className="px-4 py-2 rounded-lg text-sm font-semibold transition-all"
             style={{
               background: selectedSport === 'all'
-                ? 'linear-gradient(135deg, #10b981, #059669)'
-                : 'var(--color-card, #14141f)',
-              color: selectedSport === 'all' ? 'white' : '#94a3b8',
+                ? 'linear-gradient(135deg, #177c4c, #147b4c)'
+                : 'var(--color-card, #ffffff)',
+              color: selectedSport === 'all' ? 'white' : '#69746c',
               border: selectedSport === 'all' ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid var(--color-card-border, #1f1f35)',
             }}
           >
@@ -69,9 +69,9 @@ const PlayerProps = () => {
               className="px-4 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 card-glow"
               style={{
                 background: selectedSport === sport.apiParam
-                  ? 'linear-gradient(135deg, #10b981, #059669)'
-                  : 'var(--color-card, #14141f)',
-                color: selectedSport === sport.apiParam ? 'white' : '#94a3b8',
+                  ? 'linear-gradient(135deg, #177c4c, #147b4c)'
+                  : 'var(--color-card, #ffffff)',
+                color: selectedSport === sport.apiParam ? 'white' : '#69746c',
                 border: selectedSport === sport.apiParam
                   ? '1px solid rgba(16, 185, 129, 0.3)'
                   : '1px solid var(--color-card-border, #1f1f35)',
@@ -94,7 +94,7 @@ const PlayerProps = () => {
                 boxShadow: '0 0 12px rgba(16, 185, 129, 0.3)',
               }}
             />
-            <p className="text-sm" style={{ color: '#64748b' }}>Loading player props...</p>
+            <p className="text-sm" style={{ color: '#69746c' }}>Loading player props...</p>
           </div>
         )}
 
@@ -105,7 +105,7 @@ const PlayerProps = () => {
             style={{
               background: 'rgba(239, 68, 68, 0.08)',
               border: '1px solid rgba(239, 68, 68, 0.2)',
-              color: '#fca5a5',
+              color: '#b42318',
               animation: 'fade-in 0.2s ease-out',
             }}
           >
@@ -118,7 +118,7 @@ const PlayerProps = () => {
           <div
             className="text-center py-20 rounded-xl border card-glow"
             style={{
-              background: 'linear-gradient(135deg, var(--color-card, #14141f), var(--color-card-hover, #1a1a2e))',
+              background: 'linear-gradient(135deg, var(--color-card, #ffffff), var(--color-card-hover, #e4eee1))',
               borderColor: 'var(--color-card-border, #1f1f35)',
               animation: 'slide-up 0.4s ease-out 0.1s both',
             }}
@@ -126,8 +126,8 @@ const PlayerProps = () => {
             <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(16, 185, 129, 0.1)' }}>
               <span className="text-2xl">🎯</span>
             </div>
-            <p className="text-white text-lg font-semibold mb-1 font-[Oswald]">No player props available yet</p>
-            <p className="text-sm" style={{ color: '#64748b' }}>
+            <p className="text-heritage-ink text-lg font-semibold mb-1 font-display">No player props available yet</p>
+            <p className="text-sm" style={{ color: '#69746c' }}>
               Player props will appear here once data is ingested from The Odds API
             </p>
           </div>
@@ -141,20 +141,20 @@ const PlayerProps = () => {
                 key={prop.id}
                 className="rounded-xl p-4 border card-glow"
                 style={{
-                  background: 'linear-gradient(135deg, var(--color-card, #14141f), var(--color-card-hover, #1a1a2e))',
+                  background: 'linear-gradient(135deg, var(--color-card, #ffffff), var(--color-card-hover, #e4eee1))',
                   borderColor: 'var(--color-card-border, #1f1f35)',
                 }}
               >
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <span className="text-white font-semibold">{prop.player_name}</span>
-                    {prop.team && <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: 'rgba(100, 116, 139, 0.15)', color: '#64748b' }}>{prop.team}</span>}
+                    <span className="text-heritage-ink font-semibold">{prop.player_name}</span>
+                    {prop.team && <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: 'rgba(100, 116, 139, 0.15)', color: '#69746c' }}>{prop.team}</span>}
                   </div>
-                  <span className="text-xs" style={{ color: '#64748b' }}>{prop.league}</span>
+                  <span className="text-xs" style={{ color: '#69746c' }}>{prop.league}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm" style={{ color: '#94a3b8' }}>
-                    {prop.market.replace(/_/g, ' ')} — <span className="text-white font-mono">{prop.line}</span>
+                  <span className="text-sm" style={{ color: '#69746c' }}>
+                    {prop.market.replace(/_/g, ' ')} — <span className="text-heritage-ink font-mono">{prop.line}</span>
                   </span>
                   <div className="flex gap-2">
                     {prop.over_odds && (

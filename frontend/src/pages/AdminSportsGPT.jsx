@@ -173,8 +173,8 @@ const AdminSportsGPT = () => {
               <Sparkles className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-white">SportsGPT</h1>
-              <p className="text-gray-400 text-sm">
+              <h1 className="text-2xl font-bold text-heritage-ink">SportsGPT</h1>
+              <p className="text-heritage-muted text-sm">
                 AI-Powered Sports Analytics & Insights
               </p>
             </div>
@@ -191,12 +191,12 @@ const AdminSportsGPT = () => {
                   setInput(prompt.query);
                   setTimeout(() => handleSend(), 100);
                 }}
-                className="flex items-center space-x-3 p-4 bg-gray-800 hover:bg-gray-700 border border-gray-700 hover:border-green-500 rounded-xl transition-all text-left"
+                className="flex items-center space-x-3 p-4 bg-card hover:bg-card-hover border border-card-border hover:border-green-500 rounded-xl transition-all text-left"
               >
                 <div className="w-10 h-10 bg-green-500/10 rounded-lg flex items-center justify-center flex-shrink-0">
                   {prompt.icon}
                 </div>
-                <span className="text-sm font-medium text-white">
+                <span className="text-sm font-medium text-heritage-ink">
                   {prompt.label}
                 </span>
               </button>
@@ -205,7 +205,7 @@ const AdminSportsGPT = () => {
         )}
 
         {/* Chat Interface */}
-        <div className="bg-gray-800 rounded-xl border border-gray-700 flex flex-col h-[calc(100vh-280px)]">
+        <div className="bg-card rounded-xl border border-card-border flex flex-col h-[calc(100vh-280px)]">
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-6 space-y-4">
             {messages.map((message) => (
@@ -219,7 +219,7 @@ const AdminSportsGPT = () => {
                   className={`max-w-[80%] rounded-2xl px-5 py-4 ${
                     message.type === "user"
                       ? "bg-green-500 text-white"
-                      : "bg-gray-700 text-gray-100"
+                      : "bg-card-hover text-heritage-ink"
                   }`}
                 >
                   <p className="text-sm whitespace-pre-line leading-relaxed">
@@ -237,8 +237,8 @@ const AdminSportsGPT = () => {
 
             {isLoading && (
               <div className="flex justify-start">
-                <div className="bg-gray-700 rounded-2xl px-5 py-4">
-                  <Loader2 className="w-5 h-5 text-green-400 animate-spin" />
+                <div className="bg-card-hover rounded-2xl px-5 py-4">
+                  <Loader2 className="w-5 h-5 text-green-700 animate-spin" />
                 </div>
               </div>
             )}
@@ -247,7 +247,7 @@ const AdminSportsGPT = () => {
           </div>
 
           {/* Input */}
-          <div className="p-4 border-t border-gray-700">
+          <div className="p-4 border-t border-card-border">
             <div className="flex items-center space-x-3">
               <input
                 ref={inputRef}
@@ -256,12 +256,12 @@ const AdminSportsGPT = () => {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Ask about predictions, strategies, odds analysis..."
-                className="flex-1 h-12 px-4 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 text-sm"
+                className="flex-1 h-12 px-4 bg-card-hover border border-card-border rounded-xl text-heritage-ink placeholder-gray-400 focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 text-sm"
               />
               <button
                 onClick={handleSend}
                 disabled={!input.trim() || isLoading}
-                className="h-12 w-12 bg-green-500 hover:bg-green-600 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-xl transition-colors flex-shrink-0 flex items-center justify-center"
+                className="h-12 w-12 bg-green-500 hover:bg-green-600 disabled:bg-card-hover disabled:cursor-not-allowed text-white rounded-xl transition-colors flex-shrink-0 flex items-center justify-center"
                 aria-label="Send message"
               >
                 {isLoading ? (
@@ -271,7 +271,7 @@ const AdminSportsGPT = () => {
                 )}
               </button>
             </div>
-            <p className="text-xs text-gray-500 mt-2">
+            <p className="text-xs text-heritage-muted mt-2">
               Press Enter to send • Powered by Genkit AI
             </p>
           </div>

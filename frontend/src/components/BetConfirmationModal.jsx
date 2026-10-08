@@ -3,6 +3,7 @@ import { usePlaceBet } from '../hooks/useBetting';
 import useBettingStore from '../stores/bettingStore';
 import { betSchema, safeParse } from '../utils/validation';
 import { sanitize } from '../utils/api';
+import { Dialog } from '../heritage/ui';
 
 const BetConfirmationModal = memo(({ isOpen, onClose, betDetails }) => {
   const [betAmount, setBetAmount] = useState('');
@@ -49,7 +50,7 @@ const BetConfirmationModal = memo(({ isOpen, onClose, betDetails }) => {
 
     if (!result.success) {
       const fieldErrors = {};
-      result.error.errors.forEach((err) => {
+      result.error.issues.forEach((err) => {
         fieldErrors[err.path[0]] = err.message;
       });
       setErrors(fieldErrors);
@@ -120,25 +121,13 @@ const BetConfirmationModal = memo(({ isOpen, onClose, betDetails }) => {
   const atLimit = isAtLimit();
 
   return (
-    <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="bet-modal-title"
-      aria-describedby="bet-modal-description"
-      onClick={(e) => {
-        // Close modal when clicking backdrop
-        if (e.target === e.currentTarget && !isLoading) {
-          handleClose();
-        }
-      }}
-    >
-      <div className="bg-gray-800 rounded-xl shadow-2xl border border-gray-700 w-full max-w-md overflow-hidden">
+    <Dialog title="Place Your Bet" className="fh-wallet-dialog" onClose={handleClose}>
+      <div className="bg-card rounded-xl shadow-2xl border border-card-border w-full max-w-md overflow-hidden">
         {/* Header */}
         <div className="bg-gradient-to-r from-green-600 to-green-700 p-6 relative">
           <h2 
             id="bet-modal-title" 
-            className="text-white text-2xl font-bold"
+            className="text-white text-2xl font-normal"
           >
             Place Your Bet
           </h2>
@@ -152,7 +141,7 @@ const BetConfirmationModal = memo(({ isOpen, onClose, betDetails }) => {
             onClick={handleClose}
             disabled={isLoading}
             aria-label="Close bet confirmation modal"
-            className="absolute top-4 right-4 text-white hover:text-gray-200 transition-colors disabled:opacity-50"
+            className="absolute top-4 right-4 text-white hover:text-white transition-colors disabled:opacity-50"
           >
             <svg
               className="w-6 h-6"
@@ -174,21 +163,21 @@ const BetConfirmationModal = memo(({ isOpen, onClose, betDetails }) => {
         <div className="p-6">
           {/* Event Details */}
           <div 
-            className="bg-gray-900/50 border border-gray-700 rounded-lg p-4 mb-4"
+            className="bg-card/50 border border-card-border rounded-lg p-4 mb-4"
             role="region"
             aria-label="Event details"
           >
-            <h3 className="text-white font-bold text-lg mb-2">{betDetails.eventName}</h3>
+            <h3 className="text-heritage-ink font-bold text-lg mb-2">{betDetails.eventName}</h3>
             <div className="grid grid-cols-2 gap-2 text-sm">
               <div>
-                <span className="text-gray-400">Bet Type:</span>
-                <span className="text-white font-semibold ml-2">
+                <span className="text-heritage-muted">Bet Type:</span>
+                <span className="text-heritage-ink font-semibold ml-2">
                   {betDetails.type?.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
                 </span>
               </div>
               <div>
-                <span className="text-gray-400">Odds:</span>
-                <span className="text-green-400 font-bold ml-2">{betDetails.odds}x</span>
+                <span className="text-heritage-muted">Odds:</span>
+                <span className="text-green-700 font-bold ml-2">{betDetails.odds}x</span>
               </div>
             </div>
           </div>
@@ -197,12 +186,12 @@ const BetConfirmationModal = memo(({ isOpen, onClose, betDetails }) => {
           <div className="mb-4">
             <label 
               htmlFor="bet-amount-input"
-              className="block text-gray-300 text-sm font-semibold mb-2"
+              className="block text-heritage-ink text-sm font-semibold mb-2"
             >
               Bet Amount ($)
             </label>
             <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg font-bold">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-heritage-muted text-lg font-bold">
                 $
               </span>
               <input
@@ -218,17 +207,17 @@ const BetConfirmationModal = memo(({ isOpen, onClose, betDetails }) => {
                 aria-invalid={!!errors.amount}
                 aria-describedby={errors.amount ? 'bet-amount-error' : 'bet-amount-help'}
                 aria-required="true"
-                className={`w-full pl-10 pr-4 py-3 bg-gray-900 border rounded-lg text-white text-lg font-semibold placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
+                className={`w-full pl-10 pr-4 py-3 bg-card border rounded-lg text-heritage-ink text-lg font-semibold placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                   errors.amount
                     ? 'border-red-500 focus:ring-red-500'
-                    : 'border-gray-700 focus:ring-green-500'
+                    : 'border-card-border focus:ring-green-500'
                 } disabled:opacity-50 disabled:cursor-not-allowed`}
               />
             </div>
             {errors.amount && (
               <p 
                 id="bet-amount-error"
-                className="text-red-400 text-xs mt-2 flex items-center"
+                className="text-red-700 text-xs mt-2 flex items-center"
                 role="alert"
                 aria-live="polite"
               >
@@ -246,7 +235,7 @@ const BetConfirmationModal = memo(({ isOpen, onClose, betDetails }) => {
 
           {/* Quick Amount Buttons */}
           <div className="mb-4">
-            <label className="block text-gray-300 text-sm font-semibold mb-2">
+            <label className="block text-heritage-ink text-sm font-semibold mb-2">
               Quick Select
             </label>
             <div 
@@ -268,7 +257,7 @@ const BetConfirmationModal = memo(({ isOpen, onClose, betDetails }) => {
                     className={`py-2 px-3 rounded-lg font-semibold text-sm transition-all ${
                       betAmount === amount.toString()
                         ? 'bg-green-500 text-white shadow-lg'
-                        : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                        : 'bg-card-hover text-heritage-ink hover:bg-card-hover'
                     } disabled:opacity-50 disabled:cursor-not-allowed`}
                   >
                     ${amount}
@@ -285,7 +274,7 @@ const BetConfirmationModal = memo(({ isOpen, onClose, betDetails }) => {
               role="alert"
               aria-live="polite"
             >
-              <p className="text-yellow-400 text-xs flex items-center">
+              <p className="text-yellow-700 text-xs flex items-center">
                 <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                   <path
                     fillRule="evenodd"
@@ -305,7 +294,7 @@ const BetConfirmationModal = memo(({ isOpen, onClose, betDetails }) => {
               role="alert"
               aria-live="assertive"
             >
-              <p className="text-red-400 text-xs flex items-center">
+              <p className="text-red-700 text-xs flex items-center">
                 <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                   <path
                     fillRule="evenodd"
@@ -320,22 +309,22 @@ const BetConfirmationModal = memo(({ isOpen, onClose, betDetails }) => {
 
           {/* Bet Summary */}
           <div 
-            className="bg-gray-900 rounded-lg p-4 mb-4"
+            className="bg-card rounded-lg p-4 mb-4"
             role="region"
             aria-label="Bet summary"
           >
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-gray-400">Bet Amount:</span>
-                <span className="text-white font-semibold">${betAmount || '0.00'}</span>
+                <span className="text-heritage-muted">Bet Amount:</span>
+                <span className="text-heritage-ink font-semibold">${betAmount || '0.00'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-400">Odds:</span>
-                <span className="text-white font-semibold">{betDetails.odds}x</span>
+                <span className="text-heritage-muted">Odds:</span>
+                <span className="text-heritage-ink font-semibold">{betDetails.odds}x</span>
               </div>
-              <div className="border-t border-gray-700 pt-2 flex justify-between">
-                <span className="text-gray-400">Potential Payout:</span>
-                <span className="text-green-400 font-bold text-lg">${potentialPayout}</span>
+              <div className="border-t border-card-border pt-2 flex justify-between">
+                <span className="text-heritage-muted">Potential Payout:</span>
+                <span className="text-green-700 font-bold text-lg">${potentialPayout}</span>
               </div>
             </div>
           </div>
@@ -347,10 +336,10 @@ const BetConfirmationModal = memo(({ isOpen, onClose, betDetails }) => {
             aria-label="Session betting statistics"
           >
             <div className="flex justify-between items-center text-xs">
-              <span className="text-blue-300">Session: ${sessionStats.total.toFixed(2)} / ${sessionStats.limit}</span>
-              <span className="text-blue-300">{sessionStats.percentUsed}% used</span>
+              <span className="text-blue-700">Session: ${sessionStats.total.toFixed(2)} / ${sessionStats.limit}</span>
+              <span className="text-blue-700">{sessionStats.percentUsed}% used</span>
             </div>
-            <div className="mt-2 bg-gray-900 rounded-full h-2 overflow-hidden">
+            <div className="mt-2 bg-card rounded-full h-2 overflow-hidden">
               <div
                 className={`h-full transition-all duration-300 ${
                   sessionStats.percentUsed >= 80 ? 'bg-red-500' : 'bg-green-500'
@@ -372,7 +361,7 @@ const BetConfirmationModal = memo(({ isOpen, onClose, betDetails }) => {
               role="alert"
               aria-live="assertive"
             >
-              <p className="text-red-400 text-sm">{errors.submit}</p>
+              <p className="text-red-700 text-sm">{errors.submit}</p>
             </div>
           )}
 
@@ -382,7 +371,7 @@ const BetConfirmationModal = memo(({ isOpen, onClose, betDetails }) => {
               onClick={handleClose}
               disabled={isLoading}
               aria-label="Cancel bet placement"
-              className="flex-1 py-3 px-4 bg-gray-700 text-white rounded-lg font-semibold hover:bg-gray-600 transition-colors disabled:opacity-50"
+              className="flex-1 py-3 px-4 bg-card-hover text-heritage-ink rounded-lg font-semibold hover:bg-card-hover transition-colors disabled:opacity-50"
             >
               Cancel
             </button>
@@ -420,13 +409,13 @@ const BetConfirmationModal = memo(({ isOpen, onClose, betDetails }) => {
         </div>
 
         {/* Footer */}
-        <div className="bg-gray-900 px-6 py-3 border-t border-gray-700">
-          <p className="text-gray-500 text-xs text-center">
+        <div className="bg-card px-6 py-3 border-t border-card-border">
+          <p className="text-heritage-muted text-xs text-center">
             🎰 Gamble responsibly • Set limits • Know when to stop
           </p>
         </div>
       </div>
-    </div>
+    </Dialog>
   );
 });
 

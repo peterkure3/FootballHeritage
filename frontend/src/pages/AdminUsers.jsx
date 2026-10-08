@@ -70,65 +70,65 @@ const AdminUsers = () => {
       <div className="max-w-[1800px] mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-white">User Management</h1>
-          <p className="text-gray-400 mt-1 text-sm">
+          <h1 className="text-2xl font-bold text-heritage-ink">User Management</h1>
+          <p className="text-heritage-muted mt-1 text-sm">
             View and manage all platform users
           </p>
         </div>
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
+          <div className="bg-card rounded-xl border border-card-border p-5">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-400">Total Users</span>
-              <Shield className="w-5 h-5 text-blue-400" />
+              <span className="text-sm text-heritage-muted">Total Users</span>
+              <Shield className="w-5 h-5 text-blue-700" />
             </div>
-            <p className="text-2xl font-bold text-white">{users.length}</p>
+            <p className="text-2xl font-bold text-heritage-ink">{users.length}</p>
           </div>
           
-          <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
+          <div className="bg-card rounded-xl border border-card-border p-5">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-400">Verified</span>
-              <CheckCircle className="w-5 h-5 text-green-400" />
+              <span className="text-sm text-heritage-muted">Verified</span>
+              <CheckCircle className="w-5 h-5 text-green-700" />
             </div>
-            <p className="text-2xl font-bold text-white">{users.filter(u => u.is_verified).length}</p>
+            <p className="text-2xl font-bold text-heritage-ink">{users.filter(u => u.is_verified).length}</p>
           </div>
           
-          <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
+          <div className="bg-card rounded-xl border border-card-border p-5">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-400">Suspended</span>
-              <Ban className="w-5 h-5 text-red-400" />
+              <span className="text-sm text-heritage-muted">Suspended</span>
+              <Ban className="w-5 h-5 text-red-700" />
             </div>
-            <p className="text-2xl font-bold text-white">{users.filter(u => u.status === 'suspended').length}</p>
+            <p className="text-2xl font-bold text-heritage-ink">{users.filter(u => u.status === 'suspended').length}</p>
           </div>
           
-          <div className="bg-gray-800 rounded-xl border border-gray-700 p-5">
+          <div className="bg-card rounded-xl border border-card-border p-5">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-400">Admins</span>
-              <Shield className="w-5 h-5 text-purple-400" />
+              <span className="text-sm text-heritage-muted">Admins</span>
+              <Shield className="w-5 h-5 text-purple-700" />
             </div>
-            <p className="text-2xl font-bold text-white">{users.filter(u => u.is_admin).length}</p>
+            <p className="text-2xl font-bold text-heritage-ink">{users.filter(u => u.is_admin).length}</p>
           </div>
         </div>
 
         {/* Filters */}
-        <div className="bg-gray-800 rounded-xl border border-gray-700 p-4 mb-6">
+        <div className="bg-card rounded-xl border border-card-border p-4 mb-6">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-heritage-muted" />
               <input
                 type="text"
                 placeholder="Search by username or email..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-green-500"
+                className="w-full pl-10 pr-4 py-2 bg-card-hover border border-card-border rounded-lg text-heritage-ink placeholder-gray-400 focus:outline-none focus:border-green-500"
               />
             </div>
             
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-green-500"
+              className="px-4 py-2 bg-card-hover border border-card-border rounded-lg text-heritage-ink focus:outline-none focus:border-green-500"
             >
               <option value="all">All Status</option>
               <option value="active">Active</option>
@@ -138,66 +138,66 @@ const AdminUsers = () => {
         </div>
 
         {/* Users Table */}
-        <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
+        <div className="bg-card rounded-xl border border-card-border overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-700 bg-gray-900">
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                <tr className="border-b border-card-border bg-card">
+                  <th className="px-6 py-4 text-left text-xs font-medium text-heritage-muted uppercase tracking-wider">
                     User
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-medium text-heritage-muted uppercase tracking-wider">
                     Balance
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-medium text-heritage-muted uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-medium text-heritage-muted uppercase tracking-wider">
                     Joined
                   </th>
-                  <th className="px-6 py-4 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-right text-xs font-medium text-heritage-muted uppercase tracking-wider">
                     Actions
                   </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-700">
                 {filteredUsers.map((userItem) => (
-                  <tr key={userItem.id} className="hover:bg-gray-700/50 transition-colors">
+                  <tr key={userItem.id} className="hover:bg-card-hover/50 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center">
-                        <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center mr-3">
-                          <span className="text-sm font-medium text-gray-300">
+                        <div className="w-10 h-10 rounded-full bg-card-hover flex items-center justify-center mr-3">
+                          <span className="text-sm font-medium text-heritage-ink">
                             {userItem.username.charAt(0).toUpperCase()}
                           </span>
                         </div>
                         <div>
-                          <p className="text-sm font-medium text-white">{userItem.username}</p>
-                          <p className="text-xs text-gray-400">{userItem.email}</p>
+                          <p className="text-sm font-medium text-heritage-ink">{userItem.username}</p>
+                          <p className="text-xs text-heritage-muted">{userItem.email}</p>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-sm font-medium text-white">${userItem.balance.toFixed(2)}</span>
+                      <span className="text-sm font-medium text-heritage-ink">${userItem.balance.toFixed(2)}</span>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center space-x-2">
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                           userItem.status === 'active' 
-                            ? 'bg-green-400/10 text-green-400' 
-                            : 'bg-red-400/10 text-red-400'
+                            ? 'bg-green-400/10 text-green-700'
+                            : 'bg-red-400/10 text-red-700'
                         }`}>
                           {userItem.status}
                         </span>
                         {userItem.is_verified && (
-                          <CheckCircle className="w-4 h-4 text-green-400" />
+                          <CheckCircle className="w-4 h-4 text-green-700" />
                         )}
                         {userItem.is_admin && (
-                          <Shield className="w-4 h-4 text-purple-400" />
+                          <Shield className="w-4 h-4 text-purple-700" />
                         )}
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-sm text-gray-400">
+                      <span className="text-sm text-heritage-muted">
                         {new Date(userItem.created_at).toLocaleDateString()}
                       </span>
                     </td>
@@ -206,31 +206,31 @@ const AdminUsers = () => {
                         {!userItem.is_verified && (
                           <button
                             onClick={() => handleVerifyUser(userItem.id)}
-                            className="p-2 hover:bg-gray-600 rounded-lg transition-colors"
+                            className="p-2 hover:bg-card-hover rounded-lg transition-colors"
                             title="Verify User"
                           >
-                            <UserCheck className="w-4 h-4 text-green-400" />
+                            <UserCheck className="w-4 h-4 text-green-700" />
                           </button>
                         )}
                         {userItem.status === 'active' ? (
                           <button
                             onClick={() => handleSuspendUser(userItem.id)}
-                            className="p-2 hover:bg-gray-600 rounded-lg transition-colors"
+                            className="p-2 hover:bg-card-hover rounded-lg transition-colors"
                             title="Suspend User"
                           >
-                            <Ban className="w-4 h-4 text-red-400" />
+                            <Ban className="w-4 h-4 text-red-700" />
                           </button>
                         ) : (
                           <button
                             onClick={() => handleActivateUser(userItem.id)}
-                            className="p-2 hover:bg-gray-600 rounded-lg transition-colors"
+                            className="p-2 hover:bg-card-hover rounded-lg transition-colors"
                             title="Activate User"
                           >
-                            <CheckCircle className="w-4 h-4 text-green-400" />
+                            <CheckCircle className="w-4 h-4 text-green-700" />
                           </button>
                         )}
-                        <button className="p-2 hover:bg-gray-600 rounded-lg transition-colors">
-                          <MoreVertical className="w-4 h-4 text-gray-400" />
+                        <button className="p-2 hover:bg-card-hover rounded-lg transition-colors">
+                          <MoreVertical className="w-4 h-4 text-heritage-muted" />
                         </button>
                       </div>
                     </td>

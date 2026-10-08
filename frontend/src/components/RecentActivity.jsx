@@ -119,33 +119,33 @@ const RecentActivity = () => {
 
   const getColorClasses = (color) => {
     const colors = {
-      blue: 'bg-blue-500/10 text-blue-400',
-      purple: 'bg-purple-500/10 text-purple-400',
-      green: 'bg-green-500/10 text-green-400',
-      orange: 'bg-orange-500/10 text-orange-400',
+      blue: 'bg-blue-500/10 text-blue-700',
+      purple: 'bg-purple-500/10 text-purple-700',
+      green: 'bg-green-500/10 text-green-700',
+      orange: 'bg-orange-500/10 text-orange-700',
       cyan: 'bg-cyan-500/10 text-cyan-400',
-      gray: 'bg-gray-500/10 text-gray-400',
+      gray: 'bg-gray-500/10 text-heritage-muted',
     };
     return colors[color] || colors.gray;
   };
 
   return (
-    <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
+    <div className="bg-card rounded-xl border border-card-border overflow-hidden">
       {/* Header */}
-      <div className="p-4 border-b border-gray-700">
+      <div className="p-4 border-b border-card-border">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center">
-              <Activity className="w-4 h-4 text-green-400" />
+              <Activity className="w-4 h-4 text-green-700" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-white">Recent Activity</h3>
-              <p className="text-xs text-gray-400">Live platform events</p>
+              <h3 className="text-sm font-semibold text-heritage-ink">Recent Activity</h3>
+              <p className="text-xs text-heritage-muted">Live platform events</p>
             </div>
           </div>
           <div className="flex items-center space-x-2">
             <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
-            <span className="text-xs text-gray-400">Live</span>
+            <span className="text-xs text-heritage-muted">Live</span>
           </div>
         </div>
       </div>
@@ -155,7 +155,7 @@ const RecentActivity = () => {
         className="max-h-[400px] overflow-y-auto"
         style={{
           scrollbarWidth: 'thin',
-          scrollbarColor: '#374151 #1f2937'
+          scrollbarColor: '#e1e6dd #ffffff'
         }}
       >
         {activities.length === 0 ? (
@@ -169,7 +169,7 @@ const RecentActivity = () => {
             return (
               <div
                 key={activity.id}
-                className="p-3 hover:bg-gray-700/30 transition-colors"
+                className="p-3 hover:bg-card-hover/30 transition-colors"
               >
                 <div className="flex items-start space-x-3">
                   {/* Icon */}
@@ -181,22 +181,22 @@ const RecentActivity = () => {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
-                        <p className="text-sm text-white font-medium truncate">
+                        <p className="text-sm text-heritage-ink font-medium truncate">
                           {activity.description}
                         </p>
-                        <p className="text-xs text-gray-400 mt-0.5">
+                        <p className="text-xs text-heritage-muted mt-0.5">
                           {activity.user}
                         </p>
                       </div>
                       {activity.amount && (
-                        <span className="text-sm font-semibold text-green-400 ml-2">
+                        <span className="text-sm font-semibold text-green-700 ml-2">
                           {activity.amount}
                         </span>
                       )}
                     </div>
                     <div className="flex items-center space-x-1 mt-1">
-                      <Clock className="w-3 h-3 text-gray-500" />
-                      <span className="text-xs text-gray-500">{activity.timestamp}</span>
+                      <Clock className="w-3 h-3 text-heritage-muted" />
+                      <span className="text-xs text-heritage-muted">{activity.timestamp}</span>
                     </div>
                   </div>
                 </div>
@@ -208,8 +208,8 @@ const RecentActivity = () => {
       </div>
 
       {/* Footer */}
-      <div className="p-3 border-t border-gray-700 bg-gray-900/50">
-        <button className="w-full text-xs text-gray-400 hover:text-white transition-colors">
+      <div className="p-3 border-t border-card-border bg-card/50">
+        <button className="w-full text-xs text-heritage-muted hover:text-heritage-ink transition-colors">
           View All Activity →
         </button>
       </div>

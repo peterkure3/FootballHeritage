@@ -28,34 +28,34 @@ const LoadingSkeleton = memo(({ type = 'card', count = 1 }) => {
 
 // Bet Card Skeleton
 const BetCardSkeleton = () => (
-  <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-4 animate-pulse">
+  <div className="bg-card/50 border border-card-border rounded-lg p-4 animate-pulse">
     <div className="flex items-start justify-between mb-3">
       <div className="flex-1">
-        <div className="h-6 bg-gray-700 rounded w-3/4 mb-2"></div>
-        <div className="h-4 bg-gray-700 rounded w-1/2"></div>
+        <div className="h-6 bg-card-hover rounded w-3/4 mb-2"></div>
+        <div className="h-4 bg-card-hover rounded w-1/2"></div>
       </div>
-      <div className="h-6 w-20 bg-gray-700 rounded-full"></div>
+      <div className="h-6 w-20 bg-card-hover rounded-full"></div>
     </div>
 
     <div className="grid grid-cols-2 gap-3 mb-3">
       <div>
-        <div className="h-3 bg-gray-700 rounded w-16 mb-2"></div>
-        <div className="h-5 bg-gray-700 rounded w-24"></div>
+        <div className="h-3 bg-card-hover rounded w-16 mb-2"></div>
+        <div className="h-5 bg-card-hover rounded w-24"></div>
       </div>
       <div>
-        <div className="h-3 bg-gray-700 rounded w-16 mb-2"></div>
-        <div className="h-5 bg-gray-700 rounded w-20"></div>
+        <div className="h-3 bg-card-hover rounded w-16 mb-2"></div>
+        <div className="h-5 bg-card-hover rounded w-20"></div>
       </div>
     </div>
 
-    <div className="border-t border-gray-700 pt-3 grid grid-cols-2 gap-3">
+    <div className="border-t border-card-border pt-3 grid grid-cols-2 gap-3">
       <div>
-        <div className="h-3 bg-gray-700 rounded w-12 mb-2"></div>
-        <div className="h-7 bg-gray-700 rounded w-20"></div>
+        <div className="h-3 bg-card-hover rounded w-12 mb-2"></div>
+        <div className="h-7 bg-card-hover rounded w-20"></div>
       </div>
       <div>
-        <div className="h-3 bg-gray-700 rounded w-16 mb-2"></div>
-        <div className="h-7 bg-gray-700 rounded w-24"></div>
+        <div className="h-3 bg-card-hover rounded w-16 mb-2"></div>
+        <div className="h-7 bg-card-hover rounded w-24"></div>
       </div>
     </div>
   </div>
@@ -63,22 +63,22 @@ const BetCardSkeleton = () => (
 
 // Odds Row Skeleton
 const OddsRowSkeleton = () => (
-  <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 animate-pulse">
+  <div className="bg-card border border-card-border rounded-lg p-4 animate-pulse">
     <div className="flex items-center justify-between mb-4">
       <div className="flex-1">
-        <div className="h-6 bg-gray-700 rounded w-3/4 mb-2"></div>
-        <div className="h-4 bg-gray-700 rounded w-1/2"></div>
+        <div className="h-6 bg-card-hover rounded w-3/4 mb-2"></div>
+        <div className="h-4 bg-card-hover rounded w-1/2"></div>
       </div>
-      <div className="h-6 w-24 bg-gray-700 rounded-full"></div>
+      <div className="h-6 w-24 bg-card-hover rounded-full"></div>
     </div>
 
     <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
       {[1, 2, 3].map((index) => (
-        <div key={index} className="bg-gray-900/50 rounded-lg p-3 border border-gray-700">
-          <div className="h-4 bg-gray-700 rounded w-20 mb-3"></div>
+        <div key={index} className="bg-card/50 rounded-lg p-3 border border-card-border">
+          <div className="h-4 bg-card-hover rounded w-20 mb-3"></div>
           <div className="space-y-2">
-            <div className="h-10 bg-gray-700 rounded"></div>
-            <div className="h-10 bg-gray-700 rounded"></div>
+            <div className="h-10 bg-card-hover rounded"></div>
+            <div className="h-10 bg-card-hover rounded"></div>
           </div>
         </div>
       ))}
@@ -88,15 +88,15 @@ const OddsRowSkeleton = () => (
 
 // List Skeleton
 const ListSkeleton = () => (
-  <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 animate-pulse">
+  <div className="bg-card border border-card-border rounded-lg p-4 animate-pulse">
     <div className="space-y-3">
       {[1, 2, 3].map((index) => (
         <div key={index} className="flex items-center justify-between">
           <div className="flex-1">
-            <div className="h-4 bg-gray-700 rounded w-3/4 mb-2"></div>
-            <div className="h-3 bg-gray-700 rounded w-1/2"></div>
+            <div className="h-4 bg-card-hover rounded w-3/4 mb-2"></div>
+            <div className="h-3 bg-card-hover rounded w-1/2"></div>
           </div>
-          <div className="h-8 w-20 bg-gray-700 rounded"></div>
+          <div className="h-8 w-20 bg-card-hover rounded"></div>
         </div>
       ))}
     </div>
@@ -109,10 +109,10 @@ const StatsSkeleton = () => (
     {[1, 2, 3].map((index) => (
       <div
         key={index}
-        className="bg-gray-800 border border-gray-700 rounded-lg p-4 animate-pulse"
+        className="bg-card border border-card-border rounded-lg p-4 animate-pulse"
       >
-        <div className="h-4 bg-gray-700 rounded w-1/2 mb-3"></div>
-        <div className="h-8 bg-gray-700 rounded w-3/4"></div>
+        <div className="h-4 bg-card-hover rounded w-1/2 mb-3"></div>
+        <div className="h-8 bg-card-hover rounded w-3/4"></div>
       </div>
     ))}
   </div>
@@ -120,10 +120,10 @@ const StatsSkeleton = () => (
 
 // Default Skeleton
 const DefaultSkeleton = () => (
-  <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 animate-pulse">
-    <div className="h-6 bg-gray-700 rounded w-3/4 mb-3"></div>
-    <div className="h-4 bg-gray-700 rounded w-full mb-2"></div>
-    <div className="h-4 bg-gray-700 rounded w-5/6"></div>
+  <div className="bg-card border border-card-border rounded-lg p-4 animate-pulse">
+    <div className="h-6 bg-card-hover rounded w-3/4 mb-3"></div>
+    <div className="h-4 bg-card-hover rounded w-full mb-2"></div>
+    <div className="h-4 bg-card-hover rounded w-5/6"></div>
   </div>
 );
 

@@ -23,19 +23,19 @@ const PIPELINE_API_URL =
   import.meta.env.VITE_PIPELINE_API_URL || "http://localhost:5555/api/v1";
 
 const positionColors = {
-  GKP: "bg-yellow-500/20 text-yellow-400 border-yellow-500/40",
-  DEF: "bg-blue-500/20 text-blue-400 border-blue-500/40",
-  MID: "bg-green-500/20 text-green-400 border-green-500/40",
-  FWD: "bg-red-500/20 text-red-400 border-red-500/40",
+  GKP: "bg-yellow-500/20 text-yellow-700 border-yellow-500/40",
+  DEF: "bg-blue-500/20 text-blue-700 border-blue-500/40",
+  MID: "bg-green-500/20 text-green-700 border-green-500/40",
+  FWD: "bg-red-500/20 text-red-700 border-red-500/40",
 };
 
 
 const statusIcons = {
   a: null,
-  d: <AlertCircle className="w-4 h-4 text-yellow-400" />,
-  i: <AlertCircle className="w-4 h-4 text-red-400" />,
-  s: <AlertCircle className="w-4 h-4 text-red-400" />,
-  u: <AlertCircle className="w-4 h-4 text-gray-400" />,
+  d: <AlertCircle className="w-4 h-4 text-yellow-700" />,
+  i: <AlertCircle className="w-4 h-4 text-red-700" />,
+  s: <AlertCircle className="w-4 h-4 text-red-700" />,
+  u: <AlertCircle className="w-4 h-4 text-heritage-muted" />,
 };
 
 const PlayerCard = ({ player, isCaptain = false, isViceCaptain = false }) => {
@@ -60,14 +60,14 @@ const PlayerCard = ({ player, isCaptain = false, isViceCaptain = false }) => {
         <div className="flex items-center gap-3">
           <span
             className={`px-2 py-1 text-xs font-bold rounded border ${
-              positionColors[player.position] || "bg-gray-500/20 text-gray-400"
+              positionColors[player.position] || "bg-gray-500/20 text-heritage-muted"
             }`}
           >
             {player.position}
           </span>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-semibold text-white">{player.web_name}</span>
+              <span className="font-semibold text-heritage-ink">{player.web_name}</span>
               {isCaptain && (
                 <span className="px-1.5 py-0.5 text-xs font-bold bg-yellow-500 text-black rounded">C</span>
               )}
@@ -76,52 +76,52 @@ const PlayerCard = ({ player, isCaptain = false, isViceCaptain = false }) => {
               )}
               {statusIcons[player.status]}
             </div>
-            <span className="text-sm" style={{ color: '#94a3b8' }}>{player.team_name}</span>
+            <span className="text-sm" style={{ color: '#69746c' }}>{player.team_name}</span>
           </div>
         </div>
         <div className="text-right">
-          <div className="text-lg font-bold text-green-400">
+          <div className="text-lg font-bold text-green-700">
             {player.expected_points?.toFixed(1)} xPts
           </div>
-          <div className="text-sm" style={{ color: '#94a3b8' }}>£{player.price}m</div>
+          <div className="text-sm" style={{ color: '#69746c' }}>£{player.price}m</div>
         </div>
       </div>
 
       {expanded && (
         <div className="mt-3 pt-3 border-t grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm" style={{ borderColor: 'var(--color-card-border)' }}>
           <div>
-            <span style={{ color: '#64748b' }}>Form</span>
-            <div className="font-semibold text-white">{player.form}</div>
+            <span style={{ color: '#69746c' }}>Form</span>
+            <div className="font-semibold text-heritage-ink">{player.form}</div>
           </div>
           <div>
-            <span style={{ color: '#64748b' }}>PPG</span>
-            <div className="font-semibold text-white">{player.points_per_game}</div>
+            <span style={{ color: '#69746c' }}>PPG</span>
+            <div className="font-semibold text-heritage-ink">{player.points_per_game}</div>
           </div>
           <div>
-            <span style={{ color: '#64748b' }}>Total Pts</span>
-            <div className="font-semibold text-white">{player.total_points}</div>
+            <span style={{ color: '#69746c' }}>Total Pts</span>
+            <div className="font-semibold text-heritage-ink">{player.total_points}</div>
           </div>
           <div>
-            <span style={{ color: '#64748b' }}>Ownership</span>
-            <div className="font-semibold text-white">{player.selected_by_percent}%</div>
+            <span style={{ color: '#69746c' }}>Ownership</span>
+            <div className="font-semibold text-heritage-ink">{player.selected_by_percent}%</div>
           </div>
           <div>
-            <span style={{ color: '#64748b' }}>Value Score</span>
-            <div className="font-semibold text-green-400">{player.value_score?.toFixed(2)}</div>
+            <span style={{ color: '#69746c' }}>Value Score</span>
+            <div className="font-semibold text-green-700">{player.value_score?.toFixed(2)}</div>
           </div>
           <div>
-            <span style={{ color: '#64748b' }}>Fixture Diff</span>
+            <span style={{ color: '#69746c' }}>Fixture Diff</span>
             <div className={`font-semibold ${
-              player.fixture_difficulty_avg <= 2.5 ? "text-green-400" :
-              player.fixture_difficulty_avg <= 3.5 ? "text-yellow-400" : "text-red-400"
+              player.fixture_difficulty_avg <= 2.5 ? "text-green-700" :
+              player.fixture_difficulty_avg <= 3.5 ? "text-yellow-700" : "text-red-700"
             }`}>
               {player.fixture_difficulty_avg?.toFixed(1)}
             </div>
           </div>
           {player.news && (
             <div className="col-span-2 sm:col-span-4">
-              <span style={{ color: '#64748b' }}>News</span>
-              <div className="text-yellow-400 text-xs">{player.news}</div>
+              <span style={{ color: '#69746c' }}>News</span>
+              <div className="text-yellow-700 text-xs">{player.news}</div>
             </div>
           )}
         </div>
@@ -146,13 +146,13 @@ const TeamFormation = ({ team }) => {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-white">Formation: {formationStr}</h3>
+        <h3 className="text-lg font-semibold text-heritage-ink">Formation: {formationStr}</h3>
         <div className="flex items-center gap-4 text-sm">
-          <span style={{ color: '#94a3b8' }}>
-            Cost: <span className="text-white font-semibold">£{team.total_cost}m</span>
+          <span style={{ color: '#69746c' }}>
+            Cost: <span className="text-heritage-ink font-semibold">£{team.total_cost}m</span>
           </span>
-          <span style={{ color: '#94a3b8' }}>
-            Expected: <span className="text-green-400 font-semibold">{team.expected_points} pts</span>
+          <span style={{ color: '#69746c' }}>
+            Expected: <span className="text-green-700 font-semibold">{team.expected_points} pts</span>
           </span>
         </div>
       </div>
@@ -205,7 +205,7 @@ const TeamFormation = ({ team }) => {
 
       {/* Bench */}
       <div>
-        <h4 className="text-sm font-semibold mb-2" style={{ color: '#64748b' }}>Bench</h4>
+        <h4 className="text-sm font-semibold mb-2" style={{ color: '#69746c' }}>Bench</h4>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
           {team.bench?.map((p) => (
             <PlayerCard key={p.id} player={p} />
@@ -223,10 +223,10 @@ const PlayerList = ({ title, players, icon: Icon, description }) => {
   return (
     <div className="card-glow rounded-xl p-4 border" style={{ animation: 'slide-up 0.4s ease-out 0.06s both', background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
       <div className="flex items-center gap-2 mb-3">
-        {Icon && <Icon className="w-5 h-5 text-green-400" />}
-        <h3 className="text-lg font-semibold text-white">{title}</h3>
+        {Icon && <Icon className="w-5 h-5 text-green-700" />}
+        <h3 className="text-lg font-semibold text-heritage-ink">{title}</h3>
       </div>
-      {description && <p className="text-sm mb-3" style={{ color: '#94a3b8' }}>{description}</p>}
+      {description && <p className="text-sm mb-3" style={{ color: '#69746c' }}>{description}</p>}
 
       <div className="space-y-2">
         {displayPlayers?.map((player) => (
@@ -237,8 +237,8 @@ const PlayerList = ({ title, players, icon: Icon, description }) => {
       {players?.length > 5 && (
         <button
           onClick={() => setShowAll(!showAll)}
-          className="mt-3 w-full py-2 text-sm flex items-center justify-center gap-1 hover:text-white transition-colors"
-          style={{ color: '#64748b' }}
+          className="mt-3 w-full py-2 text-sm flex items-center justify-center gap-1 hover:text-heritage-ink transition-colors"
+          style={{ color: '#69746c' }}
         >
           {showAll ? (
             <>
@@ -316,11 +316,11 @@ const FPLAdvisor = () => {
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-green-500/20 rounded-lg">
-                <Trophy className="w-6 h-6 text-green-400" />
+                <Trophy className="w-6 h-6 text-green-700" />
               </div>
               <div>
-                <h1 className="text-2xl font-[Oswald] tracking-tight text-white">FPL Advisor</h1>
-                <p style={{ color: '#64748b' }}>
+                <h1 className="text-2xl font-display tracking-tight text-heritage-ink">FPL Advisor</h1>
+                <p style={{ color: '#69746c' }}>
                   Fantasy Premier League team optimization
                 </p>
               </div>
@@ -328,7 +328,7 @@ const FPLAdvisor = () => {
             <button
               onClick={() => refreshMutation.mutate()}
               disabled={refreshMutation.isPending}
-              className="card-glow rounded-lg px-4 py-2 border text-white font-semibold transition-all hover:opacity-90 flex items-center gap-2"
+              className="card-glow rounded-lg px-4 py-2 border text-heritage-ink font-semibold transition-all hover:opacity-90 flex items-center gap-2"
               style={{ background: 'var(--color-card)', borderColor: 'var(--color-card-border)' }}
             >
               <RefreshCw
@@ -340,11 +340,11 @@ const FPLAdvisor = () => {
 
           {advice?.gameweek && (
             <div className="mt-4 flex items-center gap-4">
-              <span className="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm font-medium">
+              <span className="px-3 py-1 bg-green-500/20 text-green-700 rounded-full text-sm font-medium">
                 Gameweek {advice.gameweek}
               </span>
               {advice.generated_at && (
-                <span className="text-sm" style={{ color: '#64748b' }}>
+                <span className="text-sm" style={{ color: '#69746c' }}>
                   Updated: {new Date(advice.generated_at).toLocaleString()}
                 </span>
               )}
@@ -360,12 +360,12 @@ const FPLAdvisor = () => {
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap ${
                 activeTab === tab.id
-                  ? 'text-white'
-                  : 'text-gray-400 hover:text-white'
+                  ? 'text-heritage-ink'
+                  : 'text-heritage-muted hover:text-heritage-ink'
               }`}
               style={
                 activeTab === tab.id
-                  ? { background: 'linear-gradient(135deg, #10b981, #059669)' }
+                  ? { background: 'linear-gradient(135deg, #177c4c, #147b4c)' }
                   : { background: 'var(--color-card)', border: '1px solid var(--color-card-border)' }
               }
             >
@@ -380,12 +380,12 @@ const FPLAdvisor = () => {
           <LoadingSkeleton count={6} />
         ) : isError ? (
           <div className="text-center py-12">
-            <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-white mb-2">Error Loading Data</h3>
-            <p className="text-sm mb-4" style={{ color: '#64748b' }}>{error?.message}</p>
+            <AlertCircle className="w-12 h-12 text-red-700 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-heritage-ink mb-2">Error Loading Data</h3>
+            <p className="text-sm mb-4" style={{ color: '#69746c' }}>{error?.message}</p>
             <button
               onClick={() => refreshMutation.mutate()}
-              style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}
+              style={{ background: 'linear-gradient(135deg, #177c4c, #147b4c)' }}
               className="text-white font-semibold rounded-lg py-3 px-4 transition-all hover:opacity-90"
             >
               Fetch FPL Data
@@ -394,12 +394,12 @@ const FPLAdvisor = () => {
         ) : !advice ? (
           <div className="text-center py-12">
             <Trophy className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-white mb-2">No FPL Data Available</h3>
-            <p className="text-sm mb-4" style={{ color: '#64748b' }}>Click the button below to fetch the latest FPL data.</p>
+            <h3 className="text-lg font-semibold text-heritage-ink mb-2">No FPL Data Available</h3>
+            <p className="text-sm mb-4" style={{ color: '#69746c' }}>Click the button below to fetch the latest FPL data.</p>
             <button
               onClick={() => refreshMutation.mutate()}
               disabled={refreshMutation.isPending}
-              style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}
+              style={{ background: 'linear-gradient(135deg, #177c4c, #147b4c)' }}
               className="text-white font-semibold rounded-lg py-3 px-4 transition-all hover:opacity-90"
             >
               {refreshMutation.isPending ? "Fetching..." : "Fetch FPL Data"}
@@ -413,26 +413,26 @@ const FPLAdvisor = () => {
                 {/* Summary Cards */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="card-glow rounded-xl p-4 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
-                    <div className="text-sm" style={{ color: '#64748b' }}>Expected Points</div>
-                    <div className="text-2xl font-[Oswald] tracking-tight text-green-400">
+                    <div className="text-sm" style={{ color: '#69746c' }}>Expected Points</div>
+                    <div className="text-2xl font-display tracking-tight text-green-700">
                       {advice.optimal_team.expected_points}
                     </div>
                   </div>
                   <div className="card-glow rounded-xl p-4 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
-                    <div className="text-sm" style={{ color: '#64748b' }}>Team Cost</div>
-                    <div className="text-2xl font-[Oswald] tracking-tight text-white">
+                    <div className="text-sm" style={{ color: '#69746c' }}>Team Cost</div>
+                    <div className="text-2xl font-display tracking-tight text-heritage-ink">
                       £{advice.optimal_team.total_cost}m
                     </div>
                   </div>
                   <div className="card-glow rounded-xl p-4 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
-                    <div className="text-sm" style={{ color: '#64748b' }}>Budget Left</div>
-                    <div className="text-2xl font-[Oswald] tracking-tight" style={{ color: '#34d399' }}>
+                    <div className="text-sm" style={{ color: '#69746c' }}>Budget Left</div>
+                    <div className="text-2xl font-display tracking-tight" style={{ color: '#34d399' }}>
                       £{advice.optimal_team.budget_remaining}m
                     </div>
                   </div>
                   <div className="card-glow rounded-xl p-4 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
-                    <div className="text-sm" style={{ color: '#64748b' }}>Captain</div>
-                    <div className="text-xl font-[Oswald] tracking-tight text-yellow-400">
+                    <div className="text-sm" style={{ color: '#69746c' }}>Captain</div>
+                    <div className="text-xl font-display tracking-tight text-yellow-700">
                       {advice.optimal_team.captain?.web_name}
                     </div>
                   </div>

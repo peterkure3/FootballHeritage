@@ -100,12 +100,12 @@ const DeviggedOdds = () => {
         <header className="flex items-start justify-between gap-4 flex-wrap" style={{ animation: 'slide-up 0.4s ease-out both' }}>
           <div>
             <p className="text-sm uppercase tracking-wide font-semibold mb-1" style={{ color: '#10b981' }}>Odds Intelligence</p>
-            <h1 className="text-3xl md:text-4xl font-bold text-white font-[Oswald] tracking-tight">Devigged Odds</h1>
-            <p className="text-sm mt-1" style={{ color: '#64748b' }}>Fair probabilities after removing vig (display only).</p>
+            <h1 className="text-3xl md:text-4xl font-bold text-heritage-ink font-display tracking-tight">Devigged Odds</h1>
+            <p className="text-sm mt-1" style={{ color: '#69746c' }}>Fair probabilities after removing vig (display only).</p>
           </div>
           <button
             onClick={() => refetch()}
-            className="px-4 py-2 rounded-lg font-semibold transition-all card-glow text-white"
+            className="px-4 py-2 rounded-lg font-semibold transition-all card-glow text-heritage-ink"
             style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', border: '1px solid var(--color-card-border)' }}
             type="button"
           >
@@ -116,35 +116,35 @@ const DeviggedOdds = () => {
         <div className="card-glow rounded-xl p-4 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)', animation: 'slide-up 0.4s ease-out 0.06s both' }}>
           <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
             <input
-              className="rounded-lg px-3 py-2 text-white placeholder-gray-600 focus:outline-none focus:ring-2 transition-all"
+              className="rounded-lg px-3 py-2 text-heritage-ink placeholder-gray-600 focus:outline-none focus:ring-2 transition-all"
               style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)', '--tw-ring-color': '#10b981' }}
               placeholder="pipeline_match_id"
               value={pipelineMatchId}
               onChange={(e) => setPipelineMatchId(e.target.value)}
             />
             <input
-              className="rounded-lg px-3 py-2 text-white placeholder-gray-600 focus:outline-none focus:ring-2 transition-all"
+              className="rounded-lg px-3 py-2 text-heritage-ink placeholder-gray-600 focus:outline-none focus:ring-2 transition-all"
               style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)', '--tw-ring-color': '#10b981' }}
               placeholder="event_id (uuid)"
               value={eventId}
               onChange={(e) => setEventId(e.target.value)}
             />
             <input
-              className="rounded-lg px-3 py-2 text-white placeholder-gray-600 focus:outline-none focus:ring-2 transition-all"
+              className="rounded-lg px-3 py-2 text-heritage-ink placeholder-gray-600 focus:outline-none focus:ring-2 transition-all"
               style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)', '--tw-ring-color': '#10b981' }}
               placeholder="bookmaker"
               value={bookmaker}
               onChange={(e) => setBookmaker(e.target.value)}
             />
             <input
-              className="rounded-lg px-3 py-2 text-white placeholder-gray-600 focus:outline-none focus:ring-2 transition-all"
+              className="rounded-lg px-3 py-2 text-heritage-ink placeholder-gray-600 focus:outline-none focus:ring-2 transition-all"
               style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)', '--tw-ring-color': '#10b981' }}
               placeholder="market (e.g. h2h)"
               value={market}
               onChange={(e) => setMarket(e.target.value)}
             />
             <select
-              className="rounded-lg px-3 py-2 text-white focus:outline-none"
+              className="rounded-lg px-3 py-2 text-heritage-ink focus:outline-none"
               style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)' }}
               value={limit}
               onChange={(e) => setLimit(Number(e.target.value))}
@@ -160,7 +160,7 @@ const DeviggedOdds = () => {
         {isLoading ? (
           <LoadingSkeleton type="list" count={1} />
         ) : isError ? (
-          <div className="rounded-xl p-4 border" style={{ background: 'rgba(239, 68, 68, 0.08)', borderColor: 'rgba(239, 68, 68, 0.2)', color: '#fca5a5' }}>
+          <div className="rounded-xl p-4 border" style={{ background: 'rgba(239, 68, 68, 0.08)', borderColor: 'rgba(239, 68, 68, 0.2)', color: '#b42318' }}>
             {error?.message || "Failed to load devigged odds."}
           </div>
         ) : !rows || rows.length === 0 ? (
@@ -172,7 +172,7 @@ const DeviggedOdds = () => {
             <div className="overflow-x-auto">
               <table className="min-w-full text-sm">
                 <thead style={{ background: 'var(--color-card)', borderBottom: '1px solid var(--color-card-border)' }}>
-                  <tr style={{ color: '#64748b' }}>
+                  <tr style={{ color: '#69746c' }}>
                     <th className="text-left px-4 py-3 cursor-pointer select-none font-semibold" onClick={() => toggleSort("created_at")}>Created</th>
                     <th className="text-left px-4 py-3 font-semibold">Match</th>
                     <th className="text-left px-4 py-3 cursor-pointer select-none font-semibold" onClick={() => toggleSort("bookmaker")}>Book</th>
@@ -199,7 +199,7 @@ const DeviggedOdds = () => {
                           <td className="px-4 py-3 whitespace-nowrap">{row.created_at ? new Date(row.created_at).toLocaleString() : "--"}</td>
                           <td className="px-4 py-3">
                             <div className="font-semibold" style={{ color: 'white' }}>{formatMatchLabel(row) || "--"}</div>
-                            <div className="text-xs" style={{ color: '#64748b' }}>{row.event_date ? new Date(row.event_date).toLocaleString() : ""}</div>
+                            <div className="text-xs" style={{ color: '#69746c' }}>{row.event_date ? new Date(row.event_date).toLocaleString() : ""}</div>
                           </td>
                           <td className="px-4 py-3">{row.bookmaker}</td>
                           <td className="px-4 py-3">{row.market}</td>
@@ -215,17 +215,17 @@ const DeviggedOdds = () => {
                         {isExpanded && (
                           <tr style={{ borderBottom: '1px solid var(--color-card-border)', background: 'rgba(0,0,0,0.2)' }}>
                             <td className="px-4 py-3" colSpan={11}>
-                              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs" style={{ color: '#94a3b8' }}>
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs" style={{ color: '#69746c' }}>
                                 <div>
-                                  <div style={{ color: '#64748b' }}>Event ID</div>
+                                  <div style={{ color: '#69746c' }}>Event ID</div>
                                   <div className="font-mono break-all">{row.event_id || "--"}</div>
                                 </div>
                                 <div>
-                                  <div style={{ color: '#64748b' }}>Source Updated</div>
+                                  <div style={{ color: '#69746c' }}>Source Updated</div>
                                   <div>{row.source_updated_at ? new Date(row.source_updated_at).toLocaleString() : "--"}</div>
                                 </div>
                                 <div>
-                                  <div style={{ color: '#64748b' }}>Row ID</div>
+                                  <div style={{ color: '#69746c' }}>Row ID</div>
                                   <div className="font-mono break-all">{row.id}</div>
                                 </div>
                               </div>

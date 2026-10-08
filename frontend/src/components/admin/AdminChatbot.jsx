@@ -144,7 +144,7 @@ const AdminChatbot = () => {
 
   return (
     <div 
-      className={`fixed bottom-6 right-6 bg-gray-800 border border-gray-700 shadow-2xl z-50 transition-all duration-300 ease-in-out flex flex-col ${
+      className={`fixed bottom-6 right-6 bg-card border border-card-border shadow-2xl z-50 transition-all duration-300 ease-in-out flex flex-col ${
         isMinimized ? 'w-14 h-14 rounded-full scale-100 opacity-100 overflow-hidden' : 'w-96 h-[600px] rounded-2xl scale-100 opacity-100'
       }`}
       style={{
@@ -153,30 +153,30 @@ const AdminChatbot = () => {
     >
       {/* Header - Always show when expanded */}
       {!isMinimized && (
-        <div className="flex items-center justify-between p-4 border-b border-gray-700 bg-gradient-to-r from-green-500/10 to-blue-500/10 flex-shrink-0">
+        <div className="flex items-center justify-between p-4 border-b border-card-border bg-gradient-to-r from-green-500/10 to-blue-500/10 flex-shrink-0">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
               <Sparkles className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-white">AI Assistant</h3>
-              <p className="text-xs text-gray-400">Always here to help</p>
+              <h3 className="text-sm font-semibold text-heritage-ink">AI Assistant</h3>
+              <p className="text-xs text-heritage-muted">Always here to help</p>
             </div>
           </div>
           <div className="flex items-center space-x-2">
             <button
               onClick={() => setIsMinimized(true)}
-              className="p-1.5 hover:bg-gray-700 rounded-lg transition-colors"
+              className="p-1.5 hover:bg-card-hover rounded-lg transition-colors"
               aria-label="Minimize"
             >
-              <Minimize2 className="w-4 h-4 text-gray-400" />
+              <Minimize2 className="w-4 h-4 text-heritage-muted" />
             </button>
             <button
               onClick={() => setIsOpen(false)}
-              className="p-1.5 hover:bg-gray-700 rounded-lg transition-colors"
+              className="p-1.5 hover:bg-card-hover rounded-lg transition-colors"
               aria-label="Close"
             >
-              <X className="w-4 h-4 text-gray-400" />
+              <X className="w-4 h-4 text-heritage-muted" />
             </button>
           </div>
         </div>
@@ -189,7 +189,7 @@ const AdminChatbot = () => {
           className="w-full h-full flex items-center justify-center bg-gradient-to-br from-green-500 to-green-600 hover:from-green-400 hover:to-green-500 transition-all"
           aria-label="Expand AI Assistant"
         >
-          <Sparkles className="w-6 h-6 text-white" />
+          <Sparkles className="w-6 h-6 text-heritage-ink" />
         </button>
       )}
 
@@ -212,7 +212,7 @@ const AdminChatbot = () => {
                   className={`max-w-[80%] rounded-2xl px-4 py-3 ${
                     message.type === 'user'
                       ? 'bg-green-500 text-white'
-                      : 'bg-gray-700 text-gray-100'
+                      : 'bg-card-hover text-heritage-ink'
                   }`}
                 >
                   <p className="text-sm whitespace-pre-line">{message.content}</p>
@@ -225,9 +225,9 @@ const AdminChatbot = () => {
 
             {isLoading && (
               <div className="flex justify-start">
-                <div className="bg-gray-700 rounded-2xl px-4 py-3 flex items-center space-x-2">
-                  <Loader2 className="w-4 h-4 text-green-400 animate-spin" />
-                  <span className="text-sm text-gray-300">Thinking...</span>
+                <div className="bg-card-hover rounded-2xl px-4 py-3 flex items-center space-x-2">
+                  <Loader2 className="w-4 h-4 text-green-700 animate-spin" />
+                  <span className="text-sm text-heritage-ink">Thinking...</span>
                 </div>
               </div>
             )}
@@ -238,16 +238,16 @@ const AdminChatbot = () => {
           {/* Quick Actions */}
           {messages.length <= 1 && (
             <div className="px-4 pb-3 -mt-2">
-              <p className="text-xs text-gray-400 mb-2">Quick actions:</p>
+              <p className="text-xs text-heritage-muted mb-2">Quick actions:</p>
               <div className="grid grid-cols-2 gap-2">
                 {quickActions.map((action, idx) => (
                   <button
                     key={idx}
                     onClick={() => handleQuickAction(action.query)}
-                    className="flex items-center space-x-2 px-3 py-2.5 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors"
+                    className="flex items-center space-x-2 px-3 py-2.5 bg-card-hover hover:bg-card-hover rounded-lg transition-colors"
                   >
                     <span className="text-base flex-shrink-0 leading-none">{action.icon}</span>
-                    <span className="text-xs text-gray-300 font-medium leading-none">{action.label}</span>
+                    <span className="text-xs text-heritage-ink font-medium leading-none">{action.label}</span>
                   </button>
                 ))}
               </div>
@@ -255,7 +255,7 @@ const AdminChatbot = () => {
           )}
 
           {/* Input */}
-          <div className="p-4 border-t border-gray-700">
+          <div className="p-4 border-t border-card-border">
             <div className="flex items-center space-x-2">
               <div className="flex-1 relative">
                 <input
@@ -265,19 +265,19 @@ const AdminChatbot = () => {
                   onChange={(e) => setInput(e.target.value)}
                   onKeyPress={handleKeyPress}
                   placeholder="Ask me anything..."
-                  className="w-full h-12 px-4 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 text-sm"
+                  className="w-full h-12 px-4 bg-card-hover border border-card-border rounded-xl text-heritage-ink placeholder-gray-400 focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500 text-sm"
                 />
               </div>
               <button
                 onClick={handleSend}
                 disabled={!input.trim() || isLoading}
-                className="h-12 w-12 bg-green-500 hover:bg-green-600 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-xl transition-colors flex-shrink-0 flex items-center justify-center"
+                className="h-12 w-12 bg-green-500 hover:bg-green-600 disabled:bg-card-hover disabled:cursor-not-allowed text-white rounded-xl transition-colors flex-shrink-0 flex items-center justify-center"
                 aria-label="Send message"
               >
                 <Send className="w-5 h-5" />
               </button>
             </div>
-            <p className="text-xs text-gray-500 mt-2">
+            <p className="text-xs text-heritage-muted mt-2">
               Press Enter to send, Shift+Enter for new line
             </p>
           </div>

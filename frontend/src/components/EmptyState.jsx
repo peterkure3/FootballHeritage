@@ -27,21 +27,21 @@ const EmptyState = memo(({
       icon: TrendingUp,
       title: 'No Bets Yet',
       description: 'You haven\'t placed any bets yet. Start by exploring available odds and place your first bet!',
-      iconColor: 'text-purple-400',
+      iconColor: 'text-purple-700',
       bgColor: 'bg-purple-500/10',
     },
     odds: {
       icon: Calendar,
       title: 'No Events Available',
       description: 'There are no upcoming events at the moment. Check back later for new betting opportunities!',
-      iconColor: 'text-blue-400',
+      iconColor: 'text-blue-700',
       bgColor: 'bg-blue-500/10',
     },
     users: {
       icon: Users,
       title: 'No Users Found',
       description: 'No users match your current filters. Try adjusting your search criteria.',
-      iconColor: 'text-green-400',
+      iconColor: 'text-green-700',
       bgColor: 'bg-green-500/10',
     },
     activity: {
@@ -55,21 +55,21 @@ const EmptyState = memo(({
       icon: AlertCircle,
       title: 'No Results Found',
       description: 'We couldn\'t find anything matching your search. Try different keywords or filters.',
-      iconColor: 'text-yellow-400',
+      iconColor: 'text-yellow-700',
       bgColor: 'bg-yellow-500/10',
     },
     data: {
       icon: FileText,
       title: 'No Data Available',
       description: 'There is no data to display at this time.',
-      iconColor: 'text-gray-400',
+      iconColor: 'text-heritage-muted',
       bgColor: 'bg-gray-500/10',
     },
     default: {
       icon: Inbox,
       title: 'Nothing Here',
       description: 'There\'s nothing to show right now.',
-      iconColor: 'text-gray-400',
+      iconColor: 'text-heritage-muted',
       bgColor: 'bg-gray-500/10',
     },
   };
@@ -90,12 +90,12 @@ const EmptyState = memo(({
       </div>
 
       {/* Title */}
-      <h3 className="text-xl font-semibold text-white mb-2">
+      <h3 className="text-xl font-semibold text-heritage-ink mb-2">
         {displayTitle}
       </h3>
 
       {/* Description */}
-      <p className="text-gray-400 text-sm max-w-md mb-6">
+      <p className="text-heritage-muted text-sm max-w-md mb-6">
         {displayDescription}
       </p>
 

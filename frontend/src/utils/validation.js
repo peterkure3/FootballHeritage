@@ -144,7 +144,7 @@ export const validateField = (schema, data) => {
   } catch (error) {
     if (error instanceof z.ZodError) {
       const errors = {};
-      error.errors.forEach((err) => {
+      error.issues.forEach((err) => {
         const path = err.path.join(".");
         errors[path] = err.message;
       });

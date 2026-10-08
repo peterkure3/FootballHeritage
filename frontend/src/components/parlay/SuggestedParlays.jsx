@@ -42,10 +42,10 @@ const getRiskIcon = (riskLevel) => {
 
 const getRiskStyle = (riskLevel) => {
   switch (riskLevel) {
-    case 'Low': return 'bg-green-500/20 text-green-400 border-green-500/40';
-    case 'Medium': return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/40';
-    case 'High': return 'bg-red-500/20 text-red-400 border-red-500/40';
-    default: return 'bg-gray-500/20 text-gray-400 border-gray-500/40';
+    case 'Low': return 'bg-green-500/20 text-green-700 border-green-500/40';
+    case 'Medium': return 'bg-yellow-500/20 text-yellow-700 border-yellow-500/40';
+    case 'High': return 'bg-red-500/20 text-red-700 border-red-500/40';
+    default: return 'bg-gray-500/20 text-heritage-muted border-gray-500/40';
   }
 };
 
@@ -53,7 +53,7 @@ const SuggestedParlayCard = ({ parlay, onAddToBuilder }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <div className="bg-gray-800/60 border border-gray-700 rounded-xl overflow-hidden hover:border-green-500/30 transition">
+    <div className="bg-card/60 border border-card-border rounded-xl overflow-hidden hover:border-green-500/30 transition">
       {/* Header */}
       <div 
         className="p-4 cursor-pointer"
@@ -61,8 +61,8 @@ const SuggestedParlayCard = ({ parlay, onAddToBuilder }) => {
       >
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-yellow-400" />
-            <h3 className="font-bold text-white">{parlay.name}</h3>
+            <Sparkles className="w-5 h-5 text-yellow-700" />
+            <h3 className="font-bold text-heritage-ink">{parlay.name}</h3>
           </div>
           <div className="flex items-center gap-2">
             <span className={`px-2 py-0.5 rounded text-xs font-semibold border flex items-center gap-1 ${getRiskStyle(parlay.risk_level)}`}>
@@ -70,38 +70,38 @@ const SuggestedParlayCard = ({ parlay, onAddToBuilder }) => {
               {parlay.risk_level} Risk
             </span>
             {isExpanded ? (
-              <ChevronUp className="w-5 h-5 text-gray-400" />
+              <ChevronUp className="w-5 h-5 text-heritage-muted" />
             ) : (
-              <ChevronDown className="w-5 h-5 text-gray-400" />
+              <ChevronDown className="w-5 h-5 text-heritage-muted" />
             )}
           </div>
         </div>
         
-        <p className="text-sm text-gray-400 mb-3">{parlay.description}</p>
+        <p className="text-sm text-heritage-muted mb-3">{parlay.description}</p>
         
         {/* Stats Row */}
         <div className="grid grid-cols-4 gap-2 text-center">
-          <div className="bg-gray-900/50 rounded-lg p-2">
-            <p className="text-xs text-gray-500">Odds</p>
-            <p className="text-sm font-bold text-white">
+          <div className="bg-card/50 rounded-lg p-2">
+            <p className="text-xs text-heritage-muted">Odds</p>
+            <p className="text-sm font-bold text-heritage-ink">
               {parlay.combined_odds_american > 0 ? '+' : ''}{parlay.combined_odds_american}
             </p>
           </div>
-          <div className="bg-gray-900/50 rounded-lg p-2">
-            <p className="text-xs text-gray-500">Win Prob</p>
-            <p className="text-sm font-bold text-white">
+          <div className="bg-card/50 rounded-lg p-2">
+            <p className="text-xs text-heritage-muted">Win Prob</p>
+            <p className="text-sm font-bold text-heritage-ink">
               {(parlay.combined_model_prob * 100).toFixed(1)}%
             </p>
           </div>
-          <div className="bg-gray-900/50 rounded-lg p-2">
-            <p className="text-xs text-gray-500">Edge</p>
-            <p className={`text-sm font-bold ${parlay.combined_edge_pct > 0 ? 'text-green-400' : 'text-red-400'}`}>
+          <div className="bg-card/50 rounded-lg p-2">
+            <p className="text-xs text-heritage-muted">Edge</p>
+            <p className={`text-sm font-bold ${parlay.combined_edge_pct > 0 ? 'text-green-700' : 'text-red-700'}`}>
               {parlay.combined_edge_pct > 0 ? '+' : ''}{parlay.combined_edge_pct}%
             </p>
           </div>
-          <div className="bg-gray-900/50 rounded-lg p-2">
-            <p className="text-xs text-gray-500">EV</p>
-            <p className={`text-sm font-bold ${parlay.expected_value_pct > 0 ? 'text-green-400' : 'text-red-400'}`}>
+          <div className="bg-card/50 rounded-lg p-2">
+            <p className="text-xs text-heritage-muted">EV</p>
+            <p className={`text-sm font-bold ${parlay.expected_value_pct > 0 ? 'text-green-700' : 'text-red-700'}`}>
               {parlay.expected_value_pct > 0 ? '+' : ''}{parlay.expected_value_pct}%
             </p>
           </div>
@@ -110,12 +110,12 @@ const SuggestedParlayCard = ({ parlay, onAddToBuilder }) => {
 
       {/* Expanded Legs */}
       {isExpanded && (
-        <div className="border-t border-gray-700 p-4 space-y-2">
+        <div className="border-t border-card-border p-4 space-y-2">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-semibold text-gray-400">
+            <span className="text-sm font-semibold text-heritage-muted">
               {parlay.legs.length} Legs
             </span>
-            <span className="text-xs text-gray-500">
+            <span className="text-xs text-heritage-muted">
               Recommended Stake: {parlay.recommended_stake_pct}% of bankroll
             </span>
           </div>
@@ -123,27 +123,27 @@ const SuggestedParlayCard = ({ parlay, onAddToBuilder }) => {
           {parlay.legs.map((leg, idx) => (
             <div 
               key={idx}
-              className="bg-gray-900/50 rounded-lg p-3 border border-gray-700"
+              className="bg-card/50 rounded-lg p-3 border border-card-border"
             >
               <div className="flex items-center justify-between mb-1">
                 <div>
-                  <p className="text-sm font-semibold text-white">{leg.selection}</p>
-                  <p className="text-xs text-gray-400">{leg.home_team} vs {leg.away_team}</p>
+                  <p className="text-sm font-semibold text-heritage-ink">{leg.selection}</p>
+                  <p className="text-xs text-heritage-muted">{leg.home_team} vs {leg.away_team}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-bold text-green-400">
+                  <p className="text-sm font-bold text-green-700">
                     {leg.american_odds > 0 ? '+' : ''}{leg.american_odds}
                   </p>
-                  <p className="text-xs text-gray-500">{formatDate(leg.match_date)}</p>
+                  <p className="text-xs text-heritage-muted">{formatDate(leg.match_date)}</p>
                 </div>
               </div>
-              <div className="flex items-center justify-between text-xs mt-2 pt-2 border-t border-gray-700">
-                <span className="text-gray-500">{leg.competition || 'Football'}</span>
+              <div className="flex items-center justify-between text-xs mt-2 pt-2 border-t border-card-border">
+                <span className="text-heritage-muted">{leg.competition || 'Football'}</span>
                 <div className="flex items-center gap-3">
-                  <span className="text-gray-400">
-                    Prob: <span className="text-white">{(leg.model_prob * 100).toFixed(0)}%</span>
+                  <span className="text-heritage-muted">
+                    Prob: <span className="text-heritage-ink">{(leg.model_prob * 100).toFixed(0)}%</span>
                   </span>
-                  <span className={`font-semibold ${leg.edge_pct > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                  <span className={`font-semibold ${leg.edge_pct > 0 ? 'text-green-700' : 'text-red-700'}`}>
                     Edge: {leg.edge_pct > 0 ? '+' : ''}{leg.edge_pct}%
                   </span>
                 </div>
@@ -217,10 +217,10 @@ const SuggestedParlays = () => {
 
   if (isLoading) {
     return (
-      <div className="bg-gray-800/40 border border-gray-700 rounded-xl p-6">
+      <div className="bg-card/40 border border-card-border rounded-xl p-6">
         <div className="flex items-center gap-3 mb-4">
-          <Sparkles className="w-6 h-6 text-yellow-400 animate-pulse" />
-          <h2 className="text-xl font-bold text-white">AI Suggested Parlays</h2>
+          <Sparkles className="w-6 h-6 text-yellow-700 animate-pulse" />
+          <h2 className="text-xl font-bold text-heritage-ink">AI Suggested Parlays</h2>
         </div>
         <div className="flex items-center justify-center py-8">
           <div className="w-8 h-8 border-2 border-green-500 border-t-transparent rounded-full animate-spin" />
@@ -231,17 +231,17 @@ const SuggestedParlays = () => {
 
   if (error) {
     return (
-      <div className="bg-gray-800/40 border border-gray-700 rounded-xl p-6">
+      <div className="bg-card/40 border border-card-border rounded-xl p-6">
         <div className="flex items-center gap-3 mb-4">
-          <AlertTriangle className="w-6 h-6 text-red-400" />
-          <h2 className="text-xl font-bold text-white">AI Suggested Parlays</h2>
+          <AlertTriangle className="w-6 h-6 text-red-700" />
+          <h2 className="text-xl font-bold text-heritage-ink">AI Suggested Parlays</h2>
         </div>
-        <p className="text-gray-400 text-center py-4">
+        <p className="text-heritage-muted text-center py-4">
           Failed to load suggestions. Make sure the pipeline API is running.
         </p>
         <button
           onClick={() => refetch()}
-          className="w-full mt-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition"
+          className="w-full mt-2 px-4 py-2 bg-card-hover hover:bg-card-hover text-heritage-ink rounded-lg transition"
         >
           Retry
         </button>
@@ -252,18 +252,18 @@ const SuggestedParlays = () => {
   const parlays = data?.parlays || [];
 
   return (
-    <div className="bg-gray-800/40 border border-gray-700 rounded-xl p-6">
+    <div className="bg-card/40 border border-card-border rounded-xl p-6">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <Sparkles className="w-6 h-6 text-yellow-400" />
+          <Sparkles className="w-6 h-6 text-yellow-700" />
           <div>
-            <h2 className="text-xl font-bold text-white">AI Suggested Parlays</h2>
-            <p className="text-sm text-gray-400">Auto-generated from best value bets</p>
+            <h2 className="text-xl font-bold text-heritage-ink">AI Suggested Parlays</h2>
+            <p className="text-sm text-heritage-muted">Auto-generated from best value bets</p>
           </div>
         </div>
         <button
           onClick={() => refetch()}
-          className="px-3 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm transition"
+          className="px-3 py-1.5 bg-card-hover hover:bg-card-hover text-heritage-ink rounded-lg text-sm transition"
         >
           Refresh
         </button>
@@ -272,8 +272,8 @@ const SuggestedParlays = () => {
       {parlays.length === 0 ? (
         <div className="text-center py-8">
           <TrendingUp className="w-12 h-12 mx-auto mb-3 text-gray-600" />
-          <p className="text-gray-400">No suggested parlays available</p>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-heritage-muted">No suggested parlays available</p>
+          <p className="text-sm text-heritage-muted mt-1">
             Check back when more value bets are detected
           </p>
         </div>

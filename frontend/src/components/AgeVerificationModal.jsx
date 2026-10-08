@@ -9,11 +9,11 @@ const AgeVerificationModal = memo(({ isOpen, dob, onConfirm, onCancel }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md">
-      <div className="bg-gray-800 rounded-xl shadow-2xl border-2 border-yellow-500 w-full max-w-lg overflow-hidden animate-fadeIn">
+      <div className="bg-card rounded-xl shadow-2xl border-2 border-yellow-500 w-full max-w-lg overflow-hidden animate-fadeIn">
         {/* Warning Header */}
         <div className="bg-gradient-to-r from-yellow-600 to-orange-600 p-6 text-center">
           <div className="text-6xl mb-2">⚠️</div>
-          <h2 className="text-white text-2xl font-bold">Age Verification Required</h2>
+          <h2 className="text-heritage-ink text-2xl font-bold">Age Verification Required</h2>
           <p className="text-yellow-100 text-sm mt-2">
             Sports betting is restricted to adults 21 and over
           </p>
@@ -27,7 +27,7 @@ const AgeVerificationModal = memo(({ isOpen, dob, onConfirm, onCancel }) => {
               <div className="text-center mb-6">
                 <div className="inline-flex items-center justify-center w-20 h-20 bg-green-500/20 rounded-full mb-4">
                   <svg
-                    className="w-10 h-10 text-green-400"
+                    className="w-10 h-10 text-green-700"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -40,15 +40,15 @@ const AgeVerificationModal = memo(({ isOpen, dob, onConfirm, onCancel }) => {
                     />
                   </svg>
                 </div>
-                <h3 className="text-white text-xl font-bold mb-2">Age Verified</h3>
-                <p className="text-gray-300 text-sm">
-                  You are <span className="text-green-400 font-bold">{age} years old</span> and eligible to participate in sports betting.
+                <h3 className="text-heritage-ink text-xl font-bold mb-2">Age Verified</h3>
+                <p className="text-heritage-ink text-sm">
+                  You are <span className="text-green-700 font-bold">{age} years old</span> and eligible to participate in sports betting.
                 </p>
               </div>
 
               {/* Legal Disclaimer */}
-              <div className="bg-gray-900/50 border border-gray-700 rounded-lg p-4 mb-6">
-                <h4 className="text-yellow-400 text-sm font-bold mb-2 flex items-center">
+              <div className="bg-card/50 border border-card-border rounded-lg p-4 mb-6">
+                <h4 className="text-yellow-700 text-sm font-bold mb-2 flex items-center">
                   <svg
                     className="w-4 h-4 mr-2"
                     fill="currentColor"
@@ -62,7 +62,7 @@ const AgeVerificationModal = memo(({ isOpen, dob, onConfirm, onCancel }) => {
                   </svg>
                   Important Information
                 </h4>
-                <ul className="text-gray-300 text-xs space-y-1">
+                <ul className="text-heritage-ink text-xs space-y-1">
                   <li>• You must be 21+ to place bets</li>
                   <li>• Gambling can be addictive - play responsibly</li>
                   <li>• Set limits and stick to them</li>
@@ -73,14 +73,14 @@ const AgeVerificationModal = memo(({ isOpen, dob, onConfirm, onCancel }) => {
 
               {/* Responsible Gambling Resources */}
               <div className="bg-blue-500/10 border border-blue-500/50 rounded-lg p-3 mb-6">
-                <p className="text-blue-300 text-xs text-center">
+                <p className="text-blue-700 text-xs text-center">
                   <strong>Need help?</strong> Contact the National Problem Gambling Helpline:
                   <span className="block mt-1 font-bold">1-800-522-4700</span>
                 </p>
               </div>
 
               {/* Confirmation Checkbox Info */}
-              <div className="text-center text-gray-400 text-xs mb-6">
+              <div className="text-center text-heritage-muted text-xs mb-6">
                 By proceeding, you confirm that:
                 <ul className="mt-2 space-y-1">
                   <li>✓ You are at least 21 years old</li>
@@ -93,7 +93,7 @@ const AgeVerificationModal = memo(({ isOpen, dob, onConfirm, onCancel }) => {
               <div className="flex gap-3">
                 <button
                   onClick={onCancel}
-                  className="flex-1 py-3 px-4 bg-gray-700 text-white rounded-lg font-semibold hover:bg-gray-600 transition-colors"
+                  className="flex-1 py-3 px-4 bg-card-hover text-heritage-ink rounded-lg font-semibold hover:bg-card-hover transition-colors"
                 >
                   Cancel
                 </button>
@@ -111,7 +111,7 @@ const AgeVerificationModal = memo(({ isOpen, dob, onConfirm, onCancel }) => {
               <div className="text-center mb-6">
                 <div className="inline-flex items-center justify-center w-20 h-20 bg-red-500/20 rounded-full mb-4">
                   <svg
-                    className="w-10 h-10 text-red-400"
+                    className="w-10 h-10 text-red-700"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -124,37 +124,37 @@ const AgeVerificationModal = memo(({ isOpen, dob, onConfirm, onCancel }) => {
                     />
                   </svg>
                 </div>
-                <h3 className="text-white text-xl font-bold mb-2">Access Denied</h3>
-                <p className="text-gray-300 text-sm mb-4">
+                <h3 className="text-heritage-ink text-xl font-bold mb-2">Access Denied</h3>
+                <p className="text-heritage-ink text-sm mb-4">
                   {dob && age > 0 ? (
                     <>
-                      You are currently <span className="text-red-400 font-bold">{age} years old</span>.
+                      You are currently <span className="text-red-700 font-bold">{age} years old</span>.
                     </>
                   ) : (
                     <>Please provide a valid date of birth.</>
                   )}
                 </p>
-                <p className="text-gray-400 text-sm">
+                <p className="text-heritage-muted text-sm">
                   You must be at least 21 years old to access this sports betting platform.
                 </p>
               </div>
 
               {/* Legal Notice */}
               <div className="bg-red-500/10 border border-red-500 rounded-lg p-4 mb-6">
-                <h4 className="text-red-400 text-sm font-bold mb-2">Legal Requirements</h4>
-                <p className="text-gray-300 text-xs">
+                <h4 className="text-red-700 text-sm font-bold mb-2">Legal Requirements</h4>
+                <p className="text-heritage-ink text-xs">
                   Federal and state laws prohibit sports betting for individuals under 21 years of age.
                   This is to protect minors from gambling-related harm.
                 </p>
               </div>
 
               {/* Resources for Young People */}
-              <div className="bg-gray-900/50 border border-gray-700 rounded-lg p-4 mb-6">
-                <h4 className="text-gray-300 text-sm font-semibold mb-2">Resources</h4>
-                <p className="text-gray-400 text-xs">
+              <div className="bg-card/50 border border-card-border rounded-lg p-4 mb-6">
+                <h4 className="text-heritage-ink text-sm font-semibold mb-2">Resources</h4>
+                <p className="text-heritage-muted text-xs">
                   If you or someone you know is struggling with gambling, help is available:
                 </p>
-                <p className="text-blue-400 text-xs mt-2 font-semibold">
+                <p className="text-blue-700 text-xs mt-2 font-semibold">
                   National Council on Problem Gambling: ncpgambling.org
                 </p>
               </div>
@@ -162,7 +162,7 @@ const AgeVerificationModal = memo(({ isOpen, dob, onConfirm, onCancel }) => {
               {/* Action Button */}
               <button
                 onClick={onCancel}
-                className="w-full py-3 px-4 bg-gray-700 text-white rounded-lg font-semibold hover:bg-gray-600 transition-colors"
+                className="w-full py-3 px-4 bg-card-hover text-heritage-ink rounded-lg font-semibold hover:bg-card-hover transition-colors"
               >
                 Go Back
               </button>
@@ -171,8 +171,8 @@ const AgeVerificationModal = memo(({ isOpen, dob, onConfirm, onCancel }) => {
         </div>
 
         {/* Footer */}
-        <div className="bg-gray-900 px-6 py-3 border-t border-gray-700">
-          <p className="text-gray-500 text-xs text-center">
+        <div className="bg-card px-6 py-3 border-t border-card-border">
+          <p className="text-heritage-muted text-xs text-center">
             🔒 Your information is secure and confidential
           </p>
         </div>
