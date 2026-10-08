@@ -46,9 +46,9 @@ const formatDate = (v) => {
 };
 
 const confidenceColors = {
-  High: "bg-green-500/20 text-green-400 border-green-500/40",
-  Medium: "bg-yellow-500/20 text-yellow-400 border-yellow-500/40",
-  Low: "bg-gray-500/20 text-gray-400 border-gray-500/40",
+  High: "bg-green-500/20 text-green-700 border-green-500/40",
+  Medium: "bg-yellow-500/20 text-yellow-700 border-yellow-500/40",
+  Low: "bg-gray-500/20 text-heritage-muted border-gray-500/40",
 };
 
 const BestBets = () => {
@@ -99,11 +99,11 @@ const BestBets = () => {
           <p className="text-sm uppercase tracking-wide font-semibold mb-2" style={{ color: '#10b981' }}>Value Bets</p>
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-green-500/20 rounded-lg">
-              <Zap className="w-6 h-6 text-green-400" />
+              <Zap className="w-6 h-6 text-green-700" />
             </div>
-            <h1 className="text-3xl font-[Oswald] tracking-tight text-white">Best Value Bets</h1>
+            <h1 className="text-3xl font-display tracking-tight text-heritage-ink">Best Value Bets</h1>
           </div>
-          <p style={{ color: '#64748b' }} className="text-sm">
+          <p style={{ color: '#69746c' }} className="text-sm">
             AI-powered betting recommendations with Kelly criterion stake sizing.
             Only showing bets where our model finds positive edge.
           </p>
@@ -111,26 +111,26 @@ const BestBets = () => {
 
         {/* Settings Panel */}
         <div className="card-glow rounded-xl p-6 border mb-6" style={{ animation: 'slide-up 0.4s ease-out 0.06s both', background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
-          <h2 className="text-lg font-semibold text-white mb-4">Settings</h2>
+          <h2 className="text-lg font-semibold text-heritage-ink mb-4">Settings</h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
-              <label className="block text-sm mb-2" style={{ color: '#64748b' }}>Bankroll ($)</label>
+              <label className="block text-sm mb-2" style={{ color: '#69746c' }}>Bankroll ($)</label>
               <input
                 type="number"
                 value={bankroll}
                 onChange={(e) => setBankroll(Number(e.target.value) || 1000)}
-                className="rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 transition-all w-full"
+                className="rounded-lg px-4 py-3 text-heritage-ink focus:outline-none focus:ring-2 transition-all w-full"
                 style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)', '--tw-ring-color': '#10b981' }}
                 min={100}
                 step={100}
               />
             </div>
             <div>
-              <label className="block text-sm mb-2" style={{ color: '#64748b' }}>Min Edge</label>
+              <label className="block text-sm mb-2" style={{ color: '#69746c' }}>Min Edge</label>
               <select
                 value={minEdge}
                 onChange={(e) => setMinEdge(Number(e.target.value))}
-                className="rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 transition-all w-full"
+                className="rounded-lg px-4 py-3 text-heritage-ink focus:outline-none focus:ring-2 transition-all w-full"
                 style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)', '--tw-ring-color': '#10b981' }}
               >
                 <option value={0.02}>2% (Aggressive)</option>
@@ -140,11 +140,11 @@ const BestBets = () => {
               </select>
             </div>
             <div>
-              <label className="block text-sm mb-2" style={{ color: '#64748b' }}>Kelly Fraction</label>
+              <label className="block text-sm mb-2" style={{ color: '#69746c' }}>Kelly Fraction</label>
               <select
                 value={kellyFraction}
                 onChange={(e) => setKellyFraction(Number(e.target.value))}
-                className="rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 transition-all w-full"
+                className="rounded-lg px-4 py-3 text-heritage-ink focus:outline-none focus:ring-2 transition-all w-full"
                 style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)', '--tw-ring-color': '#10b981' }}
               >
                 <option value={0.1}>10% Kelly (Very Safe)</option>
@@ -154,11 +154,11 @@ const BestBets = () => {
               </select>
             </div>
             <div>
-              <label className="block text-sm mb-2" style={{ color: '#64748b' }}>Max Bets</label>
+              <label className="block text-sm mb-2" style={{ color: '#69746c' }}>Max Bets</label>
               <select
                 value={limit}
                 onChange={(e) => setLimit(Number(e.target.value))}
-                className="rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 transition-all w-full"
+                className="rounded-lg px-4 py-3 text-heritage-ink focus:outline-none focus:ring-2 transition-all w-full"
                 style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)', '--tw-ring-color': '#10b981' }}
               >
                 <option value={10}>10 bets</option>
@@ -170,7 +170,7 @@ const BestBets = () => {
           <div className="mt-4">
             <button
               onClick={() => refetch()}
-              style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}
+              style={{ background: 'linear-gradient(135deg, #177c4c, #147b4c)' }}
               className="text-white font-semibold rounded-lg py-3 px-4 transition-all hover:opacity-90"
             >
               Refresh Bets
@@ -182,34 +182,34 @@ const BestBets = () => {
         {bets.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
             <div className="card-glow rounded-xl p-4 border" style={{ animation: 'slide-up 0.4s ease-out 0.06s both', background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
-              <div className="flex items-center gap-2 text-sm mb-1" style={{ color: '#64748b' }}>
+              <div className="flex items-center gap-2 text-sm mb-1" style={{ color: '#69746c' }}>
                 <Target className="w-4 h-4" />
                 <span>Value Bets Found</span>
               </div>
-              <p className="text-2xl font-[Oswald] tracking-tight text-white">{bets.length}</p>
+              <p className="text-2xl font-display tracking-tight text-heritage-ink">{bets.length}</p>
             </div>
             <div className="card-glow rounded-xl p-4 border" style={{ animation: 'slide-up 0.4s ease-out 0.12s both', background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
-              <div className="flex items-center gap-2 text-sm mb-1" style={{ color: '#64748b' }}>
+              <div className="flex items-center gap-2 text-sm mb-1" style={{ color: '#69746c' }}>
                 <DollarSign className="w-4 h-4" />
                 <span>Total Stake</span>
               </div>
-              <p className="text-2xl font-[Oswald] tracking-tight text-white">{formatMoney(totalStake)}</p>
+              <p className="text-2xl font-display tracking-tight text-heritage-ink">{formatMoney(totalStake)}</p>
             </div>
             <div className="card-glow rounded-xl p-4 border" style={{ animation: 'slide-up 0.4s ease-out 0.18s both', background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
-              <div className="flex items-center gap-2 text-sm mb-1" style={{ color: '#64748b' }}>
+              <div className="flex items-center gap-2 text-sm mb-1" style={{ color: '#69746c' }}>
                 <TrendingUp className="w-4 h-4" />
                 <span>Expected Value</span>
               </div>
-              <p className={`text-2xl font-[Oswald] tracking-tight ${totalEV >= 0 ? "text-green-400" : "text-red-400"}`}>
+              <p className={`text-2xl font-display tracking-tight ${totalEV >= 0 ? "text-green-700" : "text-red-700"}`}>
                 {formatMoney(totalEV)}
               </p>
             </div>
             <div className="card-glow rounded-xl p-4 border" style={{ animation: 'slide-up 0.4s ease-out 0.24s both', background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
-              <div className="flex items-center gap-2 text-sm mb-1" style={{ color: '#64748b' }}>
+              <div className="flex items-center gap-2 text-sm mb-1" style={{ color: '#69746c' }}>
                 <Zap className="w-4 h-4" />
                 <span>Avg Edge</span>
               </div>
-              <p className="text-2xl font-[Oswald] tracking-tight text-green-400">
+              <p className="text-2xl font-display tracking-tight text-green-700">
                 {bets.length > 0
                   ? formatPct(bets.reduce((s, b) => s + b.edge_pct, 0) / bets.length)
                   : "--"}
@@ -222,7 +222,7 @@ const BestBets = () => {
         {isLoading ? (
           <LoadingSkeleton type="list" count={3} />
         ) : isError ? (
-          <div className="rounded-xl p-6 flex items-center gap-3" style={{ color: '#fca5a5', background: 'rgba(239, 68, 68, 0.08)', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
+          <div className="rounded-xl p-6 flex items-center gap-3" style={{ color: '#b42318', background: 'rgba(239, 68, 68, 0.08)', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
             <AlertTriangle className="w-5 h-5" />
             <span>{error?.message || "Failed to load value bets"}</span>
           </div>
@@ -246,7 +246,7 @@ const BestBets = () => {
                   {/* Match Info */}
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-xs uppercase tracking-wide" style={{ color: '#64748b' }}>
+                      <span className="text-xs uppercase tracking-wide" style={{ color: '#69746c' }}>
                         {bet.competition || "Football"}
                       </span>
                       <span
@@ -257,24 +257,24 @@ const BestBets = () => {
                         {bet.confidence}
                       </span>
                     </div>
-                    <h3 className="text-lg font-semibold text-white">
+                    <h3 className="text-lg font-semibold text-heritage-ink">
                       {bet.home_team} vs {bet.away_team}
                     </h3>
-                    <p className="text-sm" style={{ color: '#64748b' }}>{formatDate(bet.match_date)}</p>
+                    <p className="text-sm" style={{ color: '#69746c' }}>{formatDate(bet.match_date)}</p>
                   </div>
 
                   {/* Selection */}
                   <div className="lg:text-center">
-                    <p className="text-xs uppercase mb-1" style={{ color: '#64748b' }}>Bet On</p>
-                    <p className="text-lg font-bold text-green-400">{bet.selection}</p>
-                    <p className="text-sm" style={{ color: '#94a3b8' }}>@ {formatDecimalOdds(bet.decimal_odds)}</p>
+                    <p className="text-xs uppercase mb-1" style={{ color: '#69746c' }}>Bet On</p>
+                    <p className="text-lg font-bold text-green-700">{bet.selection}</p>
+                    <p className="text-sm" style={{ color: '#69746c' }}>@ {formatDecimalOdds(bet.decimal_odds)}</p>
                   </div>
 
                   {/* Edge */}
                   <div className="lg:text-center">
-                    <p className="text-xs uppercase mb-1" style={{ color: '#64748b' }}>Edge</p>
-                    <p className="text-2xl font-bold text-green-400">{formatPct(bet.edge_pct)}</p>
-                    <p className="text-xs" style={{ color: '#64748b' }}>
+                    <p className="text-xs uppercase mb-1" style={{ color: '#69746c' }}>Edge</p>
+                    <p className="text-2xl font-bold text-green-700">{formatPct(bet.edge_pct)}</p>
+                    <p className="text-xs" style={{ color: '#69746c' }}>
                       Model: {(bet.model_prob * 100).toFixed(0)}% vs Implied:{" "}
                       {(bet.implied_prob * 100).toFixed(0)}%
                     </p>
@@ -282,26 +282,26 @@ const BestBets = () => {
 
                   {/* Stake */}
                   <div className="lg:text-center">
-                    <p className="text-xs uppercase mb-1" style={{ color: '#64748b' }}>Recommended Stake</p>
-                    <p className="text-2xl font-bold text-white">
+                    <p className="text-xs uppercase mb-1" style={{ color: '#69746c' }}>Recommended Stake</p>
+                    <p className="text-2xl font-bold text-heritage-ink">
                       {formatMoney(bet.recommended_stake)}
                     </p>
-                    <p className="text-xs" style={{ color: '#64748b' }}>
+                    <p className="text-xs" style={{ color: '#69746c' }}>
                       {bet.kelly_stake_pct.toFixed(1)}% of bankroll
                     </p>
                   </div>
 
                   {/* EV */}
                   <div className="lg:text-right">
-                    <p className="text-xs uppercase mb-1" style={{ color: '#64748b' }}>Expected Value</p>
+                    <p className="text-xs uppercase mb-1" style={{ color: '#69746c' }}>Expected Value</p>
                     <p
                       className={`text-xl font-bold ${
-                        bet.expected_value >= 0 ? "text-green-400" : "text-red-400"
+                        bet.expected_value >= 0 ? "text-green-700" : "text-red-700"
                       }`}
                     >
                       {formatMoney(bet.expected_value)}
                     </p>
-                    <p className="text-xs" style={{ color: '#64748b' }}>v{bet.model_version}</p>
+                    <p className="text-xs" style={{ color: '#69746c' }}>v{bet.model_version}</p>
                   </div>
 
                   {/* Add to Parlay Button */}
@@ -345,10 +345,10 @@ const BestBets = () => {
                           disabled={isSelected}
                           className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition ${
                             isSelected
-                              ? 'bg-green-500/20 text-green-400 border border-green-500/40 cursor-default'
+                              ? 'bg-green-500/20 text-green-700 border border-green-500/40 cursor-default'
                               : 'text-white'
                           }`}
-                          style={isSelected ? {} : { background: 'linear-gradient(135deg, #10b981, #059669)' }}
+                          style={isSelected ? {} : { background: 'linear-gradient(135deg, #177c4c, #147b4c)' }}
                           title={isSelected ? 'Already in parlay' : 'Add to parlay'}
                         >
                           {isSelected ? (
@@ -375,7 +375,7 @@ const BestBets = () => {
         {/* Disclaimer */}
         <div className="mt-8 card-glow rounded-xl p-4 border" style={{ background: 'rgba(234, 179, 8, 0.08)', borderColor: 'rgba(234, 179, 8, 0.2)' }}>
           <div className="flex items-start gap-3">
-            <AlertTriangle className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
+            <AlertTriangle className="w-5 h-5 text-yellow-700 flex-shrink-0 mt-0.5" />
             <div className="text-sm" style={{ color: '#fef08a' }}>
               <p className="font-semibold mb-1">Betting Disclaimer</p>
               <p style={{ color: '#fef08a', opacity: 0.8 }}>

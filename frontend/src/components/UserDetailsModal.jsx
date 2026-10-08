@@ -65,29 +65,29 @@ const UserDetailsModal = ({ user, isOpen, onClose, onUpdate }) => {
 
       {/* Modal */}
       <div className="flex min-h-full items-center justify-center p-4">
-        <div className="relative bg-gray-800 rounded-xl shadow-2xl border border-gray-700 w-full max-w-4xl">
+        <div className="relative bg-card rounded-xl shadow-2xl border border-card-border w-full max-w-4xl">
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-gray-700">
+          <div className="flex items-center justify-between p-6 border-b border-card-border">
             <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 rounded-full bg-gray-700 flex items-center justify-center">
-                <span className="text-lg font-bold text-white">
+              <div className="w-12 h-12 rounded-full bg-card-hover flex items-center justify-center">
+                <span className="text-lg font-bold text-heritage-ink">
                   {user.email.charAt(0).toUpperCase()}
                 </span>
               </div>
               <div>
-                <h2 className="text-xl font-bold text-white">{user.email}</h2>
+                <h2 className="text-xl font-bold text-heritage-ink">{user.email}</h2>
                 <div className="flex items-center space-x-2 mt-1">
                   <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
                     user.is_verified 
-                      ? 'bg-green-400/10 text-green-400' 
-                      : 'bg-yellow-400/10 text-yellow-400'
+                      ? 'bg-green-400/10 text-green-700'
+                      : 'bg-yellow-400/10 text-yellow-700'
                   }`}>
                     {user.is_verified ? 'Verified' : 'Unverified'}
                   </span>
                   <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
                     user.is_active 
-                      ? 'bg-blue-400/10 text-blue-400' 
-                      : 'bg-red-400/10 text-red-400'
+                      ? 'bg-blue-400/10 text-blue-700'
+                      : 'bg-red-400/10 text-red-700'
                   }`}>
                     {user.is_active ? 'Active' : 'Banned'}
                   </span>
@@ -97,14 +97,14 @@ const UserDetailsModal = ({ user, isOpen, onClose, onUpdate }) => {
             <button
               onClick={onClose}
               aria-label="Close user details modal"
-              className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+              className="p-2 hover:bg-card-hover rounded-lg transition-colors"
             >
-              <X className="w-5 h-5 text-gray-400" />
+              <X className="w-5 h-5 text-heritage-muted" />
             </button>
           </div>
 
           {/* Tabs */}
-          <div className="border-b border-gray-700">
+          <div className="border-b border-card-border">
             <nav className="flex space-x-8 px-6">
               {[
                 { id: 'overview', label: 'Overview' },
@@ -117,8 +117,8 @@ const UserDetailsModal = ({ user, isOpen, onClose, onUpdate }) => {
                   onClick={() => setActiveTab(tab.id)}
                   className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                     activeTab === tab.id
-                      ? 'border-green-400 text-green-400'
-                      : 'border-transparent text-gray-400 hover:text-gray-300'
+                      ? 'border-green-400 text-green-700'
+                      : 'border-transparent text-heritage-muted hover:text-heritage-ink'
                   }`}
                 >
                   {tab.label}
@@ -133,51 +133,51 @@ const UserDetailsModal = ({ user, isOpen, onClose, onUpdate }) => {
               <div className="space-y-6">
                 {/* Quick Stats */}
                 <div className="grid grid-cols-3 gap-4">
-                  <div className="bg-gray-900 rounded-lg p-4 border border-gray-700">
+                  <div className="bg-card rounded-lg p-4 border border-card-border">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center">
-                        <DollarSign className="w-5 h-5 text-green-400" />
+                        <DollarSign className="w-5 h-5 text-green-700" />
                       </div>
                       <div>
-                        <p className="text-xs text-gray-400">Balance</p>
-                        <p className="text-lg font-bold text-white">${user.balance?.toFixed(2) || '0.00'}</p>
+                        <p className="text-xs text-heritage-muted">Balance</p>
+                        <p className="text-lg font-bold text-heritage-ink">${user.balance?.toFixed(2) || '0.00'}</p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="bg-gray-900 rounded-lg p-4 border border-gray-700">
+                  <div className="bg-card rounded-lg p-4 border border-card-border">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                        <Activity className="w-5 h-5 text-blue-400" />
+                        <Activity className="w-5 h-5 text-blue-700" />
                       </div>
                       <div>
-                        <p className="text-xs text-gray-400">Total Bets</p>
-                        <p className="text-lg font-bold text-white">{user.total_bets || 0}</p>
+                        <p className="text-xs text-heritage-muted">Total Bets</p>
+                        <p className="text-lg font-bold text-heritage-ink">{user.total_bets || 0}</p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="bg-gray-900 rounded-lg p-4 border border-gray-700">
+                  <div className="bg-card rounded-lg p-4 border border-card-border">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center">
-                        <CreditCard className="w-5 h-5 text-purple-400" />
+                        <CreditCard className="w-5 h-5 text-purple-700" />
                       </div>
                       <div>
-                        <p className="text-xs text-gray-400">Total Wagered</p>
-                        <p className="text-lg font-bold text-white">${user.total_wagered?.toFixed(2) || '0.00'}</p>
+                        <p className="text-xs text-heritage-muted">Total Wagered</p>
+                        <p className="text-lg font-bold text-heritage-ink">${user.total_wagered?.toFixed(2) || '0.00'}</p>
                       </div>
                     </div>
                   </div>
                 </div>
 
                 {/* User Information */}
-                <div className="bg-gray-900 rounded-lg p-5 border border-gray-700">
+                <div className="bg-card rounded-lg p-5 border border-card-border">
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-sm font-semibold text-white">User Information</h3>
+                    <h3 className="text-sm font-semibold text-heritage-ink">User Information</h3>
                     {!isEditing ? (
                       <button
                         onClick={() => setIsEditing(true)}
-                        className="px-3 py-1 text-sm text-green-400 hover:bg-green-400/10 rounded-lg transition-colors"
+                        className="px-3 py-1 text-sm text-green-700 hover:bg-green-400/10 rounded-lg transition-colors"
                       >
                         Edit
                       </button>
@@ -185,7 +185,7 @@ const UserDetailsModal = ({ user, isOpen, onClose, onUpdate }) => {
                       <div className="flex space-x-2">
                         <button
                           onClick={() => setIsEditing(false)}
-                          className="px-3 py-1 text-sm text-gray-400 hover:bg-gray-700 rounded-lg transition-colors"
+                          className="px-3 py-1 text-sm text-heritage-muted hover:bg-card-hover rounded-lg transition-colors"
                         >
                           Cancel
                         </button>
@@ -201,22 +201,22 @@ const UserDetailsModal = ({ user, isOpen, onClose, onUpdate }) => {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs text-gray-400 mb-1">Email</label>
+                      <label className="block text-xs text-heritage-muted mb-1">Email</label>
                       {isEditing ? (
                         <input
                           type="email"
                           value={editedUser.email}
                           onChange={(e) => setEditedUser({ ...editedUser, email: e.target.value })}
-                          className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-green-400"
+                          className="w-full px-3 py-2 bg-card border border-card-border rounded-lg text-heritage-ink text-sm focus:outline-none focus:border-green-400"
                         />
                       ) : (
-                        <p className="text-sm text-white">{user.email}</p>
+                        <p className="text-sm text-heritage-ink">{user.email}</p>
                       )}
                     </div>
 
                     <div>
-                      <label className="block text-xs text-gray-400 mb-1">Joined Date</label>
-                      <p className="text-sm text-white">
+                      <label className="block text-xs text-heritage-muted mb-1">Joined Date</label>
+                      <p className="text-sm text-heritage-ink">
                         {new Date(user.created_at).toLocaleDateString('en-US', { 
                           year: 'numeric', 
                           month: 'long', 
@@ -226,50 +226,50 @@ const UserDetailsModal = ({ user, isOpen, onClose, onUpdate }) => {
                     </div>
 
                     <div>
-                      <label className="block text-xs text-gray-400 mb-1">First Name</label>
+                      <label className="block text-xs text-heritage-muted mb-1">First Name</label>
                       {isEditing ? (
                         <input
                           type="text"
                           value={editedUser.first_name || ''}
                           onChange={(e) => setEditedUser({ ...editedUser, first_name: e.target.value })}
-                          className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-green-400"
+                          className="w-full px-3 py-2 bg-card border border-card-border rounded-lg text-heritage-ink text-sm focus:outline-none focus:border-green-400"
                         />
                       ) : (
-                        <p className="text-sm text-white">{user.first_name || 'N/A'}</p>
+                        <p className="text-sm text-heritage-ink">{user.first_name || 'N/A'}</p>
                       )}
                     </div>
 
                     <div>
-                      <label className="block text-xs text-gray-400 mb-1">Last Name</label>
+                      <label className="block text-xs text-heritage-muted mb-1">Last Name</label>
                       {isEditing ? (
                         <input
                           type="text"
                           value={editedUser.last_name || ''}
                           onChange={(e) => setEditedUser({ ...editedUser, last_name: e.target.value })}
-                          className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-green-400"
+                          className="w-full px-3 py-2 bg-card border border-card-border rounded-lg text-heritage-ink text-sm focus:outline-none focus:border-green-400"
                         />
                       ) : (
-                        <p className="text-sm text-white">{user.last_name || 'N/A'}</p>
+                        <p className="text-sm text-heritage-ink">{user.last_name || 'N/A'}</p>
                       )}
                     </div>
 
                     <div>
-                      <label className="block text-xs text-gray-400 mb-1">Phone</label>
+                      <label className="block text-xs text-heritage-muted mb-1">Phone</label>
                       {isEditing ? (
                         <input
                           type="tel"
                           value={editedUser.phone || ''}
                           onChange={(e) => setEditedUser({ ...editedUser, phone: e.target.value })}
-                          className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-green-400"
+                          className="w-full px-3 py-2 bg-card border border-card-border rounded-lg text-heritage-ink text-sm focus:outline-none focus:border-green-400"
                         />
                       ) : (
-                        <p className="text-sm text-white">{user.phone || 'N/A'}</p>
+                        <p className="text-sm text-heritage-ink">{user.phone || 'N/A'}</p>
                       )}
                     </div>
 
                     <div>
-                      <label className="block text-xs text-gray-400 mb-1">Last Login</label>
-                      <p className="text-sm text-white">
+                      <label className="block text-xs text-heritage-muted mb-1">Last Login</label>
+                      <p className="text-sm text-heritage-ink">
                         {user.last_login 
                           ? new Date(user.last_login).toLocaleString() 
                           : 'Never'}
@@ -279,8 +279,8 @@ const UserDetailsModal = ({ user, isOpen, onClose, onUpdate }) => {
                 </div>
 
                 {/* Admin Actions */}
-                <div className="bg-gray-900 rounded-lg p-5 border border-gray-700">
-                  <h3 className="text-sm font-semibold text-white mb-4">Admin Actions</h3>
+                <div className="bg-card rounded-lg p-5 border border-card-border">
+                  <h3 className="text-sm font-semibold text-heritage-ink mb-4">Admin Actions</h3>
                   <div className="flex flex-wrap gap-3">
                     {!user.is_verified && (
                       <button
@@ -295,7 +295,7 @@ const UserDetailsModal = ({ user, isOpen, onClose, onUpdate }) => {
                     {user.is_active ? (
                       <button
                         onClick={handleBan}
-                        className="flex items-center space-x-2 px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 font-medium rounded-lg transition-colors text-sm border border-red-500/30"
+                        className="flex items-center space-x-2 px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-700 font-medium rounded-lg transition-colors text-sm border border-red-500/30"
                       >
                         <Ban className="w-4 h-4" />
                         <span>Ban User</span>
@@ -303,19 +303,19 @@ const UserDetailsModal = ({ user, isOpen, onClose, onUpdate }) => {
                     ) : (
                       <button
                         onClick={handleUnban}
-                        className="flex items-center space-x-2 px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 font-medium rounded-lg transition-colors text-sm border border-blue-500/30"
+                        className="flex items-center space-x-2 px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 text-blue-700 font-medium rounded-lg transition-colors text-sm border border-blue-500/30"
                       >
                         <Shield className="w-4 h-4" />
                         <span>Unban User</span>
                       </button>
                     )}
 
-                    <button className="flex items-center space-x-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-lg transition-colors text-sm">
+                    <button className="flex items-center space-x-2 px-4 py-2 bg-card-hover hover:bg-card-hover text-heritage-ink font-medium rounded-lg transition-colors text-sm">
                       <Mail className="w-4 h-4" />
                       <span>Send Email</span>
                     </button>
 
-                    <button className="flex items-center space-x-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-lg transition-colors text-sm">
+                    <button className="flex items-center space-x-2 px-4 py-2 bg-card-hover hover:bg-card-hover text-heritage-ink font-medium rounded-lg transition-colors text-sm">
                       <Calendar className="w-4 h-4" />
                       <span>View Calendar</span>
                     </button>
@@ -327,24 +327,24 @@ const UserDetailsModal = ({ user, isOpen, onClose, onUpdate }) => {
             {activeTab === 'transactions' && (
               <div className="text-center py-12">
                 <CreditCard className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-                <p className="text-gray-400">Transaction history will be displayed here</p>
-                <p className="text-sm text-gray-500 mt-2">Coming soon...</p>
+                <p className="text-heritage-muted">Transaction history will be displayed here</p>
+                <p className="text-sm text-heritage-muted mt-2">Coming soon...</p>
               </div>
             )}
 
             {activeTab === 'bets' && (
               <div className="text-center py-12">
                 <Activity className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-                <p className="text-gray-400">Betting history will be displayed here</p>
-                <p className="text-sm text-gray-500 mt-2">Coming soon...</p>
+                <p className="text-heritage-muted">Betting history will be displayed here</p>
+                <p className="text-sm text-heritage-muted mt-2">Coming soon...</p>
               </div>
             )}
 
             {activeTab === 'activity' && (
               <div className="text-center py-12">
                 <Shield className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-                <p className="text-gray-400">Activity log will be displayed here</p>
-                <p className="text-sm text-gray-500 mt-2">Coming soon...</p>
+                <p className="text-heritage-muted">Activity log will be displayed here</p>
+                <p className="text-sm text-heritage-muted mt-2">Coming soon...</p>
               </div>
             )}
           </div>

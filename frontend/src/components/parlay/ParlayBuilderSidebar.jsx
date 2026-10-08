@@ -1,3 +1,4 @@
+import { API_BASE_URL } from '../../utils/api';
 import { useState, useMemo } from "react";
 import { X, Trash2, TrendingUp, DollarSign, Brain, AlertTriangle, RefreshCw } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
@@ -63,7 +64,7 @@ const ParlayBuilderSidebar = () => {
    */
   const placeParlayMutation = useMutation({
     mutationFn: async (parlayData) => {
-      const response = await fetch('http://localhost:8080/api/v1/parlay/place', {
+      const response = await fetch(`${API_BASE_URL}/parlay/place`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -170,7 +171,7 @@ const ParlayBuilderSidebar = () => {
     <>
       {/* Fixed right sidebar - always visible */}
       <div 
-        className={`fixed right-0 top-0 h-screen w-80 bg-gray-800 border-l-2 border-green-500 shadow-2xl z-40 transition-transform duration-300 ${
+        className={`fixed right-0 top-0 h-screen w-80 bg-card border-l-2 border-green-500 shadow-2xl z-40 transition-transform duration-300 ${
           isCollapsed ? 'translate-x-full' : 'translate-x-0'
         } flex flex-col`}
       >
@@ -178,7 +179,7 @@ const ParlayBuilderSidebar = () => {
         <div className="bg-gradient-to-r from-green-600 to-green-700 p-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <TrendingUp className="w-5 h-5 text-white" />
-            <h3 className="font-bold text-white">Parlay Builder</h3>
+            <h3 className="font-bold text-heritage-ink">Parlay Builder</h3>
             <span className="bg-white text-green-700 px-2 py-0.5 rounded-full text-xs font-bold">
               {betCount}
             </span>
@@ -186,7 +187,7 @@ const ParlayBuilderSidebar = () => {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setIsExpanded(!isExpanded)}
-              className="text-white hover:text-gray-200 transition"
+              className="text-heritage-ink hover:text-heritage-ink transition"
               title={isExpanded ? "Simple view" : "Detailed view"}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -195,7 +196,7 @@ const ParlayBuilderSidebar = () => {
             </button>
             <button
               onClick={clearAll}
-              className="text-white hover:text-red-300 transition"
+              className="text-heritage-ink hover:text-red-700 transition"
               title="Clear all bets"
             >
               <X className="w-5 h-5" />
@@ -222,24 +223,24 @@ const ParlayBuilderSidebar = () => {
             selectedBets.map((bet, index) => (
               <div
                 key={index}
-                className="bg-gray-900 border border-gray-700 rounded-lg p-3 hover:border-gray-600 transition"
+                className="bg-card border border-card-border rounded-lg p-3 hover:border-card-border transition"
               >
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex-1">
-                    <p className="text-white font-semibold text-sm">{bet.team}</p>
-                    <p className="text-gray-400 text-xs truncate">{bet.event_name}</p>
+                    <p className="text-heritage-ink font-semibold text-sm">{bet.team}</p>
+                    <p className="text-heritage-muted text-xs truncate">{bet.event_name}</p>
                   </div>
                   <button
                     onClick={() => removeBet(index)}
-                    className="text-red-400 hover:text-red-300 transition ml-2"
+                    className="text-red-700 hover:text-red-700 transition ml-2"
                     title="Remove bet"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-gray-400">{bet.bet_type}</span>
-                  <span className="text-green-400 font-bold">
+                  <span className="text-heritage-muted">{bet.bet_type}</span>
+                  <span className="text-green-700 font-bold">
                     {bet.odds > 0 ? '+' : ''}{bet.odds}
                   </span>
                 </div>
@@ -252,7 +253,7 @@ const ParlayBuilderSidebar = () => {
         {correlationWarnings && correlationWarnings.length > 0 && (
           <div className="px-4 py-2 bg-yellow-500/10 border-t border-yellow-500/30">
             {correlationWarnings.map((warning, idx) => (
-              <div key={idx} className="flex items-start gap-2 text-xs text-yellow-400 py-1">
+              <div key={idx} className="flex items-start gap-2 text-xs text-yellow-700 py-1">
                 <AlertTriangle className="w-3 h-3 mt-0.5 flex-shrink-0" />
                 <span>{warning}</span>
               </div>
@@ -261,12 +262,12 @@ const ParlayBuilderSidebar = () => {
         )}
 
         {/* Calculation Section */}
-        <div className="border-t border-gray-700 p-4 space-y-3 bg-gray-850">
+        <div className="border-t border-card-border p-4 space-y-3 bg-gray-850">
           {/* ML Enrich Button */}
           <button
             onClick={() => enrichParlay()}
             disabled={isEnriching || betCount === 0}
-            className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 text-white rounded-lg text-sm font-semibold transition"
+            className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-card-hover text-white rounded-lg text-sm font-semibold transition"
           >
             {isEnriching ? (
               <>
@@ -289,26 +290,26 @@ const ParlayBuilderSidebar = () => {
                 : 'bg-yellow-900/20 border-yellow-500/30'
             }`}>
               <div className="flex items-center gap-2 mb-2">
-                <Brain className="w-4 h-4 text-blue-400" />
-                <span className="text-sm font-semibold text-white">ML Analysis</span>
+                <Brain className="w-4 h-4 text-blue-700" />
+                <span className="text-sm font-semibold text-heritage-ink">ML Analysis</span>
               </div>
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <div>
-                  <span className="text-gray-400">Win Prob</span>
-                  <p className="text-white font-bold">{(combinedModelProb * 100).toFixed(1)}%</p>
+                  <span className="text-heritage-muted">Win Prob</span>
+                  <p className="text-heritage-ink font-bold">{(combinedModelProb * 100).toFixed(1)}%</p>
                 </div>
                 <div>
-                  <span className="text-gray-400">Edge</span>
-                  <p className={`font-bold ${combinedEdge > 0 ? 'text-green-400' : 'text-yellow-400'}`}>
+                  <span className="text-heritage-muted">Edge</span>
+                  <p className={`font-bold ${combinedEdge > 0 ? 'text-green-700' : 'text-yellow-700'}`}>
                     {combinedEdge > 0 ? '+' : ''}{combinedEdge?.toFixed(1)}%
                   </p>
                 </div>
               </div>
               {parlayEV !== null && (
-                <div className="mt-2 pt-2 border-t border-gray-700">
+                <div className="mt-2 pt-2 border-t border-card-border">
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-400 text-xs">Expected Value</span>
-                    <span className={`font-bold ${parlayEV > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                    <span className="text-heritage-muted text-xs">Expected Value</span>
+                    <span className={`font-bold ${parlayEV > 0 ? 'text-green-700' : 'text-red-700'}`}>
                       {parlayEV > 0 ? '+' : ''}{parlayEV}%
                     </span>
                   </div>
@@ -318,25 +319,25 @@ const ParlayBuilderSidebar = () => {
           )}
 
           {/* Total Odds Display */}
-          <div className="bg-gray-900 border border-gray-700 rounded-lg p-3">
+          <div className="bg-card border border-card-border rounded-lg p-3">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-gray-400 text-sm">Total Odds</span>
-              <span className="text-green-400 font-bold text-lg">
+              <span className="text-heritage-muted text-sm">Total Odds</span>
+              <span className="text-green-700 font-bold text-lg">
                 {totalOdds > 0 ? '+' : ''}{totalOdds}
               </span>
             </div>
-            <div className="text-xs text-gray-500">
+            <div className="text-xs text-heritage-muted">
               {betCount} leg{betCount !== 1 ? 's' : ''} combined
             </div>
           </div>
 
           {/* Stake Input */}
           <div>
-            <label className="block text-gray-400 text-sm font-semibold mb-2">
+            <label className="block text-heritage-muted text-sm font-semibold mb-2">
               Stake Amount
             </label>
             <div className="relative">
-              <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
+              <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-heritage-muted" />
               <input
                 type="number"
                 value={stake}
@@ -344,11 +345,11 @@ const ParlayBuilderSidebar = () => {
                 min="1"
                 max="1000"
                 step="1"
-                className="w-full pl-10 pr-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white text-lg font-semibold focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-3 bg-card border border-card-border rounded-lg text-heritage-ink text-lg font-semibold focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 placeholder="10.00"
               />
             </div>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-heritage-muted mt-1">
               Min: $1 • Max: $1000
             </p>
           </div>
@@ -356,14 +357,14 @@ const ParlayBuilderSidebar = () => {
           {/* Payout Preview */}
           <div className="bg-gradient-to-r from-green-900/30 to-blue-900/30 border border-green-700/50 rounded-lg p-3">
             <div className="flex items-center justify-between mb-1">
-              <span className="text-gray-400 text-sm">Potential Payout</span>
-              <span className="text-white font-bold text-xl">
+              <span className="text-heritage-muted text-sm">Potential Payout</span>
+              <span className="text-heritage-ink font-bold text-xl">
                 ${payoutInfo.payout.toFixed(2)}
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-gray-500 text-xs">Profit</span>
-              <span className="text-green-400 font-semibold text-sm">
+              <span className="text-heritage-muted text-xs">Profit</span>
+              <span className="text-green-700 font-semibold text-sm">
                 +${payoutInfo.profit.toFixed(2)}
               </span>
             </div>
@@ -389,7 +390,7 @@ const ParlayBuilderSidebar = () => {
           </button>
           
           {betCount < 2 && (
-            <p className="text-center text-xs text-yellow-400">
+            <p className="text-center text-xs text-yellow-700">
               ⚠️ Add at least 2 bets to place parlay
             </p>
           )}

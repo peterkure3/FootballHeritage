@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { toast } from "react-hot-toast";
-import { tokenManager } from "../utils/api";
+import { tokenManager, API_BASE_URL } from "../utils/api";
 
 /**
  * Single Responsibility: Handle parlay calculation business logic
@@ -49,7 +49,7 @@ export const useParlayCalculator = () => {
         stake: parseFloat(stake),
       };
 
-      const response = await fetch("http://localhost:8080/api/v1/parlay/calculate", {
+      const response = await fetch(`${API_BASE_URL}/parlay/calculate`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -113,7 +113,7 @@ export const useParlayCalculator = () => {
         stake: parseFloat(stake),
       };
 
-      const response = await fetch("http://localhost:8080/api/v1/parlay/save", {
+      const response = await fetch(`${API_BASE_URL}/parlay/save`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

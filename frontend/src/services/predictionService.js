@@ -67,7 +67,7 @@ export const predictionService = {
    * @param {number} filters.limit - Maximum number of results (default: 100)
    * @returns {Promise<Array>} List of matches
    */
-  async getMatches(filters = {}) {
+  async getMatches(filters = {}, options = {}) {
     try {
       const params = new URLSearchParams();
       
@@ -86,7 +86,7 @@ export const predictionService = {
       }
       
       const url = `${PIPELINE_API_URL}/matches${params.toString() ? '?' + params.toString() : ''}`;
-      const response = await fetch(url, { cache: 'no-store' });
+      const response = await fetch(url, { cache: 'no-store', signal: options.signal ?? AbortSignal.timeout(15000) });
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

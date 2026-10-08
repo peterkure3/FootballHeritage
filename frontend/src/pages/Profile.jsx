@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../hooks/useAuth';
 import useAuthStore from '../stores/authStore';
-import { tokenManager } from '../utils/api';
+import { tokenManager, API_BASE_URL } from '../utils/api';
 import Navbar from '../components/Navbar';
 import LoadingSkeleton from '../components/LoadingSkeleton';
 import { toast } from 'react-hot-toast';
@@ -70,7 +70,7 @@ const Profile = () => {
 
     try {
       const token = tokenManager.getToken();
-      const response = await fetch('http://localhost:8080/api/v1/user/profile', {
+      const response = await fetch(`${API_BASE_URL}/user/profile`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -111,7 +111,7 @@ const Profile = () => {
 
     try {
       const token = tokenManager.getToken();
-      const response = await fetch('http://localhost:8080/api/v1/user/password', {
+      const response = await fetch(`${API_BASE_URL}/user/password`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -161,10 +161,10 @@ const Profile = () => {
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div style={{ animation: 'slide-up 0.4s ease-out both' }}>
-          <h1 className="text-3xl md:text-4xl font-bold text-white font-[Oswald] tracking-tight mb-1">
+          <h1 className="text-3xl md:text-4xl font-bold text-heritage-ink font-display tracking-tight mb-1">
             My Profile
           </h1>
-          <p className="text-sm" style={{ color: '#64748b' }}>
+          <p className="text-sm" style={{ color: '#69746c' }}>
             Manage your account information and settings
           </p>
         </div>
@@ -176,12 +176,12 @@ const Profile = () => {
             {/* Profile Information Card */}
             <div className="card-glow rounded-xl p-6 mt-8 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)', animation: 'slide-up 0.4s ease-out 0.06s both' }}>
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-white font-[Oswald] tracking-tight">Personal Information</h2>
+                <h2 className="text-xl font-bold text-heritage-ink font-display tracking-tight">Personal Information</h2>
                 {!isEditing && (
                   <button
                     onClick={() => setIsEditing(true)}
                     className="flex items-center gap-2 text-white px-4 py-2 rounded-lg font-semibold text-sm transition-all hover:opacity-90"
-                    style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}
+                    style={{ background: 'linear-gradient(135deg, #177c4c, #147b4c)' }}
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -195,32 +195,32 @@ const Profile = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Email (Read-only) */}
                   <div>
-                    <label className="block text-sm font-semibold mb-2" style={{ color: '#94a3b8' }}>Email Address</label>
-                    <div className="rounded-lg px-4 py-3" style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)', color: '#64748b' }}>
+                    <label className="block text-sm font-semibold mb-2" style={{ color: '#69746c' }}>Email Address</label>
+                    <div className="rounded-lg px-4 py-3" style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)', color: '#69746c' }}>
                       {user?.email}
                     </div>
-                    <p className="text-xs mt-1" style={{ color: '#64748b' }}>Email cannot be changed</p>
+                    <p className="text-xs mt-1" style={{ color: '#69746c' }}>Email cannot be changed</p>
                   </div>
 
                   {/* Date of Birth (Read-only) */}
                   <div>
-                    <label className="block text-sm font-semibold mb-2" style={{ color: '#94a3b8' }}>Date of Birth</label>
-                    <div className="rounded-lg px-4 py-3" style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)', color: '#64748b' }}>
+                    <label className="block text-sm font-semibold mb-2" style={{ color: '#69746c' }}>Date of Birth</label>
+                    <div className="rounded-lg px-4 py-3" style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)', color: '#69746c' }}>
                       {user?.date_of_birth || 'Not set'}
                     </div>
-                    <p className="text-xs mt-1" style={{ color: '#64748b' }}>Cannot be modified</p>
+                    <p className="text-xs mt-1" style={{ color: '#69746c' }}>Cannot be modified</p>
                   </div>
 
                   {/* First Name */}
                   <div>
-                    <label className="block text-sm font-semibold mb-2" style={{ color: '#94a3b8' }}>First Name</label>
+                    <label className="block text-sm font-semibold mb-2" style={{ color: '#69746c' }}>First Name</label>
                     <input
                       type="text"
                       name="first_name"
                       value={profileForm.first_name}
                       onChange={handleProfileChange}
                       disabled={!isEditing}
-                      className="w-full rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 transition-all"
+                      className="w-full rounded-lg px-4 py-3 text-heritage-ink focus:outline-none focus:ring-2 transition-all"
                       style={{
                         background: 'var(--color-card)',
                         border: `1px solid ${isEditing ? 'var(--color-card-border-hover)' : 'var(--color-card-border)'}`,
@@ -233,14 +233,14 @@ const Profile = () => {
 
                   {/* Last Name */}
                   <div>
-                    <label className="block text-sm font-semibold mb-2" style={{ color: '#94a3b8' }}>Last Name</label>
+                    <label className="block text-sm font-semibold mb-2" style={{ color: '#69746c' }}>Last Name</label>
                     <input
                       type="text"
                       name="last_name"
                       value={profileForm.last_name}
                       onChange={handleProfileChange}
                       disabled={!isEditing}
-                      className="w-full rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 transition-all"
+                      className="w-full rounded-lg px-4 py-3 text-heritage-ink focus:outline-none focus:ring-2 transition-all"
                       style={{
                         background: 'var(--color-card)',
                         border: `1px solid ${isEditing ? 'var(--color-card-border-hover)' : 'var(--color-card-border)'}`,
@@ -253,14 +253,14 @@ const Profile = () => {
 
                   {/* Phone */}
                   <div>
-                    <label className="block text-sm font-semibold mb-2" style={{ color: '#94a3b8' }}>Phone Number</label>
+                    <label className="block text-sm font-semibold mb-2" style={{ color: '#69746c' }}>Phone Number</label>
                     <input
                       type="tel"
                       name="phone"
                       value={profileForm.phone}
                       onChange={handleProfileChange}
                       disabled={!isEditing}
-                      className="w-full rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 transition-all"
+                      className="w-full rounded-lg px-4 py-3 text-heritage-ink focus:outline-none focus:ring-2 transition-all"
                       style={{
                         background: 'var(--color-card)',
                         border: `1px solid ${isEditing ? 'var(--color-card-border-hover)' : 'var(--color-card-border)'}`,
@@ -273,14 +273,14 @@ const Profile = () => {
 
                   {/* Address */}
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-semibold mb-2" style={{ color: '#94a3b8' }}>Address</label>
+                    <label className="block text-sm font-semibold mb-2" style={{ color: '#69746c' }}>Address</label>
                     <input
                       type="text"
                       name="address"
                       value={profileForm.address}
                       onChange={handleProfileChange}
                       disabled={!isEditing}
-                      className="w-full rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 transition-all"
+                      className="w-full rounded-lg px-4 py-3 text-heritage-ink focus:outline-none focus:ring-2 transition-all"
                       style={{
                         background: 'var(--color-card)',
                         border: `1px solid ${isEditing ? 'var(--color-card-border-hover)' : 'var(--color-card-border)'}`,
@@ -299,7 +299,7 @@ const Profile = () => {
                       type="submit"
                       disabled={isSaving}
                       className="flex-1 text-white px-6 py-3 rounded-lg font-semibold text-sm transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
-                      style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}
+                      style={{ background: 'linear-gradient(135deg, #177c4c, #147b4c)' }}
                     >
                       {isSaving ? 'Saving...' : 'Save Changes'}
                     </button>
@@ -307,7 +307,7 @@ const Profile = () => {
                       type="button"
                       onClick={cancelEdit}
                       disabled={isSaving}
-                      className="flex-1 text-white px-6 py-3 rounded-lg font-semibold text-sm transition-all card-glow disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex-1 text-heritage-ink px-6 py-3 rounded-lg font-semibold text-sm transition-all card-glow disabled:opacity-50 disabled:cursor-not-allowed"
                       style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)' }}
                     >
                       Cancel
@@ -319,21 +319,21 @@ const Profile = () => {
 
             {/* Account Status Card */}
             <div className="card-glow rounded-xl p-6 mt-6 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)', animation: 'slide-up 0.4s ease-out 0.1s both' }}>
-              <h2 className="text-xl font-bold text-white font-[Oswald] tracking-tight mb-4">Account Status</h2>
+              <h2 className="text-xl font-bold text-heritage-ink font-display tracking-tight mb-4">Account Status</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="flex items-center justify-between rounded-lg p-4" style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)' }}>
-                  <span style={{ color: '#94a3b8' }}>Verification Status</span>
+                  <span style={{ color: '#69746c' }}>Verification Status</span>
                   <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
                     user?.is_verified
-                      ? 'bg-green-500/20 text-green-400'
-                      : 'bg-yellow-500/20 text-yellow-400'
+                      ? 'bg-green-500/20 text-green-700'
+                      : 'bg-yellow-500/20 text-yellow-700'
                   }`}>
                     {user?.is_verified ? 'Verified' : 'Pending'}
                   </span>
                 </div>
                 <div className="flex items-center justify-between rounded-lg p-4" style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)' }}>
-                  <span style={{ color: '#94a3b8' }}>Member Since</span>
-                  <span className="text-white font-semibold">
+                  <span style={{ color: '#69746c' }}>Member Since</span>
+                  <span className="text-heritage-ink font-semibold">
                     {user?.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A'}
                   </span>
                 </div>
@@ -342,11 +342,11 @@ const Profile = () => {
 
             {/* Security Card */}
             <div className="card-glow rounded-xl p-6 mt-6 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)', animation: 'slide-up 0.4s ease-out 0.14s both' }}>
-              <h2 className="text-xl font-bold text-white font-[Oswald] tracking-tight mb-4">Security</h2>
+              <h2 className="text-xl font-bold text-heritage-ink font-display tracking-tight mb-4">Security</h2>
               <div className="flex items-center justify-between rounded-lg p-4" style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)' }}>
                 <div>
-                  <h3 className="text-white font-semibold mb-1">Password</h3>
-                  <p className="text-sm" style={{ color: '#64748b' }}>Change your account password</p>
+                  <h3 className="text-heritage-ink font-semibold mb-1">Password</h3>
+                  <p className="text-sm" style={{ color: '#69746c' }}>Change your account password</p>
                 </div>
                 <button
                   onClick={() => setShowPasswordModal(true)}
@@ -366,10 +366,10 @@ const Profile = () => {
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" style={{ animation: 'fade-in 0.2s ease-out' }}>
           <div className="card-glow rounded-xl p-6 max-w-md w-full border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)', animation: 'scale-in 0.2s ease-out' }}>
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-white font-[Oswald] tracking-tight">Change Password</h3>
+              <h3 className="text-xl font-bold text-heritage-ink font-display tracking-tight">Change Password</h3>
               <button
                 onClick={() => setShowPasswordModal(false)}
-                className="transition-colors" style={{ color: '#64748b' }}
+                className="transition-colors" style={{ color: '#69746c' }}
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -381,14 +381,14 @@ const Profile = () => {
               <div className="space-y-4">
                 {/* Current Password */}
                 <div>
-                  <label className="block text-sm font-semibold mb-2" style={{ color: '#94a3b8' }}>Current Password</label>
+                  <label className="block text-sm font-semibold mb-2" style={{ color: '#69746c' }}>Current Password</label>
                   <input
                     type="password"
                     name="current_password"
                     value={passwordForm.current_password}
                     onChange={handlePasswordChange}
                     required
-                    className="w-full rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 transition-all"
+                    className="w-full rounded-lg px-4 py-3 text-heritage-ink focus:outline-none focus:ring-2 transition-all"
                     style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border-hover)', '--tw-ring-color': '#6366f1' }}
                     placeholder="Enter current password"
                   />
@@ -396,7 +396,7 @@ const Profile = () => {
 
                 {/* New Password */}
                 <div>
-                  <label className="block text-sm font-semibold mb-2" style={{ color: '#94a3b8' }}>New Password</label>
+                  <label className="block text-sm font-semibold mb-2" style={{ color: '#69746c' }}>New Password</label>
                   <input
                     type="password"
                     name="new_password"
@@ -404,7 +404,7 @@ const Profile = () => {
                     onChange={handlePasswordChange}
                     required
                     minLength={8}
-                    className="w-full rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 transition-all"
+                    className="w-full rounded-lg px-4 py-3 text-heritage-ink focus:outline-none focus:ring-2 transition-all"
                     style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border-hover)', '--tw-ring-color': '#6366f1' }}
                     placeholder="Enter new password (min 8 characters)"
                   />
@@ -412,7 +412,7 @@ const Profile = () => {
 
                 {/* Confirm Password */}
                 <div>
-                  <label className="block text-sm font-semibold mb-2" style={{ color: '#94a3b8' }}>Confirm New Password</label>
+                  <label className="block text-sm font-semibold mb-2" style={{ color: '#69746c' }}>Confirm New Password</label>
                   <input
                     type="password"
                     name="confirm_password"
@@ -420,7 +420,7 @@ const Profile = () => {
                     onChange={handlePasswordChange}
                     required
                     minLength={8}
-                    className="w-full rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 transition-all"
+                    className="w-full rounded-lg px-4 py-3 text-heritage-ink focus:outline-none focus:ring-2 transition-all"
                     style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border-hover)', '--tw-ring-color': '#6366f1' }}
                     placeholder="Confirm new password"
                   />
@@ -450,7 +450,7 @@ const Profile = () => {
                   type="button"
                   onClick={() => setShowPasswordModal(false)}
                   disabled={isSaving}
-                  className="flex-1 text-white px-6 py-3 rounded-lg font-semibold text-sm transition-all card-glow disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 text-heritage-ink px-6 py-3 rounded-lg font-semibold text-sm transition-all card-glow disabled:opacity-50 disabled:cursor-not-allowed"
                   style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)' }}
                 >
                   Cancel

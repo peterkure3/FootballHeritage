@@ -104,17 +104,17 @@ const QuickAddSearch = ({ onClose }) => {
   };
 
   return (
-    <div className="bg-gray-800 border border-gray-700 rounded-xl overflow-hidden">
+    <div className="bg-card border border-card-border rounded-xl overflow-hidden">
       {/* Header */}
-      <div className="p-4 border-b border-gray-700 flex items-center justify-between">
-        <h3 className="font-bold text-white flex items-center gap-2">
-          <Search className="w-5 h-5 text-blue-400" />
+      <div className="p-4 border-b border-card-border flex items-center justify-between">
+        <h3 className="font-bold text-heritage-ink flex items-center gap-2">
+          <Search className="w-5 h-5 text-blue-700" />
           Quick Add Bets
         </h3>
         {onClose && (
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-white transition"
+            className="text-heritage-muted hover:text-heritage-ink transition"
           >
             <X className="w-5 h-5" />
           </button>
@@ -122,15 +122,15 @@ const QuickAddSearch = ({ onClose }) => {
       </div>
 
       {/* Search & Filters */}
-      <div className="p-4 border-b border-gray-700 space-y-3">
+      <div className="p-4 border-b border-card-border space-y-3">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-heritage-muted" />
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search teams, leagues..."
-            className="w-full pl-10 pr-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full pl-10 pr-4 py-2 bg-card border border-card-border rounded-lg text-heritage-ink placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
         </div>
         
@@ -139,9 +139,9 @@ const QuickAddSearch = ({ onClose }) => {
             type="checkbox"
             checked={showValueOnly}
             onChange={(e) => setShowValueOnly(e.target.checked)}
-            className="w-4 h-4 rounded bg-gray-900 border-gray-700 text-green-500 focus:ring-green-500"
+            className="w-4 h-4 rounded bg-card border-card-border text-green-500 focus:ring-green-500"
           />
-          <span className="text-sm text-gray-400">Show high-value bets only (+5% edge)</span>
+          <span className="text-sm text-heritage-muted">Show high-value bets only (+5% edge)</span>
         </label>
       </div>
 
@@ -152,7 +152,7 @@ const QuickAddSearch = ({ onClose }) => {
             <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto" />
           </div>
         ) : bets.length === 0 ? (
-          <div className="p-8 text-center text-gray-500">
+          <div className="p-8 text-center text-heritage-muted">
             <Search className="w-8 h-8 mx-auto mb-2 opacity-50" />
             <p>No bets found</p>
           </div>
@@ -163,14 +163,14 @@ const QuickAddSearch = ({ onClose }) => {
               return (
                 <div
                   key={`${bet.match_id}-${bet.selection}-${idx}`}
-                  className={`p-3 hover:bg-gray-700/50 transition ${selected ? 'bg-green-900/20' : ''}`}
+                  className={`p-3 hover:bg-card-hover/50 transition ${selected ? 'bg-green-900/20' : ''}`}
                 >
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-white truncate">
+                      <p className="text-sm font-semibold text-heritage-ink truncate">
                         {bet.home_team} vs {bet.away_team}
                       </p>
-                      <div className="flex items-center gap-2 text-xs text-gray-400 mt-0.5">
+                      <div className="flex items-center gap-2 text-xs text-heritage-muted mt-0.5">
                         <Calendar className="w-3 h-3" />
                         <span>{formatDate(bet.match_date)}</span>
                         <span className="text-gray-600">•</span>
@@ -179,10 +179,10 @@ const QuickAddSearch = ({ onClose }) => {
                     </div>
                     
                     <div className="text-right flex-shrink-0">
-                      <p className="text-sm font-bold text-green-400">{bet.selection}</p>
+                      <p className="text-sm font-bold text-green-700">{bet.selection}</p>
                       <div className="flex items-center gap-1 text-xs">
-                        <TrendingUp className="w-3 h-3 text-green-400" />
-                        <span className="text-green-400">+{bet.edge_pct?.toFixed(1)}%</span>
+                        <TrendingUp className="w-3 h-3 text-green-700" />
+                        <span className="text-green-700">+{bet.edge_pct?.toFixed(1)}%</span>
                       </div>
                     </div>
                     
@@ -191,7 +191,7 @@ const QuickAddSearch = ({ onClose }) => {
                       disabled={selected}
                       className={`p-2 rounded-lg transition ${
                         selected
-                          ? 'bg-green-500/20 text-green-400'
+                          ? 'bg-green-500/20 text-green-700'
                           : 'bg-blue-600 hover:bg-blue-700 text-white'
                       }`}
                     >
@@ -206,8 +206,8 @@ const QuickAddSearch = ({ onClose }) => {
       </div>
 
       {/* Footer */}
-      <div className="p-3 border-t border-gray-700 bg-gray-900/50">
-        <p className="text-xs text-gray-500 text-center">
+      <div className="p-3 border-t border-card-border bg-card/50">
+        <p className="text-xs text-heritage-muted text-center">
           Showing {bets.length} bets • Click + to add to parlay
         </p>
       </div>

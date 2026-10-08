@@ -1,6 +1,6 @@
 // API utility for secure communication with the Rust betting backend
-const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:8080/api/v1";
+export const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:8888/api/v1";
 
 const STORAGE_KEY = "token";
 
@@ -20,7 +20,7 @@ export const tokenManager = {
 };
 
 // Request helper with automatic auth headers
-const makeRequest = async (endpoint, options = {}) => {
+export const makeRequest = async (endpoint, options = {}) => {
   const token = tokenManager.getToken();
 
   const headers = {
@@ -43,9 +43,9 @@ const makeRequest = async (endpoint, options = {}) => {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
 
     // Handle 401 Unauthorized
-    if (response.status === 401) {
+    if (response.status === 401 && endpoint !== "/auth/login" && endpoint !== "/auth/register") {
       tokenManager.removeToken();
-      window.location.href = "/login";
+      window.location.href = `/login?returnTo=${encodeURIComponent(window.location.pathname + window.location.search + window.location.hash)}`;
       throw new Error("Unauthorized - please login again");
     }
 
@@ -208,6 +208,21 @@ export const api = {
     return await makeRequest("/intelligence/refresh", {
       method: "POST",
     });
+  },
+
+  aiPicks: {
+    generate: async (filters = {}) => makeRequest("/ai-picks/generate", {
+      method: "POST",
+      body: JSON.stringify(filters),
+    }),
+    list: async () => makeRequest("/ai-picks", { method: "GET" }),
+    get: async (id) => makeRequest(`/ai-picks/${id}`, { method: "GET" }),
+    chat: async (payload) => makeRequest("/ai-picks/chat", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+    conversations: async () => makeRequest("/ai-picks/conversations", { method: "GET" }),
+    conversation: async (id) => makeRequest(`/ai-picks/conversations/${id}`, { method: "GET" }),
   },
 };
 

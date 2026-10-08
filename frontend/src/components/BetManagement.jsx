@@ -123,15 +123,15 @@ const BetManagement = () => {
   const getStatusColor = (status) => {
     switch (status) {
       case 'won':
-        return 'bg-green-400/10 text-green-400 border-green-400/20';
+        return 'bg-green-400/10 text-green-700 border-green-400/20';
       case 'lost':
-        return 'bg-red-400/10 text-red-400 border-red-400/20';
+        return 'bg-red-400/10 text-red-700 border-red-400/20';
       case 'pending':
-        return 'bg-yellow-400/10 text-yellow-400 border-yellow-400/20';
+        return 'bg-yellow-400/10 text-yellow-700 border-yellow-400/20';
       case 'void':
-        return 'bg-gray-400/10 text-gray-400 border-gray-400/20';
+        return 'bg-gray-400/10 text-heritage-muted border-gray-400/20';
       default:
-        return 'bg-gray-400/10 text-gray-400 border-gray-400/20';
+        return 'bg-gray-400/10 text-heritage-muted border-gray-400/20';
     }
   };
 
@@ -166,33 +166,33 @@ const BetManagement = () => {
   };
 
   return (
-    <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
+    <div className="bg-card rounded-xl border border-card-border overflow-hidden">
       {/* Header */}
-      <div className="p-5 border-b border-gray-700">
+      <div className="p-5 border-b border-card-border">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center">
-              <TrendingUp className="w-5 h-5 text-purple-400" />
+              <TrendingUp className="w-5 h-5 text-purple-700" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-white">Bet Management</h2>
-              <p className="text-sm text-gray-400">{filteredBets.length} bets</p>
+              <h2 className="text-lg font-semibold text-heritage-ink">Bet Management</h2>
+              <p className="text-sm text-heritage-muted">{filteredBets.length} bets</p>
             </div>
           </div>
 
           {/* Quick Stats */}
           <div className="flex items-center space-x-6">
             <div className="text-right">
-              <p className="text-xs text-gray-400">Total Stake</p>
-              <p className="text-sm font-semibold text-white">${stats.totalStake.toFixed(2)}</p>
+              <p className="text-xs text-heritage-muted">Total Stake</p>
+              <p className="text-sm font-semibold text-heritage-ink">${stats.totalStake.toFixed(2)}</p>
             </div>
             <div className="text-right">
-              <p className="text-xs text-gray-400">Total Payout</p>
-              <p className="text-sm font-semibold text-green-400">${stats.totalPayout.toFixed(2)}</p>
+              <p className="text-xs text-heritage-muted">Total Payout</p>
+              <p className="text-sm font-semibold text-green-700">${stats.totalPayout.toFixed(2)}</p>
             </div>
             <div className="text-right">
-              <p className="text-xs text-gray-400">Pending</p>
-              <p className="text-sm font-semibold text-yellow-400">{stats.pending}</p>
+              <p className="text-xs text-heritage-muted">Pending</p>
+              <p className="text-sm font-semibold text-yellow-700">{stats.pending}</p>
             </div>
           </div>
         </div>
@@ -201,13 +201,13 @@ const BetManagement = () => {
         <div className="flex items-center space-x-3">
           {/* Search */}
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-heritage-muted" />
             <input
               type="text"
               placeholder="Search by event or user..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-green-400 text-sm"
+              className="w-full pl-10 pr-4 py-2 bg-card border border-card-border rounded-lg text-heritage-ink placeholder-gray-500 focus:outline-none focus:border-green-400 text-sm"
             />
           </div>
 
@@ -215,7 +215,7 @@ const BetManagement = () => {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-green-400"
+            className="px-4 py-2 bg-card border border-card-border rounded-lg text-heritage-ink text-sm focus:outline-none focus:border-green-400"
           >
             <option value="all">All Status</option>
             <option value="pending">Pending</option>
@@ -228,7 +228,7 @@ const BetManagement = () => {
           <select
             value={sportFilter}
             onChange={(e) => setSportFilter(e.target.value)}
-            className="px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm focus:outline-none focus:border-green-400"
+            className="px-4 py-2 bg-card border border-card-border rounded-lg text-heritage-ink text-sm focus:outline-none focus:border-green-400"
           >
             <option value="all">All Sports</option>
             <option value="Football">Football</option>
@@ -236,8 +236,8 @@ const BetManagement = () => {
             <option value="Tennis">Tennis</option>
           </select>
 
-          <button className="p-2 hover:bg-gray-700 rounded-lg transition-colors">
-            <Filter className="w-4 h-4 text-gray-400" />
+          <button className="p-2 hover:bg-card-hover rounded-lg transition-colors">
+            <Filter className="w-4 h-4 text-heritage-muted" />
           </button>
         </div>
       </div>
@@ -246,29 +246,29 @@ const BetManagement = () => {
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="border-b border-gray-700">
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+            <tr className="border-b border-card-border">
+              <th className="px-4 py-3 text-left text-xs font-medium text-heritage-muted uppercase tracking-wider">
                 Event
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-medium text-heritage-muted uppercase tracking-wider">
                 User
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-medium text-heritage-muted uppercase tracking-wider">
                 Selection
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-medium text-heritage-muted uppercase tracking-wider">
                 Odds
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-medium text-heritage-muted uppercase tracking-wider">
                 Stake
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-medium text-heritage-muted uppercase tracking-wider">
                 Potential Win
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+              <th className="px-4 py-3 text-left text-xs font-medium text-heritage-muted uppercase tracking-wider">
                 Status
               </th>
-              <th className="px-4 py-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">
+              <th className="px-4 py-3 text-right text-xs font-medium text-heritage-muted uppercase tracking-wider">
                 Actions
               </th>
             </tr>
@@ -277,29 +277,29 @@ const BetManagement = () => {
             {filteredBets.map((bet) => (
               <tr 
                 key={bet.id} 
-                className="hover:bg-gray-700/50 transition-colors cursor-pointer"
+                className="hover:bg-card-hover/50 transition-colors cursor-pointer"
                 onClick={() => handleViewDetails(bet)}
               >
                 <td className="px-4 py-3">
                   <div>
-                    <p className="text-sm font-medium text-white">{bet.event}</p>
-                    <p className="text-xs text-gray-400">{bet.sport} • {bet.bet_type}</p>
+                    <p className="text-sm font-medium text-heritage-ink">{bet.event}</p>
+                    <p className="text-xs text-heritage-muted">{bet.sport} • {bet.bet_type}</p>
                   </div>
                 </td>
                 <td className="px-4 py-3">
-                  <p className="text-sm text-gray-300">{bet.user_email}</p>
+                  <p className="text-sm text-heritage-ink">{bet.user_email}</p>
                 </td>
                 <td className="px-4 py-3">
-                  <p className="text-sm text-white">{bet.selection}</p>
+                  <p className="text-sm text-heritage-ink">{bet.selection}</p>
                 </td>
                 <td className="px-4 py-3">
-                  <p className="text-sm font-medium text-white">{bet.odds.toFixed(2)}</p>
+                  <p className="text-sm font-medium text-heritage-ink">{bet.odds.toFixed(2)}</p>
                 </td>
                 <td className="px-4 py-3">
-                  <p className="text-sm font-medium text-white">${bet.stake.toFixed(2)}</p>
+                  <p className="text-sm font-medium text-heritage-ink">${bet.stake.toFixed(2)}</p>
                 </td>
                 <td className="px-4 py-3">
-                  <p className="text-sm font-medium text-green-400">${bet.potential_win.toFixed(2)}</p>
+                  <p className="text-sm font-medium text-green-700">${bet.potential_win.toFixed(2)}</p>
                 </td>
                 <td className="px-4 py-3">
                   <span className={`inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-xs font-medium border ${getStatusColor(bet.status)}`}>
@@ -308,8 +308,8 @@ const BetManagement = () => {
                   </span>
                 </td>
                 <td className="px-4 py-3 text-right" onClick={(e) => e.stopPropagation()}>
-                  <button className="p-1 hover:bg-gray-600 rounded transition-colors">
-                    <MoreVertical className="w-4 h-4 text-gray-400" />
+                  <button className="p-1 hover:bg-card-hover rounded transition-colors">
+                    <MoreVertical className="w-4 h-4 text-heritage-muted" />
                   </button>
                 </td>
               </tr>
@@ -322,28 +322,28 @@ const BetManagement = () => {
       {filteredBets.length === 0 && (
         <div className="p-12 text-center">
           <TrendingUp className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-          <p className="text-gray-400">No bets found</p>
-          <p className="text-sm text-gray-500 mt-2">Try adjusting your filters</p>
+          <p className="text-heritage-muted">No bets found</p>
+          <p className="text-sm text-heritage-muted mt-2">Try adjusting your filters</p>
         </div>
       )}
 
       {/* Pagination */}
       {filteredBets.length > 0 && (
-        <div className="px-4 py-3 border-t border-gray-700 flex items-center justify-between">
-          <span className="text-sm text-gray-400">
+        <div className="px-4 py-3 border-t border-card-border flex items-center justify-between">
+          <span className="text-sm text-heritage-muted">
             Showing {filteredBets.length} of {bets.length} bets
           </span>
           <div className="flex items-center space-x-2">
-            <button className="px-3 py-1 text-sm text-gray-400 hover:text-white hover:bg-gray-700 rounded transition-colors">
+            <button className="px-3 py-1 text-sm text-heritage-muted hover:text-heritage-ink hover:bg-card-hover rounded transition-colors">
               Previous
             </button>
             <button className="px-3 py-1 text-sm bg-green-400 text-gray-900 font-medium rounded">
               1
             </button>
-            <button className="px-3 py-1 text-sm text-gray-400 hover:text-white hover:bg-gray-700 rounded transition-colors">
+            <button className="px-3 py-1 text-sm text-heritage-muted hover:text-heritage-ink hover:bg-card-hover rounded transition-colors">
               2
             </button>
-            <button className="px-3 py-1 text-sm text-gray-400 hover:text-white hover:bg-gray-700 rounded transition-colors">
+            <button className="px-3 py-1 text-sm text-heritage-muted hover:text-heritage-ink hover:bg-card-hover rounded transition-colors">
               Next
             </button>
           </div>
@@ -361,23 +361,23 @@ const BetManagement = () => {
 
           {/* Modal */}
           <div className="flex min-h-full items-center justify-center p-4">
-            <div className="relative bg-gray-800 rounded-xl shadow-2xl border border-gray-700 w-full max-w-2xl">
+            <div className="relative bg-card rounded-xl shadow-2xl border border-card-border w-full max-w-2xl">
               {/* Header */}
-              <div className="flex items-center justify-between p-5 border-b border-gray-700">
+              <div className="flex items-center justify-between p-5 border-b border-card-border">
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center">
-                    <TrendingUp className="w-5 h-5 text-purple-400" />
+                    <TrendingUp className="w-5 h-5 text-purple-700" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-white">Bet Details</h3>
-                    <p className="text-sm text-gray-400">ID: #{selectedBet.id}</p>
+                    <h3 className="text-lg font-semibold text-heritage-ink">Bet Details</h3>
+                    <p className="text-sm text-heritage-muted">ID: #{selectedBet.id}</p>
                   </div>
                 </div>
                 <button
                   onClick={() => setShowDetailsModal(false)}
-                  className="p-1 hover:bg-gray-700 rounded transition-colors"
+                  className="p-1 hover:bg-card-hover rounded transition-colors"
                 >
-                  <X className="w-5 h-5 text-gray-400" />
+                  <X className="w-5 h-5 text-heritage-muted" />
                 </button>
               </div>
 
@@ -386,50 +386,50 @@ const BetManagement = () => {
                 <div className="grid grid-cols-2 gap-6">
                   {/* Event Info */}
                   <div className="col-span-2">
-                    <h4 className="text-sm font-semibold text-white mb-3">Event Information</h4>
-                    <div className="bg-gray-900 rounded-lg p-4 space-y-2">
+                    <h4 className="text-sm font-semibold text-heritage-ink mb-3">Event Information</h4>
+                    <div className="bg-card rounded-lg p-4 space-y-2">
                       <div className="flex justify-between">
-                        <span className="text-sm text-gray-400">Event:</span>
-                        <span className="text-sm text-white font-medium">{selectedBet.event}</span>
+                        <span className="text-sm text-heritage-muted">Event:</span>
+                        <span className="text-sm text-heritage-ink font-medium">{selectedBet.event}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm text-gray-400">Sport:</span>
-                        <span className="text-sm text-white">{selectedBet.sport}</span>
+                        <span className="text-sm text-heritage-muted">Sport:</span>
+                        <span className="text-sm text-heritage-ink">{selectedBet.sport}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm text-gray-400">Bet Type:</span>
-                        <span className="text-sm text-white">{selectedBet.bet_type}</span>
+                        <span className="text-sm text-heritage-muted">Bet Type:</span>
+                        <span className="text-sm text-heritage-ink">{selectedBet.bet_type}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm text-gray-400">Selection:</span>
-                        <span className="text-sm text-white font-medium">{selectedBet.selection}</span>
+                        <span className="text-sm text-heritage-muted">Selection:</span>
+                        <span className="text-sm text-heritage-ink font-medium">{selectedBet.selection}</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Bet Details */}
                   <div>
-                    <h4 className="text-sm font-semibold text-white mb-3">Bet Details</h4>
-                    <div className="bg-gray-900 rounded-lg p-4 space-y-2">
+                    <h4 className="text-sm font-semibold text-heritage-ink mb-3">Bet Details</h4>
+                    <div className="bg-card rounded-lg p-4 space-y-2">
                       <div className="flex justify-between">
-                        <span className="text-sm text-gray-400">Odds:</span>
-                        <span className="text-sm text-white font-medium">{selectedBet.odds.toFixed(2)}</span>
+                        <span className="text-sm text-heritage-muted">Odds:</span>
+                        <span className="text-sm text-heritage-ink font-medium">{selectedBet.odds.toFixed(2)}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm text-gray-400">Stake:</span>
-                        <span className="text-sm text-white font-medium">${selectedBet.stake.toFixed(2)}</span>
+                        <span className="text-sm text-heritage-muted">Stake:</span>
+                        <span className="text-sm text-heritage-ink font-medium">${selectedBet.stake.toFixed(2)}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm text-gray-400">Potential Win:</span>
-                        <span className="text-sm text-green-400 font-medium">${selectedBet.potential_win.toFixed(2)}</span>
+                        <span className="text-sm text-heritage-muted">Potential Win:</span>
+                        <span className="text-sm text-green-700 font-medium">${selectedBet.potential_win.toFixed(2)}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm text-gray-400">Status:</span>
+                        <span className="text-sm text-heritage-muted">Status:</span>
                         <span className={`text-sm font-medium ${
-                          selectedBet.status === 'won' ? 'text-green-400' :
-                          selectedBet.status === 'lost' ? 'text-red-400' :
-                          selectedBet.status === 'pending' ? 'text-yellow-400' :
-                          'text-gray-400'
+                          selectedBet.status === 'won' ? 'text-green-700' :
+                          selectedBet.status === 'lost' ? 'text-red-700' :
+                          selectedBet.status === 'pending' ? 'text-yellow-700' :
+                          'text-heritage-muted'
                         }`}>
                           {selectedBet.status.toUpperCase()}
                         </span>
@@ -439,22 +439,22 @@ const BetManagement = () => {
 
                   {/* User & Timing */}
                   <div>
-                    <h4 className="text-sm font-semibold text-white mb-3">User & Timing</h4>
-                    <div className="bg-gray-900 rounded-lg p-4 space-y-2">
+                    <h4 className="text-sm font-semibold text-heritage-ink mb-3">User & Timing</h4>
+                    <div className="bg-card rounded-lg p-4 space-y-2">
                       <div className="flex justify-between">
-                        <span className="text-sm text-gray-400">User:</span>
-                        <span className="text-sm text-white">{selectedBet.user_email}</span>
+                        <span className="text-sm text-heritage-muted">User:</span>
+                        <span className="text-sm text-heritage-ink">{selectedBet.user_email}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm text-gray-400">Placed:</span>
-                        <span className="text-sm text-white">
+                        <span className="text-sm text-heritage-muted">Placed:</span>
+                        <span className="text-sm text-heritage-ink">
                           {new Date(selectedBet.placed_at).toLocaleString()}
                         </span>
                       </div>
                       {selectedBet.settled_at && (
                         <div className="flex justify-between">
-                          <span className="text-sm text-gray-400">Settled:</span>
-                          <span className="text-sm text-white">
+                          <span className="text-sm text-heritage-muted">Settled:</span>
+                          <span className="text-sm text-heritage-ink">
                             {new Date(selectedBet.settled_at).toLocaleString()}
                           </span>
                         </div>
@@ -466,16 +466,16 @@ const BetManagement = () => {
 
               {/* Footer - Admin Actions */}
               {selectedBet.status === 'pending' && (
-                <div className="flex items-center justify-end space-x-3 p-5 border-t border-gray-700">
+                <div className="flex items-center justify-end space-x-3 p-5 border-t border-card-border">
                   <button
                     onClick={() => handleVoid(selectedBet.id)}
-                    className="px-4 py-2 text-sm text-gray-400 hover:bg-gray-700 rounded-lg transition-colors"
+                    className="px-4 py-2 text-sm text-heritage-muted hover:bg-card-hover rounded-lg transition-colors"
                   >
                     Void Bet
                   </button>
                   <button
                     onClick={() => handleSettle(selectedBet.id, 'lost')}
-                    className="px-4 py-2 text-sm bg-red-500/20 hover:bg-red-500/30 text-red-400 font-medium rounded-lg transition-colors border border-red-500/30"
+                    className="px-4 py-2 text-sm bg-red-500/20 hover:bg-red-500/30 text-red-700 font-medium rounded-lg transition-colors border border-red-500/30"
                   >
                     Settle as Lost
                   </button>

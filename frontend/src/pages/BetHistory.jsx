@@ -80,12 +80,12 @@ const BetHistory = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div style={{ animation: 'slide-up 0.4s ease-out both' }}>
           <div className="flex items-center gap-3 mb-1">
-            <h1 className="text-3xl md:text-4xl font-bold text-white font-[Oswald] tracking-tight">
+            <h1 className="text-3xl md:text-4xl font-bold text-heritage-ink font-display tracking-tight">
               Betting History
             </h1>
             <span className="text-2xl">📊</span>
           </div>
-          <p className="text-sm" style={{ color: '#64748b' }}>
+          <p className="text-sm" style={{ color: '#69746c' }}>
             View and track all your betting activity
           </p>
         </div>
@@ -95,45 +95,45 @@ const BetHistory = () => {
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 mb-8 stagger-children">
             <div className="card-glow rounded-xl p-4 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
-              <h3 className="text-xs font-semibold uppercase mb-1" style={{ color: '#64748b' }}>Total Bets</h3>
-              <p className="text-white text-2xl font-bold font-[Oswald] tracking-tight">{totalBets}</p>
+              <h3 className="text-xs font-semibold uppercase mb-1" style={{ color: '#69746c' }}>Total Bets</h3>
+              <p className="text-heritage-ink text-2xl font-bold font-display tracking-tight">{totalBets}</p>
             </div>
             <div className="card-glow rounded-xl p-4 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
               <h3 className="text-xs font-semibold uppercase mb-1" style={{ color: '#10b981' }}>Won</h3>
-              <p className="text-green-400 text-2xl font-bold font-[Oswald] tracking-tight">{wonBets}</p>
-              <p className="text-xs mt-1" style={{ color: '#64748b' }}>
+              <p className="text-green-700 text-2xl font-bold font-display tracking-tight">{wonBets}</p>
+              <p className="text-xs mt-1" style={{ color: '#69746c' }}>
                 {totalBets > 0 ? `${Math.round((wonBets / totalBets) * 100)}%` : '0%'}
               </p>
             </div>
             <div className="card-glow rounded-xl p-4 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
               <h3 className="text-xs font-semibold uppercase mb-1" style={{ color: '#ef4444' }}>Lost</h3>
-              <p className="text-red-400 text-2xl font-bold font-[Oswald] tracking-tight">{lostBets}</p>
-              <p className="text-xs mt-1" style={{ color: '#64748b' }}>
+              <p className="text-red-700 text-2xl font-bold font-display tracking-tight">{lostBets}</p>
+              <p className="text-xs mt-1" style={{ color: '#69746c' }}>
                 {totalBets > 0 ? `${Math.round((lostBets / totalBets) * 100)}%` : '0%'}
               </p>
             </div>
             <div className="card-glow rounded-xl p-4 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
               <h3 className="text-xs font-semibold uppercase mb-1" style={{ color: '#f59e0b' }}>Pending</h3>
-              <p className="text-yellow-400 text-2xl font-bold font-[Oswald] tracking-tight">{pendingBets}</p>
+              <p className="text-yellow-700 text-2xl font-bold font-display tracking-tight">{pendingBets}</p>
             </div>
           </div>
         )}
 
         {!isLoading && totalBets > 0 && (
-          <div className="card-glow rounded-xl p-6 mb-8 border" style={{ background: 'linear-gradient(135deg, var(--color-card), #16162a)', borderColor: 'var(--color-card-border)', animation: 'slide-up 0.5s ease-out 0.1s both' }}>
-            <h3 className="text-white font-bold mb-4 font-[Oswald] tracking-tight text-lg">Financial Summary</h3>
+          <div className="card-glow rounded-xl p-6 mb-8 border" style={{ background: 'linear-gradient(135deg, var(--color-card), #f4f6f2)', borderColor: 'var(--color-card-border)', animation: 'slide-up 0.5s ease-out 0.1s both' }}>
+            <h3 className="text-heritage-ink font-bold mb-4 font-display tracking-tight text-lg">Financial Summary</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
-                <p className="text-xs mb-1" style={{ color: '#64748b' }}>Total Wagered</p>
-                <p className="text-white text-2xl font-bold font-[Oswald] tracking-tight">${totalWagered.toFixed(2)}</p>
+                <p className="text-xs mb-1" style={{ color: '#69746c' }}>Total Wagered</p>
+                <p className="text-heritage-ink text-2xl font-bold font-display tracking-tight">${totalWagered.toFixed(2)}</p>
               </div>
               <div>
-                <p className="text-xs mb-1" style={{ color: '#64748b' }}>Total Won</p>
-                <p className="text-green-400 text-2xl font-bold font-[Oswald] tracking-tight">${totalWon.toFixed(2)}</p>
+                <p className="text-xs mb-1" style={{ color: '#69746c' }}>Total Won</p>
+                <p className="text-green-700 text-2xl font-bold font-display tracking-tight">${totalWon.toFixed(2)}</p>
               </div>
               <div>
-                <p className="text-xs mb-1" style={{ color: '#64748b' }}>Net Profit/Loss</p>
-                <p className={`text-2xl font-bold font-[Oswald] tracking-tight ${netProfit >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                <p className="text-xs mb-1" style={{ color: '#69746c' }}>Net Profit/Loss</p>
+                <p className={`text-2xl font-bold font-display tracking-tight ${netProfit >= 0 ? 'text-green-700' : 'text-red-700'}`}>
                   {netProfit >= 0 ? '+' : ''}{netProfit.toFixed(2)}
                 </p>
               </div>
@@ -148,10 +148,10 @@ const BetHistory = () => {
                 onClick={() => { setFilter('all'); setDisplayCount(10); }}
                 className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
                   filter === 'all'
-                    ? 'text-white shadow-lg'
-                    : 'text-gray-400 hover:text-white'
+                    ? 'text-heritage-ink shadow-lg'
+                    : 'text-heritage-muted hover:text-white'
                 }`}
-                style={filter === 'all' ? { background: 'linear-gradient(135deg, #10b981, #059669)' } : { background: 'var(--color-card)' }}
+                style={filter === 'all' ? { background: 'linear-gradient(135deg, #177c4c, #147b4c)' } : { background: 'var(--color-card)' }}
               >
                 All ({totalBets})
               </button>
@@ -159,8 +159,8 @@ const BetHistory = () => {
                 onClick={() => { setFilter('pending'); setDisplayCount(10); }}
                 className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
                   filter === 'pending'
-                    ? 'text-white shadow-lg'
-                    : 'text-gray-400 hover:text-white'
+                    ? 'text-heritage-ink shadow-lg'
+                    : 'text-heritage-muted hover:text-white'
                 }`}
                 style={filter === 'pending' ? { background: 'linear-gradient(135deg, #f59e0b, #d97706)' } : { background: 'var(--color-card)' }}
               >
@@ -170,10 +170,10 @@ const BetHistory = () => {
                 onClick={() => { setFilter('won'); setDisplayCount(10); }}
                 className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
                   filter === 'won'
-                    ? 'text-white shadow-lg'
-                    : 'text-gray-400 hover:text-white'
+                    ? 'text-heritage-ink shadow-lg'
+                    : 'text-heritage-muted hover:text-white'
                 }`}
-                style={filter === 'won' ? { background: 'linear-gradient(135deg, #10b981, #059669)' } : { background: 'var(--color-card)' }}
+                style={filter === 'won' ? { background: 'linear-gradient(135deg, #177c4c, #147b4c)' } : { background: 'var(--color-card)' }}
               >
                 Won ({wonBets})
               </button>
@@ -181,8 +181,8 @@ const BetHistory = () => {
                 onClick={() => { setFilter('lost'); setDisplayCount(10); }}
                 className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
                   filter === 'lost'
-                    ? 'text-white shadow-lg'
-                    : 'text-gray-400 hover:text-white'
+                    ? 'text-heritage-ink shadow-lg'
+                    : 'text-heritage-muted hover:text-heritage-ink'
                 }`}
                 style={filter === 'lost' ? { background: 'linear-gradient(135deg, #ef4444, #dc2626)' } : { background: 'var(--color-card)' }}
               >
@@ -192,7 +192,7 @@ const BetHistory = () => {
 
             <div className="relative flex-1 max-w-md">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <svg className="w-5 h-5" style={{ color: '#64748b' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5" style={{ color: '#69746c' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </div>
@@ -201,7 +201,7 @@ const BetHistory = () => {
                 placeholder="Search bets..."
                 value={searchTerm}
                 onChange={(e) => { setSearchTerm(e.target.value); setDisplayCount(10); }}
-                className="w-full pl-10 pr-4 py-2 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all"
+                className="w-full pl-10 pr-4 py-2 rounded-lg text-heritage-ink placeholder-gray-500 focus:outline-none focus:ring-2 transition-all"
                 style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)', '--tw-ring-color': '#10b981' }}
               />
             </div>
@@ -215,8 +215,8 @@ const BetHistory = () => {
             <svg className="w-16 h-16 mx-auto mb-4" style={{ color: '#ef4444' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <h3 className="text-xl font-bold mb-2 font-[Oswald] tracking-tight" style={{ color: '#ef4444' }}>Failed to Load History</h3>
-            <p style={{ color: '#fca5a5' }}>Unable to fetch your betting history. Please try again.</p>
+            <h3 className="text-xl font-bold mb-2 font-display tracking-tight" style={{ color: '#ef4444' }}>Failed to Load History</h3>
+            <p style={{ color: '#b42318' }}>Unable to fetch your betting history. Please try again.</p>
           </div>
         ) : filteredBets.length === 0 ? (
           <div className="rounded-xl border card-glow" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
@@ -249,7 +249,7 @@ const BetHistory = () => {
           </div>
         ) : (
           <>
-            <div className="mb-4" style={{ color: '#64748b', animation: 'fade-in 0.3s ease-out' }}>
+            <div className="mb-4" style={{ color: '#69746c', animation: 'fade-in 0.3s ease-out' }}>
               <span className="text-sm">Showing {displayedBets.length} of {filteredBets.length} bet{filteredBets.length !== 1 ? 's' : ''}</span>
             </div>
 
@@ -279,8 +279,8 @@ const BetHistory = () => {
 
         {!isLoading && filteredBets.length > 0 && (
           <div className="card-glow rounded-xl p-6 text-center border mt-8" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)', animation: 'slide-up 0.5s ease-out 0.2s both' }}>
-            <h3 className="text-white font-bold mb-2 font-[Oswald] tracking-tight">Need your betting records?</h3>
-            <p className="text-sm mb-4" style={{ color: '#64748b' }}>
+            <h3 className="text-heritage-ink font-bold mb-2 font-display tracking-tight">Need your betting records?</h3>
+            <p className="text-sm mb-4" style={{ color: '#69746c' }}>
               Contact support to request a detailed betting history export
             </p>
             <button

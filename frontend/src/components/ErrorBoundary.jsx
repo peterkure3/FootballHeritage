@@ -97,7 +97,7 @@ class ErrorBoundary extends Component {
   };
 
   handleGoHome = () => {
-    window.location.href = '/dashboard';
+    window.location.href = '/';
   };
 
   render() {
@@ -110,18 +110,18 @@ class ErrorBoundary extends Component {
       return (
         <div className="min-h-screen flex items-center justify-center p-4" style={{ background: "var(--color-surface)" }}>
           <div className="max-w-2xl w-full">
-            <div className="bg-gray-800 rounded-2xl border border-red-500/30 shadow-2xl overflow-hidden">
+            <div className="bg-card rounded-2xl border border-red-500/30 shadow-2xl overflow-hidden">
               <div className="bg-gradient-to-r from-red-500/20 to-orange-500/20 border-b border-red-500/30 p-6">
                 <div className="flex items-center space-x-4">
                   <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center">
-                    <AlertTriangle className="w-8 h-8 text-red-400" />
+                    <AlertTriangle className="w-8 h-8 text-red-700" />
                   </div>
                   <div>
-                    <h1 className="text-2xl font-bold text-white mb-1">
+                    <h1 className="text-2xl font-normal text-heritage-ink mb-1">
                       Oops! Something went wrong
                     </h1>
-                    <p className="text-gray-400 text-sm">
-                      We encountered an unexpected error. Your data is safe.
+                    <p className="text-heritage-muted text-sm">
+                      We encountered an unexpected error. Retry or return home.
                     </p>
                   </div>
                 </div>
@@ -129,19 +129,19 @@ class ErrorBoundary extends Component {
 
               {isDevelopment && error && (
                 <div className="p-6 border-b border-gray-700">
-                  <h2 className="text-sm font-semibold text-red-400 mb-3">
+                  <h2 className="text-sm font-semibold text-red-700 mb-3">
                     Error Details (Development Mode)
                   </h2>
-                  <div className="bg-gray-900 rounded-lg p-4 border border-gray-700">
-                    <p className="text-red-400 font-mono text-sm mb-2">
+                  <div className="bg-card-hover rounded-lg p-4 border border-card-border">
+                    <p className="text-red-700 font-mono text-sm mb-2">
                       {error.toString()}
                     </p>
                     {errorInfo && (
                       <details className="mt-3">
-                        <summary className="text-gray-400 text-xs cursor-pointer hover:text-white transition-colors">
+                        <summary className="text-heritage-muted text-xs cursor-pointer hover:text-heritage-ink transition-colors">
                           Stack Trace
                         </summary>
-                        <pre className="text-gray-500 text-xs mt-2 overflow-x-auto max-h-48">
+                        <pre className="text-heritage-muted text-xs mt-2 overflow-x-auto max-h-48">
                           {errorInfo.componentStack}
                         </pre>
                       </details>
@@ -163,12 +163,12 @@ class ErrorBoundary extends Component {
                   </h2>
                   <div className="space-y-2">
                     {recentGlobalErrors.slice(0, 5).map((ge, i) => (
-                      <div key={i} className="bg-gray-900 rounded-lg p-3 border border-gray-700">
+                      <div key={i} className="bg-card-hover rounded-lg p-3 border border-card-border">
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-xs font-mono text-gray-500">
+                          <span className="text-xs font-mono text-heritage-muted">
                             {ge.type === 'unhandledrejection' ? 'Promise' : 'Runtime'}
                           </span>
-                          <span className="text-xs text-gray-600">
+                          <span className="text-xs text-heritage-muted">
                             {new Date(ge.time).toLocaleTimeString()}
                           </span>
                         </div>
@@ -185,7 +185,7 @@ class ErrorBoundary extends Component {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <button
                     onClick={this.handleReset}
-                    className="flex items-center justify-center space-x-2 bg-green-500 hover:bg-green-600 text-white px-4 py-3 rounded-lg font-semibold transition-colors"
+                    className="flex items-center justify-center space-x-2 bg-heritage hover:bg-green-800 text-white px-4 py-3 rounded-lg font-semibold transition-colors"
                   >
                     <RefreshCw className="w-4 h-4" />
                     <span>Try Again</span>
@@ -193,7 +193,7 @@ class ErrorBoundary extends Component {
 
                   <button
                     onClick={this.handleReload}
-                    className="flex items-center justify-center space-x-2 bg-gray-700 hover:bg-gray-600 text-white px-4 py-3 rounded-lg font-semibold transition-colors"
+                    className="flex items-center justify-center space-x-2 bg-card-hover hover:bg-surface text-heritage-ink px-4 py-3 rounded-lg font-semibold transition-colors"
                   >
                     <RefreshCw className="w-4 h-4" />
                     <span>Reload Page</span>
@@ -201,18 +201,18 @@ class ErrorBoundary extends Component {
 
                   <button
                     onClick={this.handleGoHome}
-                    className="flex items-center justify-center space-x-2 bg-gray-700 hover:bg-gray-600 text-white px-4 py-3 rounded-lg font-semibold transition-colors"
+                    className="flex items-center justify-center space-x-2 bg-card-hover hover:bg-surface text-heritage-ink px-4 py-3 rounded-lg font-semibold transition-colors"
                   >
                     <Home className="w-4 h-4" />
                     <span>Go Home</span>
                   </button>
                 </div>
 
-                <div className="mt-6 p-4 bg-gray-900/50 rounded-lg border border-gray-700">
-                  <h3 className="text-sm font-semibold text-white mb-2">
+                <div className="mt-6 p-4 bg-card-hover rounded-lg border border-card-border">
+                  <h3 className="text-sm font-semibold text-heritage-ink mb-2">
                     What can you do?
                   </h3>
-                  <ul className="text-sm text-gray-400 space-y-1">
+                  <ul className="text-sm text-heritage-muted space-y-1">
                     <li>Click "Try Again" to attempt to recover</li>
                     <li>Click "Reload Page" to refresh the entire application</li>
                     <li>Click "Go Home" to return to the dashboard</li>
@@ -223,7 +223,7 @@ class ErrorBoundary extends Component {
             </div>
 
             <div className="text-center mt-6">
-              <p className="text-gray-500 text-sm">
+              <p className="text-heritage-muted text-sm">
                 Error ID: {errorId}
               </p>
             </div>

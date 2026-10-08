@@ -44,6 +44,7 @@ const useAuthStore = create((set, get) => {
 
     // Actions
     setUser: (user) => {
+      sessionStorage.setItem('betting_user_data', JSON.stringify(user));
       set({ user, isAuthenticated: true, error: null });
       resetLogoutTimer();
     },

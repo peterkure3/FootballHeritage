@@ -121,8 +121,8 @@ const Chat = () => {
       <div className="max-w-5xl mx-auto px-4 py-8 space-y-6">
         <header style={{ animation: 'slide-up 0.4s ease-out both' }}>
           <p className="text-sm uppercase tracking-wide font-semibold mb-2" style={{ color: '#10b981' }}>AI Assistant</p>
-          <h1 className="text-3xl md:text-4xl font-bold text-white font-[Oswald] tracking-tight mb-2">AI Betting Assistant</h1>
-          <p className="text-sm max-w-3xl" style={{ color: '#64748b' }}>
+          <h1 className="text-3xl md:text-4xl font-bold text-heritage-ink font-display tracking-tight mb-2">AI Betting Assistant</h1>
+          <p className="text-sm max-w-3xl" style={{ color: '#69746c' }}>
             Get expert betting advice powered by AI. Ask about odds, strategies, or upcoming games.
           </p>
         </header>
@@ -137,19 +137,19 @@ const Chat = () => {
                 <div
                   className={`max-w-[80%] rounded-xl p-4 ${
                     message.type === 'user'
-                      ? 'text-white'
+                      ? 'text-heritage-ink'
                       : message.type === 'error'
                       ? 'border'
                       : ''
                   }`}
                   style={{
                     background: message.type === 'user'
-                      ? 'linear-gradient(135deg, #10b981, #059669)'
+                      ? 'linear-gradient(135deg, #177c4c, #147b4c)'
                       : message.type === 'error'
                         ? 'rgba(239, 68, 68, 0.08)'
                         : 'var(--color-card)',
                     borderColor: message.type === 'error' ? 'rgba(239, 68, 68, 0.2)' : 'var(--color-card-border)',
-                    color: message.type === 'error' ? '#fca5a5' : message.type === 'user' ? 'white' : '#e2e8f0',
+                    color: message.type === 'error' ? '#b42318' : message.type === 'user' ? 'white' : '#354338',
                   }}
                 >
                   <div className="whitespace-pre-wrap break-words text-sm leading-relaxed">
@@ -158,9 +158,9 @@ const Chat = () => {
 
                   {message.type === 'bot' && message.confidence && (
                     <div className="mt-3 pt-3" style={{ borderTop: '1px solid var(--color-card-border)' }}>
-                      <div className="flex items-center gap-2 text-xs" style={{ color: '#64748b' }}>
+                      <div className="flex items-center gap-2 text-xs" style={{ color: '#69746c' }}>
                         <span>Confidence:</span>
-                        <div className="flex-1 rounded-full h-2 max-w-[100px]" style={{ background: '#1a1a2e' }}>
+                        <div className="flex-1 rounded-full h-2 max-w-[100px]" style={{ background: '#e4eee1' }}>
                           <div
                             className="h-2 rounded-full transition-all"
                             style={{ width: `${message.confidence * 100}%`, background: 'linear-gradient(90deg, #10b981, #059669)' }}
@@ -198,14 +198,14 @@ const Chat = () => {
 
           {messages.length === 1 && (
             <div className="px-6 py-4" style={{ borderTop: '1px solid var(--color-card-border)' }}>
-              <p className="text-sm mb-3" style={{ color: '#64748b' }}>Quick actions:</p>
+              <p className="text-sm mb-3" style={{ color: '#69746c' }}>Quick actions:</p>
               <div className="grid grid-cols-2 gap-2">
                 {quickActions.map((action, idx) => (
                   <button
                     key={idx}
                     onClick={() => handleQuickAction(action.query)}
                     className="text-left px-4 py-2 rounded-lg text-sm transition-all card-glow"
-                    style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)', color: '#94a3b8' }}
+                    style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)', color: '#69746c' }}
                   >
                     {action.label}
                   </button>
@@ -222,7 +222,7 @@ const Chat = () => {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ask about odds, games, or betting strategies..."
-                className="flex-1 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 transition-all placeholder:text-gray-500"
+                className="flex-1 rounded-xl px-4 py-3 text-heritage-ink focus:outline-none focus:ring-2 transition-all placeholder:text-heritage-muted"
                 style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)', '--tw-ring-color': '#10b981' }}
                 disabled={isLoading}
                 maxLength={500}
@@ -231,7 +231,7 @@ const Chat = () => {
                 type="submit"
                 disabled={!input.trim() || isLoading}
                 className="text-white px-6 py-3 rounded-xl font-semibold transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}
+                style={{ background: 'linear-gradient(135deg, #177c4c, #147b4c)' }}
               >
                 {isLoading ? (
                   <>
@@ -255,7 +255,7 @@ const Chat = () => {
         </div>
 
         <div className="card-glow rounded-xl p-4 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'rgba(234, 179, 8, 0.2)', animation: 'slide-up 0.4s ease-out 0.12s both' }}>
-          <p className="text-sm" style={{ color: '#eab308' }}>
+          <p className="text-sm" style={{ color: '#976207' }}>
             <strong>Responsible Gambling:</strong> AI predictions are for informational purposes only. Always bet responsibly and within your limits. Past performance does not guarantee future results.
           </p>
         </div>

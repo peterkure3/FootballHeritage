@@ -17,11 +17,11 @@ const PredictionCard = ({ matchId, homeTeam, awayTeam, showEdge = false, odds = 
   if (isLoading) {
     return (
       <div className="bg-gradient-to-r from-purple-900/30 to-blue-900/30 rounded-lg p-4 border border-purple-500/30 animate-pulse">
-        <div className="h-4 bg-gray-700 rounded w-1/3 mb-3"></div>
+        <div className="h-4 bg-card-hover rounded w-1/3 mb-3"></div>
         <div className="space-y-2">
-          <div className="h-8 bg-gray-700 rounded"></div>
-          <div className="h-8 bg-gray-700 rounded"></div>
-          <div className="h-8 bg-gray-700 rounded"></div>
+          <div className="h-8 bg-card-hover rounded"></div>
+          <div className="h-8 bg-card-hover rounded"></div>
+          <div className="h-8 bg-card-hover rounded"></div>
         </div>
       </div>
     );
@@ -29,8 +29,8 @@ const PredictionCard = ({ matchId, homeTeam, awayTeam, showEdge = false, odds = 
 
   if (isError || !prediction) {
     return (
-      <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
-        <div className="flex items-center gap-2 text-gray-400">
+      <div className="bg-card/50 rounded-lg p-4 border border-card-border">
+        <div className="flex items-center gap-2 text-heritage-muted">
           <AlertCircle className="w-4 h-4" />
           <span className="text-sm">No prediction available</span>
         </div>
@@ -45,7 +45,7 @@ const PredictionCard = ({ matchId, homeTeam, awayTeam, showEdge = false, odds = 
     prediction.away_prob
   );
   const confidence = maxProb > 0.6 ? 'High' : maxProb > 0.45 ? 'Medium' : 'Low';
-  const confidenceColor = maxProb > 0.6 ? 'text-green-400' : maxProb > 0.45 ? 'text-yellow-400' : 'text-gray-400';
+  const confidenceColor = maxProb > 0.6 ? 'text-green-700' : maxProb > 0.45 ? 'text-yellow-700' : 'text-heritage-muted';
 
   // Calculate betting edge if odds provided
   let edge = null;
@@ -70,21 +70,21 @@ const PredictionCard = ({ matchId, homeTeam, awayTeam, showEdge = false, odds = 
     return (
       <div className="space-y-1">
         <div className="flex justify-between items-center text-sm">
-          <span className={`${isWinner ? 'font-bold text-white' : 'text-gray-400'}`}>
+          <span className={`${isWinner ? 'font-bold text-heritage-ink' : 'text-heritage-muted'}`}>
             {label}
           </span>
           <div className="flex items-center gap-2">
-            <span className={`${isWinner ? 'font-bold text-white' : 'text-gray-400'}`}>
+            <span className={`${isWinner ? 'font-bold text-heritage-ink' : 'text-heritage-muted'}`}>
               {percentage}%
             </span>
             {edgeValue !== null && edgeValue !== undefined && (
-              <span className={`text-xs ${edgeValue > 0 ? 'text-green-400' : 'text-red-400'}`}>
+              <span className={`text-xs ${edgeValue > 0 ? 'text-green-700' : 'text-red-700'}`}>
                 ({edgeValue > 0 ? '+' : ''}{(edgeValue * 100).toFixed(1)}%)
               </span>
             )}
           </div>
         </div>
-        <div className="w-full bg-gray-700 rounded-full h-2 overflow-hidden">
+        <div className="w-full bg-card-hover rounded-full h-2 overflow-hidden">
           <div
             className={`h-full rounded-full transition-all duration-500 ${
               isWinner 
@@ -103,14 +103,14 @@ const PredictionCard = ({ matchId, homeTeam, awayTeam, showEdge = false, odds = 
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <Brain className="w-5 h-5 text-purple-400" />
-          <span className="text-purple-400 font-semibold">AI Prediction</span>
+          <Brain className="w-5 h-5 text-purple-700" />
+          <span className="text-purple-700 font-semibold">AI Prediction</span>
         </div>
         <div className="flex items-center gap-2">
           <span className={`text-sm font-semibold ${confidenceColor}`}>
             {confidence} Confidence
           </span>
-          <span className="text-xs text-gray-500">v{prediction.model_version}</span>
+          <span className="text-xs text-heritage-muted">v{prediction.model_version}</span>
         </div>
       </div>
 
@@ -139,7 +139,7 @@ const PredictionCard = ({ matchId, homeTeam, awayTeam, showEdge = false, odds = 
       {/* Best Value Bet */}
       {edge && edge.best > 0 && (
         <div className="mt-4 pt-4 border-t border-purple-500/30">
-          <div className="flex items-center gap-2 text-green-400">
+          <div className="flex items-center gap-2 text-green-700">
             <TrendingUp className="w-4 h-4" />
             <span className="text-sm font-semibold">
               Best Value: {edge.home === edge.best ? 'Home' : edge.draw === edge.best ? 'Draw' : 'Away'}
@@ -151,8 +151,8 @@ const PredictionCard = ({ matchId, homeTeam, awayTeam, showEdge = false, odds = 
 
       {/* Prediction Summary */}
       <div className="mt-4 pt-4 border-t border-purple-500/30">
-        <p className="text-sm text-gray-300 text-center">
-          Model predicts: <strong className="text-white">
+        <p className="text-sm text-heritage-ink text-center">
+          Model predicts: <strong className="text-heritage-ink">
             {prediction.winner === 'home_win' ? homeTeam || 'Home Win' : 
              prediction.winner === 'draw' ? 'Draw' : 
              awayTeam || 'Away Win'}

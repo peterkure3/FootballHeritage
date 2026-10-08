@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 import { X, Save, Calendar, MapPin, Users, TrendingUp } from 'lucide-react';
-import { tokenManager } from '../utils/api';
+import { tokenManager, API_BASE_URL } from '../utils/api';
 
 /**
  * Event Creation/Edit Form Modal
@@ -80,8 +80,8 @@ const EventFormModal = ({ isOpen, onClose, event, onSuccess }) => {
 
     try {
       const url = event
-        ? `http://localhost:8080/api/v1/admin/events/${event.id}`
-        : 'http://localhost:8080/api/v1/admin/events';
+        ? `${API_BASE_URL}/admin/events/${event.id}`
+        : `${API_BASE_URL}/admin/events`;
 
       const method = event ? 'PUT' : 'POST';
 
@@ -134,24 +134,24 @@ const EventFormModal = ({ isOpen, onClose, event, onSuccess }) => {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-gray-800 rounded-xl border border-gray-700 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-card rounded-xl border border-card-border max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         <form onSubmit={handleSubmit}>
           {/* Header */}
-          <div className="sticky top-0 bg-gray-800 border-b border-gray-700 p-6 flex items-center justify-between">
+          <div className="sticky top-0 bg-card border-b border-card-border p-6 flex items-center justify-between">
             <div>
-              <h2 className="text-2xl font-bold text-white">
+              <h2 className="text-2xl font-bold text-heritage-ink">
                 {event ? 'Edit Event' : 'Create Event'}
               </h2>
-              <p className="text-gray-400 text-sm mt-1">
+              <p className="text-heritage-muted text-sm mt-1">
                 {event ? 'Update event details and odds' : 'Add a new sports event to the system'}
               </p>
             </div>
             <button
               type="button"
               onClick={onClose}
-              className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+              className="p-2 hover:bg-card-hover rounded-lg transition-colors"
             >
-              <X className="w-6 h-6 text-gray-400" />
+              <X className="w-6 h-6 text-heritage-muted" />
             </button>
           </div>
 
@@ -159,20 +159,20 @@ const EventFormModal = ({ isOpen, onClose, event, onSuccess }) => {
           <div className="p-6 space-y-6">
             {/* Basic Information */}
             <div>
-              <h3 className="text-lg font-semibold text-white mb-4 flex items-center space-x-2">
-                <MapPin className="w-5 h-5 text-green-400" />
+              <h3 className="text-lg font-semibold text-heritage-ink mb-4 flex items-center space-x-2">
+                <MapPin className="w-5 h-5 text-green-700" />
                 <span>Basic Information</span>
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-heritage-ink mb-2">
                     Sport *
                   </label>
                   <select
                     required
                     value={formData.sport}
                     onChange={(e) => setFormData({ ...formData, sport: e.target.value })}
-                    className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-green-500"
+                    className="w-full px-4 py-2 bg-card-hover border border-card-border rounded-lg text-heritage-ink focus:outline-none focus:border-green-500"
                   >
                     <option value="">Select Sport</option>
                     <option value="SOCCER">⚽ Soccer</option>
@@ -190,7 +190,7 @@ const EventFormModal = ({ isOpen, onClose, event, onSuccess }) => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-heritage-ink mb-2">
                     League *
                   </label>
                   <input
@@ -199,12 +199,12 @@ const EventFormModal = ({ isOpen, onClose, event, onSuccess }) => {
                     value={formData.league}
                     onChange={(e) => setFormData({ ...formData, league: e.target.value })}
                     placeholder="e.g., Premier League, NBA, Champions League"
-                    className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-green-500"
+                    className="w-full px-4 py-2 bg-card-hover border border-card-border rounded-lg text-heritage-ink placeholder-gray-400 focus:outline-none focus:border-green-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-heritage-ink mb-2">
                     Home Team *
                   </label>
                   <input
@@ -213,12 +213,12 @@ const EventFormModal = ({ isOpen, onClose, event, onSuccess }) => {
                     value={formData.home_team}
                     onChange={(e) => setFormData({ ...formData, home_team: e.target.value })}
                     placeholder="Home team name"
-                    className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-green-500"
+                    className="w-full px-4 py-2 bg-card-hover border border-card-border rounded-lg text-heritage-ink placeholder-gray-400 focus:outline-none focus:border-green-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-heritage-ink mb-2">
                     Away Team *
                   </label>
                   <input
@@ -227,12 +227,12 @@ const EventFormModal = ({ isOpen, onClose, event, onSuccess }) => {
                     value={formData.away_team}
                     onChange={(e) => setFormData({ ...formData, away_team: e.target.value })}
                     placeholder="Away team name"
-                    className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-green-500"
+                    className="w-full px-4 py-2 bg-card-hover border border-card-border rounded-lg text-heritage-ink placeholder-gray-400 focus:outline-none focus:border-green-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-heritage-ink mb-2">
                     Event Date & Time *
                   </label>
                   <input
@@ -240,19 +240,19 @@ const EventFormModal = ({ isOpen, onClose, event, onSuccess }) => {
                     required
                     value={formData.event_date}
                     onChange={(e) => setFormData({ ...formData, event_date: e.target.value })}
-                    className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-green-500"
+                    className="w-full px-4 py-2 bg-card-hover border border-card-border rounded-lg text-heritage-ink focus:outline-none focus:border-green-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-heritage-ink mb-2">
                     Status *
                   </label>
                   <select
                     required
                     value={formData.status}
                     onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                    className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-green-500"
+                    className="w-full px-4 py-2 bg-card-hover border border-card-border rounded-lg text-heritage-ink focus:outline-none focus:border-green-500"
                   >
                     <option value="UPCOMING">Upcoming</option>
                     <option value="LIVE">Live</option>
@@ -265,13 +265,13 @@ const EventFormModal = ({ isOpen, onClose, event, onSuccess }) => {
             {/* Scores (only for LIVE or FINISHED) */}
             {(formData.status === 'LIVE' || formData.status === 'FINISHED') && (
               <div>
-                <h3 className="text-lg font-semibold text-white mb-4 flex items-center space-x-2">
-                  <Users className="w-5 h-5 text-blue-400" />
+                <h3 className="text-lg font-semibold text-heritage-ink mb-4 flex items-center space-x-2">
+                  <Users className="w-5 h-5 text-blue-700" />
                   <span>Scores</span>
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                    <label className="block text-sm font-medium text-heritage-ink mb-2">
                       Home Score
                     </label>
                     <input
@@ -280,12 +280,12 @@ const EventFormModal = ({ isOpen, onClose, event, onSuccess }) => {
                       value={formData.home_score || ''}
                       onChange={(e) => setFormData({ ...formData, home_score: e.target.value })}
                       placeholder="0"
-                      className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-green-500"
+                      className="w-full px-4 py-2 bg-card-hover border border-card-border rounded-lg text-heritage-ink placeholder-gray-400 focus:outline-none focus:border-green-500"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                    <label className="block text-sm font-medium text-heritage-ink mb-2">
                       Away Score
                     </label>
                     <input
@@ -294,7 +294,7 @@ const EventFormModal = ({ isOpen, onClose, event, onSuccess }) => {
                       value={formData.away_score || ''}
                       onChange={(e) => setFormData({ ...formData, away_score: e.target.value })}
                       placeholder="0"
-                      className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-green-500"
+                      className="w-full px-4 py-2 bg-card-hover border border-card-border rounded-lg text-heritage-ink placeholder-gray-400 focus:outline-none focus:border-green-500"
                     />
                   </div>
                 </div>
@@ -303,35 +303,35 @@ const EventFormModal = ({ isOpen, onClose, event, onSuccess }) => {
 
             {/* Odds */}
             <div>
-              <h3 className="text-lg font-semibold text-white mb-4 flex items-center space-x-2">
-                <TrendingUp className="w-5 h-5 text-yellow-400" />
+              <h3 className="text-lg font-semibold text-heritage-ink mb-4 flex items-center space-x-2">
+                <TrendingUp className="w-5 h-5 text-yellow-700" />
                 <span>Betting Odds</span>
               </h3>
 
               {/* Moneyline */}
               <div className="mb-4">
-                <h4 className="text-sm font-medium text-gray-400 mb-3">Moneyline</h4>
+                <h4 className="text-sm font-medium text-heritage-muted mb-3">Moneyline</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs text-gray-400 mb-1">Home Odds</label>
+                    <label className="block text-xs text-heritage-muted mb-1">Home Odds</label>
                     <input
                       type="number"
                       step="0.01"
                       value={formData.moneyline_home}
                       onChange={(e) => setFormData({ ...formData, moneyline_home: e.target.value })}
                       placeholder="e.g., 1.85"
-                      className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-green-500"
+                      className="w-full px-4 py-2 bg-card-hover border border-card-border rounded-lg text-heritage-ink placeholder-gray-400 focus:outline-none focus:border-green-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-400 mb-1">Away Odds</label>
+                    <label className="block text-xs text-heritage-muted mb-1">Away Odds</label>
                     <input
                       type="number"
                       step="0.01"
                       value={formData.moneyline_away}
                       onChange={(e) => setFormData({ ...formData, moneyline_away: e.target.value })}
                       placeholder="e.g., 2.10"
-                      className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-green-500"
+                      className="w-full px-4 py-2 bg-card-hover border border-card-border rounded-lg text-heritage-ink placeholder-gray-400 focus:outline-none focus:border-green-500"
                     />
                   </div>
                 </div>
@@ -339,39 +339,39 @@ const EventFormModal = ({ isOpen, onClose, event, onSuccess }) => {
 
               {/* Point Spread */}
               <div className="mb-4">
-                <h4 className="text-sm font-medium text-gray-400 mb-3">Point Spread</h4>
+                <h4 className="text-sm font-medium text-heritage-muted mb-3">Point Spread</h4>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-xs text-gray-400 mb-1">Spread</label>
+                    <label className="block text-xs text-heritage-muted mb-1">Spread</label>
                     <input
                       type="number"
                       step="0.5"
                       value={formData.point_spread}
                       onChange={(e) => setFormData({ ...formData, point_spread: e.target.value })}
                       placeholder="e.g., -7.5"
-                      className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-green-500"
+                      className="w-full px-4 py-2 bg-card-hover border border-card-border rounded-lg text-heritage-ink placeholder-gray-400 focus:outline-none focus:border-green-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-400 mb-1">Home Odds</label>
+                    <label className="block text-xs text-heritage-muted mb-1">Home Odds</label>
                     <input
                       type="number"
                       step="0.01"
                       value={formData.spread_home_odds}
                       onChange={(e) => setFormData({ ...formData, spread_home_odds: e.target.value })}
                       placeholder="e.g., 1.90"
-                      className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-green-500"
+                      className="w-full px-4 py-2 bg-card-hover border border-card-border rounded-lg text-heritage-ink placeholder-gray-400 focus:outline-none focus:border-green-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-400 mb-1">Away Odds</label>
+                    <label className="block text-xs text-heritage-muted mb-1">Away Odds</label>
                     <input
                       type="number"
                       step="0.01"
                       value={formData.spread_away_odds}
                       onChange={(e) => setFormData({ ...formData, spread_away_odds: e.target.value })}
                       placeholder="e.g., 1.90"
-                      className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-green-500"
+                      className="w-full px-4 py-2 bg-card-hover border border-card-border rounded-lg text-heritage-ink placeholder-gray-400 focus:outline-none focus:border-green-500"
                     />
                   </div>
                 </div>
@@ -379,39 +379,39 @@ const EventFormModal = ({ isOpen, onClose, event, onSuccess }) => {
 
               {/* Over/Under */}
               <div>
-                <h4 className="text-sm font-medium text-gray-400 mb-3">Over/Under (Total Points)</h4>
+                <h4 className="text-sm font-medium text-heritage-muted mb-3">Over/Under (Total Points)</h4>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-xs text-gray-400 mb-1">Total</label>
+                    <label className="block text-xs text-heritage-muted mb-1">Total</label>
                     <input
                       type="number"
                       step="0.5"
                       value={formData.total_points}
                       onChange={(e) => setFormData({ ...formData, total_points: e.target.value })}
                       placeholder="e.g., 47.5"
-                      className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-green-500"
+                      className="w-full px-4 py-2 bg-card-hover border border-card-border rounded-lg text-heritage-ink placeholder-gray-400 focus:outline-none focus:border-green-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-400 mb-1">Over Odds</label>
+                    <label className="block text-xs text-heritage-muted mb-1">Over Odds</label>
                     <input
                       type="number"
                       step="0.01"
                       value={formData.over_odds}
                       onChange={(e) => setFormData({ ...formData, over_odds: e.target.value })}
                       placeholder="e.g., 1.90"
-                      className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-green-500"
+                      className="w-full px-4 py-2 bg-card-hover border border-card-border rounded-lg text-heritage-ink placeholder-gray-400 focus:outline-none focus:border-green-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-400 mb-1">Under Odds</label>
+                    <label className="block text-xs text-heritage-muted mb-1">Under Odds</label>
                     <input
                       type="number"
                       step="0.01"
                       value={formData.under_odds}
                       onChange={(e) => setFormData({ ...formData, under_odds: e.target.value })}
                       placeholder="e.g., 1.90"
-                      className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-green-500"
+                      className="w-full px-4 py-2 bg-card-hover border border-card-border rounded-lg text-heritage-ink placeholder-gray-400 focus:outline-none focus:border-green-500"
                     />
                   </div>
                 </div>
@@ -420,12 +420,12 @@ const EventFormModal = ({ isOpen, onClose, event, onSuccess }) => {
           </div>
 
           {/* Footer */}
-          <div className="sticky bottom-0 bg-gray-800 border-t border-gray-700 p-6 flex items-center justify-end space-x-3">
+          <div className="sticky bottom-0 bg-card border-t border-card-border p-6 flex items-center justify-end space-x-3">
             <button
               type="button"
               onClick={onClose}
               disabled={loading}
-              className="px-6 py-2.5 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-medium transition-colors disabled:opacity-50"
+              className="px-6 py-2.5 bg-card-hover hover:bg-card-hover text-heritage-ink rounded-lg font-medium transition-colors disabled:opacity-50"
             >
               Cancel
             </button>

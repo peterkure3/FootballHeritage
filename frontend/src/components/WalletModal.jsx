@@ -2,8 +2,9 @@ import { useState, memo } from 'react';
 import { useDeposit, useWithdraw } from '../hooks/useBetting';
 import { depositSchema, withdrawSchema, safeParse } from '../utils/validation';
 import { sanitize } from '../utils/api';
+import { Dialog } from '../heritage/ui';
 
-const WalletModal = memo(({ isOpen, onClose, initialTab = 'deposit', currentBalance = 0 }) => {
+const WalletModal = memo(({ isOpen, onClose, initialTab = 'deposit', currentBalance = 0, restoreFocus }) => {
   const [activeTab, setActiveTab] = useState(initialTab);
   const [amount, setAmount] = useState('');
   const [errors, setErrors] = useState({});
@@ -36,7 +37,7 @@ const WalletModal = memo(({ isOpen, onClose, initialTab = 'deposit', currentBala
 
     if (!result.success) {
       const fieldErrors = {};
-      result.error.errors.forEach((err) => {
+      result.error.issues.forEach((err) => {
         fieldErrors[err.path[0]] = err.message;
       });
       setErrors(fieldErrors);
@@ -108,11 +109,11 @@ const WalletModal = memo(({ isOpen, onClose, initialTab = 'deposit', currentBala
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-      <div className="bg-gray-800 rounded-xl shadow-2xl border border-gray-700 w-full max-w-md overflow-hidden">
+    <Dialog title="Wallet" className="fh-wallet-dialog" onClose={handleClose} restoreFocus={restoreFocus}>
+      <div className="bg-card rounded-xl shadow-2xl border border-card-border w-full max-w-md overflow-hidden">
         {/* Header */}
         <div className="bg-gradient-to-r from-green-600 to-green-700 p-6 relative">
-          <h2 className="text-white text-2xl font-bold">Wallet</h2>
+          <h2 className="text-white text-2xl font-normal">Wallet</h2>
           <p className="text-green-100 text-sm mt-1">
             Current Balance: <span className="font-bold">${currentBalance.toFixed(2)}</span>
           </p>
@@ -120,7 +121,7 @@ const WalletModal = memo(({ isOpen, onClose, initialTab = 'deposit', currentBala
             onClick={handleClose}
             disabled={isLoading}
             aria-label="Close wallet modal"
-            className="absolute top-4 right-4 text-white hover:text-gray-200 transition-colors disabled:opacity-50"
+            className="absolute top-4 right-4 text-white hover:text-white transition-colors disabled:opacity-50"
           >
             <svg
               className="w-6 h-6"
@@ -139,14 +140,14 @@ const WalletModal = memo(({ isOpen, onClose, initialTab = 'deposit', currentBala
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-gray-700">
+        <div className="flex border-b border-card-border">
           <button
             onClick={() => handleTabSwitch('deposit')}
             disabled={isLoading}
             className={`flex-1 py-4 px-6 font-semibold transition-colors ${
               activeTab === 'deposit'
-                ? 'bg-gray-900 text-green-400 border-b-2 border-green-400'
-                : 'text-gray-400 hover:text-white hover:bg-gray-750'
+                ? 'bg-card text-green-700 border-b-2 border-green-400'
+                : 'text-heritage-muted hover:text-heritage-ink hover:bg-gray-750'
             } disabled:opacity-50`}
           >
             💰 Deposit
@@ -156,8 +157,8 @@ const WalletModal = memo(({ isOpen, onClose, initialTab = 'deposit', currentBala
             disabled={isLoading}
             className={`flex-1 py-4 px-6 font-semibold transition-colors ${
               activeTab === 'withdraw'
-                ? 'bg-gray-900 text-green-400 border-b-2 border-green-400'
-                : 'text-gray-400 hover:text-white hover:bg-gray-750'
+                ? 'bg-card text-green-700 border-b-2 border-green-400'
+                : 'text-heritage-muted hover:text-heritage-ink hover:bg-gray-750'
             } disabled:opacity-50`}
           >
             💸 Withdraw
@@ -169,11 +170,11 @@ const WalletModal = memo(({ isOpen, onClose, initialTab = 'deposit', currentBala
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Amount Input */}
             <div>
-              <label className="block text-gray-300 text-sm font-semibold mb-2">
+              <label className="block text-heritage-ink text-sm font-semibold mb-2">
                 Amount ($)
               </label>
               <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg font-bold">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-heritage-muted text-lg font-bold">
                   $
                 </span>
                 <input
@@ -182,15 +183,15 @@ const WalletModal = memo(({ isOpen, onClose, initialTab = 'deposit', currentBala
                   onChange={handleAmountChange}
                   placeholder="0.00"
                   disabled={isLoading}
-                  className={`w-full pl-10 pr-4 py-3 bg-gray-900 border rounded-lg text-white text-lg font-semibold placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
+                  className={`w-full pl-10 pr-4 py-3 bg-card border rounded-lg text-heritage-ink text-lg font-semibold placeholder-gray-500 focus:outline-none focus:ring-2 transition-all ${
                     errors.amount
                       ? 'border-red-500 focus:ring-red-500'
-                      : 'border-gray-700 focus:ring-green-500'
+                      : 'border-card-border focus:ring-green-500'
                   } disabled:opacity-50 disabled:cursor-not-allowed`}
                 />
               </div>
               {errors.amount && (
-                <p className="text-red-400 text-xs mt-2 flex items-center">
+                <p className="text-red-700 text-xs mt-2 flex items-center">
                   <svg
                     className="w-4 h-4 mr-1"
                     fill="currentColor"
@@ -209,7 +210,7 @@ const WalletModal = memo(({ isOpen, onClose, initialTab = 'deposit', currentBala
 
             {/* Quick Amount Buttons */}
             <div>
-              <label className="block text-gray-300 text-sm font-semibold mb-2">
+              <label className="block text-heritage-ink text-sm font-semibold mb-2">
                 Quick Select
               </label>
               <div className="grid grid-cols-4 gap-2">
@@ -222,7 +223,7 @@ const WalletModal = memo(({ isOpen, onClose, initialTab = 'deposit', currentBala
                     className={`py-2 px-3 rounded-lg font-semibold text-sm transition-all ${
                       amount === quickAmount.toString()
                         ? 'bg-green-500 text-white shadow-lg'
-                        : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                        : 'bg-card-hover text-heritage-ink hover:bg-card-hover'
                     } disabled:opacity-50 disabled:cursor-not-allowed`}
                   >
                     ${quickAmount}
@@ -232,23 +233,23 @@ const WalletModal = memo(({ isOpen, onClose, initialTab = 'deposit', currentBala
             </div>
 
             {/* Limits Info */}
-            <div className="bg-gray-900/50 rounded-lg p-4 border border-gray-700">
-              <h4 className="text-gray-300 text-sm font-semibold mb-2">
+            <div className="bg-card/50 rounded-lg p-4 border border-card-border">
+              <h4 className="text-heritage-ink text-sm font-semibold mb-2">
                 {activeTab === 'deposit' ? 'Deposit' : 'Withdrawal'} Limits
               </h4>
-              <div className="space-y-1 text-xs text-gray-400">
+              <div className="space-y-1 text-xs text-heritage-muted">
                 <div className="flex justify-between">
                   <span>Minimum:</span>
-                  <span className="text-white font-semibold">$10.00</span>
+                  <span className="text-heritage-ink font-semibold">$10.00</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Maximum:</span>
-                  <span className="text-white font-semibold">$10,000.00</span>
+                  <span className="text-heritage-ink font-semibold">$10,000.00</span>
                 </div>
                 {activeTab === 'withdraw' && (
-                  <div className="flex justify-between pt-2 border-t border-gray-700 mt-2">
+                  <div className="flex justify-between pt-2 border-t border-card-border mt-2">
                     <span>Available:</span>
-                    <span className="text-green-400 font-semibold">
+                    <span className="text-green-700 font-semibold">
                       ${currentBalance.toFixed(2)}
                     </span>
                   </div>
@@ -259,7 +260,7 @@ const WalletModal = memo(({ isOpen, onClose, initialTab = 'deposit', currentBala
             {/* Submit Error */}
             {errors.submit && (
               <div className="bg-red-500/10 border border-red-500 rounded-lg p-3">
-                <p className="text-red-400 text-sm">{errors.submit}</p>
+                <p className="text-red-700 text-sm">{errors.submit}</p>
               </div>
             )}
 
@@ -307,13 +308,13 @@ const WalletModal = memo(({ isOpen, onClose, initialTab = 'deposit', currentBala
         </div>
 
         {/* Security Notice */}
-        <div className="bg-gray-900 px-6 py-4 border-t border-gray-700">
-          <p className="text-gray-400 text-xs text-center">
+        <div className="bg-card px-6 py-4 border-t border-card-border">
+          <p className="text-heritage-muted text-xs text-center">
             🔒 All transactions are encrypted and secure
           </p>
         </div>
       </div>
-    </div>
+    </Dialog>
   );
 });
 

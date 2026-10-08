@@ -13,7 +13,7 @@ const PredictionBadge = ({ matchId, variant = 'default' }) => {
 
   if (isLoading) {
     return (
-      <div className="animate-pulse bg-gray-700 h-6 w-24 rounded-full"></div>
+      <div className="animate-pulse bg-card-hover h-6 w-24 rounded-full"></div>
     );
   }
 
@@ -32,9 +32,9 @@ const PredictionBadge = ({ matchId, variant = 'default' }) => {
   
   // Color based on confidence
   const colorClasses = {
-    High: 'bg-green-500/20 text-green-400 border-green-500/50',
-    Medium: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/50',
-    Low: 'bg-gray-500/20 text-gray-400 border-gray-500/50',
+    High: 'bg-green-500/20 text-green-700 border-green-500/50',
+    Medium: 'bg-yellow-500/20 text-yellow-700 border-yellow-500/50',
+    Low: 'bg-gray-500/20 text-heritage-muted border-gray-500/50',
   };
 
   // Format winner text

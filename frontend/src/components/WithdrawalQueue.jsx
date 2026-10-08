@@ -84,13 +84,13 @@ const WithdrawalQueue = () => {
   const getRiskColor = (risk) => {
     switch (risk) {
       case 'low':
-        return 'bg-green-400/10 text-green-400 border-green-400/20';
+        return 'bg-green-400/10 text-green-700 border-green-400/20';
       case 'medium':
-        return 'bg-yellow-400/10 text-yellow-400 border-yellow-400/20';
+        return 'bg-yellow-400/10 text-yellow-700 border-yellow-400/20';
       case 'high':
-        return 'bg-red-400/10 text-red-400 border-red-400/20';
+        return 'bg-red-400/10 text-red-700 border-red-400/20';
       default:
-        return 'bg-gray-400/10 text-gray-400 border-gray-400/20';
+        return 'bg-gray-400/10 text-heritage-muted border-gray-400/20';
     }
   };
 
@@ -107,22 +107,22 @@ const WithdrawalQueue = () => {
   };
 
   return (
-    <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
+    <div className="bg-card rounded-xl border border-card-border overflow-hidden">
       {/* Header */}
-      <div className="p-5 border-b border-gray-700">
+      <div className="p-5 border-b border-card-border">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 rounded-lg bg-yellow-500/10 flex items-center justify-center">
-              <DollarSign className="w-5 h-5 text-yellow-400" />
+              <DollarSign className="w-5 h-5 text-yellow-700" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-white">Withdrawal Queue</h2>
-              <p className="text-sm text-gray-400">{withdrawals.length} pending requests</p>
+              <h2 className="text-lg font-semibold text-heritage-ink">Withdrawal Queue</h2>
+              <p className="text-sm text-heritage-muted">{withdrawals.length} pending requests</p>
             </div>
           </div>
           <div className="flex items-center space-x-2">
-            <span className="text-sm text-gray-400">
-              Total: <span className="font-semibold text-white">
+            <span className="text-sm text-heritage-muted">
+              Total: <span className="font-semibold text-heritage-ink">
                 ${withdrawals.reduce((sum, w) => sum + w.amount, 0).toFixed(2)}
               </span>
             </span>
@@ -135,24 +135,24 @@ const WithdrawalQueue = () => {
         {withdrawals.length === 0 ? (
           <div className="p-12 text-center">
             <CheckCircle className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-            <p className="text-gray-400">No pending withdrawals</p>
-            <p className="text-sm text-gray-500 mt-2">All caught up! 🎉</p>
+            <p className="text-heritage-muted">No pending withdrawals</p>
+            <p className="text-sm text-heritage-muted mt-2">All caught up! 🎉</p>
           </div>
         ) : (
           withdrawals.map((withdrawal) => (
-            <div key={withdrawal.id} className="p-5 hover:bg-gray-700/30 transition-colors">
+            <div key={withdrawal.id} className="p-5 hover:bg-card-hover/30 transition-colors">
               <div className="flex items-start justify-between">
                 {/* Left Side - User & Details */}
                 <div className="flex-1">
                   <div className="flex items-center space-x-3 mb-3">
-                    <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center">
-                      <User className="w-5 h-5 text-gray-400" />
+                    <div className="w-10 h-10 rounded-full bg-card-hover flex items-center justify-center">
+                      <User className="w-5 h-5 text-heritage-muted" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-white">{withdrawal.user_email}</p>
+                      <p className="text-sm font-medium text-heritage-ink">{withdrawal.user_email}</p>
                       <div className="flex items-center space-x-2 mt-1">
-                        <Clock className="w-3 h-3 text-gray-500" />
-                        <span className="text-xs text-gray-500">
+                        <Clock className="w-3 h-3 text-heritage-muted" />
+                        <span className="text-xs text-heritage-muted">
                           {getTimeAgo(withdrawal.requested_at)}
                         </span>
                       </div>
@@ -161,22 +161,22 @@ const WithdrawalQueue = () => {
 
                   <div className="grid grid-cols-2 gap-4 ml-13">
                     <div>
-                      <p className="text-xs text-gray-400 mb-1">Amount</p>
-                      <p className="text-lg font-bold text-white">${withdrawal.amount.toFixed(2)}</p>
+                      <p className="text-xs text-heritage-muted mb-1">Amount</p>
+                      <p className="text-lg font-bold text-heritage-ink">${withdrawal.amount.toFixed(2)}</p>
                     </div>
                     <div>
-                      <p className="text-xs text-gray-400 mb-1">Method</p>
+                      <p className="text-xs text-heritage-muted mb-1">Method</p>
                       <div className="flex items-center space-x-2">
-                        <CreditCard className="w-4 h-4 text-gray-400" />
-                        <span className="text-sm text-white">{withdrawal.method}</span>
+                        <CreditCard className="w-4 h-4 text-heritage-muted" />
+                        <span className="text-sm text-heritage-ink">{withdrawal.method}</span>
                       </div>
                     </div>
                     <div>
-                      <p className="text-xs text-gray-400 mb-1">Account</p>
-                      <p className="text-sm text-gray-300">{withdrawal.account_details}</p>
+                      <p className="text-xs text-heritage-muted mb-1">Account</p>
+                      <p className="text-sm text-heritage-ink">{withdrawal.account_details}</p>
                     </div>
                     <div>
-                      <p className="text-xs text-gray-400 mb-1">Risk Level</p>
+                      <p className="text-xs text-heritage-muted mb-1">Risk Level</p>
                       <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border ${getRiskColor(withdrawal.risk_score)}`}>
                         {withdrawal.risk_score.toUpperCase()}
                       </span>
@@ -195,7 +195,7 @@ const WithdrawalQueue = () => {
                   </button>
                   <button
                     onClick={() => openRejectModal(withdrawal)}
-                    className="flex items-center space-x-2 px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 font-medium rounded-lg transition-colors text-sm border border-red-500/30"
+                    className="flex items-center space-x-2 px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-700 font-medium rounded-lg transition-colors text-sm border border-red-500/30"
                   >
                     <X className="w-4 h-4" />
                     <span>Reject</span>
@@ -206,10 +206,10 @@ const WithdrawalQueue = () => {
               {/* Risk Warning */}
               {withdrawal.risk_score === 'high' && (
                 <div className="mt-4 ml-13 flex items-start space-x-2 p-3 bg-red-500/10 rounded-lg border border-red-500/20">
-                  <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
+                  <AlertCircle className="w-4 h-4 text-red-700 flex-shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-sm font-medium text-red-400">High Risk Transaction</p>
-                    <p className="text-xs text-gray-400 mt-1">
+                    <p className="text-sm font-medium text-red-700">High Risk Transaction</p>
+                    <p className="text-xs text-heritage-muted mt-1">
                       Review user history and verify identity before approval
                     </p>
                   </div>
@@ -231,35 +231,35 @@ const WithdrawalQueue = () => {
 
           {/* Modal */}
           <div className="flex min-h-full items-center justify-center p-4">
-            <div className="relative bg-gray-800 rounded-xl shadow-2xl border border-gray-700 w-full max-w-md">
+            <div className="relative bg-card rounded-xl shadow-2xl border border-card-border w-full max-w-md">
               {/* Header */}
-              <div className="flex items-center justify-between p-5 border-b border-gray-700">
-                <h3 className="text-lg font-semibold text-white">Reject Withdrawal</h3>
+              <div className="flex items-center justify-between p-5 border-b border-card-border">
+                <h3 className="text-lg font-semibold text-heritage-ink">Reject Withdrawal</h3>
                 <button
                   onClick={() => setShowRejectModal(false)}
-                  className="p-1 hover:bg-gray-700 rounded transition-colors"
+                  className="p-1 hover:bg-card-hover rounded transition-colors"
                 >
-                  <X className="w-5 h-5 text-gray-400" />
+                  <X className="w-5 h-5 text-heritage-muted" />
                 </button>
               </div>
 
               {/* Content */}
               <div className="p-5">
                 <div className="mb-4">
-                  <p className="text-sm text-gray-400 mb-2">
+                  <p className="text-sm text-heritage-muted mb-2">
                     You are rejecting a withdrawal of{' '}
-                    <span className="font-semibold text-white">
+                    <span className="font-semibold text-heritage-ink">
                       ${selectedWithdrawal?.amount.toFixed(2)}
                     </span>{' '}
                     for{' '}
-                    <span className="font-semibold text-white">
+                    <span className="font-semibold text-heritage-ink">
                       {selectedWithdrawal?.user_email}
                     </span>
                   </p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-heritage-ink mb-2">
                     Reason for Rejection *
                   </label>
                   <textarea
@@ -267,16 +267,16 @@ const WithdrawalQueue = () => {
                     onChange={(e) => setRejectReason(e.target.value)}
                     placeholder="Provide a detailed reason for rejecting this withdrawal..."
                     rows={4}
-                    className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-red-400 text-sm resize-none"
+                    className="w-full px-3 py-2 bg-card border border-card-border rounded-lg text-heritage-ink placeholder-gray-500 focus:outline-none focus:border-red-400 text-sm resize-none"
                   />
                 </div>
               </div>
 
               {/* Footer */}
-              <div className="flex items-center justify-end space-x-3 p-5 border-t border-gray-700">
+              <div className="flex items-center justify-end space-x-3 p-5 border-t border-card-border">
                 <button
                   onClick={() => setShowRejectModal(false)}
-                  className="px-4 py-2 text-sm text-gray-400 hover:bg-gray-700 rounded-lg transition-colors"
+                  className="px-4 py-2 text-sm text-heritage-muted hover:bg-card-hover rounded-lg transition-colors"
                 >
                   Cancel
                 </button>

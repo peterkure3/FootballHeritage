@@ -2,6 +2,8 @@
 target/
 dist/
 node_modules/
+frontend/test-results/
+frontend/playwright-report/
 
 # Local backups & data dumps (73MB+, never commit)
 backups/

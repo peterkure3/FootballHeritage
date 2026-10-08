@@ -1,0 +1,26 @@
+.fh-existing-navbar{background:#141b17!important;border-color:#24372b!important;color:#fff!important;box-shadow:0 2px 4px #0001!important}
+.fh-existing-navbar .max-w-7xl{max-width:1440px!important;height:72px!important;padding-left:40px!important;padding-right:40px!important}
+.fh-existing-navbar .relative>div{background:#fff!important;border-color:#e1e6dd!important;color:#354338!important}
+.fh-existing-navbar .relative>div a{color:#354338!important}
+.fh-existing-navbar .relative>div a:hover{background:#f1f6ee!important;color:#147b4c!important}
+.fh-existing-navbar a:hover{color:#a4d4ac!important}
+.ai-page{min-height:calc(100vh - 72px);background:#f0f2ef}
+.ai-page .ai-layout{grid-template-columns:210px minmax(0,1fr)}
+.ai-page .ai-panel{min-height:560px}
+.ai-error{display:flex;align-items:center;gap:8px}
+.ai-error button{margin-left:auto;text-decoration:underline;color:#7b4d06}
+
+/* Legacy routes keep their data/actions but inherit the template's editorial surfaces. */
+.heritage-app [class~="bg-gray-900"],.heritage-app [class~="bg-gray-800"],.heritage-app [class*="bg-gray-900/"],.heritage-app [class*="bg-gray-800/"],.heritage-app [class~="bg-slate-950"],.heritage-app [class*="bg-slate-950/"]{background-color:#fff!important}
+.heritage-app [class~="bg-gray-700"],.heritage-app [class~="bg-gray-600"],.heritage-app [class*="bg-gray-700/"],.heritage-app [class*="bg-gray-600/"]{background-color:#f4f6f2!important}
+.heritage-app [class~="text-white"]{color:#202723!important}
+.heritage-app [class~="text-gray-100"],.heritage-app [class~="text-gray-200"],.heritage-app [class~="text-gray-300"]{color:#354338!important}
+.heritage-app [class~="text-gray-400"],.heritage-app [class~="text-gray-500"]{color:#7a847d!important}
+.heritage-app [class~="border-gray-700"],.heritage-app [class~="border-gray-600"],.heritage-app [class*="border-gray-700/"]{border-color:#dce2da!important}
+.heritage-app [class*="hover:bg-gray-700"]:hover,.heritage-app [class*="hover:bg-gray-800"]:hover{background-color:#edf4e6!important}
+.heritage-app .fh-existing-navbar [class~="text-white"],.heritage-app .fh-existing-navbar [class~="text-gray-100"],.heritage-app .fh-existing-navbar [class~="text-gray-200"],.heritage-app .fh-existing-navbar [class~="text-gray-300"],.heritage-app .fh-existing-navbar [class~="text-gray-400"]{color:#fff!important}
+.heritage-app .fh-existing-navbar [class~="text-gray-500"]{color:#d0d7d1!important}
+.heritage-app .fh-existing-navbar [class~="bg-gray-800"],.heritage-app .fh-existing-navbar [class~="bg-gray-900"]{background-color:transparent!important}
+.heritage-app input,.heritage-app select,.heritage-app textarea{font-family:Arial,Helvetica,sans-serif}
+.heritage-app h1,.heritage-app h2,.heritage-app h3{letter-spacing:-.2px}
+.heritage-app .font-\[Oswald\]{font-family:Georgia,serif!important;font-weight:500!important}

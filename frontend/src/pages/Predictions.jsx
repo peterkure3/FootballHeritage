@@ -135,8 +135,8 @@ const Predictions = () => {
       <div className="max-w-7xl mx-auto px-4 py-8 space-y-10">
         <header style={{ animation: 'slide-up 0.4s ease-out both' }}>
           <p className="text-sm uppercase tracking-wide font-semibold mb-2" style={{ color: '#10b981' }}>AI Insights</p>
-          <h1 className="text-3xl md:text-4xl font-bold text-white font-[Oswald] tracking-tight mb-2">Predictions & Betting Edge</h1>
-          <p className="text-sm max-w-3xl" style={{ color: '#64748b' }}>
+          <h1 className="text-3xl md:text-4xl font-bold text-heritage-ink font-display tracking-tight mb-2">Predictions & Betting Edge</h1>
+          <p className="text-sm max-w-3xl" style={{ color: '#69746c' }}>
             Explore upcoming fixtures powered by our ML pipeline, visualize probabilities, and run custom
             what-if matchups before placing a bet.
           </p>
@@ -148,7 +148,7 @@ const Predictions = () => {
             onClick={() => setActiveTab('upcoming')}
             className={`px-6 py-3 font-semibold text-sm transition`}
             style={{
-              color: activeTab === 'upcoming' ? '#10b981' : '#64748b',
+              color: activeTab === 'upcoming' ? '#10b981' : '#69746c',
               borderBottom: activeTab === 'upcoming' ? '2px solid #10b981' : '2px solid transparent',
             }}
           >
@@ -158,7 +158,7 @@ const Predictions = () => {
             onClick={() => setActiveTab('results')}
             className={`px-6 py-3 font-semibold text-sm transition`}
             style={{
-              color: activeTab === 'results' ? '#10b981' : '#64748b',
+              color: activeTab === 'results' ? '#10b981' : '#69746c',
               borderBottom: activeTab === 'results' ? '2px solid #10b981' : '2px solid transparent',
             }}
           >
@@ -174,15 +174,15 @@ const Predictions = () => {
         <section className="card-glow rounded-xl p-6 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)', animation: 'slide-up 0.4s ease-out 0.06s both' }}>
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-6">
             <div>
-              <h2 className="text-2xl font-bold text-white font-[Oswald] tracking-tight">Upcoming Matches</h2>
-              <p className="text-sm" style={{ color: '#64748b' }}>Pulled directly from the pipeline API (auto-refreshes every minute)</p>
+              <h2 className="text-2xl font-bold text-heritage-ink font-display tracking-tight">Upcoming Matches</h2>
+              <p className="text-sm" style={{ color: '#69746c' }}>Pulled directly from the pipeline API (auto-refreshes every minute)</p>
             </div>
             <button
               onClick={() => {
                 setRefreshKey((value) => value + 1);
                 refetchMatches();
               }}
-              className="self-start md:self-auto inline-flex items-center gap-2 px-4 py-2 rounded-lg text-white font-semibold text-sm transition-all card-glow"
+              className="self-start md:self-auto inline-flex items-center gap-2 px-4 py-2 rounded-lg text-heritage-ink font-semibold text-sm transition-all card-glow"
               style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)' }}
             >
               <svg className={`w-4 h-4 ${matchesLoading ? 'animate-spin' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -200,15 +200,15 @@ const Predictions = () => {
             </div>
           ) : matchesError ? (
             <div className="rounded-xl p-6 text-center border" style={{ background: 'rgba(239, 68, 68, 0.08)', borderColor: 'rgba(239, 68, 68, 0.2)' }}>
-              <p style={{ color: '#fca5a5' }} className="font-semibold">Failed to load matches. Please try again.</p>
+              <p style={{ color: '#b42318' }} className="font-semibold">Failed to load matches. Please try again.</p>
             </div>
           ) : matches.length === 0 ? (
             <div className="card-glow rounded-xl p-10 text-center border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
-              <p style={{ color: '#64748b' }}>No pipeline matches available right now. Check back shortly.</p>
+              <p style={{ color: '#69746c' }}>No pipeline matches available right now. Check back shortly.</p>
             </div>
           ) : upcomingMatches.length === 0 ? (
             <div className="card-glow rounded-xl p-10 text-center border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
-              <p style={{ color: '#64748b' }}>No upcoming matches found. Try refreshing after the next pipeline sync.</p>
+              <p style={{ color: '#69746c' }}>No upcoming matches found. Try refreshing after the next pipeline sync.</p>
             </div>
           ) : (
             <div>
@@ -219,10 +219,10 @@ const Predictions = () => {
               </div>
 
               <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <p className="text-sm" style={{ color: '#64748b' }}>
-                  Showing <span className="text-gray-200">{Math.min(upcomingMatches.length, startIndex + 1)}</span>-
-                  <span className="text-gray-200">{Math.min(upcomingMatches.length, startIndex + pagedUpcomingMatches.length)}</span>{' '}
-                  of <span className="text-gray-200">{upcomingMatches.length}</span>
+                <p className="text-sm" style={{ color: '#69746c' }}>
+                  Showing <span className="text-heritage-ink">{Math.min(upcomingMatches.length, startIndex + 1)}</span>-
+                  <span className="text-heritage-ink">{Math.min(upcomingMatches.length, startIndex + pagedUpcomingMatches.length)}</span>{' '}
+                  of <span className="text-heritage-ink">{upcomingMatches.length}</span>
                 </p>
 
                 <div className="flex flex-wrap items-center gap-2 justify-start sm:justify-end">
@@ -230,7 +230,7 @@ const Predictions = () => {
                     type="button"
                     onClick={() => setMatchesPage((page) => Math.max(1, page - 1))}
                     disabled={clampedPage <= 1}
-                    className="px-3 py-2 rounded-lg text-white text-sm font-semibold transition-all card-glow disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-3 py-2 rounded-lg text-heritage-ink text-sm font-semibold transition-all card-glow disabled:opacity-50 disabled:cursor-not-allowed"
                     style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)' }}
                   >
                     Prev
@@ -243,14 +243,14 @@ const Predictions = () => {
                         onClick={() => setMatchesPage(1)}
                         className="px-3 py-2 rounded-lg text-sm font-semibold transition-all"
                         style={{
-                          background: clampedPage === 1 ? 'linear-gradient(135deg, #10b981, #059669)' : 'var(--color-card)',
+                          background: clampedPage === 1 ? 'linear-gradient(135deg, #177c4c, #147b4c)' : 'var(--color-card)',
                           color: 'white',
                           border: clampedPage === 1 ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid var(--color-card-border)',
                         }}
                       >
                         1
                       </button>
-                      <span className="px-1" style={{ color: '#64748b' }}>…</span>
+                      <span className="px-1" style={{ color: '#69746c' }}>…</span>
                     </>
                   )}
 
@@ -261,7 +261,7 @@ const Predictions = () => {
                       onClick={() => setMatchesPage(page)}
                       className="px-3 py-2 rounded-lg text-sm font-semibold transition-all"
                       style={{
-                        background: clampedPage === page ? 'linear-gradient(135deg, #10b981, #059669)' : 'var(--color-card)',
+                        background: clampedPage === page ? 'linear-gradient(135deg, #177c4c, #147b4c)' : 'var(--color-card)',
                         color: 'white',
                         border: clampedPage === page ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid var(--color-card-border)',
                       }}
@@ -272,13 +272,13 @@ const Predictions = () => {
 
                   {pageNumbers[pageNumbers.length - 1] !== totalPages && (
                     <>
-                      <span className="px-1" style={{ color: '#64748b' }}>…</span>
+                      <span className="px-1" style={{ color: '#69746c' }}>…</span>
                       <button
                         type="button"
                         onClick={() => setMatchesPage(totalPages)}
                         className="px-3 py-2 rounded-lg text-sm font-semibold transition-all"
                         style={{
-                          background: clampedPage === totalPages ? 'linear-gradient(135deg, #10b981, #059669)' : 'var(--color-card)',
+                          background: clampedPage === totalPages ? 'linear-gradient(135deg, #177c4c, #147b4c)' : 'var(--color-card)',
                           color: 'white',
                           border: clampedPage === totalPages ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid var(--color-card-border)',
                         }}
@@ -292,7 +292,7 @@ const Predictions = () => {
                     type="button"
                     onClick={() => setMatchesPage((page) => Math.min(totalPages, page + 1))}
                     disabled={clampedPage >= totalPages}
-                    className="px-3 py-2 rounded-lg text-white text-sm font-semibold transition-all card-glow disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-3 py-2 rounded-lg text-heritage-ink text-sm font-semibold transition-all card-glow disabled:opacity-50 disabled:cursor-not-allowed"
                     style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)' }}
                   >
                     Next
@@ -305,29 +305,29 @@ const Predictions = () => {
 
         <section className="grid gap-6 md:grid-cols-2 stagger-children">
           <div className="card-glow rounded-xl p-6 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
-            <h2 className="text-2xl font-bold text-white font-[Oswald] tracking-tight mb-2">What-If Matchup</h2>
-            <p className="text-sm mb-6" style={{ color: '#64748b' }}>Compare any two teams and get instant probabilities plus an AI recommendation.</p>
+            <h2 className="text-2xl font-bold text-heritage-ink font-display tracking-tight mb-2">What-If Matchup</h2>
+            <p className="text-sm mb-6" style={{ color: '#69746c' }}>Compare any two teams and get instant probabilities plus an AI recommendation.</p>
 
             <form onSubmit={handleMatchupSubmit} className="space-y-4">
               <div>
-                <label className="text-sm font-semibold mb-2 block" style={{ color: '#94a3b8' }}>Home Team</label>
+                <label className="text-sm font-semibold mb-2 block" style={{ color: '#69746c' }}>Home Team</label>
                 <input
                   type="text"
                   value={homeTeam}
                   onChange={(event) => setHomeTeam(event.target.value)}
                   placeholder="e.g., Arsenal"
-                  className="w-full rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 transition-all"
+                  className="w-full rounded-lg px-4 py-3 text-heritage-ink focus:outline-none focus:ring-2 transition-all"
                   style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)', '--tw-ring-color': '#10b981' }}
                 />
               </div>
               <div>
-                <label className="text-sm font-semibold mb-2 block" style={{ color: '#94a3b8' }}>Away Team</label>
+                <label className="text-sm font-semibold mb-2 block" style={{ color: '#69746c' }}>Away Team</label>
                 <input
                   type="text"
                   value={awayTeam}
                   onChange={(event) => setAwayTeam(event.target.value)}
                   placeholder="e.g., Chelsea"
-                  className="w-full rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 transition-all"
+                  className="w-full rounded-lg px-4 py-3 text-heritage-ink focus:outline-none focus:ring-2 transition-all"
                   style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)', '--tw-ring-color': '#10b981' }}
                 />
               </div>
@@ -335,7 +335,7 @@ const Predictions = () => {
                 type="submit"
                 disabled={matchupLoading}
                 className="w-full flex items-center justify-center gap-2 text-white font-semibold rounded-lg py-3 transition-all hover:opacity-90 disabled:opacity-70 disabled:cursor-not-allowed"
-                style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}
+                style={{ background: 'linear-gradient(135deg, #177c4c, #147b4c)' }}
               >
                 {matchupLoading && (
                   <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -348,17 +348,17 @@ const Predictions = () => {
           </div>
 
           <div className="card-glow rounded-xl p-6 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
-            <h3 className="text-xl font-bold text-white font-[Oswald] tracking-tight mb-4">Matchup Insights</h3>
+            <h3 className="text-xl font-bold text-heritage-ink font-display tracking-tight mb-4">Matchup Insights</h3>
             {!matchupPrediction ? (
-              <div className="h-full flex items-center justify-center text-sm text-center" style={{ color: '#64748b' }}>
+              <div className="h-full flex items-center justify-center text-sm text-center" style={{ color: '#69746c' }}>
                 Enter two teams and tap "Generate Prediction" to view AI analysis.
               </div>
             ) : (
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm" style={{ color: '#64748b' }}>Predicted Winner</p>
-                    <p className="text-2xl font-bold text-white capitalize font-[Oswald] tracking-tight">{matchupPrediction.winner?.replace('_', ' ') || 'N/A'}</p>
+                    <p className="text-sm" style={{ color: '#69746c' }}>Predicted Winner</p>
+                    <p className="text-2xl font-bold text-heritage-ink capitalize font-display tracking-tight">{matchupPrediction.winner?.replace('_', ' ') || 'N/A'}</p>
                   </div>
                   <span className="px-3 py-1 rounded-full border text-xs font-semibold" style={{ borderColor: 'rgba(16, 185, 129, 0.5)', color: '#6ee7b7' }}>
                     {matchupPrediction.confidence || 'Medium'} confidence
@@ -377,7 +377,7 @@ const Predictions = () => {
 
                 {matchupPrediction.recommendation && (
                   <div className="card-glow rounded-xl p-4 border" style={{ background: 'var(--color-card)', borderColor: 'var(--color-card-border)' }}>
-                    <p className="text-xs uppercase tracking-wide mb-2" style={{ color: '#64748b' }}>Recommendation</p>
+                    <p className="text-xs uppercase tracking-wide mb-2" style={{ color: '#69746c' }}>Recommendation</p>
                     <p className="leading-relaxed" style={{ color: '#cbd5e1' }}>{matchupPrediction.recommendation}</p>
                   </div>
                 )}
@@ -396,11 +396,11 @@ const ProbabilityBar = ({ label, value }) => {
   const percentage = Math.round((value || 0) * 100);
   return (
     <div>
-      <div className="flex justify-between text-sm mb-1" style={{ color: '#94a3b8' }}>
+      <div className="flex justify-between text-sm mb-1" style={{ color: '#69746c' }}>
         <span>{label}</span>
         <span>{percentage}%</span>
       </div>
-      <div className="h-2 rounded-full overflow-hidden" style={{ background: '#1a1a2e' }}>
+      <div className="h-2 rounded-full overflow-hidden" style={{ background: '#e4eee1' }}>
         <div className="h-full" style={{ width: `${percentage}%`, background: 'linear-gradient(90deg, #10b981, #059669)' }} />
       </div>
     </div>
@@ -430,14 +430,14 @@ const PredictionCard = ({ match, refreshKey }) => {
     <div className="card-glow rounded-xl p-5 border flex flex-col gap-4" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-xs uppercase tracking-wide" style={{ color: '#64748b' }}>{match.competition || 'Competition'}</p>
-          <h3 className="text-xl font-bold text-white font-[Oswald] tracking-tight">
+          <p className="text-xs uppercase tracking-wide" style={{ color: '#69746c' }}>{match.competition || 'Competition'}</p>
+          <h3 className="text-xl font-bold text-heritage-ink font-display tracking-tight">
             {match.home_team} vs {match.away_team}
           </h3>
-          <p className="text-sm" style={{ color: '#64748b' }}>{formatDateTime(match.date)}</p>
+          <p className="text-sm" style={{ color: '#69746c' }}>{formatDateTime(match.date)}</p>
         </div>
         {match.status && (
-          <span className="px-3 py-1 rounded-full border text-xs font-semibold" style={{ borderColor: 'var(--color-card-border)', color: '#94a3b8' }}>
+          <span className="px-3 py-1 rounded-full border text-xs font-semibold" style={{ borderColor: 'var(--color-card-border)', color: '#69746c' }}>
             {match.status}
           </span>
         )}
@@ -445,17 +445,17 @@ const PredictionCard = ({ match, refreshKey }) => {
 
       <div className="grid grid-cols-3 gap-3">
         <div className="card-glow rounded-xl p-3 text-center border" style={{ background: 'var(--color-card)', borderColor: 'var(--color-card-border)' }}>
-          <p className="text-xs uppercase mb-1" style={{ color: '#64748b' }}>Home ML</p>
-          <p className="text-white font-semibold text-lg font-[Oswald] tracking-tight">{formatAmericanOdds(odds.home)}</p>
-          <p className="text-xs" style={{ color: '#64748b' }}>moneyline</p>
+          <p className="text-xs uppercase mb-1" style={{ color: '#69746c' }}>Home ML</p>
+          <p className="text-heritage-ink font-semibold text-lg font-display tracking-tight">{formatAmericanOdds(odds.home)}</p>
+          <p className="text-xs" style={{ color: '#69746c' }}>moneyline</p>
         </div>
         <div className="card-glow rounded-xl p-3 text-center border" style={{ background: 'var(--color-card)', borderColor: 'var(--color-card-border)' }}>
-          <p className="text-xs uppercase mb-1" style={{ color: '#64748b' }}>Away ML</p>
-          <p className="text-white font-semibold text-lg font-[Oswald] tracking-tight">{formatAmericanOdds(odds.away)}</p>
-          <p className="text-xs" style={{ color: '#64748b' }}>moneyline</p>
+          <p className="text-xs uppercase mb-1" style={{ color: '#69746c' }}>Away ML</p>
+          <p className="text-heritage-ink font-semibold text-lg font-display tracking-tight">{formatAmericanOdds(odds.away)}</p>
+          <p className="text-xs" style={{ color: '#69746c' }}>moneyline</p>
         </div>
         <div className="card-glow rounded-xl p-3 text-center border" style={{ background: 'var(--color-card)', borderColor: 'var(--color-card-border)' }}>
-          <p className="text-xs uppercase mb-1" style={{ color: '#64748b' }}>Best Edge</p>
+          <p className="text-xs uppercase mb-1" style={{ color: '#69746c' }}>Best Edge</p>
           {(() => {
             const homeImplied = impliedProbabilityFromAmerican(odds.home);
             const awayImplied = impliedProbabilityFromAmerican(odds.away);
@@ -468,45 +468,45 @@ const PredictionCard = ({ match, refreshKey }) => {
               .sort((a, b) => b.value - a.value)[0];
 
             if (!best) {
-              return <p className="text-white font-semibold text-lg font-[Oswald] tracking-tight">--</p>;
+              return <p className="text-heritage-ink font-semibold text-lg font-display tracking-tight">--</p>;
             }
 
             const pct = Math.round(best.value * 1000) / 10;
-            const color = best.value > 0 ? 'text-green-300' : 'text-gray-300';
+            const color = best.value > 0 ? 'text-green-700' : 'text-heritage-ink';
             return (
-              <p className={`font-semibold text-lg font-[Oswald] tracking-tight ${color}`}>
+              <p className={`font-semibold text-lg font-display tracking-tight ${color}`}>
                 {best.side === 'home' ? 'Home' : 'Away'} {pct > 0 ? '+' : ''}{pct}%
               </p>
             );
           })()}
-          <p className="text-xs" style={{ color: '#64748b' }}>model - implied</p>
+          <p className="text-xs" style={{ color: '#69746c' }}>model - implied</p>
         </div>
       </div>
 
       <div className="space-y-3">
         {isLoading ? (
-          <div className="h-4 rounded animate-pulse" style={{ background: '#1a1a2e' }} />
+          <div className="h-4 rounded animate-pulse" style={{ background: '#e4eee1' }} />
         ) : prediction ? (
           <>
             <ProbabilityBar label={`Home win (${match.home_team})`} value={prediction.home_prob} />
             <ProbabilityBar label={`Away win (${match.away_team})`} value={prediction.away_prob} />
           </>
         ) : (
-          <p className="text-sm" style={{ color: '#64748b' }}>Prediction unavailable for this match.</p>
+          <p className="text-sm" style={{ color: '#69746c' }}>Prediction unavailable for this match.</p>
         )}
       </div>
 
       {bestBet ? (
         <div className="rounded-xl p-4 border" style={{ background: 'rgba(16, 185, 129, 0.08)', borderColor: 'rgba(16, 185, 129, 0.3)' }}>
           <p className="text-xs uppercase tracking-wide mb-1" style={{ color: '#6ee7b7' }}>Top Value Bet</p>
-          <p className="text-white font-semibold">
+          <p className="text-heritage-ink font-semibold">
             {bestBet.outcome === 'home' && match.home_team}
             {bestBet.outcome === 'away' && match.away_team}
             <span className="text-sm font-normal" style={{ color: '#34d399' }}> · {Math.round(bestBet.edge * 100)}% edge</span>
           </p>
         </div>
       ) : (
-        <div className="rounded-xl p-4 text-sm border" style={{ background: 'var(--color-card)', borderColor: 'var(--color-card-border)', color: '#64748b' }}>
+        <div className="rounded-xl p-4 text-sm border" style={{ background: 'var(--color-card)', borderColor: 'var(--color-card-border)', color: '#69746c' }}>
           No positive value edge detected for current odds.
         </div>
       )}

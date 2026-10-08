@@ -3,6 +3,7 @@ import {
   Routes,
   Route,
   Navigate,
+  useLocation,
 } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
@@ -39,6 +40,13 @@ import CollegeSports from "./pages/CollegeSports";
 import MarchMadnessBracket from "./pages/MarchMadnessBracket";
 import FPLAdvisor from "./pages/FPLAdvisor";
 import PlayerProps from "./pages/PlayerProps";
+import HomePage, { StoryPage } from './heritage/HomePage';
+import SportPage, { TeamsPage } from './heritage/SportPage';
+import { BestPicksPage, AiChatPage } from './heritage/AiPages';
+import MainNavbar from './heritage/MainNavbar';
+import Landing from './landing/Landing';
+import LandingNavbar from './landing/LandingNavbar';
+import { safeReturnTo } from './utils/authRedirect';
 
 // Create React Query client with optimized settings
 const queryClient = new QueryClient({
@@ -47,10 +55,10 @@ const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
       retry: 2,
       staleTime: 30000, // 30 seconds
-      cacheTime: 300000, // 5 minutes
+      gcTime: 300000, // 5 minutes (React Query v5)
     },
     mutations: {
-      retry: 1,
+      retry: 0, // Never automatically replay money-moving requests.
     },
   },
 });
@@ -58,9 +66,10 @@ const queryClient = new QueryClient({
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated } = useAuthStore();
+  const location = useLocation();
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" state={{ from: `${location.pathname}${location.search}${location.hash}` }} replace />;
   }
 
   return children;
@@ -69,9 +78,10 @@ const ProtectedRoute = ({ children }) => {
 // Admin Route Component (requires authenticated user with admin/superadmin role)
 const AdminRoute = ({ children }) => {
   const { isAuthenticated, user } = useAuthStore();
+  const location = useLocation();
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" state={{ from: `${location.pathname}${location.search}${location.hash}` }} replace />;
   }
 
   if (!user?.is_admin && !user?.is_super_admin) {
@@ -84,21 +94,39 @@ const AdminRoute = ({ children }) => {
 // Public Route Component (redirect to dashboard if already logged in)
 const PublicRoute = ({ children }) => {
   const { isAuthenticated } = useAuthStore();
+  const location = useLocation();
+  const requested = new URLSearchParams(location.search).get('returnTo') ?? location.state?.from;
 
   if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to={safeReturnTo(requested)} replace />;
   }
 
   return children;
 };
+
+function ApplicationNavbar() {
+  const { pathname } = useLocation();
+  if (pathname === '/') return null;
+  if (/^\/(login|register)\/?$/.test(pathname)) {
+    return <div className="fh-landing landing-auth-header"><LandingNavbar /></div>;
+  }
+  return <MainNavbar />;
+}
 
 function App() {
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <Router>
-          <div className="min-h-screen" style={{ background: 'var(--color-surface, #0d0d14)' }}>
+          <div className="min-h-screen heritage-app" style={{ background: 'var(--color-surface, #f0f2ef)' }}>
+          <ApplicationNavbar />
           <Routes>
+            <Route path="/app" element={<HomePage />} />
+            <Route path="/sport/:sport" element={<SportPage />} />
+            <Route path="/sport/:sport/:section" element={<SportPage />} />
+            <Route path="/stories/:id" element={<StoryPage />} />
+            <Route path="/saved" element={<HomePage savedOnly />} />
+            <Route path="/followed-teams" element={<TeamsPage followedOnly />} />
             {/* Public Routes */}
             <Route
               path="/login"
@@ -210,6 +238,14 @@ function App() {
               }
             />
             <Route
+              path="/ai-picks"
+              element={<BestPicksPage />}
+            />
+            <Route
+              path="/ai-picks/chat"
+              element={<AiChatPage />}
+            />
+            <Route
               path="/player-props"
               element={
                 <ProtectedRoute>
@@ -279,21 +315,21 @@ function App() {
             </Route>
 
             {/* Default Route */}
-            <Route path="/" element={<Navigate to="/login" replace />} />
+            <Route path="/" element={<Landing />} />
 
             {/* 404 Route */}
             <Route
               path="*"
               element={
-                <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center p-4">
+                <div className="min-h-screen bg-surface flex items-center justify-center p-4">
                   <div className="text-center">
-                    <h1 className="text-6xl font-bold text-white mb-4">404</h1>
-                    <p className="text-gray-400 text-xl mb-8">Page not found</p>
+                    <h1 className="text-6xl font-normal text-heritage-ink mb-4">404</h1>
+                    <p className="text-heritage-muted text-xl mb-8">Page not found</p>
                     <a
-                      href="/dashboard"
-                      className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors inline-block"
+                      href="/"
+                      className="fh-button"
                     >
-                      Go to Dashboard
+                      Return home
                     </a>
                   </div>
                 </div>
@@ -308,9 +344,9 @@ function App() {
           toastOptions={{
             duration: 4000,
             style: {
-              background: "#1f2937",
-              color: "#fff",
-              border: "1px solid #374151",
+              background: "#fff",
+              color: "#202723",
+              border: "1px solid #e1e6dd",
             },
             success: {
               iconTheme: {

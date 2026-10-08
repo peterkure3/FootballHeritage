@@ -47,15 +47,15 @@ const WhatIfPredictor = () => {
   };
 
   return (
-    <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
+    <div className="bg-card rounded-lg p-6 border border-card-border">
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
         <div className="p-2 bg-purple-500/20 rounded-lg">
-          <Brain className="w-6 h-6 text-purple-400" />
+          <Brain className="w-6 h-6 text-purple-700" />
         </div>
         <div>
-          <h2 className="text-xl font-bold text-white">What-If Predictor</h2>
-          <p className="text-sm text-gray-400">Predict any matchup using AI</p>
+          <h2 className="text-xl font-bold text-heritage-ink">What-If Predictor</h2>
+          <p className="text-sm text-heritage-muted">Predict any matchup using AI</p>
         </div>
       </div>
 
@@ -63,7 +63,7 @@ const WhatIfPredictor = () => {
       <form onSubmit={handleSubmit} className="space-y-4 mb-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-heritage-ink mb-2">
               Home Team
             </label>
             <input
@@ -71,11 +71,11 @@ const WhatIfPredictor = () => {
               value={homeTeam}
               onChange={(e) => setHomeTeam(e.target.value)}
               placeholder="e.g., Arsenal"
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition"
+              className="w-full px-4 py-2 bg-card border border-card-border rounded-lg text-heritage-ink placeholder-gray-500 focus:outline-none focus:border-purple-500 transition"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-heritage-ink mb-2">
               Away Team
             </label>
             <input
@@ -83,7 +83,7 @@ const WhatIfPredictor = () => {
               value={awayTeam}
               onChange={(e) => setAwayTeam(e.target.value)}
               placeholder="e.g., Chelsea"
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition"
+              className="w-full px-4 py-2 bg-card border border-card-border rounded-lg text-heritage-ink placeholder-gray-500 focus:outline-none focus:border-purple-500 transition"
             />
           </div>
         </div>
@@ -110,7 +110,7 @@ const WhatIfPredictor = () => {
             <button
               type="button"
               onClick={handleReset}
-              className="px-6 py-3 bg-gray-700 text-white font-semibold rounded-lg hover:bg-gray-600 transition"
+              className="px-6 py-3 bg-card-hover text-heritage-ink font-semibold rounded-lg hover:bg-card-hover transition"
             >
               Reset
             </button>
@@ -122,10 +122,10 @@ const WhatIfPredictor = () => {
       {isError && (
         <div className="bg-red-900/20 border border-red-500/50 rounded-lg p-4">
           <div className="flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+            <AlertCircle className="w-5 h-5 text-red-700 flex-shrink-0 mt-0.5" />
             <div>
-              <h3 className="text-red-400 font-semibold mb-1">Prediction Failed</h3>
-              <p className="text-sm text-red-300">
+              <h3 className="text-red-700 font-semibold mb-1">Prediction Failed</h3>
+              <p className="text-sm text-red-700">
                 {error?.message || 'Unable to generate prediction. Please try again.'}
               </p>
             </div>
@@ -137,13 +137,13 @@ const WhatIfPredictor = () => {
       {prediction && !isLoading && (
         <div className="space-y-4">
           {/* Match Header */}
-          <div className="bg-gray-900 rounded-lg p-4 border border-gray-700">
+          <div className="bg-card rounded-lg p-4 border border-card-border">
             <div className="text-center">
-              <h3 className="text-lg font-bold text-white mb-2">
+              <h3 className="text-lg font-bold text-heritage-ink mb-2">
                 {prediction.home_team} vs {prediction.away_team}
               </h3>
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-500/20 rounded-full border border-purple-500/50">
-                <span className="text-purple-400 font-semibold">
+                <span className="text-purple-700 font-semibold">
                   Predicted Winner: {prediction.winner.replace('_', ' ').toUpperCase()}
                 </span>
               </div>
@@ -152,14 +152,14 @@ const WhatIfPredictor = () => {
 
           {/* Probabilities */}
           <div className="bg-gradient-to-r from-purple-900/30 to-blue-900/30 rounded-lg p-4 border border-purple-500/30">
-            <h4 className="text-sm font-semibold text-purple-400 mb-3">Win Probabilities</h4>
+            <h4 className="text-sm font-semibold text-purple-700 mb-3">Win Probabilities</h4>
             <div className="grid grid-cols-3 gap-3">
               <div className="text-center">
-                <div className="text-xs text-gray-400 mb-1">Home Win</div>
-                <div className="text-2xl font-bold text-white">
+                <div className="text-xs text-heritage-muted mb-1">Home Win</div>
+                <div className="text-2xl font-bold text-heritage-ink">
                   {(prediction.home_prob * 100).toFixed(1)}%
                 </div>
-                <div className="w-full bg-gray-700 rounded-full h-2 mt-2">
+                <div className="w-full bg-card-hover rounded-full h-2 mt-2">
                   <div
                     className={`h-full rounded-full ${
                       prediction.winner === 'home_win' 
@@ -171,11 +171,11 @@ const WhatIfPredictor = () => {
                 </div>
               </div>
               <div className="text-center">
-                <div className="text-xs text-gray-400 mb-1">Draw</div>
-                <div className="text-2xl font-bold text-white">
+                <div className="text-xs text-heritage-muted mb-1">Draw</div>
+                <div className="text-2xl font-bold text-heritage-ink">
                   {(prediction.draw_prob * 100).toFixed(1)}%
                 </div>
-                <div className="w-full bg-gray-700 rounded-full h-2 mt-2">
+                <div className="w-full bg-card-hover rounded-full h-2 mt-2">
                   <div
                     className={`h-full rounded-full ${
                       prediction.winner === 'draw' 
@@ -187,11 +187,11 @@ const WhatIfPredictor = () => {
                 </div>
               </div>
               <div className="text-center">
-                <div className="text-xs text-gray-400 mb-1">Away Win</div>
-                <div className="text-2xl font-bold text-white">
+                <div className="text-xs text-heritage-muted mb-1">Away Win</div>
+                <div className="text-2xl font-bold text-heritage-ink">
                   {(prediction.away_prob * 100).toFixed(1)}%
                 </div>
-                <div className="w-full bg-gray-700 rounded-full h-2 mt-2">
+                <div className="w-full bg-card-hover rounded-full h-2 mt-2">
                   <div
                     className={`h-full rounded-full ${
                       prediction.winner === 'away_win' 
@@ -207,26 +207,26 @@ const WhatIfPredictor = () => {
 
           {/* Confidence & Recommendation */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-gray-900 rounded-lg p-4 border border-gray-700">
+            <div className="bg-card rounded-lg p-4 border border-card-border">
               <div className="flex items-center gap-2 mb-2">
-                <TrendingUp className="w-4 h-4 text-blue-400" />
-                <h4 className="text-sm font-semibold text-gray-300">Confidence Level</h4>
+                <TrendingUp className="w-4 h-4 text-blue-700" />
+                <h4 className="text-sm font-semibold text-heritage-ink">Confidence Level</h4>
               </div>
               <div className={`text-2xl font-bold ${
-                prediction.confidence === 'High' ? 'text-green-400' :
-                prediction.confidence === 'Medium' ? 'text-yellow-400' :
-                'text-gray-400'
+                prediction.confidence === 'High' ? 'text-green-700' :
+                prediction.confidence === 'Medium' ? 'text-yellow-700' :
+                'text-heritage-muted'
               }`}>
                 {prediction.confidence}
               </div>
             </div>
 
-            <div className="bg-gray-900 rounded-lg p-4 border border-gray-700">
+            <div className="bg-card rounded-lg p-4 border border-card-border">
               <div className="flex items-center gap-2 mb-2">
-                <Brain className="w-4 h-4 text-purple-400" />
-                <h4 className="text-sm font-semibold text-gray-300">Model Version</h4>
+                <Brain className="w-4 h-4 text-purple-700" />
+                <h4 className="text-sm font-semibold text-heritage-ink">Model Version</h4>
               </div>
-              <div className="text-2xl font-bold text-white">
+              <div className="text-2xl font-bold text-heritage-ink">
                 v{prediction.model_version}
               </div>
             </div>
@@ -236,11 +236,11 @@ const WhatIfPredictor = () => {
           <div className="bg-gradient-to-r from-green-900/20 to-blue-900/20 rounded-lg p-4 border border-green-500/30">
             <div className="flex items-start gap-3">
               <div className="p-2 bg-green-500/20 rounded-lg flex-shrink-0">
-                <TrendingUp className="w-5 h-5 text-green-400" />
+                <TrendingUp className="w-5 h-5 text-green-700" />
               </div>
               <div>
-                <h4 className="text-sm font-semibold text-green-400 mb-2">AI Recommendation</h4>
-                <p className="text-sm text-gray-300 leading-relaxed">
+                <h4 className="text-sm font-semibold text-green-700 mb-2">AI Recommendation</h4>
+                <p className="text-sm text-heritage-ink leading-relaxed">
                   {prediction.recommendation}
                 </p>
               </div>

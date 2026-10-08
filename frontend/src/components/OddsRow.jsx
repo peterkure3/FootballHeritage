@@ -70,7 +70,7 @@ const OddsRow = memo(({ event, onBetClick }) => {
       return `${baseStyles} bg-green-500 text-white shadow-lg shadow-green-500/50 scale-105`;
     }
 
-    return `${baseStyles} bg-gray-700 text-white hover:bg-green-600 hover:shadow-md hover:shadow-green-500/30 active:scale-95`;
+    return `${baseStyles} bg-card-hover text-heritage-ink hover:bg-heritage hover:text-white hover:shadow-md hover:shadow-green-500/30 active:scale-95`;
   };
 
   // Check if event is live
@@ -78,12 +78,12 @@ const OddsRow = memo(({ event, onBetClick }) => {
   const isPending = event.status === 'upcoming' || event.status === 'scheduled';
 
   return (
-    <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 hover:border-green-500/50 transition-all duration-300">
+    <div className="bg-card border border-card-border rounded-lg p-4 hover:border-green-500/50 transition-all duration-300">
       {/* Event Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
-            <h3 className="text-white font-bold text-lg">
+            <h3 className="text-heritage-ink font-bold text-lg">
               {formatTeamName(event.home_team)} vs {formatTeamName(event.away_team)}
             </h3>
             {isLive && (
@@ -92,7 +92,7 @@ const OddsRow = memo(({ event, onBetClick }) => {
               </span>
             )}
           </div>
-          <div className="flex items-center gap-3 text-sm text-gray-400">
+          <div className="flex items-center gap-3 text-sm text-heritage-muted">
             <span>📅 {formatEventTime(event.event_date || event.event_time || event.start_time || event.date)}</span>
             {event.league && <span>🏈 {event.league}</span>}
           </div>
@@ -100,7 +100,7 @@ const OddsRow = memo(({ event, onBetClick }) => {
 
         {/* Event Status */}
         {isPending && (
-          <span className="px-3 py-1 bg-blue-500/20 text-blue-400 text-xs font-semibold rounded-full border border-blue-500/50">
+          <span className="px-3 py-1 bg-blue-500/20 text-blue-700 text-xs font-semibold rounded-full border border-blue-500/50">
             UPCOMING
           </span>
         )}
@@ -110,8 +110,8 @@ const OddsRow = memo(({ event, onBetClick }) => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         {/* Moneyline */}
         {event.moneyline_home && event.moneyline_away && (
-          <div className="bg-gray-900/50 rounded-lg p-3 border border-gray-700">
-            <h4 className="text-gray-400 text-xs font-semibold mb-2 uppercase">Moneyline</h4>
+          <div className="bg-card/50 rounded-lg p-3 border border-card-border">
+            <h4 className="text-heritage-muted text-xs font-semibold mb-2 uppercase">Moneyline</h4>
             <div className="space-y-2">
               <div className="flex gap-2">
                 <button
@@ -177,8 +177,8 @@ const OddsRow = memo(({ event, onBetClick }) => {
 
         {/* Spread */}
         {event.spread_home && event.spread_away && (
-          <div className="bg-gray-900/50 rounded-lg p-3 border border-gray-700">
-            <h4 className="text-gray-400 text-xs font-semibold mb-2 uppercase">Spread</h4>
+          <div className="bg-card/50 rounded-lg p-3 border border-card-border">
+            <h4 className="text-heritage-muted text-xs font-semibold mb-2 uppercase">Spread</h4>
             <div className="space-y-2">
               <button
                 onClick={() => handleBetClick('spread', event.spread_odds_home || 1.91)}
@@ -208,8 +208,8 @@ const OddsRow = memo(({ event, onBetClick }) => {
 
         {/* Over/Under */}
         {event.total && (
-          <div className="bg-gray-900/50 rounded-lg p-3 border border-gray-700">
-            <h4 className="text-gray-400 text-xs font-semibold mb-2 uppercase">Total Points</h4>
+          <div className="bg-card/50 rounded-lg p-3 border border-card-border">
+            <h4 className="text-heritage-muted text-xs font-semibold mb-2 uppercase">Total Points</h4>
             <div className="space-y-2">
               <button
                 onClick={() => handleBetClick('over_under', event.over_odds || 1.91)}
@@ -240,16 +240,16 @@ const OddsRow = memo(({ event, onBetClick }) => {
 
       {/* Score Display for Live Events */}
       {isLive && (event.home_score !== undefined || event.away_score !== undefined) && (
-        <div className="mt-3 pt-3 border-t border-gray-700">
+        <div className="mt-3 pt-3 border-t border-card-border">
           <div className="flex justify-center gap-8 text-center">
             <div>
-              <p className="text-gray-400 text-xs mb-1">{formatTeamName(event.home_team)}</p>
-              <p className="text-white text-2xl font-bold">{event.home_score || 0}</p>
+              <p className="text-heritage-muted text-xs mb-1">{formatTeamName(event.home_team)}</p>
+              <p className="text-heritage-ink text-2xl font-bold">{event.home_score || 0}</p>
             </div>
-            <div className="flex items-center text-gray-500 text-xl">-</div>
+            <div className="flex items-center text-heritage-muted text-xl">-</div>
             <div>
-              <p className="text-gray-400 text-xs mb-1">{formatTeamName(event.away_team)}</p>
-              <p className="text-white text-2xl font-bold">{event.away_score || 0}</p>
+              <p className="text-heritage-muted text-xs mb-1">{formatTeamName(event.away_team)}</p>
+              <p className="text-heritage-ink text-2xl font-bold">{event.away_score || 0}</p>
             </div>
           </div>
         </div>

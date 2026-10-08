@@ -91,15 +91,15 @@ const FraudAlerts = () => {
   const getSeverityColor = (severity) => {
     switch (severity) {
       case 'critical':
-        return 'bg-red-500/20 text-red-400 border-red-500/30';
+        return 'bg-red-500/20 text-red-700 border-red-500/30';
       case 'high':
-        return 'bg-orange-500/20 text-orange-400 border-orange-500/30';
+        return 'bg-orange-500/20 text-orange-700 border-orange-500/30';
       case 'medium':
-        return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
+        return 'bg-yellow-500/20 text-yellow-700 border-yellow-500/30';
       case 'low':
-        return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+        return 'bg-blue-500/20 text-blue-700 border-blue-500/30';
       default:
-        return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
+        return 'bg-gray-500/20 text-heritage-muted border-gray-500/30';
     }
   };
 
@@ -135,17 +135,17 @@ const FraudAlerts = () => {
   };
 
   return (
-    <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
+    <div className="bg-card rounded-xl border border-card-border overflow-hidden">
       {/* Header */}
-      <div className="p-5 border-b border-gray-700">
+      <div className="p-5 border-b border-card-border">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center">
-              <Shield className="w-5 h-5 text-red-400" />
+              <Shield className="w-5 h-5 text-red-700" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-white">Fraud Alerts</h2>
-              <p className="text-sm text-gray-400">
+              <h2 className="text-lg font-semibold text-heritage-ink">Fraud Alerts</h2>
+              <p className="text-sm text-heritage-muted">
                 {alerts.filter(a => a.status === 'pending').length} active alerts
               </p>
             </div>
@@ -153,8 +153,8 @@ const FraudAlerts = () => {
           <div className="flex items-center space-x-2">
             <span className={`px-3 py-1 rounded-full text-xs font-medium ${
               alerts.some(a => a.severity === 'critical') 
-                ? 'bg-red-500/20 text-red-400' 
-                : 'bg-green-500/20 text-green-400'
+                ? 'bg-red-500/20 text-red-700'
+                : 'bg-green-500/20 text-green-700'
             }`}>
               {alerts.some(a => a.severity === 'critical') ? 'Action Required' : 'All Clear'}
             </span>
@@ -167,12 +167,12 @@ const FraudAlerts = () => {
         {alerts.length === 0 ? (
           <div className="p-12 text-center">
             <Shield className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-            <p className="text-gray-400">No fraud alerts</p>
-            <p className="text-sm text-gray-500 mt-2">System is secure! 🛡️</p>
+            <p className="text-heritage-muted">No fraud alerts</p>
+            <p className="text-sm text-heritage-muted mt-2">System is secure! 🛡️</p>
           </div>
         ) : (
           alerts.map((alert) => (
-            <div key={alert.id} className="p-5 hover:bg-gray-700/30 transition-colors">
+            <div key={alert.id} className="p-5 hover:bg-card-hover/30 transition-colors">
               <div className="flex items-start justify-between">
                 {/* Left Side - Alert Info */}
                 <div className="flex-1">
@@ -187,27 +187,27 @@ const FraudAlerts = () => {
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center space-x-2 mb-1">
-                        <h3 className="text-sm font-semibold text-white">
+                        <h3 className="text-sm font-semibold text-heritage-ink">
                           {getTypeLabel(alert.type)}
                         </h3>
                         <span className={`px-2 py-0.5 rounded-full text-xs font-medium border ${getSeverityColor(alert.severity)}`}>
                           {alert.severity.toUpperCase()}
                         </span>
-                        <span className="text-xs text-gray-500">
+                        <span className="text-xs text-heritage-muted">
                           {getTimeAgo(alert.created_at)}
                         </span>
                       </div>
-                      <p className="text-sm text-gray-300 mb-2">{alert.description}</p>
-                      <p className="text-xs text-gray-400">
-                        User: <span className="text-gray-300">{alert.user_email}</span>
+                      <p className="text-sm text-heritage-ink mb-2">{alert.description}</p>
+                      <p className="text-xs text-heritage-muted">
+                        User: <span className="text-heritage-ink">{alert.user_email}</span>
                       </p>
                       
                       {/* Quick Details */}
                       <div className="mt-3 flex flex-wrap gap-4">
                         {Object.entries(alert.details).slice(0, 3).map(([key, value]) => (
                           <div key={key} className="text-xs">
-                            <span className="text-gray-500">{key.replace(/_/g, ' ')}: </span>
-                            <span className="text-white font-medium">
+                            <span className="text-heritage-muted">{key.replace(/_/g, ' ')}: </span>
+                            <span className="text-heritage-ink font-medium">
                               {Array.isArray(value) ? value.join(', ') : value}
                             </span>
                           </div>
@@ -221,14 +221,14 @@ const FraudAlerts = () => {
                 <div className="flex flex-col space-y-2 ml-6">
                   <button
                     onClick={() => handleInvestigate(alert)}
-                    className="flex items-center space-x-2 px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 font-medium rounded-lg transition-colors text-sm border border-blue-500/30"
+                    className="flex items-center space-x-2 px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 text-blue-700 font-medium rounded-lg transition-colors text-sm border border-blue-500/30"
                   >
                     <Eye className="w-4 h-4" />
                     <span>Investigate</span>
                   </button>
                   <button
                     onClick={() => handleDismiss(alert.id)}
-                    className="flex items-center space-x-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 font-medium rounded-lg transition-colors text-sm"
+                    className="flex items-center space-x-2 px-4 py-2 bg-card-hover hover:bg-card-hover text-heritage-ink font-medium rounded-lg transition-colors text-sm"
                   >
                     <X className="w-4 h-4" />
                     <span>Dismiss</span>
@@ -251,9 +251,9 @@ const FraudAlerts = () => {
 
           {/* Modal */}
           <div className="flex min-h-full items-center justify-center p-4">
-            <div className="relative bg-gray-800 rounded-xl shadow-2xl border border-gray-700 w-full max-w-2xl">
+            <div className="relative bg-card rounded-xl shadow-2xl border border-card-border w-full max-w-2xl">
               {/* Header */}
-              <div className="flex items-center justify-between p-5 border-b border-gray-700">
+              <div className="flex items-center justify-between p-5 border-b border-card-border">
                 <div className="flex items-center space-x-3">
                   <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
                     selectedAlert.severity === 'critical' ? 'bg-red-500/20' :
@@ -263,17 +263,17 @@ const FraudAlerts = () => {
                     {getTypeIcon(selectedAlert.type)}
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-white">
+                    <h3 className="text-lg font-semibold text-heritage-ink">
                       {getTypeLabel(selectedAlert.type)}
                     </h3>
-                    <p className="text-sm text-gray-400">{selectedAlert.user_email}</p>
+                    <p className="text-sm text-heritage-muted">{selectedAlert.user_email}</p>
                   </div>
                 </div>
                 <button
                   onClick={() => setShowDetailsModal(false)}
-                  className="p-1 hover:bg-gray-700 rounded transition-colors"
+                  className="p-1 hover:bg-card-hover rounded transition-colors"
                 >
-                  <X className="w-5 h-5 text-gray-400" />
+                  <X className="w-5 h-5 text-heritage-muted" />
                 </button>
               </div>
 
@@ -281,19 +281,19 @@ const FraudAlerts = () => {
               <div className="p-5">
                 <div className="space-y-4">
                   <div>
-                    <h4 className="text-sm font-semibold text-white mb-2">Description</h4>
-                    <p className="text-sm text-gray-300">{selectedAlert.description}</p>
+                    <h4 className="text-sm font-semibold text-heritage-ink mb-2">Description</h4>
+                    <p className="text-sm text-heritage-ink">{selectedAlert.description}</p>
                   </div>
 
                   <div>
-                    <h4 className="text-sm font-semibold text-white mb-2">Details</h4>
-                    <div className="bg-gray-900 rounded-lg p-4 space-y-2">
+                    <h4 className="text-sm font-semibold text-heritage-ink mb-2">Details</h4>
+                    <div className="bg-card rounded-lg p-4 space-y-2">
                       {Object.entries(selectedAlert.details).map(([key, value]) => (
                         <div key={key} className="flex justify-between">
-                          <span className="text-sm text-gray-400">
+                          <span className="text-sm text-heritage-muted">
                             {key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:
                           </span>
-                          <span className="text-sm text-white font-medium">
+                          <span className="text-sm text-heritage-ink font-medium">
                             {Array.isArray(value) ? value.join(', ') : value}
                           </span>
                         </div>
@@ -302,15 +302,15 @@ const FraudAlerts = () => {
                   </div>
 
                   <div>
-                    <h4 className="text-sm font-semibold text-white mb-2">Severity Level</h4>
+                    <h4 className="text-sm font-semibold text-heritage-ink mb-2">Severity Level</h4>
                     <span className={`inline-flex px-3 py-1 rounded-full text-sm font-medium border ${getSeverityColor(selectedAlert.severity)}`}>
                       {selectedAlert.severity.toUpperCase()}
                     </span>
                   </div>
 
                   <div>
-                    <h4 className="text-sm font-semibold text-white mb-2">Detected</h4>
-                    <p className="text-sm text-gray-300">
+                    <h4 className="text-sm font-semibold text-heritage-ink mb-2">Detected</h4>
+                    <p className="text-sm text-heritage-ink">
                       {new Date(selectedAlert.created_at).toLocaleString()}
                     </p>
                   </div>
@@ -318,10 +318,10 @@ const FraudAlerts = () => {
               </div>
 
               {/* Footer */}
-              <div className="flex items-center justify-end space-x-3 p-5 border-t border-gray-700">
+              <div className="flex items-center justify-end space-x-3 p-5 border-t border-card-border">
                 <button
                   onClick={() => handleResolve(selectedAlert.id, 'false_positive')}
-                  className="px-4 py-2 text-sm text-gray-400 hover:bg-gray-700 rounded-lg transition-colors"
+                  className="px-4 py-2 text-sm text-heritage-muted hover:bg-card-hover rounded-lg transition-colors"
                 >
                   Mark as False Positive
                 </button>

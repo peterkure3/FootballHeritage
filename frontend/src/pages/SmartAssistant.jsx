@@ -42,7 +42,7 @@ const BetCardComponent = ({ bet }) => {
   const confidenceBadgeStyle = {
     High: { borderColor: 'rgba(16, 185, 129, 0.4)', color: '#34d399', background: 'rgba(16, 185, 129, 0.1)' },
     Medium: { borderColor: 'rgba(234, 179, 8, 0.4)', color: '#facc15', background: 'rgba(234, 179, 8, 0.1)' },
-    Low: { borderColor: 'rgba(148, 163, 184, 0.4)', color: '#94a3b8', background: 'rgba(148, 163, 184, 0.1)' },
+    Low: { borderColor: 'rgba(148, 163, 184, 0.4)', color: '#69746c', background: 'rgba(148, 163, 184, 0.1)' },
   };
 
   return (
@@ -51,9 +51,9 @@ const BetCardComponent = ({ bet }) => {
     >
       <div className="flex justify-between items-start mb-2">
         <div>
-          <p className="text-xs" style={{ color: '#64748b' }}>{bet.competition || 'Football'}</p>
-          <p className="text-sm font-semibold text-white">{bet.home_team} vs {bet.away_team}</p>
-          <p className="text-xs" style={{ color: '#94a3b8' }}>{formatDate(bet.match_date)}</p>
+          <p className="text-xs" style={{ color: '#69746c' }}>{bet.competition || 'Football'}</p>
+          <p className="text-sm font-semibold text-heritage-ink">{bet.home_team} vs {bet.away_team}</p>
+          <p className="text-xs" style={{ color: '#69746c' }}>{formatDate(bet.match_date)}</p>
         </div>
         <span className="px-2 py-0.5 rounded text-xs font-semibold border"
           style={confidenceBadgeStyle[bet.confidence]}
@@ -65,25 +65,25 @@ const BetCardComponent = ({ bet }) => {
         style={{ borderColor: 'var(--color-card-border)' }}
       >
         <div>
-          <p className="text-xs" style={{ color: '#64748b' }}>Bet On</p>
+          <p className="text-xs" style={{ color: '#69746c' }}>Bet On</p>
           <p className="text-sm font-bold" style={{ color: '#34d399' }}>{bet.selection}</p>
         </div>
         <div className="text-right">
-          <p className="text-xs" style={{ color: '#64748b' }}>Edge</p>
+          <p className="text-xs" style={{ color: '#69746c' }}>Edge</p>
           <p className="text-lg font-bold" style={{ color: '#34d399' }}>+{bet.edge_pct}%</p>
         </div>
       </div>
       <div className="grid grid-cols-3 gap-2 mt-2 text-center">
         <div className="rounded p-1" style={{ background: 'rgba(0, 0, 0, 0.2)' }}>
-          <p className="text-xs" style={{ color: '#64748b' }}>Odds</p>
-          <p className="text-sm font-semibold text-white">{bet.decimal_odds}</p>
+          <p className="text-xs" style={{ color: '#69746c' }}>Odds</p>
+          <p className="text-sm font-semibold text-heritage-ink">{bet.decimal_odds}</p>
         </div>
         <div className="rounded p-1" style={{ background: 'rgba(0, 0, 0, 0.2)' }}>
-          <p className="text-xs" style={{ color: '#64748b' }}>Stake</p>
-          <p className="text-sm font-semibold text-white">${bet.recommended_stake}</p>
+          <p className="text-xs" style={{ color: '#69746c' }}>Stake</p>
+          <p className="text-sm font-semibold text-heritage-ink">${bet.recommended_stake}</p>
         </div>
         <div className="rounded p-1" style={{ background: 'rgba(0, 0, 0, 0.2)' }}>
-          <p className="text-xs" style={{ color: '#64748b' }}>EV</p>
+          <p className="text-xs" style={{ color: '#69746c' }}>EV</p>
           <p className="text-sm font-semibold" style={{ color: '#34d399' }}>${bet.expected_value}</p>
         </div>
       </div>
@@ -99,14 +99,14 @@ const PredictionCardComponent = ({ prediction }) => {
       style={{ background: 'var(--color-card)', borderColor: 'var(--color-card-border)' }}
     >
       <div className="text-center mb-3">
-        <p className="text-lg font-bold text-white">
+        <p className="text-lg font-bold text-heritage-ink">
           {prediction.home_team} vs {prediction.away_team}
         </p>
-        <p className="text-sm" style={{ color: '#94a3b8' }}>Confidence: {prediction.confidence}</p>
+        <p className="text-sm" style={{ color: '#69746c' }}>Confidence: {prediction.confidence}</p>
       </div>
       <div className="space-y-2">
         <div className="flex items-center gap-2">
-          <span className="text-sm w-20" style={{ color: '#94a3b8' }}>{prediction.home_team.split(' ')[0]}</span>
+          <span className="text-sm w-20" style={{ color: '#69746c' }}>{prediction.home_team.split(' ')[0]}</span>
           <div className="flex-1 rounded-full h-4 overflow-hidden" style={{ background: 'rgba(148, 163, 184, 0.15)' }}>
             <div className="h-full rounded-full"
               style={{
@@ -115,12 +115,12 @@ const PredictionCardComponent = ({ prediction }) => {
               }}
             />
           </div>
-          <span className="text-sm font-semibold text-white w-12 text-right">
+          <span className="text-sm font-semibold text-heritage-ink w-12 text-right">
             {(prediction.home_prob * 100).toFixed(0)}%
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-sm w-20" style={{ color: '#94a3b8' }}>Draw</span>
+          <span className="text-sm w-20" style={{ color: '#69746c' }}>Draw</span>
           <div className="flex-1 rounded-full h-4 overflow-hidden" style={{ background: 'rgba(148, 163, 184, 0.15)' }}>
             <div className="h-full rounded-full"
               style={{
@@ -129,12 +129,12 @@ const PredictionCardComponent = ({ prediction }) => {
               }}
             />
           </div>
-          <span className="text-sm font-semibold text-white w-12 text-right">
+          <span className="text-sm font-semibold text-heritage-ink w-12 text-right">
             {(prediction.draw_prob * 100).toFixed(0)}%
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-sm w-20" style={{ color: '#94a3b8' }}>{prediction.away_team.split(' ')[0]}</span>
+          <span className="text-sm w-20" style={{ color: '#69746c' }}>{prediction.away_team.split(' ')[0]}</span>
           <div className="flex-1 rounded-full h-4 overflow-hidden" style={{ background: 'rgba(148, 163, 184, 0.15)' }}>
             <div className="h-full rounded-full"
               style={{
@@ -143,7 +143,7 @@ const PredictionCardComponent = ({ prediction }) => {
               }}
             />
           </div>
-          <span className="text-sm font-semibold text-white w-12 text-right">
+          <span className="text-sm font-semibold text-heritage-ink w-12 text-right">
             {(prediction.away_prob * 100).toFixed(0)}%
           </span>
         </div>
@@ -157,12 +157,12 @@ const MatchCardComponent = ({ match }) => (
     style={{ background: 'var(--color-card)', borderColor: 'var(--color-card-border)' }}
   >
     <div>
-      <p className="text-sm font-semibold text-white">{match.home_team} vs {match.away_team}</p>
-      <p className="text-xs" style={{ color: '#64748b' }}>{match.competition || 'Football'}</p>
+      <p className="text-sm font-semibold text-heritage-ink">{match.home_team} vs {match.away_team}</p>
+      <p className="text-xs" style={{ color: '#69746c' }}>{match.competition || 'Football'}</p>
     </div>
     <div className="text-right">
-      <p className="text-sm" style={{ color: '#94a3b8' }}>{formatDate(match.match_date)}</p>
-      <p className="text-xs" style={{ color: '#64748b' }}>{match.status || 'Scheduled'}</p>
+      <p className="text-sm" style={{ color: '#69746c' }}>{formatDate(match.match_date)}</p>
+      <p className="text-xs" style={{ color: '#69746c' }}>{match.status || 'Scheduled'}</p>
     </div>
   </div>
 );
@@ -300,8 +300,8 @@ const SmartAssistant = () => {
               <Bot className="w-6 h-6" style={{ color: '#10b981' }} />
             </div>
             <div>
-              <h1 className="text-2xl font-[Oswald] tracking-tight text-white">Smart Betting Assistant</h1>
-              <p className="text-sm" style={{ color: '#64748b' }}>AI-powered picks, predictions & analysis</p>
+              <h1 className="text-2xl font-display tracking-tight text-heritage-ink">Smart Betting Assistant</h1>
+              <p className="text-sm" style={{ color: '#69746c' }}>AI-powered picks, predictions & analysis</p>
             </div>
           </div>
         </header>
@@ -345,7 +345,7 @@ const SmartAssistant = () => {
                       style={message.type === 'user' ? {} : { background: 'var(--color-card)' }}
                     >
                       {message.type === 'user' ? (
-                        <User className="w-4 h-4 text-white" />
+                        <User className="w-4 h-4 text-heritage-ink" />
                       ) : (
                         <Bot className="w-4 h-4" style={{ color: '#10b981' }} />
                       )}
@@ -363,7 +363,7 @@ const SmartAssistant = () => {
                         message.type === 'user'
                           ? {}
                           : message.type === 'error'
-                          ? { background: 'rgba(239, 68, 68, 0.08)', color: '#fca5a5', borderColor: 'rgba(239, 68, 68, 0.2)' }
+                          ? { background: 'rgba(239, 68, 68, 0.08)', color: '#b42318', borderColor: 'rgba(239, 68, 68, 0.2)' }
                           : { background: 'var(--color-card)', color: '#cbd5e1' }
                       }
                     >
@@ -371,7 +371,7 @@ const SmartAssistant = () => {
                         {message.content}
                       </div>
                       <div className="text-xs mt-2"
-                        style={{ color: message.type === 'user' ? '#86efac' : '#64748b' }}
+                        style={{ color: message.type === 'user' ? '#86efac' : '#69746c' }}
                       >
                         {formatTime(message.timestamp)}
                       </div>
@@ -447,7 +447,7 @@ const SmartAssistant = () => {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ask about bets, predictions, or teams..."
-                className="flex-1 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-all"
+                className="flex-1 rounded-lg px-4 py-3 text-heritage-ink placeholder-gray-500 focus:outline-none focus:ring-2 transition-all"
                 style={{ background: 'var(--color-card)', border: '1px solid var(--color-card-border)', '--tw-ring-color': '#10b981' }}
                 disabled={isLoading}
                 maxLength={500}
@@ -456,7 +456,7 @@ const SmartAssistant = () => {
                 type="submit"
                 disabled={!input.trim() || isLoading}
                 className="text-white font-semibold rounded-lg py-3 px-4 transition-all hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}
+                style={{ background: 'linear-gradient(135deg, #177c4c, #147b4c)' }}
               >
                 <Send className="w-5 h-5" />
               </button>
