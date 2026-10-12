@@ -4,19 +4,20 @@ Transfers matches and odds from pipeline DB to backend's events table.
 """
 
 import sys
-import io
+import argparse
+import os
 from pathlib import Path
-from datetime import datetime
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 import uuid
 
 import psycopg2
-from psycopg2.extras import execute_batch
-from psycopg2.extensions import register_adapter
+from psycopg2.extensions import parse_dsn
+from dotenv import dotenv_values
 import logging
 
 # Fix Windows console encoding
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8')
 
 # Setup logging
 logging.basicConfig(
@@ -108,7 +109,38 @@ def get_sport_from_competition(competition: str) -> str:
     return standardize_sport_name(competition)
 
 
-def sync_matches_to_backend():
+def connection_settings(env_file: Path, prefix: str, database: str,
+                        host: Optional[str] = None,
+                        port: Optional[int] = None) -> Dict[str, object]:
+    """Resolve each database independently without changing process environment."""
+    values = dotenv_values(env_file)
+    dsn = os.getenv(f'{prefix}_DATABASE_URL') or values.get('DATABASE_URL')
+    if not env_file.is_file() and not dsn:
+        raise ValueError(f'Missing database configuration: {env_file}')
+    settings = dict(parse_dsn(dsn)) if dsn else {
+        'host': values.get('DB_HOST') or 'localhost',
+        'port': values.get('DB_PORT') or '5432',
+        'dbname': values.get('DB_NAME') or values.get('POSTGRES_DB') or database,
+        'user': values.get('DB_USER') or values.get('POSTGRES_USER') or 'postgres',
+        'password': values.get('DB_PASSWORD') or values.get('POSTGRES_PASSWORD') or '',
+    }
+    for field, suffix in [('host', 'HOST'), ('port', 'PORT'), ('dbname', 'NAME'),
+                          ('user', 'USER'), ('password', 'PASSWORD')]:
+        override = os.getenv(f'{prefix}_DB_{suffix}')
+        if override is not None:
+            settings[field] = override
+    if host is not None:
+        settings['host'] = host
+    if port is not None:
+        settings['port'] = str(port)
+    settings['connect_timeout'] = 10
+    return settings
+
+
+def sync_matches_to_backend(pipeline_settings: Optional[Dict[str, object]] = None,
+                            backend_settings: Optional[Dict[str, object]] = None,
+                            dry_run: bool = False,
+                            limit: Optional[int] = None) -> Dict[str, int]:
     """Main sync function."""
     logger.info("=" * 60)
     logger.info("STARTING PIPELINE → BACKEND SYNC")
@@ -121,26 +153,23 @@ def sync_matches_to_backend():
     try:
         # Connect to pipeline database
         logger.info("Connecting to pipeline database...")
-        pipeline_conn = psycopg2.connect(
-            host='localhost',
-            port=5432,
-            database='football_betting',
-            user='postgres',
-            password='jumpman13'
-        )
+        base = Path(__file__).resolve().parent
+        pipeline_conn = psycopg2.connect(**(pipeline_settings or connection_settings(
+            base / '.env', 'PIPELINE', 'football_betting')))
+        pipeline_conn.set_session(readonly=True)
         
         # Connect to backend database
         logger.info("Connecting to backend database...")
-        backend_conn = psycopg2.connect(
-            host='localhost',
-            port=5432,
-            database='football_heritage',
-            user='postgres',
-            password='jumpman13'
-        )
+        backend_conn = psycopg2.connect(**(backend_settings or connection_settings(
+            base.parent / 'backend' / '.env', 'BACKEND', 'football_heritage')))
+        backend_conn.set_session(readonly=dry_run)
         
         pipeline_cur = pipeline_conn.cursor()
         backend_cur = backend_conn.cursor()
+        pipeline_cur.execute("SET TIME ZONE 'UTC'")
+        backend_cur.execute("SET TIME ZONE 'UTC'")
+        if not dry_run:
+            backend_cur.execute('SELECT pg_advisory_xact_lock(7160413)')
         
         # Fetch all matches from pipeline with odds
         logger.info("Fetching matches and odds from pipeline database...")
@@ -163,7 +192,12 @@ def sync_matches_to_backend():
                 o.away_win,
                 'SOCCER' as sport_type  -- Standardized sport type
             FROM matches m
-            LEFT JOIN odds o ON m.match_id = o.match_id
+            LEFT JOIN LATERAL (
+                SELECT home_win, draw, away_win FROM odds
+                WHERE match_id = m.match_id
+                ORDER BY updated_at DESC NULLS LAST, id DESC
+                LIMIT 1
+            ) o ON TRUE
             WHERE m.match_id IS NOT NULL
                 AND m.date IS NOT NULL
                 AND m.home_team IS NOT NULL
@@ -201,7 +235,8 @@ def sync_matches_to_backend():
                 AND away_team IS NOT NULL
             
             ORDER BY date DESC
-        """)
+            LIMIT %s
+        """, (limit,))
         
         matches = pipeline_cur.fetchall()
         logger.info(f"Found {len(matches)} matches to sync (including NBA games)")
@@ -217,10 +252,9 @@ def sync_matches_to_backend():
         
         if not matches:
             logger.warning("No matches to sync")
-            return
+            return {'total': 0, 'synced': 0, 'skipped': 0}
         
         # Prepare data for backend
-        events_to_insert = []
         synced_count = 0
         skipped_count = 0
         
@@ -240,7 +274,10 @@ def sync_matches_to_backend():
                 status_map = {
                     'FINISHED': 'FINISHED',
                     'SCHEDULED': 'UPCOMING',
+                    'TIMED': 'UPCOMING',
                     'LIVE': 'LIVE',
+                    'IN_PLAY': 'LIVE',
+                    'PAUSED': 'LIVE',
                     'POSTPONED': 'CANCELLED',
                     'CANCELLED': 'CANCELLED'
                 }
@@ -257,37 +294,64 @@ def sync_matches_to_backend():
                     except (ValueError, ZeroDivisionError) as e:
                         logger.warning(f"Could not convert odds for match {match_id}: {e}")
                 
-                # Check if event already exists (by home_team, away_team, and date)
+                source = 'football_pipeline' if sport == 'SOCCER' else 'nba_pipeline'
+                # Prefer provider identity so a changed kickoff keeps the event ID.
                 backend_cur.execute("""
-                    SELECT id FROM events 
-                    WHERE home_team = %s 
-                    AND away_team = %s 
-                    AND event_date = %s
-                """, (home_team, away_team, date))
-                
+                    SELECT id FROM events
+                    WHERE external_source = %s AND external_id = %s
+                """, (source, match_id))
                 existing = backend_cur.fetchone()
+                if not existing:
+                    backend_cur.execute("""
+                        SELECT id FROM events
+                        WHERE home_team = %s AND away_team = %s AND event_date = %s
+                          AND sport = %s
+                          AND (external_source IS NULL OR external_source = %s)
+                          AND (external_id IS NULL OR external_id = %s)
+                        ORDER BY id LIMIT 2
+                    """, (home_team, away_team, date, sport, source, match_id))
+                    candidates = backend_cur.fetchall()
+                    if len(candidates) > 1:
+                        raise ValueError('Ambiguous existing fixture; resolve duplicates first')
+                    existing = candidates[0] if candidates else None
                 
+                if dry_run:
+                    logger.info('Would %s event: %s vs %s (%s)',
+                                'update' if existing else 'insert', home_team, away_team, date)
+                    synced_count += 1
+                    continue
+
                 if existing:
                     # Update existing event
                     backend_cur.execute("""
                         UPDATE events SET
                             sport = %s,
                             league = %s,
+                            event_date = %s,
+                            home_team = %s,
+                            away_team = %s,
                             status = %s,
                             home_score = %s,
                             away_score = %s,
-                            moneyline_home = %s,
-                            moneyline_away = %s,
+                            moneyline_home = COALESCE(%s, moneyline_home),
+                            moneyline_away = COALESCE(%s, moneyline_away),
+                            external_source = %s,
+                            external_id = %s,
                             updated_at = CURRENT_TIMESTAMP
                         WHERE id = %s
                     """, (
                         sport,
                         competition,
+                        date,
+                        home_team,
+                        away_team,
                         backend_status,
                         home_score,
                         away_score,
                         moneyline_home,
                         moneyline_away,
+                        source,
+                        match_id,
                         existing[0]
                     ))
                     logger.debug(f"Updated event: {home_team} vs {away_team}")
@@ -298,9 +362,10 @@ def sync_matches_to_backend():
                         INSERT INTO events (
                             id, sport, league, home_team, away_team, event_date,
                             status, home_score, away_score, moneyline_home, moneyline_away,
+                            external_source, external_id,
                             created_at, updated_at
                         ) VALUES (
-                            %s::uuid, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
+                            %s::uuid, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
                             CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
                         )
                     """, (
@@ -314,26 +379,27 @@ def sync_matches_to_backend():
                         home_score,
                         away_score,
                         moneyline_home,
-                        moneyline_away
+                        moneyline_away,
+                        source,
+                        match_id
                     ))
                     logger.debug(f"Inserted event: {home_team} vs {away_team}")
                 
-                # Commit after each successful insert/update
-                backend_conn.commit()
                 synced_count += 1
                 
             except Exception as e:
-                # Rollback this transaction and continue
                 backend_conn.rollback()
                 logger.error(f"Error processing match {match_id}: {e}")
-                skipped_count += 1
-                continue
+                raise
         
         # Commit changes
-        backend_conn.commit()
+        if dry_run:
+            backend_conn.rollback()
+        else:
+            backend_conn.commit()
         
         logger.info("=" * 60)
-        logger.info(f"✓ Sync completed successfully!")
+        logger.info('Preview completed (no writes)' if dry_run else 'Sync completed successfully')
         logger.info(f"  Total matches processed: {len(matches)}")
         logger.info(f"  Successfully synced: {synced_count}")
         logger.info(f"  Skipped (errors): {skipped_count}")
@@ -365,12 +431,13 @@ def sync_matches_to_backend():
         logger.info("Events by status:")
         for status, count in status_counts:
             logger.info(f"  {status}: {count}")
+        return {'total': len(matches), 'synced': synced_count, 'skipped': skipped_count}
         
     except Exception as e:
         logger.error(f"Sync failed: {e}", exc_info=True)
         if backend_conn:
             backend_conn.rollback()
-        sys.exit(1)
+        raise
         
     finally:
         # Close connections
@@ -381,10 +448,25 @@ def sync_matches_to_backend():
         logger.info("Database connections closed")
 
 
-def main():
+def main() -> None:
     """Main entry point."""
+    base = Path(__file__).resolve().parent
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--pipeline-env', type=Path, default=base / '.env')
+    parser.add_argument('--backend-env', type=Path, default=base.parent / 'backend' / '.env')
+    parser.add_argument('--pipeline-host')
+    parser.add_argument('--pipeline-port', type=int)
+    parser.add_argument('--dry-run', action='store_true', help='Read-only preview; no backend writes')
+    parser.add_argument('--limit', type=int, help='Maximum fixtures to preview or sync')
+    args = parser.parse_args()
+    if args.limit is not None and args.limit < 1:
+        parser.error('--limit must be positive')
     try:
-        sync_matches_to_backend()
+        pipeline_settings = connection_settings(args.pipeline_env, 'PIPELINE',
+                                                'football_betting', args.pipeline_host,
+                                                args.pipeline_port)
+        backend_settings = connection_settings(args.backend_env, 'BACKEND', 'football_heritage')
+        sync_matches_to_backend(pipeline_settings, backend_settings, args.dry_run, args.limit)
     except Exception as e:
         logger.error(f"Fatal error: {e}", exc_info=True)
         sys.exit(1)

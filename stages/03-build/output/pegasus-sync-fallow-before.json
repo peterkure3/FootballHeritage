@@ -1,0 +1,16 @@
+{
+  "kind": "audit",
+  "version": "3.33.1",
+  "command": "audit",
+  "summary": {
+    "dead_code_issues": 1,
+    "dead_code_has_errors": true,
+    "complexity_findings": 11,
+    "max_cyclomatic": 24,
+    "duplication_clone_groups": 1
+  },
+  "snapshot": "metrics-only; source snippets excluded to prevent credential copies",
+  "collection_sizes": {
+    "next_steps": 2
+  }
+}

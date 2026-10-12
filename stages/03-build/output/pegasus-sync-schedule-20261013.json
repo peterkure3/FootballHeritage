@@ -1,0 +1,12 @@
+{
+    "task":  "FootballHeritagePegasusSync",
+    "state":  "Ready",
+    "last_result":  0,
+    "last_run":  "2026-10-13T00:52:54.0000000+03:00",
+    "next_run":  "2026-10-13T01:22:54.0000000+03:00",
+    "intervals":  [
+                      "PT30M"
+                  ],
+    "fresh_key_tunnel_preview_exit":  0,
+    "logon_type":  "Interactive"
+}

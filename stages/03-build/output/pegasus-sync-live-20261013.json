@@ -1,0 +1,18 @@
+{
+  "verified_at": "2026-10-12T21:41:20.535883+00:00",
+  "source_fixtures": 20,
+  "sync": {
+    "total": 20,
+    "synced": 20,
+    "skipped": 0
+  },
+  "verified_backend_fixtures": 20,
+  "preserved_event_ids": 20,
+  "preserved_price_pairs": 20,
+  "repeat_preview": {
+    "total": 20,
+    "synced": 20,
+    "skipped": 0
+  },
+  "before_snapshot": "events-before-pegasus-20261012T214119919845Z.json"
+}

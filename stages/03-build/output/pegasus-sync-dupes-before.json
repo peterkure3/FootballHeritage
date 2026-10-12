@@ -1,0 +1,13 @@
+{
+  "kind": "dupes",
+  "version": "3.33.1",
+  "command": null,
+  "summary": null,
+  "snapshot": "metrics-only; source snippets excluded to prevent credential copies",
+  "collection_sizes": {
+    "clone_groups": 214,
+    "clone_families": 120,
+    "workspace_diagnostics": 1,
+    "next_steps": 3
+  }
+}
