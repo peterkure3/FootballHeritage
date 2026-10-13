@@ -2,6 +2,11 @@
 
 ## Result
 
+Schedule follow-up: the user changed Pegasus's timer to 08:00 Africa/Kampala
+on 2026-10-13 and verified the next run as 2026-10-14 08:00 EAT. The earlier
+06:00 verification below records the initial setup. Windows synchronization
+remains at sign-in and every 30 minutes while the Windows user is signed in.
+
 Prepared Windows-side synchronization from Pegasus PostgreSQL through SSH to
 the existing backend database. `scripts/sync_pegasus.ps1` previews by default;
 `-Apply` uses a single transaction. Setup commands and connection behavior are

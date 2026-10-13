@@ -1,6 +1,6 @@
 # Pegasus to Windows backend synchronization
 
-Pegasus collects Premier League fixtures/results daily at 06:00 Africa/Kampala.
+Pegasus collects Premier League fixtures/results daily at 08:00 Africa/Kampala.
 Its PostgreSQL container is `fh-pegasus-db`, listening on Pegasus loopback port
 55432. The Windows backend uses its existing `backend/.env` configuration.
 
@@ -97,6 +97,10 @@ Start-ScheduledTask -TaskName FootballHeritagePegasusSync
   predictions, accounts, balances or bets. Odds collection on Pegasus awaits quota.
 
 ## Verification recorded 2026-10-13
+
+The collection schedule was changed from 06:00 to 08:00 Africa/Kampala on
+2026-10-13. The user verified the next timer run as 2026-10-14 08:00 EAT.
+The Windows sync still runs at sign-in and every 30 minutes while signed in.
 
 Six regression tests passed, including live PostgreSQL tests in disposable
 schemas for preview, latest-odds selection, unchanged odds, rescheduled event
