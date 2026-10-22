@@ -120,7 +120,7 @@ pub async fn deposit(
 
     // Get current balance or create wallet if doesn't exist
     let wallet_result: Result<(Uuid, String, String), sqlx::Error> = sqlx::query_as(
-        "SELECT id, encrypted_balance, encryption_iv FROM wallets WHERE user_id = $1",
+        "SELECT id, encrypted_balance, encryption_iv FROM wallets WHERE user_id = $1 FOR UPDATE",
     )
     .bind(user_id)
     .fetch_one(&mut *tx)
@@ -239,7 +239,7 @@ pub async fn withdraw(
 
     // Get current balance or create wallet if doesn't exist
     let wallet_result: Result<(Uuid, String, String), sqlx::Error> = sqlx::query_as(
-        "SELECT id, encrypted_balance, encryption_iv FROM wallets WHERE user_id = $1",
+        "SELECT id, encrypted_balance, encryption_iv FROM wallets WHERE user_id = $1 FOR UPDATE",
     )
     .bind(user_id)
     .fetch_one(&mut *tx)

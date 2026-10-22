@@ -83,10 +83,6 @@ where
                 // Extract token
                 if let Some(token) = auth_header.strip_prefix("Bearer ") {
                     // Validate token
-                    info!(
-                        "Validating token for admin access: {}...",
-                        &token[..20.min(token.len())]
-                    );
                     match auth_service.validate_token(token) {
                         Ok(claims) => {
                             info!(
@@ -94,7 +90,15 @@ where
                                 claims.email, claims.role
                             );
                             // Check if user has admin or superadmin role
-                            if claims.role == "admin" || claims.role == "superadmin" {
+                            let current_admin = match req
+                                .app_data::<actix_web::web::Data<sqlx::PgPool>>()
+                            {
+                                Some(pool) => crate::features::administrator(req.request(), pool)
+                                    .await
+                                    .is_ok(),
+                                None => false,
+                            };
+                            if current_admin {
                                 // Store claims in request extensions for later use
                                 req.extensions_mut().insert(claims.clone());
 

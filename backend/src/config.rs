@@ -156,6 +156,36 @@ impl AppConfig {
         if !config.validate_jwt_secret() {
             return Err(anyhow::anyhow!("JWT_SECRET must be at least 32 characters"));
         }
+        if !config.validate_encryption_key() {
+            return Err(anyhow::anyhow!("ENCRYPTION_KEY must be exactly 32 bytes"));
+        }
+        if config.app_env.eq_ignore_ascii_case("production") {
+            if env::var("ALLOWED_ORIGINS").is_err()
+                || config.allowed_origins.is_empty()
+                || config.allowed_origins.iter().any(|origin| {
+                    reqwest::Url::parse(origin).map_or(true, |url| {
+                        url.scheme() != "https"
+                            || url.host_str().is_none()
+                            || url.host_str().is_some_and(|h| {
+                                h == "localhost" || h == "127.0.0.1" || h.contains('*')
+                            })
+                            || url.path() != "/"
+                            || url.query().is_some()
+                            || url.fragment().is_some()
+                            || !url.username().is_empty()
+                            || url.password().is_some()
+                            || origin.ends_with('/')
+                    })
+                })
+            {
+                return Err(anyhow::anyhow!("Production ALLOWED_ORIGINS must contain exact HTTPS origins without trailing slashes"));
+            }
+            if env::var("PIPELINE_INTERNAL_TOKEN").map_or(true, |s| s.len() < 32) {
+                return Err(anyhow::anyhow!(
+                    "Production PIPELINE_INTERNAL_TOKEN must contain at least 32 bytes"
+                ));
+            }
+        }
 
         Ok(config)
     }

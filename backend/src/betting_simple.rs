@@ -166,6 +166,7 @@ impl SimpleBettingService {
             SELECT id, encrypted_balance, encryption_iv
             FROM wallets
             WHERE user_id = $1
+            FOR UPDATE
             "#,
         )
         .bind(user_id)

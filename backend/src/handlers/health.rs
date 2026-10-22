@@ -16,3 +16,15 @@ pub async fn health_check(monitoring: web::Data<MonitoringService>) -> AppResult
 
     Ok(HttpResponse::Ok().json(health))
 }
+
+pub async fn readiness(pool: web::Data<sqlx::PgPool>) -> HttpResponse {
+    match sqlx::query_scalar::<_, i32>("SELECT 1")
+        .fetch_one(pool.get_ref())
+        .await
+    {
+        Ok(_) => HttpResponse::Ok().json(serde_json::json!({"status":"ready"})),
+        Err(_) => {
+            HttpResponse::ServiceUnavailable().json(serde_json::json!({"status":"unavailable"}))
+        }
+    }
+}

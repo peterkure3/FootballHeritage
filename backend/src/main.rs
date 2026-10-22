@@ -10,10 +10,12 @@ mod auth;
 mod betting_simple;
 mod config;
 mod crypto;
+mod features;
 mod errors;
 mod handlers;
 mod middleware;
 mod models;
+mod pipeline_gateway;
 mod monitoring;
 mod rates;
 mod utils;
@@ -50,8 +52,13 @@ async fn main() -> std::io::Result<()> {
 
     // Initialize database connection pool
     let db_pool = PgPoolOptions::new()
-        .max_connections(50)
-        .min_connections(10)
+        .max_connections(
+            std::env::var("DB_MAX_CONNECTIONS")
+                .unwrap_or_else(|_| "10".into())
+                .parse()
+                .map_err(|_| std::io::Error::other("Invalid DB_MAX_CONNECTIONS"))?,
+        )
+        .min_connections(1)
         .acquire_timeout(std::time::Duration::from_secs(30))
         .idle_timeout(std::time::Duration::from_secs(600))
         .max_lifetime(std::time::Duration::from_secs(1800))
@@ -171,6 +178,7 @@ async fn main() -> std::io::Result<()> {
             .app_data(monitoring_service.clone())
             .wrap(middleware::monitoring::Metrics::new(
                 monitoring_service.clone(),
+            .wrap(features::FeatureGate)
             ))
             .wrap(middleware::rate_limit::RateLimitMiddleware::new())
             .wrap(cors)
@@ -179,6 +187,11 @@ async fn main() -> std::io::Result<()> {
             .wrap(actix_web::middleware::NormalizePath::trim())
             .wrap(crate::middleware::security_headers::SecurityHeaders)
             .service(
+                    .route("/me/features", web::get().to(features::effective))
+                    .route(
+                        "/pipeline/{tail:.*}",
+                        web::route().to(pipeline_gateway::proxy),
+                    )
                 web::scope("/api/v1")
                     .service(
                         web::scope("/auth")
@@ -297,6 +310,7 @@ async fn main() -> std::io::Result<()> {
                             .route("/{id}", web::delete().to(handlers::parlay::delete_parlay)),
                     )
                     .service(
+                            .configure(features::configure_admin)
                         web::scope("/admin")
                             .wrap(middleware::admin_auth::RequireAdmin::new(Rc::new(
                                 auth_service_for_app.clone(),
@@ -362,6 +376,7 @@ async fn main() -> std::io::Result<()> {
                             ),
                     ),
             )
+            .route("/ready", web::get().to(handlers::health::readiness))
             .route("/health", web::get().to(handlers::health::health_check))
             .route("/metrics", web::get().to(handlers::monitoring::metrics))
             .default_service(web::route().to(handlers::not_found::not_found))
