@@ -5,6 +5,9 @@ Includes logging setup, retry logic, and common helpers.
 
 import json
 import logging
+import os
+import re
+import tempfile
 import time
 from datetime import datetime
 from functools import wraps
@@ -40,16 +43,22 @@ def setup_logger(name: str, log_level: str = "INFO") -> logging.Logger:
                     "timestamp": datetime.utcnow().isoformat(),
                     "module": record.name,
                     "level": record.levelname,
-                    "message": record.getMessage(),
+                    "message": redact_credentials(record.getMessage()),
                 }
                 if record.exc_info:
-                    log_data["exception"] = self.formatException(record.exc_info)
+                    log_data["exception"] = redact_credentials(self.formatException(record.exc_info))
                 return json.dumps(log_data)
         
         handler.setFormatter(JSONFormatter())
         logger.addHandler(handler)
     
     return logger
+
+
+def redact_credentials(message: str) -> str:
+    """Remove credentials from request URLs and provider error messages."""
+    return re.sub(r'(?i)(\b(?:api_?key|access_token|token)=)[^&\s\"\'<>]+',
+                  r'\1[REDACTED]', message)
 
 
 def retry_on_failure(
@@ -141,11 +150,18 @@ def save_json(data: Dict[str, Any], filepath: Path) -> None:
         filepath: Path to save JSON file
     """
     ensure_dir(filepath.parent)
-    with open(filepath, 'w', encoding='utf-8') as f:
-        json.dump(data, f, indent=2, ensure_ascii=False)
+    descriptor, temporary = tempfile.mkstemp(dir=filepath.parent, prefix=f'.{filepath.name}-')
+    try:
+        with os.fdopen(descriptor, 'w', encoding='utf-8') as stream:
+            json.dump(data, stream, indent=2, ensure_ascii=False)
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(temporary, filepath)
+    finally:
+        Path(temporary).unlink(missing_ok=True)
 
 
-def load_json(filepath: Path) -> Dict[str, Any]:
+def load_json(filepath: Path) -> Any:
     """
     Load JSON file.
     
@@ -155,8 +171,31 @@ def load_json(filepath: Path) -> Dict[str, Any]:
     Returns:
         Loaded dictionary
     """
-    with open(filepath, 'r', encoding='utf-8') as f:
-        return json.load(f)
+    try:
+        with open(filepath, 'r', encoding='utf-8-sig') as stream:
+            return json.load(stream)
+    except (ValueError, UnicodeError) as exc:
+        raise ValueError(f'Invalid JSON in {filepath}: {type(exc).__name__}') from exc
+
+
+def load_json_object(filepath: Path) -> Dict[str, Any]:
+    """Require an object for manifests and status while raw feeds may be lists."""
+    data = load_json(filepath)
+    if not isinstance(data, dict):
+        raise ValueError(f'Expected a JSON object in {filepath}')
+    return data
+
+
+def load_status_json(filepath: Path) -> Optional[Dict[str, Any]]:
+    """Keep optional collector telemetry from blocking settlement or collection."""
+    try:
+        return load_json_object(filepath)
+    except FileNotFoundError:
+        return None
+    except (ValueError, OSError) as exc:
+        setup_logger(__name__).warning('Collector status unavailable: %s (%s)', filepath, type(exc).__name__)
+        return {'outcome': 'unavailable', 'failed_steps': [],
+                'status_error': f'Cannot read collector status: {filepath} ({type(exc).__name__})'}
 
 
 def get_timestamp_str(fmt: str = "%Y-%m-%d") -> str:

@@ -37,7 +37,7 @@ class NcaabOddsFetcher:
         })
         ensure_dir(NCAAB_DATA_DIR)
     
-    def fetch_odds(self) -> list:
+    def fetch_odds(self) -> list | None:
         """
         Fetch NCAAB odds from The Odds API.
         
@@ -77,12 +77,12 @@ class NcaabOddsFetcher:
                 logger.warning("NCAAB odds not available (404) - may be off-season")
                 return []
             logger.error(f"HTTP error fetching NCAAB odds: {e}")
-            return []
+            return None
         except Exception as e:
             logger.error(f"Error fetching NCAAB odds: {e}")
-            return []
+            return None
     
-    def fetch_scores(self, days_from: int = 3) -> list:
+    def fetch_scores(self, days_from: int = 3) -> list | None:
         """
         Fetch NCAAB scores from The Odds API.
         
@@ -123,12 +123,12 @@ class NcaabOddsFetcher:
                 logger.warning("NCAAB scores not available (404) - may be off-season")
                 return []
             logger.error(f"HTTP error fetching NCAAB scores: {e}")
-            return []
+            return None
         except Exception as e:
             logger.error(f"Error fetching NCAAB scores: {e}")
-            return []
+            return None
     
-    def fetch_events(self) -> list:
+    def fetch_events(self) -> list | None:
         """
         Fetch upcoming NCAAB events (games) from The Odds API.
         
@@ -165,10 +165,10 @@ class NcaabOddsFetcher:
                 logger.warning("NCAAB events not available (404) - may be off-season")
                 return []
             logger.error(f"HTTP error fetching NCAAB events: {e}")
-            return []
+            return None
         except Exception as e:
             logger.error(f"Error fetching NCAAB events: {e}")
-            return []
+            return None
 
 
 def fetch_all_ncaab_data():
@@ -194,12 +194,12 @@ def fetch_all_ncaab_data():
     
     logger.info("=" * 60)
     logger.info(f"NCAAB Data Summary:")
-    logger.info(f"  - Odds records: {len(odds)}")
-    logger.info(f"  - Score records: {len(scores)}")
-    logger.info(f"  - Event records: {len(events)}")
+    logger.info(f"  - Odds records: {len(odds or [])}")
+    logger.info(f"  - Score records: {len(scores or [])}")
+    logger.info(f"  - Event records: {len(events or [])}")
     logger.info("=" * 60)
     
-    return True
+    return all(result is not None for result in [odds, scores, events])
 
 
 def main():
@@ -230,13 +230,17 @@ def main():
     
     try:
         if args.type == "all":
-            fetch_all_ncaab_data()
+            succeeded = fetch_all_ncaab_data()
         elif args.type == "odds":
-            fetcher.fetch_odds()
+            succeeded = fetcher.fetch_odds() is not None
         elif args.type == "scores":
-            fetcher.fetch_scores(days_from=args.days)
+            succeeded = fetcher.fetch_scores(days_from=args.days) is not None
         elif args.type == "events":
-            fetcher.fetch_events()
+            succeeded = fetcher.fetch_events() is not None
+
+        if not succeeded:
+            logger.error('NCAAB data fetch incomplete; see provider errors above')
+            sys.exit(1)
         
         logger.info("NCAAB data fetch completed successfully")
         

@@ -1,10 +1,9 @@
 import { apiFetch, PIPELINE_API_URL } from '../utils/api';
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import { createElement } from "react";
+import { Link } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import Navbar from "../components/Navbar";
-import LoadingSkeleton from "../components/LoadingSkeleton";
-import EmptyState from "../components/EmptyState";
 import {
   Trophy,
   Users,
@@ -15,249 +14,226 @@ import {
   Zap,
   RefreshCw,
   ChevronDown,
-  ChevronUp,
   AlertCircle,
   DollarSign,
+  ArrowUpRight,
 } from "lucide-react";
+import { Footer } from "../heritage/AppShell";
+import { DataState } from "../heritage/ui";
+import EditableTeam from "../components/fpl/EditableTeam";
+import useAuthStore from "../stores/authStore";
+import "./FPLAdvisor.css";
 
 
-
-const positionColors = {
-  GKP: "bg-yellow-500/20 text-yellow-700 border-yellow-500/40",
-  DEF: "bg-blue-500/20 text-blue-700 border-blue-500/40",
-  MID: "bg-green-500/20 text-green-700 border-green-500/40",
-  FWD: "bg-red-500/20 text-red-700 border-red-500/40",
+const tabs = [
+  {
+    id: "team",
+    label: "Optimal Team",
+    icon: Users,
+    description: "Your suggested starting eleven and bench.",
+  },
+  {
+    id: "captains",
+    label: "Captain Picks",
+    icon: Star,
+    description: "Compare the players to lead your gameweek.",
+  },
+  {
+    id: "positions",
+    label: "By Position",
+    icon: Shield,
+    description: "Find the right player for every part of your squad.",
+  },
+  {
+    id: "value",
+    label: "Value Picks",
+    icon: DollarSign,
+    description: "Make more of your budget with points-per-million insights.",
+  },
+  {
+    id: "differentials",
+    label: "Differentials",
+    icon: Zap,
+    description: "Explore high-potential players with less than 10% ownership.",
+  },
+];
+const positions = {
+  GKP: "Goalkeepers",
+  DEF: "Defenders",
+  MID: "Midfielders",
+  FWD: "Forwards",
 };
-
-
-const statusIcons = {
-  a: null,
-  d: <AlertCircle className="w-4 h-4 text-yellow-700" />,
-  i: <AlertCircle className="w-4 h-4 text-red-700" />,
-  s: <AlertCircle className="w-4 h-4 text-red-700" />,
-  u: <AlertCircle className="w-4 h-4 text-heritage-muted" />,
+const availability = {
+  d: "Doubtful",
+  i: "Injured",
+  s: "Suspended",
+  u: "Unavailable",
 };
+const metric = (value, digits = 1) =>
+  value == null || !Number.isFinite(Number(value))
+    ? "—"
+    : Number(value).toFixed(digits);
 
-const PlayerCard = ({ player, isCaptain = false, isViceCaptain = false }) => {
-  const [expanded, setExpanded] = useState(false);
-
+function PlayerCard({ player, captainId, viceCaptainId }) {
   return (
-    <div
-      className={`card-glow rounded-xl p-4 border transition-colors cursor-pointer ${
-        isCaptain ? "ring-1 ring-yellow-500/30" : ""
-      }`}
-      style={{
-        background: 'var(--color-card)',
-        borderColor: isCaptain
-          ? 'rgba(234, 179, 8, 0.6)'
-          : isViceCaptain
-            ? 'rgba(59, 130, 246, 0.6)'
-            : 'var(--color-card-border)'
-      }}
-      onClick={() => setExpanded(!expanded)}
-    >
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <span
-            className={`px-2 py-1 text-xs font-bold rounded border ${
-              positionColors[player.position] || "bg-gray-500/20 text-heritage-muted"
-            }`}
-          >
-            {player.position}
-          </span>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="font-semibold text-heritage-ink">{player.web_name}</span>
-              {isCaptain && (
-                <span className="px-1.5 py-0.5 text-xs font-bold bg-yellow-500 text-black rounded">C</span>
-              )}
-              {isViceCaptain && (
-                <span className="px-1.5 py-0.5 text-xs font-bold bg-blue-500 text-white rounded">V</span>
-              )}
-              {statusIcons[player.status]}
-            </div>
-            <span className="text-sm" style={{ color: '#69746c' }}>{player.team_name}</span>
-          </div>
-        </div>
-        <div className="text-right">
-          <div className="text-lg font-bold text-green-700">
-            {player.expected_points?.toFixed(1)} xPts
-          </div>
-          <div className="text-sm" style={{ color: '#69746c' }}>£{player.price}m</div>
-        </div>
-      </div>
-
-      {expanded && (
-        <div className="mt-3 pt-3 border-t grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm" style={{ borderColor: 'var(--color-card-border)' }}>
-          <div>
-            <span style={{ color: '#69746c' }}>Form</span>
-            <div className="font-semibold text-heritage-ink">{player.form}</div>
-          </div>
-          <div>
-            <span style={{ color: '#69746c' }}>PPG</span>
-            <div className="font-semibold text-heritage-ink">{player.points_per_game}</div>
-          </div>
-          <div>
-            <span style={{ color: '#69746c' }}>Total Pts</span>
-            <div className="font-semibold text-heritage-ink">{player.total_points}</div>
-          </div>
-          <div>
-            <span style={{ color: '#69746c' }}>Ownership</span>
-            <div className="font-semibold text-heritage-ink">{player.selected_by_percent}%</div>
-          </div>
-          <div>
-            <span style={{ color: '#69746c' }}>Value Score</span>
-            <div className="font-semibold text-green-700">{player.value_score?.toFixed(2)}</div>
-          </div>
-          <div>
-            <span style={{ color: '#69746c' }}>Fixture Diff</span>
-            <div className={`font-semibold ${
-              player.fixture_difficulty_avg <= 2.5 ? "text-green-700" :
-              player.fixture_difficulty_avg <= 3.5 ? "text-yellow-700" : "text-red-700"
-            }`}>
-              {player.fixture_difficulty_avg?.toFixed(1)}
-            </div>
-          </div>
-          {player.news && (
-            <div className="col-span-2 sm:col-span-4">
-              <span style={{ color: '#69746c' }}>News</span>
-              <div className="text-yellow-700 text-xs">{player.news}</div>
-            </div>
+    <details className="fpl-player">
+      <summary>
+        <span className={`fpl-position fpl-position-${player.position}`}>
+          {player.position}
+        </span>
+        <span className="fpl-player-name">
+          <strong>
+            {player.web_name}
+            {player.id === captainId && (
+              <span className="fpl-captain" title="Captain">
+                C
+              </span>
+            )}
+            {player.id === viceCaptainId && (
+              <span className="fpl-captain" title="Vice captain">
+                V
+              </span>
+            )}
+          </strong>
+          <small>
+            {player.team_name} · £{metric(player.price)}m
+          </small>
+          {availability[player.status] && (
+            <small className="fpl-availability">
+              <AlertCircle size={12} />
+              {availability[player.status]}
+            </small>
           )}
-        </div>
-      )}
-    </div>
-  );
-};
-
-const TeamFormation = ({ team }) => {
-  if (!team) return null;
-
-  const formation = team.formation;
-  const formationStr = `${formation.DEF}-${formation.MID}-${formation.FWD}`;
-
-  const groupedPlayers = {
-    GKP: team.starting_xi.filter((p) => p.position === "GKP"),
-    DEF: team.starting_xi.filter((p) => p.position === "DEF"),
-    MID: team.starting_xi.filter((p) => p.position === "MID"),
-    FWD: team.starting_xi.filter((p) => p.position === "FWD"),
-  };
-
-  return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-heritage-ink">Formation: {formationStr}</h3>
-        <div className="flex items-center gap-4 text-sm">
-          <span style={{ color: '#69746c' }}>
-            Cost: <span className="text-heritage-ink font-semibold">£{team.total_cost}m</span>
-          </span>
-          <span style={{ color: '#69746c' }}>
-            Expected: <span className="text-green-700 font-semibold">{team.expected_points} pts</span>
-          </span>
-        </div>
-      </div>
-
-      {/* Pitch visualization */}
-      <div className="card-glow rounded-xl p-4 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
-        {/* Forwards */}
-        <div className="flex justify-center gap-2 mb-4">
-          {groupedPlayers.FWD.map((p) => (
-            <PlayerCard
-              key={p.id}
-              player={p}
-              isCaptain={p.id === team.captain?.id}
-              isViceCaptain={p.id === team.vice_captain?.id}
-            />
-          ))}
-        </div>
-
-        {/* Midfielders */}
-        <div className="flex justify-center gap-2 mb-4 flex-wrap">
-          {groupedPlayers.MID.map((p) => (
-            <PlayerCard
-              key={p.id}
-              player={p}
-              isCaptain={p.id === team.captain?.id}
-              isViceCaptain={p.id === team.vice_captain?.id}
-            />
-          ))}
-        </div>
-
-        {/* Defenders */}
-        <div className="flex justify-center gap-2 mb-4 flex-wrap">
-          {groupedPlayers.DEF.map((p) => (
-            <PlayerCard
-              key={p.id}
-              player={p}
-              isCaptain={p.id === team.captain?.id}
-              isViceCaptain={p.id === team.vice_captain?.id}
-            />
-          ))}
-        </div>
-
-        {/* Goalkeeper */}
-        <div className="flex justify-center">
-          {groupedPlayers.GKP.map((p) => (
-            <PlayerCard key={p.id} player={p} />
-          ))}
-        </div>
-      </div>
-
-      {/* Bench */}
-      <div>
-        <h4 className="text-sm font-semibold mb-2" style={{ color: '#69746c' }}>Bench</h4>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
-          {team.bench?.map((p) => (
-            <PlayerCard key={p.id} player={p} />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const PlayerList = ({ title, players, icon: Icon, description }) => {
-  const [showAll, setShowAll] = useState(false);
-  const displayPlayers = showAll ? players : players?.slice(0, 5);
-
-  return (
-    <div className="card-glow rounded-xl p-4 border" style={{ animation: 'slide-up 0.4s ease-out 0.06s both', background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
-      <div className="flex items-center gap-2 mb-3">
-        {Icon && <Icon className="w-5 h-5 text-green-700" />}
-        <h3 className="text-lg font-semibold text-heritage-ink">{title}</h3>
-      </div>
-      {description && <p className="text-sm mb-3" style={{ color: '#69746c' }}>{description}</p>}
-
-      <div className="space-y-2">
-        {displayPlayers?.map((player) => (
-          <PlayerCard key={player.id} player={player} />
+        </span>
+        <span className="fpl-player-points">
+          <b>{metric(player.expected_points)}</b>
+          <small>xPts</small>
+        </span>
+        <ChevronDown size={14} className="fpl-disclosure" />
+      </summary>
+      <dl className="fpl-player-stats">
+        {[
+          ["Form", metric(player.form)],
+          ["Points / game", metric(player.points_per_game)],
+          ["Total points", metric(player.total_points, 0)],
+          ["Ownership", `${metric(player.selected_by_percent)}%`],
+          ["Value score", metric(player.value_score, 2)],
+          ["Fixture difficulty", metric(player.fixture_difficulty_avg)],
+        ].map(([label, value]) => (
+          <div key={label}>
+            <dt>{label}</dt>
+            <dd>{value}</dd>
+          </div>
         ))}
-      </div>
+      </dl>
+      {player.news && <p className="fpl-player-news">{player.news}</p>}
+    </details>
+  );
+}
 
-      {players?.length > 5 && (
+function PlayerList({ title, players = [], icon: Icon, description }) {
+  const [showAll, setShowAll] = useState(false);
+  const list = players || [];
+  return (
+    <section className="fh-card fpl-panel">
+      <div className="fpl-panel-heading">
+        {createElement(Icon, { size: 18 })}
+        <h3>{title}</h3>
+        <span>{list.length} players</span>
+      </div>
+      {description && <p className="fh-muted fpl-description">{description}</p>}
+      {list.length ? (
+        <div className="fpl-player-list">
+          {(showAll ? list : list.slice(0, 5)).map((player) => (
+            <PlayerCard key={player.id} player={player} />
+          ))}
+        </div>
+      ) : (
+        <DataState empty="No player recommendations available." />
+      )}
+      {list.length > 5 && (
         <button
+          className="fh-button fh-button-secondary fpl-show-more"
           onClick={() => setShowAll(!showAll)}
-          className="mt-3 w-full py-2 text-sm flex items-center justify-center gap-1 hover:text-heritage-ink transition-colors"
-          style={{ color: '#69746c' }}
+          aria-expanded={showAll}
         >
-          {showAll ? (
-            <>
-              Show Less <ChevronUp className="w-4 h-4" />
-            </>
-          ) : (
-            <>
-              Show All ({players.length}) <ChevronDown className="w-4 h-4" />
-            </>
-          )}
+          {showAll ? "Show less" : `Show all ${list.length} players`}
+          <ChevronDown size={14} />
         </button>
       )}
-    </div>
+    </section>
   );
-};
+}
 
-const FPLAdvisor = () => {
+function TeamFormation({ team }) {
+  return (
+    <>
+      <div className="fpl-metrics">
+        {[
+          ["Expected points", metric(team.expected_points)],
+          ["Team cost", `£${metric(team.total_cost)}m`],
+          ["Budget left", `£${metric(team.budget_remaining)}m`],
+          ["Captain", team.captain?.web_name || "Unavailable"],
+        ].map(([label, value]) => (
+          <div className="fh-card" key={label}>
+            <span className="fh-eyebrow">{label}</span>
+            <strong>{value}</strong>
+          </div>
+        ))}
+      </div>
+      <section className="fh-card fpl-panel">
+        <div className="fpl-panel-heading">
+          <Users size={18} />
+          <h3>Starting eleven</h3>
+          <span className="fpl-badge">
+            {team.formation
+              ? `${team.formation.DEF}-${team.formation.MID}-${team.formation.FWD}`
+              : "Formation unavailable"}
+          </span>
+        </div>
+        <p className="fh-muted fpl-description">
+          Select a player to explore form, ownership and fixture difficulty.
+        </p>
+        <div className="fpl-pitch">
+          {["FWD", "MID", "DEF", "GKP"].map((position) => (
+            <section
+              className="fpl-pitch-row"
+              key={position}
+              aria-label={positions[position]}
+            >
+              <span className="fh-eyebrow">{positions[position]}</span>
+              <div>
+                {(team.starting_xi || [])
+                  .filter((player) => player.position === position)
+                  .map((player) => (
+                    <PlayerCard
+                      key={player.id}
+                      player={player}
+                      captainId={team.captain?.id}
+                      viceCaptainId={team.vice_captain?.id}
+                    />
+                  ))}
+              </div>
+            </section>
+          ))}
+        </div>
+        <div className="fpl-panel-heading fpl-bench-heading">
+          <h3>The bench</h3>
+          <span>Squad depth</span>
+        </div>
+        <div className="fpl-bench">
+          {(team.bench || []).map((player) => (
+            <PlayerCard key={player.id} player={player} />
+          ))}
+        </div>
+      </section>
+    </>
+  );
+}
+
+export default function FPLAdvisor() {
+  const userId = useAuthStore((state) => state.user?.id);
   const [activeTab, setActiveTab] = useState("team");
-
   const {
     data: advice,
     isLoading,
@@ -268,18 +244,13 @@ const FPLAdvisor = () => {
     queryKey: ["fpl-advice"],
     queryFn: async () => {
       const response = await apiFetch(`${PIPELINE_API_URL}/fpl/advice`);
-      if (!response.ok) {
-        if (response.status === 404) {
-          return null;
-        }
-        throw new Error("Failed to fetch FPL advice");
-      }
+      if (response.status === 404) return null;
+      if (!response.ok) throw new Error("Failed to fetch FPL advice");
       return response.json();
     },
     staleTime: 300000,
     retry: 1,
   });
-
   const refreshMutation = useMutation({
     mutationFn: async () => {
       const response = await apiFetch(`${PIPELINE_API_URL}/fpl/refresh`, {
@@ -292,216 +263,186 @@ const FPLAdvisor = () => {
       toast.success("FPL data refreshed successfully!");
       refetch();
     },
-    onError: (err) => {
-      toast.error(`Refresh failed: ${err.message}`);
-    },
+    onError: (err) => toast.error(`Refresh failed: ${err.message}`),
   });
-
-  const tabs = [
-    { id: "team", label: "Optimal Team", icon: Users },
-    { id: "captains", label: "Captain Picks", icon: Star },
-    { id: "positions", label: "By Position", icon: Shield },
-    { id: "value", label: "Value Picks", icon: DollarSign },
-    { id: "differentials", label: "Differentials", icon: Zap },
-  ];
-
+  const selectedTab = tabs.find((tab) => tab.id === activeTab);
   return (
-    <div className="min-h-screen" style={{ background: "var(--color-surface)" }}>
-      <Navbar />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <header style={{ animation: 'slide-up 0.4s ease-out both' }}>
-          <p className="text-sm uppercase tracking-wide font-semibold mb-4" style={{ color: '#10b981' }}>FPL Advisor</p>
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-green-500/20 rounded-lg">
-                <Trophy className="w-6 h-6 text-green-700" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-display tracking-tight text-heritage-ink">FPL Advisor</h1>
-                <p style={{ color: '#69746c' }}>
-                  Fantasy Premier League team optimization
-                </p>
-              </div>
-            </div>
+    <div className="fh-page fpl-page">
+      <header className="fh-intro">
+        <div>
+          <span className="fh-eyebrow">Fantasy Sports / FPL Advisor</span>
+          <h1>Fantasy Premier League</h1>
+        </div>
+        <Link
+          className="fh-button fh-button-secondary"
+          to="/sport/football/schedule?competition=Premier%20League"
+        >
+          League fixtures
+          <ArrowUpRight size={14} />
+        </Link>
+      </header>
+      <main id="main-content">
+        <section className="fh-card fpl-hero">
+          <div>
+            <span className="fh-eyebrow">
+              <Trophy size={15} />
+              YOUR GAMEWEEK, CONSIDERED.
+            </span>
+            <h2>A stronger squad starts here.</h2>
+            <p>
+              Build your team. Find your captain. Discover your next
+              differential.
+            </p>
+          </div>
+          <div className="fpl-refresh">
+            <span className="fpl-badge">
+              {advice?.gameweek
+                ? `Gameweek ${advice.gameweek}`
+                : "Gameweek unavailable"}
+            </span>
             <button
+              className="fh-button"
               onClick={() => refreshMutation.mutate()}
               disabled={refreshMutation.isPending}
-              className="card-glow rounded-lg px-4 py-2 border text-heritage-ink font-semibold transition-all hover:opacity-90 flex items-center gap-2"
-              style={{ background: 'var(--color-card)', borderColor: 'var(--color-card-border)' }}
             >
               <RefreshCw
-                className={`w-4 h-4 ${refreshMutation.isPending ? "animate-spin" : ""}`}
+                size={15}
+                className={refreshMutation.isPending ? "animate-spin" : ""}
               />
               {refreshMutation.isPending ? "Refreshing..." : "Refresh Data"}
             </button>
+            {advice?.generated_at && (
+              <small>
+                Updated {new Date(advice.generated_at).toLocaleString()}
+              </small>
+            )}
           </div>
-
-          {advice?.gameweek && (
-            <div className="mt-4 flex items-center gap-4">
-              <span className="px-3 py-1 bg-green-500/20 text-green-700 rounded-full text-sm font-medium">
-                Gameweek {advice.gameweek}
-              </span>
-              {advice.generated_at && (
-                <span className="text-sm" style={{ color: '#69746c' }}>
-                  Updated: {new Date(advice.generated_at).toLocaleString()}
-                </span>
-              )}
+        </section>
+        <div className="fpl-workspace">
+          <aside className="fpl-sidebar">
+            <nav className="fh-card fpl-navigation" aria-label="FPL tools">
+              <span className="fh-eyebrow">Your FPL toolkit</span>
+              {tabs.map(({ id, label, icon: Icon }) => (
+                <button
+                  key={id}
+                  aria-pressed={activeTab === id}
+                  onClick={() => setActiveTab(id)}
+                >
+                  {createElement(Icon, { size: 17 })}
+                  <span>{label}</span>
+                  <ArrowUpRight size={13} />
+                </button>
+              ))}
+            </nav>
+            <div className="fh-card fpl-guide">
+              <span className="fh-eyebrow">Behind the numbers</span>
+              <h3>Make every point count.</h3>
+              <p>
+                xPts is a player's expected points. Compare it with price,
+                recent form and upcoming fixtures when shaping your squad.
+              </p>
+              <p>Open any player card for a closer look.</p>
             </div>
-          )}
-        </header>
-
-        {/* Tabs */}
-        <div className="flex gap-2 mb-6 overflow-x-auto pb-2" style={{ animation: 'slide-up 0.4s ease-out 0.06s both' }}>
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all whitespace-nowrap ${
-                activeTab === tab.id
-                  ? 'text-heritage-ink'
-                  : 'text-heritage-muted hover:text-heritage-ink'
-              }`}
-              style={
-                activeTab === tab.id
-                  ? { background: 'linear-gradient(135deg, #177c4c, #147b4c)' }
-                  : { background: 'var(--color-card)', border: '1px solid var(--color-card-border)' }
-              }
-            >
-              <tab.icon className="w-4 h-4" />
-              {tab.label}
-            </button>
-          ))}
+          </aside>
+          <section
+            className="fh-content fpl-results"
+            aria-label={selectedTab.label}
+          >
+            <header className="fpl-results-heading">
+              <h2>{selectedTab.label}</h2>
+              <p className="fh-muted">{selectedTab.description}</p>
+            </header>
+            {isLoading ? (
+              <div className="fh-card">
+                <DataState loading />
+              </div>
+            ) : isError ? (
+              <div className="fh-card">
+                <DataState error={error} retry={() => refetch()} />
+              </div>
+            ) : !advice ? (
+              <div className="fh-card fh-state">
+                <Trophy size={32} />
+                <h3>No FPL Data Available</h3>
+                <p>
+                  Fetch the latest player data to explore your gameweek
+                  recommendations.
+                </p>
+                <button
+                  className="fh-button"
+                  onClick={() => refreshMutation.mutate()}
+                  disabled={refreshMutation.isPending}
+                >
+                  {refreshMutation.isPending ? "Fetching..." : "Fetch FPL Data"}
+                </button>
+              </div>
+            ) : (
+              <>
+                {activeTab === "team" && userId != null && (
+                  <EditableTeam
+                    key={`${userId}:${advice.gameweek}`}
+                    storageKey={`fh:${userId}:fpl-team:${advice.gameweek ?? "unknown"}`}
+                    suggested={advice.optimal_team}
+                    apiUrl={PIPELINE_API_URL}
+                  >
+                    {(team) =>
+                      team ? (
+                        <TeamFormation team={team} />
+                      ) : (
+                        <div className="fh-card">
+                          <DataState empty="No optimal team available." />
+                        </div>
+                      )
+                    }
+                  </EditableTeam>
+                )}
+                {activeTab === "captains" && (
+                  <PlayerList
+                    title="Captain Recommendations"
+                    players={advice.captain_picks}
+                    icon={Star}
+                    description="Captain options based on expected points and differential value."
+                  />
+                )}
+                {activeTab === "positions" && (
+                  <div className="fpl-position-grid">
+                    {[
+                      ["Top Goalkeepers", advice.top_goalkeepers, Shield],
+                      ["Top Defenders", advice.top_defenders, Shield],
+                      ["Top Midfielders", advice.top_midfielders, Target],
+                      ["Top Forwards", advice.top_forwards, TrendingUp],
+                    ].map(([title, players, icon]) => (
+                      <PlayerList
+                        key={title}
+                        title={title}
+                        players={players}
+                        icon={icon}
+                      />
+                    ))}
+                  </div>
+                )}
+                {activeTab === "value" && (
+                  <PlayerList
+                    title="Best Value Picks"
+                    players={advice.value_picks}
+                    icon={DollarSign}
+                    description="Budget-friendly players with high points per million."
+                  />
+                )}
+                {activeTab === "differentials" && (
+                  <PlayerList
+                    title="Differential Picks"
+                    players={advice.differential_picks}
+                    icon={Zap}
+                    description="High-potential players with low ownership (under 10%)."
+                  />
+                )}
+              </>
+            )}
+          </section>
         </div>
-
-        {/* Content */}
-        {isLoading ? (
-          <LoadingSkeleton count={6} />
-        ) : isError ? (
-          <div className="text-center py-12">
-            <AlertCircle className="w-12 h-12 text-red-700 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-heritage-ink mb-2">Error Loading Data</h3>
-            <p className="text-sm mb-4" style={{ color: '#69746c' }}>{error?.message}</p>
-            <button
-              onClick={() => refreshMutation.mutate()}
-              style={{ background: 'linear-gradient(135deg, #177c4c, #147b4c)' }}
-              className="text-white font-semibold rounded-lg py-3 px-4 transition-all hover:opacity-90"
-            >
-              Fetch FPL Data
-            </button>
-          </div>
-        ) : !advice ? (
-          <div className="text-center py-12">
-            <Trophy className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-heritage-ink mb-2">No FPL Data Available</h3>
-            <p className="text-sm mb-4" style={{ color: '#69746c' }}>Click the button below to fetch the latest FPL data.</p>
-            <button
-              onClick={() => refreshMutation.mutate()}
-              disabled={refreshMutation.isPending}
-              style={{ background: 'linear-gradient(135deg, #177c4c, #147b4c)' }}
-              className="text-white font-semibold rounded-lg py-3 px-4 transition-all hover:opacity-90"
-            >
-              {refreshMutation.isPending ? "Fetching..." : "Fetch FPL Data"}
-            </button>
-          </div>
-        ) : (
-          <div>
-            {/* Optimal Team Tab */}
-            {activeTab === "team" && advice.optimal_team && (
-              <div className="space-y-6" style={{ animation: 'slide-up 0.4s ease-out 0.12s both' }}>
-                {/* Summary Cards */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="card-glow rounded-xl p-4 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
-                    <div className="text-sm" style={{ color: '#69746c' }}>Expected Points</div>
-                    <div className="text-2xl font-display tracking-tight text-green-700">
-                      {advice.optimal_team.expected_points}
-                    </div>
-                  </div>
-                  <div className="card-glow rounded-xl p-4 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
-                    <div className="text-sm" style={{ color: '#69746c' }}>Team Cost</div>
-                    <div className="text-2xl font-display tracking-tight text-heritage-ink">
-                      £{advice.optimal_team.total_cost}m
-                    </div>
-                  </div>
-                  <div className="card-glow rounded-xl p-4 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
-                    <div className="text-sm" style={{ color: '#69746c' }}>Budget Left</div>
-                    <div className="text-2xl font-display tracking-tight" style={{ color: '#34d399' }}>
-                      £{advice.optimal_team.budget_remaining}m
-                    </div>
-                  </div>
-                  <div className="card-glow rounded-xl p-4 border" style={{ background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))', borderColor: 'var(--color-card-border)' }}>
-                    <div className="text-sm" style={{ color: '#69746c' }}>Captain</div>
-                    <div className="text-xl font-display tracking-tight text-yellow-700">
-                      {advice.optimal_team.captain?.web_name}
-                    </div>
-                  </div>
-                </div>
-
-                <TeamFormation team={advice.optimal_team} />
-              </div>
-            )}
-
-            {/* Captain Picks Tab */}
-            {activeTab === "captains" && (
-              <PlayerList
-                title="Captain Recommendations"
-                players={advice.captain_picks}
-                icon={Star}
-                description="Best captain options based on expected points and differential value"
-              />
-            )}
-
-            {/* By Position Tab */}
-            {activeTab === "positions" && (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <PlayerList
-                  title="Top Goalkeepers"
-                  players={advice.top_goalkeepers}
-                  icon={Shield}
-                />
-                <PlayerList
-                  title="Top Defenders"
-                  players={advice.top_defenders}
-                  icon={Shield}
-                />
-                <PlayerList
-                  title="Top Midfielders"
-                  players={advice.top_midfielders}
-                  icon={Target}
-                />
-                <PlayerList
-                  title="Top Forwards"
-                  players={advice.top_forwards}
-                  icon={TrendingUp}
-                />
-              </div>
-            )}
-
-            {/* Value Picks Tab */}
-            {activeTab === "value" && (
-              <PlayerList
-                title="Best Value Picks"
-                players={advice.value_picks}
-                icon={DollarSign}
-                description="Budget-friendly players with high points-per-million"
-              />
-            )}
-
-            {/* Differentials Tab */}
-            {activeTab === "differentials" && (
-              <PlayerList
-                title="Differential Picks"
-                players={advice.differential_picks}
-                icon={Zap}
-                description="High-potential players with low ownership (<10%)"
-              />
-            )}
-          </div>
-        )}
-      </div>
+      </main>
+      <Footer />
     </div>
   );
-};
-
-export default FPLAdvisor;
+}

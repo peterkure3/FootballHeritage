@@ -1,0 +1,2 @@
+# Optional transport; install in an isolated environment.
+scrapling[all]>=0.4.15,<0.5

@@ -28,6 +28,7 @@ from etl.utils import (
     ensure_dir,
     get_timestamp_str,
 )
+from models.data import canonical_matches, historical_frames, merge_prematch_odds
 
 logger = setup_logger(__name__, LOG_LEVEL)
 
@@ -123,7 +124,7 @@ def normalize_the_odds_api_odds(json_files: List[Path]) -> pd.DataFrame:
                                 "away_team": away_team,
                                 "commence_time": commence_time,
                                 "bookmaker": bookmaker_name,
-                                "updated_at": fetched_at,
+                                "updated_at": market.get("last_update") or fetched_at,
                             }
                             
                             for outcome in outcomes:
@@ -154,27 +155,8 @@ def load_historical_csvs() -> pd.DataFrame:
     Returns:
         Combined DataFrame from all CSVs
     """
-    csv_files = list(HISTORICAL_CSV_DIR.glob("*.csv"))
-    
-    if not csv_files:
-        logger.warning("No historical CSV files found")
-        return pd.DataFrame()
-    
-    dfs = []
-    for csv_file in csv_files:
-        try:
-            df = pd.read_csv(csv_file)
-            df["data_source"] = "historical_csv"
-            dfs.append(df)
-        except Exception as e:
-            logger.error(f"Error loading {csv_file}: {str(e)}")
-    
-    if dfs:
-        combined = pd.concat(dfs, ignore_index=True)
-        logger.info(f"Loaded {len(combined)} records from {len(dfs)} CSV files")
-        return combined
-    
-    return pd.DataFrame()
+    frames = historical_frames(HISTORICAL_CSV_DIR)
+    return canonical_matches(frames) if frames else pd.DataFrame()
 
 
 def calculate_team_form(df: pd.DataFrame, window: int = TEAM_FORM_WINDOW) -> pd.DataFrame:
@@ -213,7 +195,7 @@ def calculate_team_form(df: pd.DataFrame, window: int = TEAM_FORM_WINDOW) -> pd.
         
         for idx in team_matches.index:
             # Get previous N matches
-            prev_matches = team_matches[team_matches["date"] < df.loc[idx, "date"]].tail(window)
+            prev_matches = team_matches[(team_matches["date"] < df.loc[idx, "date"]) & team_matches["result"].notna()].tail(window)
             
             if len(prev_matches) == 0:
                 continue
@@ -223,7 +205,7 @@ def calculate_team_form(df: pd.DataFrame, window: int = TEAM_FORM_WINDOW) -> pd.
             losses = 0
             
             for _, match in prev_matches.iterrows():
-                if match["result"] is None:
+                if pd.isna(match["result"]):
                     continue
                 
                 if match["home_team"] == team:
@@ -284,7 +266,7 @@ def calculate_goal_difference(df: pd.DataFrame, window: int = TEAM_FORM_WINDOW) 
             continue
         
         for idx in team_matches.index:
-            prev_matches = team_matches[team_matches["date"] < df.loc[idx, "date"]].tail(window)
+            prev_matches = team_matches[(team_matches["date"] < df.loc[idx, "date"]) & team_matches["result"].notna()].tail(window)
             
             if len(prev_matches) == 0:
                 continue
@@ -325,29 +307,7 @@ def merge_odds_with_matches(matches_df: pd.DataFrame, odds_df: pd.DataFrame) -> 
     Returns:
         Merged DataFrame
     """
-    if odds_df.empty:
-        logger.warning("No odds data to merge")
-        return matches_df
-    
-    # Group odds by match and calculate average
-    avg_odds = odds_df.groupby(["home_team", "away_team"]).agg({
-        "home_win": "mean",
-        "draw": "mean",
-        "away_win": "mean",
-    }).reset_index()
-    
-    # Merge with matches
-    merged = matches_df.merge(
-        avg_odds,
-        on=["home_team", "away_team"],
-        how="left"
-    )
-    
-    # Calculate odds spread
-    merged["odds_spread"] = merged["home_win"] - merged["away_win"]
-    
-    logger.info(f"Merged odds data with {len(merged)} matches")
-    return merged
+    return merge_prematch_odds(matches_df, odds_df)
 
 
 def transform_data():
@@ -379,7 +339,8 @@ def transform_data():
     historical_data = load_historical_csvs()
     
     # Combine all match data
-    all_matches = pd.concat([football_matches, historical_data], ignore_index=True)
+    frames = [historical_data, football_matches]
+    all_matches = canonical_matches(frames) if any(not f.empty for f in frames) else pd.DataFrame()
     
     if not all_matches.empty:
         # Calculate features

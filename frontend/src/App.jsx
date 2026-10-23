@@ -8,9 +8,9 @@ import {
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
 import useAuthStore from "./stores/authStore";
+import ErrorBoundary from "./components/ErrorBoundary";
 import AdminFeatures from './pages/AdminFeatures';
 import { FeatureBoundary } from './features/FeatureAccess';
-import ErrorBoundary from "./components/ErrorBoundary";
 
 // Pages
 import Login from "./pages/Login";
@@ -45,6 +45,7 @@ import PlayerProps from "./pages/PlayerProps";
 import HomePage, { StoryPage } from './heritage/HomePage';
 import SportPage, { TeamsPage } from './heritage/SportPage';
 import { BestPicksPage, AiChatPage } from './heritage/AiPages';
+import BettingIntel from './heritage/BettingIntel';
 import MainNavbar from './heritage/MainNavbar';
 import Landing from './landing/Landing';
 import LandingNavbar from './landing/LandingNavbar';
@@ -247,6 +248,9 @@ function App() {
               path="/ai-picks/chat"
               element={<AiChatPage />}
             />
+            <Route path="/ai-picks/intelligence" element={<BettingIntel />} />
+            <Route path="/ai-picks/intelligence/:sport" element={<BettingIntel />} />
+            <Route path="/ai-picks/intelligence/:sport/:view" element={<BettingIntel />} />
             <Route
               path="/player-props"
               element={
@@ -312,8 +316,8 @@ function App() {
               <Route path="analytics" element={<AdminAnalytics />} />
               <Route path="revenue" element={<AdminRevenue />} />
               <Route path="sportsgpt" element={<AdminSportsGPT />} />
-              <Route path="features" element={<AdminFeatures />} />
               <Route path="settings" element={<AdminSettings />} />
+              <Route path="features" element={<AdminFeatures />} />
               <Route path="logs" element={<AdminLogs />} />
             </Route>
 

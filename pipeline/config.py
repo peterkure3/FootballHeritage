@@ -4,8 +4,8 @@ Contains API keys, database URIs, file paths, and other settings.
 """
 
 import os
-from urllib.parse import quote
 from pathlib import Path
+from urllib.parse import quote
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -66,7 +66,7 @@ NCAA_API_DIR = RAW_DATA_DIR / "ncaa_api"
 HISTORICAL_CSV_DIR = RAW_DATA_DIR / "historical"
 
 # Model Configuration
-MODEL_VERSION = "2.0.0"  # Enhanced ensemble model with calibration
+MODEL_VERSION = os.getenv("MODEL_VERSION", "2.0.0")  # Activate only a reviewed candidate bundle.
 MODEL_NAME = f"model_v{MODEL_VERSION}.pkl"
 MODEL_PATH = MODEL_DIR / MODEL_NAME
 

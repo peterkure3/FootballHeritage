@@ -75,3 +75,8 @@ jobs:
         # Full dependency install (xgboost, etc.) is too heavy for every push;
         # compileall catches syntax/indentation errors across all modules
         run: python -m compileall -q pipeline
+      - name: Install model test dependencies
+        run: python -m pip install -r pipeline/requirements-model-tests.txt
+      - name: Verify fixture identity and causal model features
+        working-directory: pipeline
+        run: python -m unittest discover -s tests -v

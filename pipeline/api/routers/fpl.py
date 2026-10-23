@@ -53,6 +53,31 @@ class FPLTeamResponse(BaseModel):
     budget_remaining: float
 
 
+class FPLTeamDraft(BaseModel):
+    squad_ids: List[int]
+    starter_ids: List[int]
+    captain_id: int
+    vice_captain_id: int
+
+
+@router.post("/fpl/team/evaluate", response_model=FPLTeamResponse)
+def evaluate_fpl_team(draft: FPLTeamDraft):
+    """Evaluate an advisor draft; does not submit an official FPL transfer."""
+    import json
+    from etl.fetch_fpl_data import FPL_PROCESSED_DIR
+    from etl.fpl_optimizer import load_players_from_data, evaluate_custom_team
+
+    try:
+        with open(FPL_PROCESSED_DIR / "fpl_data_latest.json", encoding="utf-8") as source:
+            players = load_players_from_data(json.load(source))
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Refresh FPL data before editing your team.")
+    try:
+        return evaluate_custom_team(players, draft.squad_ids, draft.starter_ids, draft.captain_id, draft.vice_captain_id)
+    except ValueError as error:
+        raise HTTPException(status_code=422, detail=str(error))
+
+
 class FPLAdviceResponse(BaseModel):
     generated_at: Optional[str]
     gameweek: Optional[int]

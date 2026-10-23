@@ -20,6 +20,10 @@ from api.routers.assistant import router as assistant_router
 from api.routers.parlay import router as parlay_router
 from api.routers.fpl import router as fpl_router
 from api.routers.ncaab import router as ncaab_router
+from api.routers.ai_picks import router as ai_picks_router
+from api.routers.sport_models import router as sport_models_router
+from api.routers.prediction_dashboard import router as prediction_dashboard_router
+from api.routers.betting_intel import router as betting_intel_router
 
 router = APIRouter()
 
@@ -31,3 +35,7 @@ router.include_router(assistant_router)
 router.include_router(parlay_router)
 router.include_router(fpl_router)
 router.include_router(ncaab_router)
+router.include_router(ai_picks_router)
+router.include_router(sport_models_router)
+router.include_router(prediction_dashboard_router)
+router.include_router(betting_intel_router)

@@ -1,0 +1,35 @@
+.bi-intro > p { max-width: 62ch; color: var(--color-muted, #69746c); line-height: 1.7; }
+.bi-sport-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.bi-sport-card { display: flex; flex-direction: column; gap: 10px; }
+.bi-sport-card > a, .bi-summary-links a, .bi-inline-summary a { display: inline-flex; align-items: center; gap: 6px; color: #275840; }
+.bi-sport-card > a { margin-top: auto; }
+.bi-sport-card h2 { margin: 0; }
+.bi-mini-metrics { display: flex; flex-wrap: wrap; gap: 12px 24px; padding: 18px 0; }
+.bi-mini-metrics > div { display: flex; flex-direction: column; min-width: 64px; gap: 4px; }
+.bi-mini-metrics b { font-size: 25px; font-variant-numeric: tabular-nums; }
+.bi-mini-metrics small, .bi-next-game { color: #5d6b62; font-size: 12px; }
+.bi-provenance { display: flex; flex-direction: column; gap: 7px; padding: 14px 16px; margin: 15px 0; border: 1px solid #dce3d8; border-left: 3px solid #71865d; border-radius: 8px; background: #f3f5ef; font-size: 12px; overflow-wrap: anywhere; }
+.bi-provenance details { max-height: 220px; overflow: auto; }
+.bi-provenance summary { cursor: pointer; }
+.bi-toolbar, .bi-pagination { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.bi-sport-nav, .bi-view-nav { display: flex; flex-wrap: wrap; gap: 6px; padding: 15px 0; }
+.bi-view-nav { border-top: 1px solid #e1e6dd; border-bottom: 1px solid #e1e6dd; margin-bottom: 20px; }
+.bi-sport-nav a, .bi-view-nav a { padding: 8px 11px; border-radius: 6px; font-size: 12px; color: #526058; }
+.bi-sport-nav a[aria-current=page], .bi-view-nav a[aria-current=page] { color: var(--color-card); background: #28503a; }
+.bi-search { display: flex; flex-direction: column; gap: 7px; font-size: 12px; margin: 10px 0 20px; }
+.bi-search input { border: 1px solid #cfd8cc; border-radius: 7px; padding: 11px 13px; background: #fff; color: #25352b; width: 100%; }
+.bi-table-scroll { width: 100%; overflow-x: auto; border: 1px solid #e0e6db; border-radius: 9px; }
+.bi-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 12px; min-width: 660px; }
+.bi-table th { background: #f1f4ed; color: #52614f; padding: 13px; font-weight: 600; }
+.bi-table td { padding: 14px 13px; vertical-align: top; border-top: 1px solid #e6eae2; line-height: 1.65; }
+.bi-table td:first-child { min-width: 180px; }
+.bi-table small { display: block; color: #5e6a60; font-size: 11px; }
+.bi-table .bi-positive { color: #25633b; font-weight: 600; }
+.bi-badge { display: inline-block; border: 1px solid #d4dfc9; border-radius: 5px; background: #edf2e6; color: #405538; font-size: 10px; padding: 2px 6px; }
+.bi-versus { color: #7d877c; font-size: 10px; font-weight: 400; }
+.bi-pagination { margin: 20px 0; font-size: 12px; }
+.bi-summary-links { display: flex; flex-wrap: wrap; gap: 15px; border-top: 1px solid #e1e6dd; padding-top: 20px; font-size: 13px; }
+.bi-footnote { margin-top: 25px; color: var(--color-muted); font-size: 11px; line-height: 1.7; }
+.bi-workspace { min-width: 0; }
+.bi-workspace :focus-visible, .bi-sport-card a:focus-visible { outline: 2px solid #66834d; outline-offset: 3px; }
+@media (max-width: 700px) { .bi-sport-grid { grid-template-columns: 1fr; } .bi-toolbar .fh-button { padding: 8px 11px; } .bi-mini-metrics { gap: 12px 18px; } }

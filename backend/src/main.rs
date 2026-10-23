@@ -3,21 +3,22 @@ use actix_web::{web, App, HttpServer};
 use rustls::pki_types::CertificateDer;
 use sqlx::postgres::PgPoolOptions;
 use std::rc::Rc;
-use tracing_subscriber::Layer;
 use tracing::{debug, error, info, warn};
+use tracing_subscriber::Layer;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 mod auth;
 mod betting_simple;
 mod config;
 mod crypto;
-mod features;
 mod errors;
+mod features;
 mod handlers;
 mod middleware;
 mod models;
-mod pipeline_gateway;
 mod monitoring;
+mod pipeline_gateway;
+mod rag;
 mod rates;
 mod utils;
 
@@ -96,6 +97,19 @@ async fn main() -> std::io::Result<()> {
     // Initialize auth service (Clone-able, shared across all handlers and middleware)
     let config_arc = std::sync::Arc::new(config.clone());
     let auth_service = auth::AuthService::new(config_arc);
+    let ai_picks_service = handlers::ai_picks::AiPicksService::from_env().map_err(|e| {
+        error!("Failed to initialize AI Picks service: {}", e);
+        std::io::Error::new(
+            std::io::ErrorKind::Other,
+            "AI Picks client initialization failed",
+        )
+    })?;
+    let rag_agent = web::Data::new(rag::RagAgent::from_env().map_err(|_| {
+        std::io::Error::new(
+            std::io::ErrorKind::Other,
+            "RAG agent configuration is invalid",
+        )
+    })?);
 
     // Initialize TLS configuration if HTTPS is enabled
     let tls_config = if config.https_enabled {
@@ -179,12 +193,14 @@ async fn main() -> std::io::Result<()> {
             .app_data(web::Data::new(config.clone()))
             .app_data(web::Data::new(db_pool.clone()))
             .app_data(web::Data::new(auth_service_for_app.clone()))
+            .app_data(web::Data::new(ai_picks_service.clone()))
+            .app_data(rag_agent.clone())
             .app_data(rate_limiters.clone())
             .app_data(monitoring_service.clone())
             .wrap(middleware::monitoring::Metrics::new(
                 monitoring_service.clone(),
-            .wrap(features::FeatureGate)
             ))
+            .wrap(features::FeatureGate)
             .wrap(middleware::rate_limit::RateLimitMiddleware::new())
             .wrap(cors)
             .wrap(actix_web::middleware::Logger::default())
@@ -192,12 +208,12 @@ async fn main() -> std::io::Result<()> {
             .wrap(actix_web::middleware::NormalizePath::trim())
             .wrap(crate::middleware::security_headers::SecurityHeaders)
             .service(
+                web::scope("/api/v1")
                     .route("/me/features", web::get().to(features::effective))
                     .route(
                         "/pipeline/{tail:.*}",
                         web::route().to(pipeline_gateway::proxy),
                     )
-                web::scope("/api/v1")
                     .service(
                         web::scope("/auth")
                             .route("/register", web::post().to(handlers::auth::register))
@@ -209,6 +225,9 @@ async fn main() -> std::io::Result<()> {
                                 web::post().to(handlers::auth::verify_email),
                             ),
                     )
+                    .configure(|cfg| {
+                        handlers::ai_picks::configure(cfg, auth_service_for_app.clone())
+                    })
                     .service(
                         web::scope("/intelligence")
                             .route(
@@ -297,7 +316,10 @@ async fn main() -> std::io::Result<()> {
                     .service(
                         web::scope("/player-props")
                             .route("", web::get().to(handlers::player_props::get_player_props))
-                            .route("/event/{id}", web::get().to(handlers::player_props::get_player_props_by_event)),
+                            .route(
+                                "/event/{id}",
+                                web::get().to(handlers::player_props::get_player_props_by_event),
+                            ),
                     )
                     .service(
                         web::scope("/parlay")
@@ -315,8 +337,8 @@ async fn main() -> std::io::Result<()> {
                             .route("/{id}", web::delete().to(handlers::parlay::delete_parlay)),
                     )
                     .service(
-                            .configure(features::configure_admin)
                         web::scope("/admin")
+                            .configure(features::configure_admin)
                             .wrap(middleware::admin_auth::RequireAdmin::new(Rc::new(
                                 auth_service_for_app.clone(),
                             )))
@@ -381,8 +403,8 @@ async fn main() -> std::io::Result<()> {
                             ),
                     ),
             )
-            .route("/ready", web::get().to(handlers::health::readiness))
             .route("/health", web::get().to(handlers::health::health_check))
+            .route("/ready", web::get().to(handlers::health::readiness))
             .route("/metrics", web::get().to(handlers::monitoring::metrics))
             .default_service(web::route().to(handlers::not_found::not_found))
     });

@@ -4,11 +4,12 @@ Generates predictions using the calibrated ensemble model with enhanced features
 """
 
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Tuple, Optional
 
 import joblib
+import json
 import numpy as np
 import pandas as pd
 from sqlalchemy import create_engine, text
@@ -20,12 +21,15 @@ from config import (
     DATABASE_URI,
     MODEL_DIR,
     LOG_LEVEL,
+    MODEL_VERSION,
 )
 from etl.utils import setup_logger
+from models.data import canonical_matches, historical_frames
+from models.features import FEATURE_NAMES, FEATURE_SCHEMA_VERSION, build_live_features
+from config import HISTORICAL_CSV_DIR
 
 logger = setup_logger(__name__, LOG_LEVEL)
 
-MODEL_VERSION = "2.0.0"
 
 # ELO Configuration (must match training)
 ELO_K_FACTOR = 32
@@ -51,9 +55,19 @@ def load_model_artifacts() -> Tuple:
     model = joblib.load(model_path)
     label_encoder = joblib.load(encoder_path)
     feature_names = joblib.load(features_path)
+    if getattr(model, "n_features_in_", None) != len(feature_names):
+        raise ValueError("Model and feature artifacts have different feature counts")
+    if MODEL_VERSION == "2.0.0" and (feature_names != FEATURE_NAMES[:-1] or type(model).__name__ != "CalibratedClassifierCV"):
+        raise ValueError("Active v2.0 artifact is not the expected calibrated 38-feature model")
+    if MODEL_VERSION != "2.0.0":
+        manifest = json.loads((MODEL_DIR / f"metrics_v{MODEL_VERSION}.json").read_text(encoding="utf-8"))
+        if manifest.get("feature_schema_version") != FEATURE_SCHEMA_VERSION or feature_names != FEATURE_NAMES:
+            raise ValueError("Model artifact feature schema does not match serving")
     
     scaler = None
     if scaler_path.exists():
+        if MODEL_VERSION != "2.0.0":
+            raise ValueError("This feature schema does not support an external scaler")
         scaler = joblib.load(scaler_path)
     
     logger.info(f"Loaded model v{MODEL_VERSION}")
@@ -326,7 +340,7 @@ def get_h2h_stats(engine, home_team: str, away_team: str, window: int = 10) -> D
     }
 
 
-def build_feature_vector(
+def _build_legacy_feature_vector(
     home_team: str,
     away_team: str,
     engine,
@@ -453,10 +467,38 @@ def build_feature_vector(
     return X
 
 
+def load_feature_history(engine, cutoff: pd.Timestamp) -> pd.DataFrame:
+    query = text("SELECT date, home_team, away_team, home_score, away_score, result, status, data_source "
+                 "FROM matches WHERE date < :cutoff AND result IS NOT NULL "
+                 "AND sport_type = 'football' ORDER BY date")
+    with engine.connect() as conn:
+        recent = pd.read_sql(query, conn, params={"cutoff": pd.to_datetime(cutoff, utc=True).to_pydatetime()})
+    frames = historical_frames(HISTORICAL_CSV_DIR)
+    frames.append(recent)
+    return canonical_matches(frames)
+
+
+def build_feature_vector(home_team: str, away_team: str, engine,
+                         elo_ratings: Dict[str, float] = None, odds: Optional[Dict] = None,
+                         feature_names: List[str] = None, cutoff: pd.Timestamp = None,
+                         history: pd.DataFrame = None) -> pd.DataFrame:
+    # Keep the deployed v2.0 artifact's contract until a v2.1 candidate is promoted.
+    if feature_names != FEATURE_NAMES:
+        if MODEL_VERSION != "2.0.0":
+            raise ValueError("Unsupported model feature schema")
+        return _build_legacy_feature_vector(home_team, away_team, engine,
+                                            elo_ratings or get_team_elo_ratings(engine), odds, feature_names)
+    cutoff = pd.to_datetime(cutoff, utc=True) if cutoff is not None else pd.Timestamp.now(tz="UTC")
+    history = load_feature_history(engine, cutoff) if history is None else history
+    return build_live_features(history, home_team, away_team, cutoff, odds)
+
+
 def predict_match(
     home_team: str,
     away_team: str,
     odds: Optional[Dict] = None,
+    engine=None,
+    cutoff: pd.Timestamp = None,
 ) -> Dict:
     """
     Predict match outcome using enhanced model.
@@ -473,14 +515,14 @@ def predict_match(
     model, label_encoder, feature_names, scaler = load_model_artifacts()
     
     # Get database connection
-    engine = create_engine(DATABASE_URI)
+    engine = engine if engine is not None else create_engine(DATABASE_URI)
     
     # Get ELO ratings
-    elo_ratings = get_team_elo_ratings(engine)
+    elo_ratings = get_team_elo_ratings(engine) if feature_names != FEATURE_NAMES else {}
     
     # Build features
     X = build_feature_vector(
-        home_team, away_team, engine, elo_ratings, odds, feature_names
+        home_team, away_team, engine, elo_ratings, odds, feature_names, cutoff=cutoff
     )
     
     # Apply scaler if available
@@ -545,7 +587,7 @@ def generate_predictions(
         "match_id": match_ids,
         "model_version": MODEL_VERSION,
         "winner": predicted_outcomes,
-        "created_at": datetime.now(),
+        "created_at": datetime.now(timezone.utc).replace(tzinfo=None),
     })
     
     # Add probabilities
@@ -605,9 +647,15 @@ def get_upcoming_matches(engine) -> pd.DataFrame:
             AVG(o.draw) AS draw,
             AVG(o.away_win) AS away_win
         FROM matches m
-        LEFT JOIN odds o ON m.match_id = o.match_id
+        LEFT JOIN (
+            SELECT DISTINCT ON (match_id, bookmaker) match_id, bookmaker, home_win, draw, away_win
+            FROM odds
+            WHERE updated_at <= NOW() AND home_win > 1 AND draw > 1 AND away_win > 1
+            ORDER BY match_id, bookmaker, updated_at DESC, id DESC
+        ) o ON m.match_id = o.match_id
         WHERE m.status IN ('SCHEDULED', 'TIMED')
             AND m.date > NOW()
+            AND m.sport_type = 'football'
         GROUP BY m.match_id, m.home_team, m.away_team
         ORDER BY m.match_id
     """
@@ -624,7 +672,9 @@ def predict_upcoming_matches() -> None:
 
     model, label_encoder, feature_names, scaler = load_model_artifacts()
     engine = create_engine(DATABASE_URI)
-    elo_ratings = get_team_elo_ratings(engine)
+    elo_ratings = get_team_elo_ratings(engine) if feature_names != FEATURE_NAMES else {}
+    cutoff = pd.Timestamp.now(tz="UTC")
+    history = load_feature_history(engine, cutoff) if feature_names == FEATURE_NAMES else None
 
     matches = get_upcoming_matches(engine)
     if matches.empty:
@@ -634,7 +684,7 @@ def predict_upcoming_matches() -> None:
     rows = []
     for m in matches.itertuples():
         odds = None
-        if m.home_win is not None:
+        if pd.notna(m.home_win) and pd.notna(m.draw) and pd.notna(m.away_win):
             odds = {
                 "home_win": float(m.home_win),
                 "draw": float(m.draw) if m.draw is not None else 3.2,
@@ -642,7 +692,8 @@ def predict_upcoming_matches() -> None:
             }
         try:
             X = build_feature_vector(
-                m.home_team, m.away_team, engine, elo_ratings, odds, feature_names
+                m.home_team, m.away_team, engine, elo_ratings, odds, feature_names,
+                cutoff=cutoff, history=history
             )
             if scaler is not None:
                 X = pd.DataFrame(scaler.transform(X), columns=X.columns)
@@ -656,14 +707,13 @@ def predict_upcoming_matches() -> None:
                 "home_prob": float(prob.get("home_win", 0.0)),
                 "draw_prob": float(prob.get("draw", 0.0)),
                 "away_prob": float(prob.get("away_win", 0.0)),
-                "created_at": datetime.now(),
+                "created_at": datetime.now(timezone.utc).replace(tzinfo=None),
             })
         except Exception as e:
             logger.error(f"Prediction failed for {m.home_team} vs {m.away_team}: {e}")
 
-    if not rows:
-        logger.warning("No predictions generated")
-        return
+    if len(rows) != len(matches):
+        raise RuntimeError(f"Prediction batch incomplete: {len(rows)}/{len(matches)} fixtures; nothing saved")
 
     save_predictions_to_db(pd.DataFrame(rows), engine)
     logger.info(f"Batch prediction completed: {len(rows)}/{len(matches)} matches")

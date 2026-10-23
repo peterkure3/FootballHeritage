@@ -1,337 +1,394 @@
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useUser } from '../hooks/useAuth';
-import { useBetsHistory } from '../hooks/useBetting';
-import useAuthStore from '../stores/authStore';
-import useBettingStore from '../stores/bettingStore';
-import Navbar from '../components/Navbar';
-import BetCard from '../components/BetCard';
-import LoadingSkeleton from '../components/LoadingSkeleton';
+﻿import { createElement, useState } from "react";
+import { Link } from "react-router-dom";
+import {
+  ArrowUpRight,
+  ArrowRight,
+  Wallet,
+  Ticket,
+  Target,
+  Clock3,
+  ShieldCheck,
+  Sparkles,
+  BarChart3,
+  Bookmark,
+  RefreshCw,
+} from "lucide-react";
+import { useUser } from "../hooks/useAuth";
+import { useBetsHistory } from "../hooks/useBetting";
+import useBettingStore from "../stores/bettingStore";
+import "./Dashboard.css";
 
-const StatCard = ({ title, value, subtitle, icon, accent, delay = 0 }) => (
-  <div
-    className="card-glow rounded-xl p-6 border"
-    style={{
-      background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))',
-      borderColor: 'var(--color-card-border)',
-      animation: `slide-up 0.5s ease-out ${delay}s both`,
-    }}
-  >
-    <div className="flex items-center justify-between mb-3">
-      <span className="text-xs font-semibold tracking-widest uppercase" style={{ color: accent }}>{title}</span>
-      <div className="w-9 h-9 rounded-lg flex items-center justify-center" style={{ background: `${accent}15` }}>
-        <svg className="w-5 h-5" fill="none" stroke={accent} viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={icon} />
-        </svg>
-      </div>
-    </div>
-    <p className="text-3xl font-bold text-heritage-ink mb-0.5 font-display tracking-tight">{value}</p>
-    <p className="text-xs" style={{ color: 'var(--color-muted, #69746c)' }}>{subtitle}</p>
-  </div>
-);
+const money = (value) =>
+  ![null, undefined, ""].includes(value) && Number.isFinite(Number(value))
+    ? new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+      }).format(Number(value))
+    : "—";
+const statusOf = (bet) => (bet.status || "unknown").toLowerCase();
+const isOpen = (bet) => ["pending", "active"].includes(statusOf(bet));
+const isWon = (bet) => ["won", "settled_won"].includes(statusOf(bet));
+const isLost = (bet) => ["lost", "settled_lost"].includes(statusOf(bet));
+const dateOf = (bet) =>
+  bet.placed_at || bet.placedAt || bet.timestamp || bet.created_at;
+const timestamp = (bet) => new Date(dateOf(bet)).getTime() || 0;
+const dateLabel = (bet) =>
+  timestamp(bet)
+    ? new Date(dateOf(bet)).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      })
+    : "Date unavailable";
+const shortcuts = [
+  {
+    title: "AI picks",
+    detail: "Explore model insights",
+    to: "/ai-picks",
+    icon: Sparkles,
+  },
+  {
+    title: "Predictions",
+    detail: "Look closer at the numbers",
+    to: "/predictions",
+    icon: BarChart3,
+  },
+  {
+    title: "Saved picks",
+    detail: "Return to your shortlist",
+    to: "/saved",
+    icon: Bookmark,
+  },
+];
 
-const Dashboard = () => {
-  const navigate = useNavigate();
-  const { isAuthenticated } = useAuthStore();
-  const { data: user, isLoading: userLoading } = useUser();
-  const { data: bets, isLoading: betsLoading } = useBetsHistory();
-  const { getSessionStats } = useBettingStore();
-
-  useEffect(() => {
-    if (!isAuthenticated) {
-      navigate('/login');
-    }
-  }, [isAuthenticated, navigate]);
-
-  if (!isAuthenticated) {
-    return null;
-  }
-
-  const sessionStats = getSessionStats();
-  const activeBets = bets?.filter(bet =>
-    bet.status === 'pending' || bet.status === 'active'
-  ) || [];
-  const recentBets = bets?.slice(0, 5) || [];
-
-  const totalBets = bets?.length || 0;
-  const wonBets = bets?.filter(bet =>
-    bet.status === 'won' || bet.status === 'settled_won'
-  ).length || 0;
-  const pendingBets = activeBets.length;
-  const winRate = totalBets > 0 ? Math.round((wonBets / totalBets) * 100) : 0;
-
-  const quickActions = [
-    {
-      label: 'Place Bet',
-      desc: 'Browse odds and place wagers',
-      icon: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6',
-      path: '/odds',
-      gradient: 'linear-gradient(135deg, #177c4c, #147b4c)',
-      accent: '#10b981',
-    },
-    {
-      label: 'My Bets',
-      desc: 'Track your active wagers',
-      icon: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2',
-      path: '/bets',
-      gradient: 'linear-gradient(135deg, #6366f1, #4f46e5)',
-      accent: '#6366f1',
-    },
-    {
-      label: 'AI Picks',
-      desc: 'Smart predictions & insights',
-      icon: 'M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z',
-      path: '/best-bets',
-      gradient: 'linear-gradient(135deg, #f59e0b, #d97706)',
-      accent: '#f59e0b',
-    },
-  ];
-
+function Metric({ label, value, detail, icon: Icon }) {
   return (
-    <div className="min-h-screen" style={{ background: 'var(--color-surface)' }}>
-      <Navbar />
+    <article className="ud-metric">
+      <div>
+        <span>{label}</span>
+        {createElement(Icon, { size: 18, "aria-hidden": true })}
+      </div>
+      <strong>{value}</strong>
+      <p>{detail}</p>
+    </article>
+  );
+}
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Welcome Section */}
-        <div style={{ animation: 'slide-up 0.4s ease-out both' }}>
-          <div className="flex items-center gap-3 mb-1">
-            <h1 className="text-3xl md:text-4xl font-bold text-heritage-ink font-display tracking-tight">
-              Welcome back{user?.email ? `, ${user.email.split('@')[0]}` : ''}
-            </h1>
-            <span className="text-2xl">🏈</span>
-          </div>
-          <p className="text-sm" style={{ color: '#69746c' }}>
-            Check your balance, active bets, and betting statistics
+function BetRow({ bet }) {
+  const outcome = isWon(bet)
+    ? "won"
+    : isLost(bet)
+      ? "lost"
+      : isOpen(bet)
+        ? "pending"
+        : "other";
+  const label =
+    { won: "Won", lost: "Lost", pending: "Pending" }[outcome] ||
+    statusOf(bet).replaceAll("_", " ");
+  const selection =
+    bet.selection ||
+    (bet.type || bet.bet_type || "Selection unavailable").replaceAll("_", " ");
+  return (
+    <article className="ud-bet-row">
+      <div className={`ud-bet-icon ud-${outcome}`}>
+        <Ticket size={19} aria-hidden="true" />
+      </div>
+      <div className="ud-bet-event">
+        <h3>
+          {bet.event_name ||
+            bet.eventName ||
+            `Event #${bet.event_id || bet.eventId || "unavailable"}`}
+        </h3>
+        <p>
+          {selection} · {dateLabel(bet)}
+        </p>
+      </div>
+      <div className="ud-bet-amount">
+        <strong>{money(bet.amount)}</strong>
+        <span>Stake · {bet.odds || "—"} odds</span>
+      </div>
+      <span className={`ud-status ud-${outcome}`}>{label}</span>
+    </article>
+  );
+}
+
+function Activity({ query, bets }) {
+  const [filter, setFilter] = useState("All bets");
+  const filtered = bets.filter(
+    (bet) =>
+      filter === "All bets" ||
+      (filter === "Pending" ? isOpen(bet) : isWon(bet) || isLost(bet)),
+  );
+  return (
+    <section className="ud-panel ud-activity" aria-labelledby="activity-title">
+      <div className="ud-panel-heading">
+        <div>
+          <span className="ud-eyebrow">YOUR BETTING JOURNAL</span>
+          <h2 id="activity-title">Recent activity</h2>
+        </div>
+        <Link to="/bets">
+          Full history <ArrowUpRight size={16} aria-hidden="true" />
+        </Link>
+      </div>
+      <div
+        className="ud-filters"
+        role="group"
+        aria-label="Filter betting activity"
+      >
+        {["All bets", "Pending", "Settled"].map((label) => (
+          <button
+            type="button"
+            key={label}
+            aria-pressed={filter === label}
+            onClick={() => setFilter(label)}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+      {query.isError && (
+        <div className="ud-error" role="alert">
+          <p>
+            Bet history could not be refreshed.{" "}
+            {query.data
+              ? "Showing the last available activity."
+              : "Your activity is unavailable."}
           </p>
+          <button
+            type="button"
+            disabled={query.isFetching}
+            onClick={() => query.refetch()}
+          >
+            Retry bet history
+          </button>
         </div>
-
-        {/* Stats Grid */}
-        {userLoading ? (
-          <LoadingSkeleton type="stats" count={1} />
-        ) : (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-8 mb-8 stagger-children">
-            <StatCard
-              title="Balance"
-              value={`$${user?.balance?.toFixed(2) || '0.00'}`}
-              subtitle="Available to bet"
-              accent="#10b981"
-              icon="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              delay={0}
-            />
-            <StatCard
-              title="Total Bets"
-              value={totalBets}
-              subtitle="All time"
-              accent="#6366f1"
-              icon="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
-              delay={0.06}
-            />
-            <StatCard
-              title="Win Rate"
-              value={`${winRate}%`}
-              subtitle={`${wonBets} won / ${totalBets - wonBets} lost`}
-              accent="#f59e0b"
-              icon="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-              delay={0.1}
-            />
-            <StatCard
-              title="Pending"
-              value={pendingBets}
-              subtitle="Active bets"
-              accent="#f97316"
-              icon="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-              delay={0.14}
-            />
-          </div>
-        )}
-
-        {/* Session Limit Progress */}
-        <div
-          className="rounded-xl p-6 mb-8 border card-glow stagger-children"
-          style={{
-            background: 'linear-gradient(135deg, var(--card, #ffffff), #f4f6f2)',
-            borderColor: 'var(--color-card-border)',
-            animation: 'slide-up 0.5s ease-out 0.18s both',
-          }}
-        >
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-heritage-ink font-semibold font-display tracking-tight text-lg">
-              Session Limit
-            </h3>
-            <span
-              className="text-xs font-bold px-3 py-1 rounded-full"
-              style={{
-                background: sessionStats.percentUsed >= 80
-                  ? 'rgba(239, 68, 68, 0.15)'
-                  : sessionStats.percentUsed >= 50
-                  ? 'rgba(245, 158, 11, 0.15)'
-                  : 'rgba(16, 185, 129, 0.15)',
-                color: sessionStats.percentUsed >= 80
-                  ? '#ef4444'
-                  : sessionStats.percentUsed >= 50
-                  ? '#f59e0b'
-                  : '#10b981',
-              }}
-            >
-              {sessionStats.percentUsed}% Used
-            </span>
-          </div>
-          <div className="rounded-full h-2 mb-3 overflow-hidden" style={{ background: '#e4eee1' }}>
-            <div
-              className="h-full transition-all duration-700 ease-out rounded-full"
-              style={{
-                width: `${Math.min(sessionStats.percentUsed, 100)}%`,
-                background: sessionStats.percentUsed >= 80
-                  ? 'linear-gradient(90deg, #ef4444, #dc2626)'
-                  : sessionStats.percentUsed >= 50
-                  ? 'linear-gradient(90deg, #f59e0b, #d97706)'
-                  : 'linear-gradient(90deg, #10b981, #059669)',
-              }}
-            />
-          </div>
-          <div className="flex justify-between text-xs" style={{ color: '#69746c' }}>
-            <span>Used: <span className="text-heritage-ink font-semibold">${sessionStats.total.toFixed(2)}</span></span>
-            <span>Remaining: <span className="text-heritage-ink font-semibold">${sessionStats.remaining.toFixed(2)}</span></span>
-            <span>Limit: <span className="text-heritage-ink font-semibold">${sessionStats.limit}</span></span>
-          </div>
-          {sessionStats.percentUsed >= 80 && (
-            <div className="mt-4 rounded-lg p-3 flex items-center gap-2 text-sm" style={{ background: 'rgba(245, 158, 11, 0.1)', border: '1px solid rgba(245, 158, 11, 0.2)', color: '#976207' }}>
-              <svg className="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-              </svg>
-              You're approaching your session limit. Remember to gamble responsibly!
-            </div>
-          )}
+      )}
+      {query.isLoading ? (
+        <div className="ud-loading" role="status">
+          Loading your betting activity…
+          <div />
+          <div />
+          <div />
         </div>
-
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 stagger-children">
-          {quickActions.map((action) => (
-            <button
-              key={action.path}
-              onClick={() => navigate(action.path)}
-              className="rounded-xl p-6 border text-left transition-all active:scale-[0.98] card-glow"
-              style={{
-                background: action.gradient,
-                borderColor: `${action.accent}40`,
-              }}
-            >
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-lg font-normal text-white font-display tracking-tight">{action.label}</h3>
-                <svg className="w-7 h-7 opacity-60" fill="none" stroke="white" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                </svg>
-              </div>
-              <p className="text-sm" style={{ color: 'rgba(255,255,255,0.7)' }}>{action.desc}</p>
-            </button>
+      ) : filtered.length ? (
+        <div>
+          {filtered.slice(0, 5).map((bet) => (
+            <BetRow key={bet.id || bet.bet_id} bet={bet} />
           ))}
         </div>
-
-        {/* Active Bets Section */}
-        {activeBets.length > 0 && (
-          <div className="mb-8" style={{ animation: 'slide-up 0.5s ease-out 0.3s both' }}>
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-heritage-ink font-display tracking-tight flex items-center gap-3">
-                <span className="w-2 h-2 rounded-full animate-pulse-glow" style={{ background: '#10b981' }}></span>
-                Active Bets
-              </h2>
-              <span className="text-xs" style={{ color: '#69746c' }}>{activeBets.length} pending</span>
-            </div>
-            {betsLoading ? (
-              <LoadingSkeleton type="card" count={2} />
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {activeBets.slice(0, 4).map((bet, index) => (
-                  <BetCard key={bet.id || index} bet={bet} />
-                ))}
-              </div>
-            )}
-            {activeBets.length > 4 && (
-              <div className="mt-4 text-center">
-                <button
-                  onClick={() => navigate('/bets')}
-                  className="font-semibold text-sm transition-colors hover:underline"
-                  style={{ color: '#10b981' }}
-                >
-                  View all {activeBets.length} active bets →
-                </button>
-              </div>
-            )}
+      ) : (
+        !query.isError && (
+          <div className="ud-empty">
+            <Ticket size={30} aria-hidden="true" />
+            <h3>
+              {filter === "All bets"
+                ? "Your story starts here"
+                : `No ${filter.toLowerCase()} bets`}
+            </h3>
+            <p>
+              {filter === "All bets"
+                ? "Your betting activity will appear here when you place a bet."
+                : "Bets with this status will appear here."}
+            </p>
+            <Link to="/odds">
+              Explore the markets <ArrowRight size={16} aria-hidden="true" />
+            </Link>
           </div>
-        )}
+        )
+      )}
+      <div className="ud-activity-note">
+        <Clock3 size={14} aria-hidden="true" /> Latest five shown. Activity
+        refreshes every 30 seconds.
+      </div>
+    </section>
+  );
+}
 
-        {/* Recent Bets Section */}
-        <div className="mb-8" style={{ animation: 'slide-up 0.5s ease-out 0.35s both' }}>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-heritage-ink font-display tracking-tight">Recent Bets</h2>
-            <button
-              onClick={() => navigate('/bets')}
-              className="font-semibold text-sm transition-colors hover:underline"
-              style={{ color: '#10b981' }}
-            >
-              View All →
-            </button>
-          </div>
-          {betsLoading ? (
-            <LoadingSkeleton type="card" count={3} />
-          ) : recentBets.length > 0 ? (
-            <div className="space-y-3">
-              {recentBets.map((bet, index) => (
-                <BetCard key={bet.id || index} bet={bet} />
-              ))}
-            </div>
-          ) : (
-            <div
-              className="rounded-xl p-12 text-center border card-glow"
-              style={{
-                background: 'linear-gradient(135deg, var(--color-card), var(--color-card-hover))',
-                borderColor: 'var(--color-card-border)',
-              }}
-            >
-              <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(16, 185, 129, 0.1)' }}>
-                <svg className="w-8 h-8" fill="none" stroke="#10b981" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                </svg>
-              </div>
-              <h3 className="text-heritage-ink text-lg font-bold mb-2 font-display">No Bets Yet</h3>
-              <p className="text-sm mb-6" style={{ color: '#69746c' }}>Start betting to see your history here</p>
-              <button
-                onClick={() => navigate('/odds')}
-                className="font-semibold px-6 py-2.5 rounded-lg text-sm transition-all hover:opacity-90"
-                style={{
-                  background: 'linear-gradient(135deg, #177c4c, #147b4c)',
-                  color: 'white',
-                }}
-              >
-                Browse Odds
-              </button>
-            </div>
-          )}
+function SessionCard() {
+  const total = useBettingStore((state) => state.sessionTotal);
+  const limit = useBettingStore((state) => state.sessionLimit);
+  const percentage = Math.min(
+    100,
+    Math.max(0, Math.round((total / limit) * 100)),
+  );
+  return (
+    <section
+      className={`ud-panel ud-session ${percentage >= 80 ? "ud-session-warning" : ""}`}
+      aria-labelledby="session-title"
+    >
+      <div className="ud-session-icon">
+        <ShieldCheck size={22} aria-hidden="true" />
+      </div>
+      <span className="ud-eyebrow">STAY IN CONTROL</span>
+      <h2 id="session-title">Play at your pace.</h2>
+      <p>A clear limit helps keep the game enjoyable.</p>
+      <div className="ud-session-totals">
+        <strong>
+          {money(total)} <small>/ {money(limit)}</small>
+        </strong>
+        <span>{percentage}% used</span>
+      </div>
+      <progress
+        value={percentage}
+        max="100"
+        aria-label="Session stake limit used"
+      />
+      <p className="ud-session-caption">
+        {money(Math.max(0, limit - total))} remaining in this browser session.
+      </p>
+      <div className="ud-session-message">
+        {percentage >= 80
+          ? "You’re approaching your session limit. Take a break before placing another bet."
+          : "Only stake what you can afford to lose. Taking a break is always a good call."}
+      </div>
+    </section>
+  );
+}
+
+export default function Dashboard() {
+  const userQuery = useUser();
+  const betsQuery = useBetsHistory();
+  const user = userQuery.data;
+  const bets = Array.isArray(betsQuery.data)
+    ? [...betsQuery.data].sort((a, b) => timestamp(b) - timestamp(a))
+    : [];
+  const won = bets.filter(isWon).length;
+  const lost = bets.filter(isLost).length;
+  const pending = bets.filter(isOpen).length;
+  const ready = betsQuery.data !== undefined;
+  const metric = (value) => (ready ? value : "—");
+  const name = user?.first_name || user?.email?.split("@")[0];
+  const busy = userQuery.isFetching || betsQuery.isFetching;
+  return (
+    <main className="user-dashboard">
+      <div className="ud-breadcrumb">
+        <Link to="/app">Home</Link>
+        <span>/</span>
+        <span>My dashboard</span>
+      </div>
+      <header className="ud-header">
+        <div>
+          <span className="ud-eyebrow">YOUR PERSONAL CLUBHOUSE</span>
+          <h1>Welcome back{name ? `, ${name}` : ""}.</h1>
+          <p>Your activity, your insights, your game plan.</p>
         </div>
-
-        {/* Responsible Gambling Notice */}
-        <div
-          className="rounded-xl p-6 text-center border mb-8"
-          style={{
-            background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(99, 102, 241, 0.03))',
-            borderColor: 'rgba(99, 102, 241, 0.2)',
-            animation: 'slide-up 0.5s ease-out 0.4s both',
+        <button
+          className="ud-refresh"
+          type="button"
+          disabled={busy}
+          onClick={() => {
+            userQuery.refetch();
+            betsQuery.refetch();
           }}
         >
-          <h3 className="font-bold mb-2 font-display text-lg" style={{ color: '#818cf8' }}>Play Responsibly</h3>
-          <p className="text-sm mb-3" style={{ color: '#a5b4fc' }}>
-            Set limits, know when to stop, and never bet more than you can afford to lose.
+          <RefreshCw size={15} aria-hidden="true" />
+          {busy ? "Refreshing…" : "Refresh overview"}
+        </button>
+      </header>
+      <div className="ud-overview">
+        <section className="ud-wallet" aria-labelledby="balance-title">
+          <div className="ud-wallet-top">
+            <span id="balance-title">AVAILABLE BALANCE</span>
+            <Wallet size={21} aria-hidden="true" />
+          </div>
+          <strong>
+            {userQuery.isLoading ? "Loading…" : money(user?.balance)}
+          </strong>
+          <p>
+            {userQuery.isError
+              ? "Balance could not be refreshed."
+              : "Your account, at a glance."}
           </p>
-          <p className="text-xs" style={{ color: '#818cf8' }}>
-            Need help? Call{' '}
-            <a href="tel:1-800-522-4700" className="font-bold hover:underline" style={{ color: '#a5b4fc' }}>
-              1-800-522-4700
-            </a>
-          </p>
+          <Link to="/profile">
+            Manage account <ArrowUpRight size={16} aria-hidden="true" />
+          </Link>
+          <span className="ud-wallet-decoration" aria-hidden="true">
+            FH
+          </span>
+        </section>
+        <div className="ud-metrics">
+          <Metric
+            label="Total bets"
+            value={metric(bets.length)}
+            detail="Across your betting history"
+            icon={Ticket}
+          />
+          <Metric
+            label="Win rate"
+            value={metric(
+              won + lost ? `${Math.round((won / (won + lost)) * 100)}%` : "—",
+            )}
+            detail={
+              ready
+                ? `${won} won · ${lost} lost · settled only`
+                : "Awaiting betting history"
+            }
+            icon={Target}
+          />
+          <Metric
+            label="Open bets"
+            value={metric(pending)}
+            detail="Awaiting a result"
+            icon={Clock3}
+          />
         </div>
       </div>
-    </div>
+      {userQuery.isError && (
+        <div className="ud-error" role="alert">
+          <p>Your account details could not be refreshed.</p>
+          <button
+            type="button"
+            disabled={userQuery.isFetching}
+            onClick={() => userQuery.refetch()}
+          >
+            Retry account
+          </button>
+        </div>
+      )}
+      <div className="ud-main-grid">
+        <div className="ud-main-column">
+          <div className="ud-section-label">
+            <h2>A little insight. A better game plan.</h2>
+            <span>EXPLORE FOOTBALLHERITAGE</span>
+          </div>
+          <nav className="ud-shortcuts" aria-label="Dashboard shortcuts">
+            {shortcuts.map(({ title, detail, to, icon: Icon }) => (
+              <Link key={to} to={to}>
+                {createElement(Icon, { size: 22, "aria-hidden": true })}
+                <h3>{title}</h3>
+                <p>{detail}</p>
+                <ArrowUpRight
+                  className="ud-shortcut-arrow"
+                  size={17}
+                  aria-hidden="true"
+                />
+              </Link>
+            ))}
+          </nav>
+          <Activity query={betsQuery} bets={bets} />
+        </div>
+        <aside className="ud-aside">
+          <SessionCard />
+          <section className="ud-explore">
+            <span className="ud-eyebrow">THE NEXT CHAPTER</span>
+            <h2>
+              Follow the game
+              <br />
+              beyond the score.
+            </h2>
+            <p>Fixtures, markets, and match insights. All in one place.</p>
+            <Link to="/odds">
+              Explore odds <ArrowRight size={16} aria-hidden="true" />
+            </Link>
+          </section>
+        </aside>
+      </div>
+      <footer className="ud-footer">
+        <span>
+          <ShieldCheck size={15} aria-hidden="true" /> Play responsibly. Stay in
+          control.
+        </span>
+        <span>18+ · Every outcome carries risk.</span>
+      </footer>
+    </main>
   );
-};
-
-export default Dashboard;
+}

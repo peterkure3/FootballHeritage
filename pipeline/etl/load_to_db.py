@@ -12,7 +12,7 @@ from typing import List, Dict, Any, Optional, Union, Set
 
 import pandas as pd
 from colorama import init, Fore, Style
-from sqlalchemy import create_engine, text, inspect
+from sqlalchemy import create_engine, text, inspect, Integer
 from sqlalchemy.exc import SQLAlchemyError, ProgrammingError
 
 # Initialize colorama
@@ -243,7 +243,7 @@ def get_db_engine():
     Returns:
         SQLAlchemy engine
     """
-    engine = create_engine(DATABASE_URI)
+    engine = create_engine(DATABASE_URI, connect_args={"options": "-c timezone=UTC"})
     ensure_schema_exists(engine)
     return engine
 
@@ -277,7 +277,7 @@ def prepare_dataframe(df: pd.DataFrame, id_column: str, date_columns: list = Non
     if date_columns:
         for col in date_columns:
             if col in df.columns:
-                df[col] = pd.to_datetime(df[col], errors='coerce')
+                df[col] = pd.to_datetime(df[col], errors='coerce', utc=True).dt.tz_localize(None)
     
     return df
 
@@ -319,6 +319,12 @@ def upsert_matches(df: pd.DataFrame, engine) -> None:
     if df_to_load.empty:
         logger.warning("No valid matches data to load after processing")
         return
+
+    # Upcoming-only batches contain no scores; pandas otherwise infers TEXT.
+    score_types = {name: Integer() for name in ['home_score', 'away_score']
+                   if name in df_to_load.columns}
+    for name in score_types:
+        df_to_load[name] = pd.to_numeric(df_to_load[name], errors='raise').astype('Int64')
     
     try:
         with engine.begin() as conn:
@@ -328,7 +334,8 @@ def upsert_matches(df: pd.DataFrame, engine) -> None:
                 conn,
                 if_exists="replace",
                 index=False,
-                method="multi"
+                method="multi",
+                dtype=score_types,
             )
             
             # Build column list for upsert
@@ -347,7 +354,7 @@ def upsert_matches(df: pd.DataFrame, engine) -> None:
                 batch = df_to_load.iloc[i:i+batch_size]
                 
                 # Create a temp table for this batch
-                batch.to_sql("matches_temp_batch", conn, if_exists="replace", index=False)
+                batch.to_sql("matches_temp_batch", conn, if_exists="replace", index=False, dtype=score_types)
                 
                 # Execute upsert for this batch
                 upsert_query = text(f"""
@@ -388,19 +395,15 @@ def upsert_odds(df: pd.DataFrame, engine) -> None:
     # Prepare data
     df_to_load = df.copy()
     
-    # Map match by home_team and away_team to get match_id
-    # This is a simplified approach - in production, you'd need better matching logic
+    # Require an unambiguous fixture day and canonical team identities.
     try:
         with engine.begin() as conn:
             # Get match IDs
-            matches = pd.read_sql("SELECT match_id, home_team, away_team FROM matches", conn)
+            matches = pd.read_sql("SELECT match_id, date, home_team, away_team FROM matches WHERE sport_type = 'football'", conn)
             
             # Merge to get match_id
-            df_to_load = df_to_load.merge(
-                matches[["match_id", "home_team", "away_team"]],
-                on=["home_team", "away_team"],
-                how="inner"
-            )
+            from models.data import match_odds_to_fixtures
+            df_to_load = match_odds_to_fixtures(matches, df_to_load)
             
             if df_to_load.empty:
                 logger.warning("No matching matches found for odds data")

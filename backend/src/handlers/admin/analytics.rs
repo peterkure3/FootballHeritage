@@ -36,7 +36,7 @@ pub async fn get_dashboard_metrics(pool: web::Data<PgPool>, req: HttpRequest) ->
         }));
     }
 
-    // Use the view we created in migration
+    // Select fields explicitly: the legacy view has an extra pending_bets column.
     let metrics = sqlx::query_as::<
         _,
         (
@@ -51,7 +51,19 @@ pub async fn get_dashboard_metrics(pool: web::Data<PgPool>, req: HttpRequest) ->
             i64,
             i64,
         ),
-    >("SELECT * FROM admin_dashboard_summary")
+    >(r#"SELECT
+        (SELECT COUNT(*) FROM users WHERE is_active = true),
+        (SELECT COUNT(*) FROM users WHERE DATE(created_at) = CURRENT_DATE),
+        (SELECT COUNT(DISTINCT user_id) FROM bets WHERE DATE(created_at) = CURRENT_DATE),
+        (SELECT COUNT(*) FROM bets WHERE DATE(created_at) = CURRENT_DATE),
+        (SELECT COALESCE(SUM(amount), 0) FROM bets WHERE DATE(created_at) = CURRENT_DATE),
+        (SELECT COALESCE(SUM(amount - CASE WHEN status = 'WON' THEN potential_win ELSE 0 END), 0)
+         FROM bets WHERE status IN ('WON', 'LOST') AND DATE(settled_at) = CURRENT_DATE),
+        (SELECT COUNT(*) FROM events WHERE status = 'LIVE'),
+        (SELECT COUNT(*) FROM events WHERE status = 'UPCOMING' AND event_date > CURRENT_TIMESTAMP),
+        (SELECT COUNT(*) FROM fraud_alerts WHERE status = 'pending'),
+        (SELECT COUNT(*) FROM fraud_alerts WHERE status = 'pending' AND severity IN ('high', 'critical'))
+    "#)
     .fetch_one(pool.get_ref())
     .await;
 

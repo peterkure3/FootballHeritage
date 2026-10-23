@@ -10,8 +10,8 @@ use crate::{
     errors::AppError,
     middleware::jwt_auth::get_claims,
     models::{
-        CalculateParlayRequest, Claims, Parlay, ParlayBet, ParlayCalculation,
-        ParlayCalculationResponse, ParlayLeg, ParlayWithLegs, SaveParlayRequest,
+        CalculateParlayRequest, Parlay, ParlayBet, ParlayCalculation, ParlayCalculationResponse,
+        ParlayLeg, ParlayWithLegs, SaveParlayRequest,
     },
 };
 

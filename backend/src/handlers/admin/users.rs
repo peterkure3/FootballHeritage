@@ -92,17 +92,6 @@ pub struct UpdateUserStatusRequest {
     pub reason: Option<String>,
 }
 
-#[derive(Debug, Deserialize)]
-pub struct UpdateUserLimitsRequest {
-    pub daily_loss_limit: Option<f64>,
-    pub weekly_loss_limit: Option<f64>,
-    pub monthly_loss_limit: Option<f64>,
-    pub daily_bet_limit: Option<i32>,
-    pub weekly_bet_limit: Option<i32>,
-    pub monthly_bet_limit: Option<i32>,
-    pub max_single_bet: Option<f64>,
-}
-
 // ============================================================================
 // HANDLERS
 // ============================================================================
@@ -129,8 +118,8 @@ pub async fn list_users(
     };
 
     let page = query.page.unwrap_or(1).max(1);
-    let limit = query.limit.unwrap_or(20).min(100); // Max 100 per page
-    let offset = (page - 1) * limit;
+    let limit = query.limit.unwrap_or(20).clamp(1, 100);
+    let offset = (page - 1).saturating_mul(limit);
 
     // Build dynamic query
     let mut sql = String::from(
@@ -154,40 +143,41 @@ pub async fn list_users(
         "#,
     );
 
-    // Add filters
-    if let Some(status) = &query.status {
-        match status.as_str() {
-            "active" => sql.push_str(" AND u.is_active = true AND u.locked_until IS NULL"),
-            "suspended" => sql.push_str(" AND u.is_active = false"),
-            "locked" => sql.push_str(" AND u.locked_until > NOW()"),
-            _ => {}
-        }
-    }
-
-    if let Some(role) = &query.role {
-        sql.push_str(&format!(" AND u.role = '{}'", role));
-    }
-
-    if let Some(verified) = query.verified {
-        sql.push_str(&format!(" AND u.is_verified = {}", verified));
-    }
-
-    if let Some(search) = &query.search {
-        sql.push_str(&format!(
-            " AND (u.email ILIKE '%{}%' OR u.first_name ILIKE '%{}%' OR u.last_name ILIKE '%{}%')",
-            search, search, search
-        ));
-    }
+    let filters = r#"
+        AND ($1::text IS NULL OR CASE $1
+            WHEN 'active' THEN u.is_active = true AND (u.locked_until IS NULL OR u.locked_until <= NOW())
+            WHEN 'suspended' THEN u.is_active = false
+            WHEN 'locked' THEN u.locked_until > NOW()
+            ELSE true END)
+        AND ($2::text IS NULL OR u.role = $2)
+        AND ($3::boolean IS NULL OR u.is_verified = $3)
+        AND ($4::text IS NULL OR u.email ILIKE $4 OR u.first_name ILIKE $4 OR u.last_name ILIKE $4)
+    "#;
+    let role = query.role.as_deref().filter(|value| !value.is_empty());
+    let search = query
+        .search
+        .as_ref()
+        .filter(|value| !value.is_empty())
+        .map(|value| format!("%{}%", value));
+    sql.push_str(filters);
 
     sql.push_str(" GROUP BY u.id");
 
     // Add sorting
-    let sort_by = query.sort_by.as_deref().unwrap_or("created_at");
-    let sort_order = query.sort_order.as_deref().unwrap_or("desc");
-    sql.push_str(&format!(" ORDER BY u.{} {}", sort_by, sort_order));
+    let sort_by = match query.sort_by.as_deref() {
+        Some("last_login") => "u.last_login",
+        Some("total_bets") => "total_bets",
+        _ => "u.created_at",
+    };
+    let sort_order = if query.sort_order.as_deref() == Some("asc") {
+        "ASC"
+    } else {
+        "DESC"
+    };
+    sql.push_str(&format!(" ORDER BY {} {}", sort_by, sort_order));
 
     // Add pagination
-    sql.push_str(&format!(" LIMIT {} OFFSET {}", limit, offset));
+    sql.push_str(" LIMIT $5 OFFSET $6");
 
     // Execute query
     let users_result = sqlx::query_as::<
@@ -207,6 +197,12 @@ pub async fn list_users(
             BigDecimal,
         ),
     >(&sql)
+    .bind(query.status.as_deref())
+    .bind(role)
+    .bind(query.verified)
+    .bind(&search)
+    .bind(limit)
+    .bind(offset)
     .fetch_all(pool.get_ref())
     .await;
 
@@ -237,11 +233,23 @@ pub async fn list_users(
     };
 
     // Get total count
-    let count_result = sqlx::query_scalar::<_, i64>("SELECT COUNT(*) FROM users")
+    let count_sql = format!("SELECT COUNT(*) FROM users u WHERE 1=1 {}", filters);
+    let count_result = sqlx::query_scalar::<_, i64>(&count_sql)
+        .bind(query.status.as_deref())
+        .bind(role)
+        .bind(query.verified)
+        .bind(&search)
         .fetch_one(pool.get_ref())
         .await;
 
-    let total = count_result.unwrap_or(0);
+    let total = match count_result {
+        Ok(total) => total,
+        Err(error) => {
+            eprintln!("Error counting users: {}", error);
+            return HttpResponse::InternalServerError()
+                .json(serde_json::json!({"error": "Failed to count users"}));
+        }
+    };
     let total_pages = (total as f64 / limit as f64).ceil() as i64;
 
     // Log admin action

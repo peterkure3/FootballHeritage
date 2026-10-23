@@ -15,6 +15,7 @@ import {
 } from "./services";
 import { DataState } from "./ui";
 import useAuthStore from "../stores/authStore";
+import { SportIntelSummary } from './BettingIntel';
 
 function numeric(value: unknown, suffix = "") {
   const n = number(value);
@@ -36,6 +37,9 @@ function PickCard({ pick }: { pick: RecordData }) {
         {text(pick.home_team)} v {text(pick.away_team)}
       </h3>
       <strong>{text(pick.selection) || "Selection unavailable"}</strong>
+      <p className="fh-data-note">
+        {pick.pick_type === "value" ? "Value comparison" : "Model prediction"}
+      </p>
       <div className="fh-pick-metrics">
         <div>
           <small>Model probability</small>
@@ -65,6 +69,10 @@ function PickCard({ pick }: { pick: RecordData }) {
           <small>Model version</small>
           <b>{text(pick.model_version) || "Unavailable"}</b>
         </div>
+        <div>
+          <small>Bookmaker</small>
+          <b>{text(pick.bookmaker) || "Unavailable"}</b>
+        </div>
       </div>
       <p>
         {text(pick.explanation) ||
@@ -75,8 +83,9 @@ function PickCard({ pick }: { pick: RecordData }) {
         {formatDate(text(pick.match_date))}
       </p>
       <p className="fh-data-note">
-        Bookmaker, odds timestamp, calibration and evidence provenance are
-        unavailable. These values are not verified betting recommendations.
+        Prediction: {formatDate(text(pick.prediction_created_at))}. Odds updated:{" "}
+        {text(pick.odds_updated_at) ? formatDate(text(pick.odds_updated_at)) : "Unavailable"}.
+        Model probabilities are estimates, not guarantees.
       </p>
     </article>
   );
@@ -148,15 +157,10 @@ export function BestPicksPage() {
     }
   }
   const response = record(result);
-  const picks = array(response.picks)
-    .map(record)
-    .filter(
-      (pick) =>
-        (!competition || text(pick.competition) === competition) &&
-        (!date || text(pick.match_date).slice(0, 10) === date),
-    );
+  const picks = array(response.picks).map(record);
   return (
     <AppShell title="A smarter look at matchday." eyebrow="FOOTBALLHERITAGE AI">
+      <SportIntelSummary sport={sport} />
       <section className="fh-card fh-section">
         <span className="fh-eyebrow">
           <Sparkles size={14} /> AI PICKS
@@ -214,11 +218,10 @@ export function BestPicksPage() {
               </label>
             </div>
             <p className="fh-data-note">
-              Only Football is accepted by the current generation endpoint.
-              Competition/date filters are applied to returned results here; the
-              server does not yet apply them before ranking. The upstream
-              service can substitute missing odds, so freshness and bookmaker
-              provenance are not verified.
+              Football predictions use the active model. Competition and match
+              date (UTC) are filtered before ranking. Odds comparisons require
+              bookmaker quotes from the last 24 hours; otherwise only the model
+              prediction is shown. Reference stakes use one unit.
             </p>
             <button
               className="fh-button"
@@ -243,6 +246,9 @@ export function BestPicksPage() {
                   )
                 }
               />
+            )}
+            {result && text(record(response.summary).message) && (
+              <p className="fh-data-note">{text(record(response.summary).message)}</p>
             )}
             {loading || error ? (
               <DataState
@@ -314,6 +320,7 @@ interface Message {
   role: "user" | "assistant";
   content: string;
   evidence?: unknown;
+  mode?: string;
 }
 function providerReply(value: unknown): Message {
   if (typeof value === "string") return { role: "assistant", content: value };
@@ -329,6 +336,7 @@ function providerReply(value: unknown): Message {
     role: "assistant",
     content,
     evidence: reply.picks ?? reply.evidence ?? reply.predictions,
+    mode: text(reply.mode),
   };
 }
 export function AiChatPage() {
@@ -347,7 +355,7 @@ export function AiChatPage() {
   const [prompt, setPrompt] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const [failed, setFailed] = useState<Message[] | null>(null);
+  const [failed, setFailed] = useState<{ messages: Message[]; requestId: string } | null>(null);
   const controller = useRef<AbortController | null>(null);
   const history = useQuery({
     queryKey: ["heritage-conversations", userId],
@@ -366,12 +374,13 @@ export function AiChatPage() {
     const row = record(value);
     return (row.role === "user" || row.role === "assistant") &&
       text(row.content)
-      ? [{ role: row.role, content: text(row.content) } as Message]
+      ? [{ role: row.role, content: text(row.content), evidence: record(row.metadata).evidence,
+          mode: text(record(row.metadata).mode) } as Message]
       : [];
   });
   const displayed = messages.length ? messages : loaded;
   useEffect(() => () => controller.current?.abort(), []);
-  async function send(next: Message[]) {
+  async function send(next: Message[], requestId: string = crypto.randomUUID()) {
     setMessages(next);
     setLoading(true);
     setError(null);
@@ -385,6 +394,7 @@ export function AiChatPage() {
           signal: AbortSignal.any([active.signal, AbortSignal.timeout(35000)]),
           body: JSON.stringify({
             conversation_id: conversationId || undefined,
+            request_id: requestId,
             messages: next
               .slice(-30)
               .map(({ role, content }) => ({ role, content })),
@@ -399,7 +409,7 @@ export function AiChatPage() {
         setParams({ conversation: text(response.conversation_id) });
       void history.refetch();
     } catch (err) {
-      setFailed(next);
+      setFailed({ messages: next, requestId });
       if (!active.signal.aborted)
         setError(
           err instanceof Error ? err : new Error("Chat is unavailable."),
@@ -437,9 +447,8 @@ export function AiChatPage() {
       <section className="fh-card fh-section">
         <h2>AI Picks Chat</h2>
         <p className="fh-muted">
-          Provider explanations are not model predictions. Numerical claims
-          require supporting evidence. No wallet or betting actions are
-          available in this chat.
+          Ask about fixtures, predictions or odds. Answers use retrieved model
+          evidence and supporting knowledge, with source references you can inspect.
         </p>
         {!authenticated ? (
           <SignInNotice />
@@ -506,12 +515,12 @@ export function AiChatPage() {
                       <small>
                         {message.role === "user"
                           ? "YOU"
-                          : "PROVIDER EXPLANATION"}
+                          : message.mode === "retrieved_evidence" ? "RETRIEVED EVIDENCE" : "RAG EXPLANATION"}
                       </small>
                       <p>{message.content}</p>
                       {message.evidence != null && (
                         <details>
-                          <summary>Returned evidence / structured data</summary>
+                          <summary>Sources and retrieved evidence</summary>
                           <pre>{JSON.stringify(message.evidence, null, 2)}</pre>
                         </details>
                       )}
@@ -524,10 +533,10 @@ export function AiChatPage() {
             {error && (
               <DataState
                 error={error}
-                retry={failed ? () => void send(failed) : undefined}
+                retry={failed ? () => void send(failed.messages, failed.requestId) : undefined}
               />
             )}
-            {loading && <p role="status">Waiting for the provider…</p>}
+            {loading && <p role="status">Retrieving evidence and preparing a reply…</p>}
             <form className="fh-compose" onSubmit={submit}>
               <label>
                 Message
@@ -565,9 +574,9 @@ export function AiChatPage() {
               )}
             </form>
             <p className="fh-data-note">
-              Context is limited to the latest 30 messages. History depends on
-              server persistence. Cancellation stops waiting here; it cannot
-              guarantee cancellation of provider work.
+              The latest 30 messages provide context. Conversations and source
+              evidence are saved with your account. If text generation is
+              unavailable, the chat shows retrieved evidence directly.
             </p>
           </>
         )}

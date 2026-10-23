@@ -159,14 +159,15 @@ tests are the fallback. Authenticated upstream/provider behavior is not proven b
 
 - No newsroom, live team-profile, standings, bookmark or followed-team APIs are present.
   Editorial/directory previews and device-only preferences are visibly labeled.
-- AI generation currently accepts only Football. The handler ignores competition/date
-  filters before upstream ranking; this UI filters the returned set and discloses that
-  it cannot obtain a complete filtered ranking. The upstream can substitute missing odds.
-  Bookmaker provenance, odds freshness, evidence/calibration and feature versions are
-  incomplete. These are not verified betting recommendations.
-- Chat depends on provider configuration and a compatible service response. Existing
-  conversation persistence resubmits context, can duplicate history, and its ownership
-  upsert requires backend review. Numerical grounding is not guaranteed by this frontend.
+- AI generation accepts Football and applies competition/UTC-date filters before
+  ranking. Missing bookmaker quotes produce model predictions with unavailable odds
+  and value metrics. Current model calibration/accuracy evidence is not exposed here.
+- Chat now runs a RAG agent in the Rust API, retrieving predictions directly from
+  PostgreSQL and supporting knowledge through full-text search. Gemini generation
+  and evidence-only modes expose source references. Saved history retains sources,
+  server-owned context prevents forged history, and stable request IDs avoid duplicate
+  turns on retry. Ownership checks cover reads and writes. Generation constraints and
+  source-ID validation do not constitute a complete factuality evaluator.
 - The original parlay sidebar posts to `/parlay/place`, which is not registered in the
   current Rust routes. Calculation/save/history remain available. Its mixed American/
   decimal odds and synthesized fixture-ID behavior need a separate financial review.

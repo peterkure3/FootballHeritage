@@ -25,6 +25,7 @@ venv/
 env/
 ENV/
 .venv
+.venv-scrapling/
 
 # IDE
 .vscode/
@@ -50,10 +51,14 @@ tls/
 # Data files
 data/raw/**/*.json
 data/raw/**/*.csv
+data/raw/sportsbooks/
+data/raw/historical/basketball_leagues/
+data/raw/historical/americanfootball_leagues/
 data/interim/
 data/processed/
 
 # Model artifacts
+models/model_store/candidates/
 models/model_store/*.pkl
 models/model_store/*.json
 models/model_store/*.csv

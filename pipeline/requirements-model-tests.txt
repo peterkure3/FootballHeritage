@@ -1,0 +1,10 @@
+# Small behavioral CI suite; training libraries are in requirements.txt.
+numpy>=1.24,<3
+scipy>=1.10,<2
+pandas>=2.0,<4
+pyarrow>=14.0.0
+scikit-learn>=1.6,<1.9
+python-dotenv>=1,<2
+requests>=2.31,<3
+fastapi>=0.115,<1
+httpx==0.28.1

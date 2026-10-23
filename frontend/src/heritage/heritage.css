@@ -330,6 +330,28 @@ img {
 .fh-dropdown button:hover {
   background: #f1f6ee;
 }
+.fh-fantasy-menu {
+  position: relative;
+}
+.fh-fantasy-menu .fh-dropdown {
+  width: 290px;
+}
+.fh-fantasy-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-weight: 700;
+}
+.fh-fantasy-description {
+  display: block;
+  margin-top: 7px;
+  line-height: 1.6;
+  opacity: 0.75;
+}
+.fh-fantasy-menu a[aria-current="page"] {
+  background: #f1f6ee;
+  color: var(--fh-green);
+}
 .fh-mobile-toggle,
 .fh-mobile-menu {
   display: none;

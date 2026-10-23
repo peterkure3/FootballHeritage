@@ -10,7 +10,7 @@ from sqlalchemy import create_engine
 from config import DATABASE_URI
 from heritage_config import DATABASE_URI as HERITAGE_DATABASE_URI
 
-engine = create_engine(DATABASE_URI)
+engine = create_engine(DATABASE_URI, connect_args={"options": "-c timezone=UTC"})
 
 heritage_engine = create_engine(HERITAGE_DATABASE_URI)
 

@@ -1,5 +1,6 @@
 @echo off
-REM Weekly model retraining script
+REM Weekly model retraining using data already ingested by the daily script
+REM Run run_daily_fetch_with_sync.bat first and let it finish before retraining.
 REM Run this via Windows Task Scheduler
 
 cd /d "%~dp0"
@@ -21,41 +22,15 @@ echo Using Python interpreter: %PYTHON%
 echo ========================================
 echo Football Model Weekly Retrain
 echo Started: %date% %time%
+echo Using existing processed files and imported historical data.
 echo ========================================
 
 REM Activate virtual environment if you have one
 REM call venv\Scripts\activate
 
-REM Fetch fresh data
-echo.
-echo [1/5] Fetching raw data...
-%PYTHON% -m etl.fetch_raw_data
-if %errorlevel% neq 0 (
-    echo ERROR: Data fetch failed
-    exit /b 1
-)
-
-REM Transform data
-echo.
-echo [2/5] Transforming data...
-%PYTHON% -m etl.transform
-if %errorlevel% neq 0 (
-    echo ERROR: Transform failed
-    exit /b 1
-)
-
-REM Load to database
-echo.
-echo [3/5] Loading to database...
-%PYTHON% -m etl.load_to_db
-if %errorlevel% neq 0 (
-    echo ERROR: Database load failed
-    exit /b 1
-)
-
 REM Train model
 echo.
-echo [4/5] Training model...
+echo [1/2] Training model...
 %PYTHON% -m models.train_model_v2
 if %errorlevel% neq 0 (
     echo ERROR: Model training failed
@@ -64,7 +39,7 @@ if %errorlevel% neq 0 (
 
 REM Generate predictions
 echo.
-echo [5/5] Generating predictions...
+echo [2/2] Generating predictions...
 %PYTHON% -m models.predict_v2
 if %errorlevel% neq 0 (
     echo ERROR: Prediction generation failed

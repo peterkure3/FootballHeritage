@@ -8,8 +8,8 @@ import {
   type SetStateAction,
 } from "react";
 import { useLocation } from "react-router-dom";
-import { FeatureLink as Link } from "../features/FeatureAccess";
-import { useFeatures } from "../features/useFeatures";
+import { FeatureLink as Link, FeatureVisible } from '../features/FeatureAccess';
+import { useFeatures } from '../features/useFeatures';
 import {
   ChevronDown,
   Menu,
@@ -18,6 +18,7 @@ import {
   UserRound,
   ArrowUpRight,
   Activity,
+  Trophy,
 } from "lucide-react";
 import useAuthStore from "../stores/authStore";
 import WalletModal from "../components/WalletModal";
@@ -99,7 +100,9 @@ function MenuGroup({
         <div
           id={`menu-${name}`}
           className={
-            name === "account" || name === "ai" ? "fh-dropdown" : "fh-mega"
+            name === "account" || name === "ai" || name === "fantasy"
+              ? "fh-dropdown"
+              : "fh-mega"
           }
         >
           {children}
@@ -164,12 +167,29 @@ export default function MainNavbar() {
   const [wallet, setWallet] = useState(false);
   const header = useRef<HTMLElement>(null);
   const mobileTrigger = useRef<HTMLButtonElement>(null);
-  const selected = sports.find(
-    (sport) =>
-      location.pathname.split("/")[1] === "sport" &&
-      location.pathname.split("/")[2] === slug(sport),
+  const selected =
+    (location.pathname === "/college/bracket" ? "NCAAB" : undefined) ||
+    sports.find(
+      (sport) =>
+        location.pathname.split("/")[1] === "sport" &&
+        location.pathname.split("/")[2] === slug(sport),
+    );
+  const section =
+    location.pathname === "/college/bracket"
+      ? "bracket"
+      : location.pathname.split("/")[3] || "home";
+  const isFantasy = location.pathname === "/fpl-advisor";
+  const fantasyLink = (
+    <Link to="/fpl-advisor" aria-current={isFantasy ? "page" : undefined}>
+      <span className="fh-fantasy-title">
+        <Trophy size={17} />
+        Fantasy Premier League
+      </span>
+      <small className="fh-fantasy-description">
+        Team builder, captain picks & player insights
+      </small>
+    </Link>
   );
-  const section = location.pathname.split("/")[3] || "home";
   useLayoutEffect(() => {
     setOpen("");
     setMobile(false);
@@ -278,7 +298,11 @@ export default function MainNavbar() {
                       {teams.map((team) => (
                         <Link
                           key={team}
-                          to={`${sportPath(sport, "teams")}?team=${encodeURIComponent(team)}`}
+                          to={
+                            sport === "NCAAB" && team === "March Madness"
+                              ? "/college/bracket"
+                              : `${sportPath(sport, "teams")}?team=${encodeURIComponent(team)}`
+                          }
                         >
                           {team}
                         </Link>
@@ -288,6 +312,19 @@ export default function MainNavbar() {
                 </div>
               </MenuGroup>
             ))}
+            <FeatureVisible feature="fpl"><MenuGroup
+              name="fantasy"
+              className="fh-fantasy-menu"
+              label={
+                <span className={isFantasy ? "active" : ""}>
+                  Fantasy Sports
+                </span>
+              }
+              open={open}
+              setOpen={setOpen}
+            >
+              {fantasyLink}
+            </MenuGroup></FeatureVisible>
           </nav>
           <div className="fh-nav-actions">
             <MenuGroup
@@ -302,6 +339,9 @@ export default function MainNavbar() {
               setOpen={setOpen}
             >
               <Link to="/ai-picks">Best picks</Link>
+              <Link to="/ai-picks/intelligence">Intelligence</Link>
+              <Link to="/ai-picks/intelligence/nba">NBA intelligence</Link>
+              <Link to="/predictions">Predictions</Link>
               <Link to="/ai-picks/chat">Chat</Link>
             </MenuGroup>
             <MenuGroup
@@ -348,6 +388,9 @@ export default function MainNavbar() {
               <details key={sport}>
                 <summary>{sport}</summary>
                 <Link to={sportPath(sport)}>Visit {sport}</Link>
+                {sport === "NCAAB" && (
+                  <Link to="/college/bracket">March Madness</Link>
+                )}
                 {sections.slice(1).map((item) => (
                   <Link key={item} to={sportPath(sport, item.toLowerCase())}>
                     {item}
@@ -363,9 +406,16 @@ export default function MainNavbar() {
                 ))}
               </details>
             ))}
+            <FeatureVisible feature="fpl"><details>
+              <summary>Fantasy Sports</summary>
+              {fantasyLink}
+            </details></FeatureVisible>
             <details>
               <summary>AI Picks</summary>
               <Link to="/ai-picks">Best picks</Link>
+              <Link to="/ai-picks/intelligence">Intelligence</Link>
+              <Link to="/ai-picks/intelligence/nba">NBA intelligence</Link>
+              <Link to="/predictions">Predictions</Link>
               <Link to="/ai-picks/chat">Chat</Link>
             </details>
             <details>
@@ -378,6 +428,15 @@ export default function MainNavbar() {
       {selected && (
         <nav className="fh-subnav" aria-label={`${selected} navigation`}>
           <span>{selected.toUpperCase()}</span>
+          {selected === "NCAAB" && (
+            <Link
+              to="/college/bracket"
+              className={section === "bracket" ? "selected" : ""}
+              aria-current={section === "bracket" ? "page" : undefined}
+            >
+              March Madness
+            </Link>
+          )}
           {sections.map((item) => (
             <Link
               key={item}

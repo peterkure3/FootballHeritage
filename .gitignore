@@ -33,3 +33,6 @@ Thumbs.db
 backend/scripts/fix_admin_role.sql
 backend/scripts/reset_admin_password.sql
 backend/scripts/update_admin_password.sql
+
+# Isolated staging build/test worktrees and artifacts
+.release/

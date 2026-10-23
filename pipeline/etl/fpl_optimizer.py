@@ -415,6 +415,46 @@ def select_starting_xi(squad: List[Player]) -> Tuple[List[Player], List[Player],
     return best_xi, best_bench, best_formation
 
 
+def evaluate_custom_team(players, squad_ids, starter_ids, captain_id, vice_captain_id):
+    """Validate an advisor draft against optimizer constraints and recalculate it."""
+    if len(squad_ids) != SQUAD_SIZE or len(set(squad_ids)) != SQUAD_SIZE:
+        raise ValueError("Select 15 different players.")
+    by_id = {player.id: player for player in players}
+    if any(player_id not in by_id for player_id in squad_ids):
+        raise ValueError("A selected player is no longer available in the player catalog.")
+    squad = [by_id[player_id] for player_id in squad_ids]
+    for position, limits in POSITION_LIMITS.items():
+        if sum(player.position == position for player in squad) != limits["max"]:
+            raise ValueError(f"Your squad needs {limits['max']} {position} players.")
+    for team_id in {player.team_id for player in squad}:
+        if sum(player.team_id == team_id for player in squad) > MAX_PER_TEAM:
+            raise ValueError("Choose no more than three players from one club.")
+    if any(player.price <= 0 for player in squad):
+        raise ValueError("Every selected player must have a valid price.")
+    cost_tenths = sum(round(player.price * 10) for player in squad)
+    if cost_tenths > round(TOTAL_BUDGET * 10):
+        raise ValueError(f"Your squad exceeds the £{TOTAL_BUDGET:g}m advisor budget.")
+    if len(starter_ids) != STARTING_XI or len(set(starter_ids)) != STARTING_XI or not set(starter_ids) <= set(squad_ids):
+        raise ValueError("Select 11 different starters from your squad.")
+    starters = [by_id[player_id] for player_id in starter_ids]
+    formation = {position: sum(player.position == position for player in starters) for position in ("DEF", "MID", "FWD")}
+    if sum(player.position == "GKP" for player in starters) != 1 or formation not in VALID_FORMATIONS:
+        raise ValueError("Choose one starting goalkeeper and a supported formation: " + ", ".join(f"{f['DEF']}-{f['MID']}-{f['FWD']}" for f in VALID_FORMATIONS) + ".")
+    if captain_id == vice_captain_id or captain_id not in starter_ids or vice_captain_id not in starter_ids:
+        raise ValueError("Choose different captain and vice-captain players from your starting eleven.")
+    return {
+        "players": [_player_to_dict(player) for player in squad],
+        "starting_xi": [_player_to_dict(player) for player in starters],
+        "bench": [_player_to_dict(player) for player in squad if player.id not in starter_ids],
+        "captain": _player_to_dict(by_id[captain_id]),
+        "vice_captain": _player_to_dict(by_id[vice_captain_id]),
+        "formation": formation,
+        "total_cost": cost_tenths / 10,
+        "budget_remaining": (round(TOTAL_BUDGET * 10) - cost_tenths) / 10,
+        "expected_points": round(sum(player.expected_points for player in starters) + by_id[captain_id].expected_points, 1),
+    }
+
+
 def get_top_picks_by_position(
     players: List[Player],
     position: str,

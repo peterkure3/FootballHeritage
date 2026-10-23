@@ -17,6 +17,20 @@ logger = setup_logger(__name__, LOG_LEVEL)
 router = APIRouter()
 
 
+@router.get("/ncaab/bracket")
+def get_march_madness_bracket(
+    season: Optional[int] = Query(None, ge=2020, le=2100),
+    refresh: bool = Query(False),
+):
+    """Return sourced NCAA men's tournament games and the participating teams."""
+    from datetime import date
+    from etl.march_madness import get_bracket
+    try:
+        return get_bracket(season or date.today().year, refresh)
+    except RuntimeError as error:
+        raise HTTPException(status_code=503, detail=str(error))
+
+
 # =============================================================================
 # NCAAB (NCAA Basketball) Endpoints
 # =============================================================================

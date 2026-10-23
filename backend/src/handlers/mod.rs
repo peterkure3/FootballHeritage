@@ -1,4 +1,5 @@
 pub mod admin;
+pub mod ai_picks;
 pub mod auth;
 pub mod betting;
 pub mod chat;
@@ -7,8 +8,8 @@ pub mod intelligence;
 pub mod limits;
 pub mod monitoring;
 pub mod not_found;
-pub mod player_props;
 pub mod parlay;
+pub mod player_props;
 pub mod sports;
 pub mod user;
 pub mod wallet;

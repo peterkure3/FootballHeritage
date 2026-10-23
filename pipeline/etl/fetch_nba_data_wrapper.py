@@ -67,7 +67,7 @@ class NbaOddsFetcher:
             
         except Exception as e:
             logger.error(f"Error fetching NBA odds: {e}")
-            return []
+            return None
     
     def fetch_nba_scores(self, sport: str = "basketball_nba"):
         """Fetch NBA scores from The Odds API."""
@@ -96,7 +96,7 @@ class NbaOddsFetcher:
             
         except Exception as e:
             logger.error(f"Error fetching NBA scores: {e}")
-            return []
+            return None
 
 def main():
     """Fetch current NBA data using The Odds API."""
@@ -114,6 +114,10 @@ def main():
         # Fetch and save NBA scores
         logger.info("Fetching NBA scores...")
         scores = fetcher.fetch_nba_scores()
+
+        if odds is None or scores is None:
+            logger.error('NBA data fetch incomplete; see provider errors above')
+            return 1
         
         logger.info("NBA data fetch completed successfully")
         return 0
@@ -123,4 +127,4 @@ def main():
         return 1
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

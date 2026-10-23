@@ -273,11 +273,11 @@ export default function SportPage() {
               imply model support.
             </p>
             <div className="fh-link-grid">
-              <Link to="/predictions">Match predictions →</Link>
-              <Link to="/intelligence/devigged-odds">Devigged odds →</Link>
-              <Link to="/intelligence/ev-bets">Expected value →</Link>
-              <Link to="/intelligence/arbitrage">Arbitrage →</Link>
-              <Link to="/player-props">Player props →</Link>
+              <Link to={`/ai-picks/intelligence/${slug(sport)}/predictions`}>Match predictions →</Link>
+              <Link to={`/ai-picks/intelligence/${slug(sport)}/devigged-odds`}>De-vigged odds →</Link>
+              <Link to={`/ai-picks/intelligence/${slug(sport)}/ev-bets`}>Expected value →</Link>
+              <Link to={`/ai-picks/intelligence/${slug(sport)}/arbitrage`}>Arbitrage →</Link>
+              <Link to={`/ai-picks/intelligence/${slug(sport)}/player-props`}>Player props →</Link>
               <Link to="/college">College sports →</Link>
             </div>
           </>

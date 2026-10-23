@@ -1,0 +1,1156 @@
+{
+  "base_commit": "634da159a69a55a3da075f46465777d51058a046",
+  "selected_source": [
+    {
+      "status": "tracked-change",
+      "path": ".github/workflows/ci.yml",
+      "sha256": "94b644b225d1c4dfaa06a141a072e1550b5caec9f98c6ed4e732e5b7d9377c67"
+    },
+    {
+      "status": "tracked-change",
+      "path": "backend/.cargo/config.toml",
+      "sha256": "8930fafb8719ffdb77aa25024498ca0cb7620b0ab7ddd5f7489057d5dc1f70a5"
+    },
+    {
+      "status": "tracked-change",
+      "path": "backend/.env.example",
+      "sha256": "04184463ba16130f61e0ddefa098ad134ad20d96f1c614f07d0aabc70eaa76a2"
+    },
+    {
+      "status": "tracked-change",
+      "path": "backend/Cargo.toml",
+      "sha256": "eccfcbc3c53fb3bbd4f7a80356deebc3823795c2b3c1293ab1d9fe6e5bf8a39e"
+    },
+    {
+      "status": "tracked-change",
+      "path": "backend/docs/API_DOCUMENTATION.md",
+      "sha256": "28d953fac4792f3a73706ebc7722fcb9efc345d04cfb61bd322d1dc35ecb48f9"
+    },
+    {
+      "status": "tracked-change",
+      "path": "backend/src/handlers/admin/analytics.rs",
+      "sha256": "3b599021b49c0ea2413d5ffdf5e935365e542c45ecd48ec41593790a6d53239e"
+    },
+    {
+      "status": "tracked-change",
+      "path": "backend/src/handlers/admin/events.rs",
+      "sha256": "1f3e2bc1e8c8bcb5c9b9bc244302f117a2a2ad0efa2f9d3cd4d208e957070eba"
+    },
+    {
+      "status": "tracked-change",
+      "path": "backend/src/handlers/admin/mod.rs",
+      "sha256": "adb66341821dc39ee0b4da0314ce0f1f6d330e03d47e28ad2cf91b00ea4aac85"
+    },
+    {
+      "status": "tracked-change",
+      "path": "backend/src/handlers/admin/users.rs",
+      "sha256": "0400dba0218e9ce522490d4c0364eeab4fd5fc0e60c2d8dba06bc14238eaeea3"
+    },
+    {
+      "status": "tracked-change",
+      "path": "backend/src/handlers/mod.rs",
+      "sha256": "0132fca55310806c78f6ded3f6bf4b96fd3053a7366d83cd0263a2fc56c51025"
+    },
+    {
+      "status": "tracked-change",
+      "path": "backend/src/handlers/parlay.rs",
+      "sha256": "7f5754be70d0e7fe406a85af62c1b9b1ab5f68428e2a642025b938b64eb5cdfc"
+    },
+    {
+      "status": "tracked-change",
+      "path": "backend/src/handlers/wallet.rs",
+      "sha256": "701ebbf43952c2997ce5fa86abacd38d2d938a4fb3211a78b628471999d74991"
+    },
+    {
+      "status": "tracked-change",
+      "path": "backend/src/main.rs",
+      "sha256": "41c92d3ffa68cb09b077d24320061fad8e99cba1a4f0f40e58f796cb8ceb7e1b"
+    },
+    {
+      "status": "tracked-change",
+      "path": "backend/src/middleware/admin_auth.rs",
+      "sha256": "12f2861d16a73312f53c3de35f63ca53367fee5e9d14ed39227af4468a673dec"
+    },
+    {
+      "status": "tracked-change",
+      "path": "backend/src/middleware/monitoring.rs",
+      "sha256": "e443a7b5d62d62bfab6375d342313a08b370d358d721be66feed965f2d83ab33"
+    },
+    {
+      "status": "tracked-change",
+      "path": "frontend/UI_INTEGRATION.md",
+      "sha256": "91b357350ca287b92c282134cb33905314c17a8aeb92b81c80f9de7a47c7cc74"
+    },
+    {
+      "status": "tracked-change",
+      "path": "frontend/package.json",
+      "sha256": "91a5fe92de5abdf96608b7718e03b51804d1d33bd0e296c624f971b097af4946"
+    },
+    {
+      "status": "tracked-change",
+      "path": "frontend/src/App.jsx",
+      "sha256": "af817a5b599a332a17eae3d6be099aa0f3dca3742b7f8dd81c6e232d1d73bf9f"
+    },
+    {
+      "status": "tracked-change",
+      "path": "frontend/src/components/BetManagement.jsx",
+      "sha256": "36a6921211e6adfcadd6bfea33de10d71ef561ffe31f6dfad0458b923d903cb2"
+    },
+    {
+      "status": "tracked-change",
+      "path": "frontend/src/components/EventFormModal.jsx",
+      "sha256": "73731d89885f16d3f1d8cd421484053ff063ae86f06ac26d4c075209b55429fc"
+    },
+    {
+      "status": "tracked-change",
+      "path": "frontend/src/components/PredictionBadge.jsx",
+      "sha256": null
+    },
+    {
+      "status": "tracked-change",
+      "path": "frontend/src/components/PredictionCard.jsx",
+      "sha256": null
+    },
+    {
+      "status": "tracked-change",
+      "path": "frontend/src/components/WhatIfPredictor.jsx",
+      "sha256": null
+    },
+    {
+      "status": "tracked-change",
+      "path": "frontend/src/components/admin/AdminChatbot.jsx",
+      "sha256": "3d5e7b05694a11dcbfd8a53325c95ce06023c69b32d6b301a94b58ba463a8119"
+    },
+    {
+      "status": "tracked-change",
+      "path": "frontend/src/components/admin/AdminLayout.jsx",
+      "sha256": "7827eaf3da759891613fe359c7beba0bd9f40bbd68c7937ec842194170c87316"
+    },
+    {
+      "status": "tracked-change",
+      "path": "frontend/src/components/admin/AdminNavbar.jsx",
+      "sha256": "dce3d61c15cfc45837a171d2b6147eaf0fb209079189851d6891c6944919c672"
+    },
+    {
+      "status": "tracked-change",
+      "path": "frontend/src/components/admin/AdminSidebar.css",
+      "sha256": "788f3e16aca3d8966dca948cd8d68332fc7f9456d124e42c877a567ccb892306"
+    },
+    {
+      "status": "tracked-change",
+      "path": "frontend/src/components/admin/AdminSidebar.jsx",
+      "sha256": "20f19773bf89134362da976dfc653315b2adda6c3c437255a7a654415d504ee5"
+    },
+    {
+      "status": "tracked-change",
+      "path": "frontend/src/components/predictions/PredictionResults.jsx",
+      "sha256": "6dfefb4371553bb1c7d6c530b5dfd4306df0c644cc7587f8516202603423fc9a"
+    },
+    {
+      "status": "tracked-change",
+      "path": "frontend/src/heritage/AiPages.tsx",
+      "sha256": "e72ea7ee2f408f2e9d8871a62c59e7ba6afeaf90522c25fff1a284e5fa6d6aca"
+    },
+    {
+      "status": "tracked-change",
+      "path": "frontend/src/heritage/HomePage.tsx",
+      "sha256": "02395332c8bba8a103bd1f5c206df792a64d08ae83efde71348724d191d302be"
+    },
+    {
+      "status": "tracked-change",
+      "path": "frontend/src/heritage/MainNavbar.tsx",
+      "sha256": "d7afeae69afe230e7fe3196e1a5ee1d7989edaadde598ead3227d711828d5029"
+    },
+    {
+      "status": "tracked-change",
+      "path": "frontend/src/heritage/SportPage.tsx",
+      "sha256": "4173eae96d4e01aacf5b30409f1551ce5c9cc15bbcb78d7ba2398da1cb591e85"
+    },
+    {
+      "status": "tracked-change",
+      "path": "frontend/src/heritage/heritage.css",
+      "sha256": "1ff3cb42ee3fc50ceae540f5232f97e8b31772b7705891b8ca53548e92c43ccc"
+    },
+    {
+      "status": "tracked-change",
+      "path": "frontend/src/hooks/usePredictions.js",
+      "sha256": null
+    },
+    {
+      "status": "tracked-change",
+      "path": "frontend/src/pages/AdminAnalytics.jsx",
+      "sha256": "faf88af85bf82dadd492e89f905ce382fc150c84ed2ee8baa2cfa9091f6fc28d"
+    },
+    {
+      "status": "tracked-change",
+      "path": "frontend/src/pages/AdminBets.jsx",
+      "sha256": "50b7a9fb623b86b3c13cb8955910592214a1577591e557d692869c62a61880bc"
+    },
+    {
+      "status": "tracked-change",
+      "path": "frontend/src/pages/AdminDashboard.jsx",
+      "sha256": "b49a004347b7f495711d4e582b4bf5eb2053e7ef9102745187605b0eef315a9b"
+    },
+    {
+      "status": "tracked-change",
+      "path": "frontend/src/pages/AdminEvents.jsx",
+      "sha256": "4a6e05a0bb203e195dc34d0e51884936bd298928e6adb8847f44fe09c967001a"
+    },
+    {
+      "status": "tracked-change",
+      "path": "frontend/src/pages/AdminLogs.jsx",
+      "sha256": "2ef671a33a32f193925b777f6ac8f733f768bf5894058bc29b7b1dd04cb6ad32"
+    },
+    {
+      "status": "tracked-change",
+      "path": "frontend/src/pages/AdminRevenue.jsx",
+      "sha256": "5775c523524d8111df4f9c483f24e0e595e27d91edb8291d66a4bbb9c6d22776"
+    },
+    {
+      "status": "tracked-change",
+      "path": "frontend/src/pages/AdminSettings.jsx",
+      "sha256": "83ddacaf7a51efbfcedc47f9d49de6f84725a781d788fec6a503303c432e333d"
+    },
+    {
+      "status": "tracked-change",
+      "path": "frontend/src/pages/AdminSportsGPT.jsx",
+      "sha256": "69ce3847d19b906c7931c537febc0fa056e4697779b6a0439d53f692c4df60fc"
+    },
+    {
+      "status": "tracked-change",
+      "path": "frontend/src/pages/AdminUsers.jsx",
+      "sha256": "c2c4b803a7c2906ec73dcafcac63dba7c44954f45af48cfd3d75cd4619df2958"
+    },
+    {
+      "status": "tracked-change",
+      "path": "frontend/src/pages/Dashboard.jsx",
+      "sha256": "1e40352911eb96887c601ab845d8ef9df6456aba04d4a868c1f08f1f8a8f53e1"
+    },
+    {
+      "status": "tracked-change",
+      "path": "frontend/src/pages/FPLAdvisor.jsx",
+      "sha256": "fe25a959a74f9d17ff28507e91c0a8f4166117d330a4d7189fa85b6cf5d096c6"
+    },
+    {
+      "status": "tracked-change",
+      "path": "frontend/src/pages/MarchMadnessBracket.jsx",
+      "sha256": "93d289b196c9e6e1d1ef0c9f5cdf3e3d4cd655518170135f1f9efba30d4ae6b1"
+    },
+    {
+      "status": "tracked-change",
+      "path": "frontend/src/pages/Predictions.jsx",
+      "sha256": "9fe6c789d10ea074126b815e4fb0aae71a6a74651178349efbad93d2a1aa30aa"
+    },
+    {
+      "status": "tracked-change",
+      "path": "frontend/src/services/predictionService.js",
+      "sha256": "6715eec6722711c54bbd84db7d7f743ec8f602d6ae47fee3516bcc9aeaefbf1a"
+    },
+    {
+      "status": "tracked-change",
+      "path": "frontend/tests/heritage-navigation.spec.js",
+      "sha256": "7d73c962989a19c340c419ac1536c98686dfb547f9947cf035eeeead8328e10f"
+    },
+    {
+      "status": "tracked-change",
+      "path": "pipeline/.env.example",
+      "sha256": "d66feb234f91b6e586b2887e52642d1b463db71687492fe106a462f80f5b70d8"
+    },
+    {
+      "status": "tracked-change",
+      "path": "pipeline/.gitignore",
+      "sha256": "6dc86cf509b61abdb73d3c84195575438896316a822ea90c885204e4be658334"
+    },
+    {
+      "status": "tracked-change",
+      "path": "pipeline/api/db.py",
+      "sha256": "8cda4687fe626f5fb3a72872ac9e340dabeb0b32dfcb57709472df4f15f81092"
+    },
+    {
+      "status": "tracked-change",
+      "path": "pipeline/api/routers/fpl.py",
+      "sha256": "2aa2a6eb4b771121c9798cddb3fde3436022f550f87221a02202841796b6a4fc"
+    },
+    {
+      "status": "tracked-change",
+      "path": "pipeline/api/routers/matchup.py",
+      "sha256": "58a2b2426a8bc1b59b37140c7a814e4267151ceae0496391d5873e23efd4a71d"
+    },
+    {
+      "status": "tracked-change",
+      "path": "pipeline/api/routers/ncaab.py",
+      "sha256": "64fbc84de3dbac2cd9329889ed57b456c3623e86ab58314389ed3116f25f6bdf"
+    },
+    {
+      "status": "tracked-change",
+      "path": "pipeline/api/routers/predictions.py",
+      "sha256": "62213c4a36c9eb2ffba1de33a282bfccab78476c6e4b3fe7da6974df5403d221"
+    },
+    {
+      "status": "tracked-change",
+      "path": "pipeline/api/routes.py",
+      "sha256": "7b0c1c091d3b986d0bec5bceb3065524a3a894691934f7fd89e78925f0d43375"
+    },
+    {
+      "status": "tracked-change",
+      "path": "pipeline/config.py",
+      "sha256": "a9d089055d149408374b45469889fdcabf64a6d9f85044890e66b7962b0a9d34"
+    },
+    {
+      "status": "tracked-change",
+      "path": "pipeline/etl/fetch_nba_data_wrapper.py",
+      "sha256": "0e8504ba81c0ca597f691e7f1089d0542988a9a3182ba7f77fd07b020c0f47ca"
+    },
+    {
+      "status": "tracked-change",
+      "path": "pipeline/etl/fetch_ncaab_odds.py",
+      "sha256": "128a198571af13a0606a3fbb7b4e8354859243302ceb93cbf98cff81e3898530"
+    },
+    {
+      "status": "tracked-change",
+      "path": "pipeline/etl/fetch_raw_data.py",
+      "sha256": "4739a0da00ddae6290317652787334c8a94ea92b0b7b2e91f2937e6fa30fb35c"
+    },
+    {
+      "status": "tracked-change",
+      "path": "pipeline/etl/fpl_optimizer.py",
+      "sha256": "78a522d8c4190fe8cc145b483e95e9a6f34327a9bcf145a86adb0a3e71f20447"
+    },
+    {
+      "status": "tracked-change",
+      "path": "pipeline/etl/ingest_player_props.py",
+      "sha256": "5cab48f6bf9c4770f4e108f33c74e3b30dd6f70a63b1498ad2d8572713a816c3"
+    },
+    {
+      "status": "tracked-change",
+      "path": "pipeline/etl/load_to_db.py",
+      "sha256": "1387790cbd3dc0f9a0fecae21b88cfe9bd9168970ff97586533a22f5a5455ccf"
+    },
+    {
+      "status": "tracked-change",
+      "path": "pipeline/etl/transform.py",
+      "sha256": "190650f6e60cf784800ae04663a35d472ff37f0662a35e73f57e7dc2e3c3863e"
+    },
+    {
+      "status": "tracked-change",
+      "path": "pipeline/etl/utils.py",
+      "sha256": "50943a11836ef47737594535ff1f0656d516e228fd9e71481d89c03feb55d4d7"
+    },
+    {
+      "status": "tracked-change",
+      "path": "pipeline/models/evaluate.py",
+      "sha256": "1d8617384f663e49acd95e5b8b4315744b190d194e98303e567d8072841a1d76"
+    },
+    {
+      "status": "tracked-change",
+      "path": "pipeline/models/predict_v2.py",
+      "sha256": "eae9386b56e19aef9448c00dab5e3e09cad98efbca60de8f9e7feed96ab27e1c"
+    },
+    {
+      "status": "tracked-change",
+      "path": "pipeline/models/train_model_v2.py",
+      "sha256": "fa6cb19085ee7754095c21d86c44917ece967c7ec75ad46353c69ff6cd8f0c35"
+    },
+    {
+      "status": "tracked-change",
+      "path": "pipeline/requirements.txt",
+      "sha256": "5ebcc54c519f27bdc7ae64f27ced211740cbe7752a0f87a51c02fadd9e3e21f6"
+    },
+    {
+      "status": "tracked-change",
+      "path": "pipeline/run_daily_fetch.bat",
+      "sha256": "d25aefc410845991ae4482f4faef28f1bc055dcfd9f253ccafce7c400d056efb"
+    },
+    {
+      "status": "tracked-change",
+      "path": "pipeline/run_daily_fetch_with_sync.bat",
+      "sha256": "e3196582c987d6e3b80bb42ea92742f4ea9e206a5621a709ff60c4935ef83c1c"
+    },
+    {
+      "status": "tracked-change",
+      "path": "pipeline/run_weekly_retrain.bat",
+      "sha256": "2fcf121833ae5a389a47ad15e69a2a34c421d14023a8908cebf8b046bf90b5ec"
+    },
+    {
+      "status": "untracked-source",
+      "path": "backend/migrations/20261007000001_add_ai_picks.sql",
+      "sha256": "29513681452e7b1433e5b9ec05b6ceebabb0355e39eb7737073b90665f626874"
+    },
+    {
+      "status": "untracked-source",
+      "path": "backend/migrations/20261008000001_add_rust_rag_chat.sql",
+      "sha256": "a46c99f4753ea9369247dc7ae1a57b8bab84a4bf736d3c82a63cf28e7a571b7f"
+    },
+    {
+      "status": "untracked-source",
+      "path": "backend/src/handlers/admin/tests.rs",
+      "sha256": "c44f93a008080ffd74e51948b104d447f1fcc00cc01311d12996f77eb056e58a"
+    },
+    {
+      "status": "untracked-source",
+      "path": "backend/src/handlers/ai_picks.rs",
+      "sha256": "bee281c9a9f88fd37451c57503fb2215566c7601bd68b0dc316be982af572841"
+    },
+    {
+      "status": "untracked-source",
+      "path": "backend/src/rag.rs",
+      "sha256": "3bba0c81b07eabe90e3f7a16a254552c00bbd1555551464e9e337805e49cd02c"
+    },
+    {
+      "status": "untracked-source",
+      "path": "frontend/.vercelignore",
+      "sha256": "87a58da97c04e56baf5338e03068742f0f7936dd7c6d1252fa755107a5f82872"
+    },
+    {
+      "status": "untracked-source",
+      "path": "frontend/scripts/capture-bookmaker-network.mjs",
+      "sha256": "126596f49106e2dd0c2c20a83c0fb244706b1374c837f9b7dd3c7bda1504f5bd"
+    },
+    {
+      "status": "untracked-source",
+      "path": "frontend/scripts/verify-betting-intel-live.mjs",
+      "sha256": "aaa58a25a73415c572f990be465f6c6ef0bbbeb5ca83660c8b6a0a05e1bee566"
+    },
+    {
+      "status": "untracked-source",
+      "path": "frontend/scripts/verify-model-lab-live.mjs",
+      "sha256": "6b7eccbb942ced2313fcd45c67190a6eb7ea511e800513f5db30235fe2b77ffd"
+    },
+    {
+      "status": "untracked-source",
+      "path": "frontend/src/components/admin/AdminPage.jsx",
+      "sha256": "506883379e1a5fcdc401e53372b28bcf2da75b79fa2d2cd71b73fc0a7170faa6"
+    },
+    {
+      "status": "untracked-source",
+      "path": "frontend/src/components/admin/AdminPages.css",
+      "sha256": "69a3f626697158c09511a53fc573c9d4459b95a03c5e60372b70feb9a0e006af"
+    },
+    {
+      "status": "untracked-source",
+      "path": "frontend/src/components/admin/AuditWorkspace.jsx",
+      "sha256": "61b60eccdae163886170cb40a807ecd5fefb01439cbe62df65c9ecafcaa6124b"
+    },
+    {
+      "status": "untracked-source",
+      "path": "frontend/src/components/admin/BetAvailability.jsx",
+      "sha256": "fd4b1d9662c4571d2303372850c7fb2c3999df2bd380d4141da3b1ecffc75fcf"
+    },
+    {
+      "status": "untracked-source",
+      "path": "frontend/src/components/admin/EventsWorkspace.jsx",
+      "sha256": "480a2eea711939d7489071fa7748ed9bb7b4ffedbcb07b9dae1d465955d3a52f"
+    },
+    {
+      "status": "untracked-source",
+      "path": "frontend/src/components/admin/OperationsDashboard.jsx",
+      "sha256": "24ad63c02b06b940df6c506c0ca7dcbcda5e0185b7fe4d52cc82cf9731e27eba"
+    },
+    {
+      "status": "untracked-source",
+      "path": "frontend/src/components/admin/PlatformAnalytics.jsx",
+      "sha256": "6c5802b36eac932d24a41613ec1b86f8784cb2639d35345e63c17abd68858051"
+    },
+    {
+      "status": "untracked-source",
+      "path": "frontend/src/components/admin/SportsAssistant.jsx",
+      "sha256": "9d0d046851f686d66d755d36a78535fdc664f46d0e14265d031c8bc4999a5876"
+    },
+    {
+      "status": "untracked-source",
+      "path": "frontend/src/components/admin/SystemPreferences.jsx",
+      "sha256": "46b8329a0d1ca8600224af9dab528c75c579a6c5358b7d3bc33218917cced4d0"
+    },
+    {
+      "status": "untracked-source",
+      "path": "frontend/src/components/admin/UsersWorkspace.jsx",
+      "sha256": "773fea834b3fa8a1392a06261f84f3de2a8f191cd433bdf6c060009e3e6b9b2b"
+    },
+    {
+      "status": "untracked-source",
+      "path": "frontend/src/components/fpl/EditableTeam.jsx",
+      "sha256": "d6f34ae53939a33854c2aa81ab31ab43065a6eb11df3034213a68f46b9c7eb5b"
+    },
+    {
+      "status": "untracked-source",
+      "path": "frontend/src/components/fpl/TeamEditor.jsx",
+      "sha256": "ccaaaf839f3548f2f12e93ff4fbb300fe96af56812831e6e8723d957ce88c351"
+    },
+    {
+      "status": "untracked-source",
+      "path": "frontend/src/components/predictions/BookmakerGrid.css",
+      "sha256": "d3d0b8ab882411a2caad8fe7d4be3bfbb15c7f50955e70250e0ac9e95195e2da"
+    },
+    {
+      "status": "untracked-source",
+      "path": "frontend/src/components/predictions/BookmakerGrid.jsx",
+      "sha256": "c603ec3c008057be531cd5daf8d9196e3a0549442b8d5310c0afd80202b93845"
+    },
+    {
+      "status": "untracked-source",
+      "path": "frontend/src/components/predictions/EvidenceTable.jsx",
+      "sha256": "4d3ca8dffa2620b03c52747200845a6e9fde91a5c1a4630af703bba14417d728"
+    },
+    {
+      "status": "untracked-source",
+      "path": "frontend/src/components/predictions/ForecastCard.jsx",
+      "sha256": "e83148dc1ccaf435fbb78b5426cd9c4c25e63e46ae7db915803d2bc03ebea12d"
+    },
+    {
+      "status": "untracked-source",
+      "path": "frontend/src/components/predictions/ModelPreview.jsx",
+      "sha256": "a76e39ef2a40a10701765bb9af14ad8e6728a7a18dfa122bfd1c645bd731d4ab"
+    },
+    {
+      "status": "untracked-source",
+      "path": "frontend/src/components/predictions/Pagination.jsx",
+      "sha256": "cbec796a2848ea7520575eaf2213598a5625b38295447979addc4183eb0ee270"
+    },
+    {
+      "status": "untracked-source",
+      "path": "frontend/src/components/predictions/PaperTrial.jsx",
+      "sha256": "08f5b95841f519ff5b84d3aaf8e6bbfce990946b27f1fb252a7cd92b1c24b585"
+    },
+    {
+      "status": "untracked-source",
+      "path": "frontend/src/components/predictions/QueryState.jsx",
+      "sha256": "9bb7a1127085d77a5791c1ee1181fc8a403014346d6d1c149da6ecc4fa6814d5"
+    },
+    {
+      "status": "untracked-source",
+      "path": "frontend/src/components/predictions/TeamSearch.jsx",
+      "sha256": "8563c50d7895dd674e4fb0e1f580377fabfca9ea79fa1c3018781a96b3c4b00a"
+    },
+    {
+      "status": "untracked-source",
+      "path": "frontend/src/heritage/BettingIntel.tsx",
+      "sha256": "8be20e3fe680f2916635b5fbdff20b39a514946723d339dc60e15ea90c333d42"
+    },
+    {
+      "status": "untracked-source",
+      "path": "frontend/src/heritage/BettingIntelTable.tsx",
+      "sha256": "f4f0efe13c95db6ea8349286c56042ac66eef6a5089e839669cb33430c31ce2c"
+    },
+    {
+      "status": "untracked-source",
+      "path": "frontend/src/heritage/betting-intel.css",
+      "sha256": "9142e1a218d9a7b5af6fd451ef550b0747c0b0c1dd2fee2171b0210340e8df55"
+    },
+    {
+      "status": "untracked-source",
+      "path": "frontend/src/heritage/bettingIntelFormat.ts",
+      "sha256": "4c16eb1f344a41f90284658609ec9dd80df5b4929be74c2063856a50115a1d92"
+    },
+    {
+      "status": "untracked-source",
+      "path": "frontend/src/pages/AdminDashboard.css",
+      "sha256": "b8f9a4667d9c4133a03bda916838b7f15f0d3d9541dacdb327950d82c8e6f57b"
+    },
+    {
+      "status": "untracked-source",
+      "path": "frontend/src/pages/Dashboard.css",
+      "sha256": "675646f360dbdd54afcebb2868be091c72aae744ffdf2befb97aa9e7966e9a36"
+    },
+    {
+      "status": "untracked-source",
+      "path": "frontend/src/pages/FPLAdvisor.css",
+      "sha256": "fec3237aedb17723714fb05fe16ff0be2326fcd8b6134538797a79ed95b8d323"
+    },
+    {
+      "status": "untracked-source",
+      "path": "frontend/src/pages/MarchMadness.css",
+      "sha256": "2c9dd72548a02e1ccd7886cad30883f46415689dd8f274e9b81fd4e99c1a557f"
+    },
+    {
+      "status": "untracked-source",
+      "path": "frontend/src/pages/MarchMadness.jsx",
+      "sha256": "31759bc5ba32eb6b91a5383a25f19a6aa334cc79c3580ad98c92f4425cfa78a2"
+    },
+    {
+      "status": "untracked-source",
+      "path": "frontend/src/pages/Predictions.css",
+      "sha256": "68ccce4f4ac3ec19ffbfc5da709e4f8b4e9bb0249f3a9163ef9948f7fc44a32c"
+    },
+    {
+      "status": "untracked-source",
+      "path": "frontend/src/services/adminService.js",
+      "sha256": "dd55f8d6d20fd52c5e9cb47b41157dab8dcbd983c42c39dd671533df06d27485"
+    },
+    {
+      "status": "untracked-source",
+      "path": "frontend/tests/admin-operations.spec.js",
+      "sha256": "123f5ba03d5a9e1bd12ce904799ec10549812c6e9b6f5085074832312cd9f295"
+    },
+    {
+      "status": "untracked-source",
+      "path": "frontend/tests/admin-pages.spec.js",
+      "sha256": "e4d30072470a5a1a0f0703674dcb4e1b26d09cd7262340f2c9fb9eef55dfb8c7"
+    },
+    {
+      "status": "untracked-source",
+      "path": "frontend/tests/betting-intel.spec.js",
+      "sha256": "8c94726dffa68cf6c2770507a60099b599c90dd1dd0511f896463e1138f8ac47"
+    },
+    {
+      "status": "untracked-source",
+      "path": "frontend/tests/dashboard.spec.js",
+      "sha256": "00497ec7ba3819fc156289f2827db4aee25cfa4478389928d9ed1ec8168c03b6"
+    },
+    {
+      "status": "untracked-source",
+      "path": "frontend/tests/fpl-team-edit.spec.js",
+      "sha256": "2ab586fae8ce9c0df3a6483c2daf1f8a6fdefd564c5e4846e38eda9a67932c13"
+    },
+    {
+      "status": "untracked-source",
+      "path": "frontend/tests/march-madness.spec.js",
+      "sha256": "4962f68566ed070a259224e4fa2a880e9337afdd7bda31e6ab94c49cb9ad03e0"
+    },
+    {
+      "status": "untracked-source",
+      "path": "frontend/tests/predictions.spec.js",
+      "sha256": "2d99e5a8fbcebb5625a52dfc962296fffde18378b8d702a20765d1e8aed4ade5"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/api/ai_picks.py",
+      "sha256": "11dda3f83070ed08583d109dba1b52c3ae31b7fa69512b4be26b3ac2c18bbc3b"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/api/betting_intel.py",
+      "sha256": "2fae1f959e0ec29cc7bdf8ae071d584695f5be736726523dcb8c08762e6487f8"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/api/bookmaker_catalog.py",
+      "sha256": "2ac39ce4eadbfbb809152305ef67aba234f68caa0a198343f5afe219b9ce5918"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/api/operations.py",
+      "sha256": "549187188a6f36c7eb3a7d3164e34de12f3cc6df2ef0e890e2c66acbd2ec4416"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/api/prediction_dashboard.py",
+      "sha256": "e6e48ffe1dcbb85d64c31964f7b810812fe12913d259c5e042caa9b8c330fe5c"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/api/routers/ai_picks.py",
+      "sha256": "368bde024cad5f4b62aadc9bcd4247121513386a78ab9b49bbd52e8d6b444efd"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/api/routers/betting_intel.py",
+      "sha256": "dbeb55f2ec79c2ce2a9688d3c56e36ba055f21d824dd1e623e9d537e8494f0d4"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/api/routers/prediction_dashboard.py",
+      "sha256": "b6624e5bf1f7a8bd9ce9acc3f75fc203a90f974a7d83cba1f6250b4bef064f2f"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/api/routers/sport_models.py",
+      "sha256": "3dc9459ef52ff4f8d4895189176e5048b119e3fa1a351df236569ffafe1cb785"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/etl/betting_intel.py",
+      "sha256": "ed5d9eca84621bc8c20a2f5a2529dc74f5f7d254dd95fd3e3d640ce74abe31a0"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/etl/fetch_americanfootball_history.py",
+      "sha256": "81056abc743e7fbdd4a24969fca2efc9474e8f2ba04258afda702eef2bf06883"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/etl/fetch_basketball_history.py",
+      "sha256": "46164bd7942ef4aaae200e49576f198bd119ead7779204a92bb5f46c0b020b5d"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/etl/fetch_football_form.py",
+      "sha256": "2da69f7aa63c57b068da729a891e5959510b202a8c4f0882ab359e56e1b2d643"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/etl/fetch_gridiron_sources.py",
+      "sha256": "5cc7fbc1224412cb565cbf4126e462090047ad9ce52008ac9c4b7a381aeebd62"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/etl/fetch_nba_public_odds.py",
+      "sha256": "bf044dc4dfe15177ee3a35df371b665860c463d55105c31a8c9e5a3a957c03c8"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/etl/fetch_soccer_events.py",
+      "sha256": "647b30d44b50ad29cb14ffff988d576c9452b24d584a228aba333e0d163a8ac4"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/etl/march_madness.py",
+      "sha256": "e8e1bb60309fbbae3f3fbe809cf563112af80b7afc0da275c152564c1fc4e1c9"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/etl/nba_public_parsers.py",
+      "sha256": "619c9e8347921de3c0a67b02d4641ff19bc31140164e6a7debb0265ea60c933c"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/etl/regional_sportsbooks.py",
+      "sha256": "af41d063488fac493c3796930487c830ee6cc07eb180ae9d089b0d59ed7399fa"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/etl/scrape_sportsbooks.py",
+      "sha256": "f0a0de62af369ec85c009a6647b6330a65067cb2aebbdd4968be2ce688dfeb27"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/etl/scrapling_transport.py",
+      "sha256": "a6f0bc6690ad6da64353c742169c29a334fd0b283f7c7335b9985927f91309e6"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/etl/soccer_event_dataset.py",
+      "sha256": "8b02a381607e913793f4adc9daad45e321aa7c6a4ce79e3bcb4f57b83b7a4291"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/etl/sportsbook_parsers.py",
+      "sha256": "ebc8314a7ef9b1a064f9690b1058a72947edb4735a8da70dd297a8d896cd8fd0"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/models/backtest.py",
+      "sha256": "5ca7e02a5a1c7c65b997b29b345da8efb2333c58b5993cf389d3b5e5c799fc7f"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/models/data.py",
+      "sha256": "02cf685f7cd1aaf00d5f2835dbc895a6d9ee5610d3cee585c3ffe903fc4255d4"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/models/ensemble.py",
+      "sha256": "99943a7d93f26347811f940465fbad9a5cb3e3d1a5fba50c240a5c4eba6aefd7"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/models/evaluate_soccer_players.py",
+      "sha256": "fc3a1c5434a8a0ad3d34714a95381cb1d326ca45255fa006d3cc07880be1eca0"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/models/features.py",
+      "sha256": "ffe075420dbea2f762a1fc97bd4afd79203e24659b982758c63ec7ab7559dc51"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/models/football_identity.py",
+      "sha256": "812eddba2b07685e497e0df2ff3984c051b9173e9dbdc05217b296efa1b87dd3"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/models/gridiron_efficiency.py",
+      "sha256": "c60d04f6746e345a3f025359510200ebeacbddc04d8691ab712b10c22f1d1124"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/models/gridiron_sources.py",
+      "sha256": "bf40ae558e4c70a77f6f6d89f2cf18a3b7bb13d773701ab7c5ff11d52a372f5e"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/models/import_historical.py",
+      "sha256": "e65912f7325dbd3d5573ab43dd6367ac9ad0d226f6988beda0e4cbd26624bb48"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/models/import_sportsbook_odds.py",
+      "sha256": "8ab8a946960b255cd3800cf3bf0be180014b483ae780eadf7aed5f49ac60f947"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/models/market_demo.py",
+      "sha256": "7bbec12f5c5d2f5771984a9840939738c911b6686686d9ea244210d02b2963cd"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/models/paper_trial.py",
+      "sha256": "29643e9ac3f8f169d00fd52f596e6dc0f184b81919a71254573d3f1c271507b0"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/models/run_soccer_simulation.py",
+      "sha256": "f59f529a3b1733fe368dbc391e6065f4b77e5d0bffb189078baf6b8edff04e2f"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/models/selection.py",
+      "sha256": "2e62a6c0a6e16d81a9acf1d857635a6525c3336f3a9d7a152337163e89d45202"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/models/soccer_players.py",
+      "sha256": "aa904f67a93503724a33731f40d490caad82f66c8a22d3cdeba78affdceeead6"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/models/soccer_possessions.py",
+      "sha256": "306db3a3558107f20983499d97cec8070cde084bf7bf52a5ab7e98e5584c1526"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/models/sport_data.py",
+      "sha256": "b0cd836024f77d851af590f4541fd1d96a4e2d16f39b2cf0cefd69217992420a"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/models/sport_features.py",
+      "sha256": "8cc1e359180717f669e8edb583c03bd9f060d3741b1e95dce1e7a2d55b7cd809"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/models/sport_market_demo.py",
+      "sha256": "0257c3fb60358f31a5f8ca7f2eddfe369cd80a67a83d22470387b2c642b23318"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/models/sport_model.py",
+      "sha256": "b6a538d38887bd343f62934ea56a1317edfb8560cebaa966de7bd736d2610831"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/models/sport_predict.py",
+      "sha256": "69c1c978a4b0df9a5e604a3024ef2ae956d1548a9bc8243629af1f88b0be72ac"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/models/train_gridiron_sources.py",
+      "sha256": "e5bdb72751d1a160847fb6e088aff9040335d28e432f0731e5684bb76af5eddf"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/models/train_sports.py",
+      "sha256": "b6421942213047baa33b5d6f5a04ecb0fec24d741c69eab98d7e1ded060a87c9"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/models/trial_study.py",
+      "sha256": "aa4dc7ac65f7084013813a48bbb9089f68d3e3030ca16ffef6cfa2cb1bc3e1c3"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/models/validation.py",
+      "sha256": "fd301a75d5e0bac6f3b6082d9e26c1548fb24b917e0465f7a1b5562b007ee20f"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/requirements-model-tests.txt",
+      "sha256": "c688e5047934d5ffa9361f24ca230694f9532325bd3c9b4cf26423fa8d077645"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/requirements-scraping.txt",
+      "sha256": "c6b0e086955790633a1a118867b3637b747d90abcc163ecd3dd432ebed49fa90"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/scripts/assess_paper_trial.py",
+      "sha256": "b28b05873619aab67b242294736db464184e12471591bd0b0337f86c824f8c7a"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/scripts/audit_bookmaker_network.py",
+      "sha256": "365bba50768480c03a9ebe7d9a939adafd01b304174d5fac77e7201865f25538"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/scripts/audit_predictions_page.py",
+      "sha256": "eacb6f969f609cd1fe25f0d5ec7cb881ed2cd8ba2a6fb00fb85f94ddb67bfa85"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/scripts/inspect_regional_sources.py",
+      "sha256": "62b810c157d22f9e1d44b069daf84cada9122a89e69d62257d7b93325f2a0544"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/scripts/probe_regional_feeds.py",
+      "sha256": "889e48ba7281464f09d1fa821fae41067a07fb37ddf06e3ebfe8e05f8073a1c7"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/scripts/probe_supplied_bookmaker_feeds.py",
+      "sha256": "a57dff0a084657cd849fb99002a79a846f0877469946b502935e601238fae890"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/scripts/record_edge_trial.py",
+      "sha256": "a74225acc4a15b0866e6f9c647ac8c688ed00bf6f6970993615e03f13e4b099d"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/scripts/record_manual_paper_pick.py",
+      "sha256": "315ce1525681917d8721067580788c04c7063c3d2f0adcb5ef06fbb30ec10274"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/scripts/refresh_paper_trial.py",
+      "sha256": "5cf749e9623a2747e55e4a6ea7eeeff852a832f9084c6e5749052c96270768d6"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/scripts/refresh_regional_pipeline.py",
+      "sha256": "7a8db155c5cd20ccf7077909884e5d1b80a1ec1694107c42f0f9977c88a45601"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/scripts/refresh_trial_fixtures.py",
+      "sha256": "195b2ea6c82ea7fceeb32353025e8cf5bef69f98303382e1d9b244cd4c6c940a"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/scripts/replay_bookmaker_network.py",
+      "sha256": "d525b8b877ea1d462b860da66392221fbf7405465bf5dc8ca81c3cab059e5e3e"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/scripts/run_trial_collection.py",
+      "sha256": "c8e0fcaae54b84eeee020e6c4f7a8912e48de7f4bb46179179391b98dec83a86"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/scripts/simulate_soccer_fixtures.py",
+      "sha256": "1ff79411e632694b398c12d23eb7f5132fa3df4b8331e9403698fb22dfc58997"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/scripts/smoke_sport_models.py",
+      "sha256": "fc91a60c0963dde3ae009c66ebc3565b047e6f180d107cd9daa2b21ddd807257"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/scripts/sync_bookmaker_grid.py",
+      "sha256": "e130fb699985cec3f7c6f50589d73a456fa0af861060209a9c1ec0ba085b9f4c"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/scripts/sync_verified_odds.py",
+      "sha256": "743d5e2f08c60d1fc509649c9d7fee01dc50ea3cfe870d175f4133e0f866602b"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/scripts/verify_bookmaker_comparison.py",
+      "sha256": "82c936b5274dccdf231604a3cbed49a40d0eadc5dd80454c15f9bf1874fdaf99"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/scripts/verify_prediction_dashboard.py",
+      "sha256": "bd65d9a72354561839192bc43333a158f71c0ac1256bc9788345625a5f77d54e"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/scripts/verify_regional_pipeline.py",
+      "sha256": "395b28f2276a1e60ddb8dc619c46a341fb0cdcd2a023cb4418ee71c2bb7eab19"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/scripts/verify_sport_models.py",
+      "sha256": "158884ec6f3adc00ccce756e9867585d196c3ea84250b0cb0c1f5bcf80d3e012"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/scripts/verify_trial_automation.py",
+      "sha256": "5b9bb86c317d81c80216051ee600939a424ffc3ab8ec3641ea8682d226b25065"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/tests/test_ai_picks.py",
+      "sha256": "eb993ac9e5f3040037b7d5a2b918b3737e064c19697ba2fb7db9a5ed4e9b77ea"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/tests/test_americanfootball_leagues.py",
+      "sha256": "c1edd02757f84ff6921e0fd02b5d8560e291cfbc60ae91d7684252e0e805a3e1"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/tests/test_basketball_leagues.py",
+      "sha256": "0823d2c7a0b15d126bd292a27ab04b44c87f8ce495e1c98266ce918022a54c5a"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/tests/test_betting_intel.py",
+      "sha256": "cfe3eece0ec9a9f9a5028db343cd3d0dd72cb2127d2d87df63c7f3bd81ccb4b7"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/tests/test_bookmaker_grid_coverage.py",
+      "sha256": "9674e2f7866e62f76e2c52d18f696bb65c1a82b0179ac41d6c38032d8216f8cf"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/tests/test_bookmaker_html_adapter.py",
+      "sha256": "efa45d63204c57e95ebc1d2ff90e6ba38c5cd5e3bd83e21a19177d90f68ebd52"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/tests/test_candidate_teams.py",
+      "sha256": "b08ce9ea2423c97ce38809d49dc1dba7e868bc0694248e7c86adc9adab0bc634"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/tests/test_edge_trial.py",
+      "sha256": "bf178b7ddf5081fa9dbef4579a1d3449a235d3bf7da9781bc94b997c69fa49f0"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/tests/test_fetch_failures.py",
+      "sha256": "2dfdd094a7cad4ed9584561618ec2c5e1b2d4c9ce47c99e2dc0c6967d505b856"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/tests/test_football_form.py",
+      "sha256": "f170d3ad5470ffea05d9de0b2356838000030214030e406588951aeebfc110a2"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/tests/test_football_identity.py",
+      "sha256": "fc309635ea152701f6af817f2900d1e32ba087609da7ca8de8db9150b2a554e9"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/tests/test_fpl_team_edit.py",
+      "sha256": "dadb3e92926078b2b471d47e7ce0825a3ef70caffc6561f472aed00045545920"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/tests/test_gridiron_sources.py",
+      "sha256": "cbc826b21b10f09c645d450757f3f2f410b73cef042185b0537a5a64be1f9df7"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/tests/test_json_resilience.py",
+      "sha256": "2c8038d79c3fa68db5d5db85d970f4d087e8f0849a779a8d8f5a212f908c8f96"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/tests/test_manual_paper_pick.py",
+      "sha256": "2ca9ebcbed8f2c797bc31a1b07a1b806f03dd33ce9cf410c9d550a4c9f7ecf78"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/tests/test_march_madness.py",
+      "sha256": "212912ba264fed764143bd001fabd05bfcc3e3037cef6ba37b313213486ca54a"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/tests/test_market_demo.py",
+      "sha256": "ea67c6bf081b26a1bec723c9f092cb994448759fe7d7f45a47d63a04d3c7fa9f"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/tests/test_model_pipeline.py",
+      "sha256": "7267462b8f7e08d61fde89b104a3342fcae39bbdc668fbcb0150228d1c375654"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/tests/test_model_selection.py",
+      "sha256": "f882f357da9622bd4f2638dbef0485a008ee33e4402fa76dd6bde6497ca6b1ab"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/tests/test_nba_public_odds.py",
+      "sha256": "1cd736fbe523a81dcde8922eb79f1ca5cc44082e1be208ccef7fbb6b7b61003f"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/tests/test_network_bookmaker_adapters.py",
+      "sha256": "fc3ca5215af16b4298aa900e5d3602358bdf7894c39af7c08fe2e6d863257ea3"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/tests/test_nullable_fixture_load.py",
+      "sha256": "2f10606d961ada19a783e6fe192a886c7be6bbb4c55dbd909e914e3622399427"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/tests/test_operations.py",
+      "sha256": "af383452ec42d8fe43b51fe3429082d205fa6a920edb6c36a168d55bf68f558d"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/tests/test_prediction_dashboard.py",
+      "sha256": "39330e901e662abb4c7cb54d359e6313b1bc6bdb0a115522ea295e9c59c5dda1"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/tests/test_regional_pipeline.py",
+      "sha256": "8381c1d20fa5f71545e2985a00cf458069e30bbb411e3e2341c1177ae9c586d8"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/tests/test_scrapling_transport.py",
+      "sha256": "9b81e843a043985993f916a46d817ab56d5491329083b4051d7165e62a555635"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/tests/test_soccer_simulation.py",
+      "sha256": "0b08d0c715a375c468a23f37bd30e4ad71e3ec5b2213fb24b46ce88ae6ffd961"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/tests/test_sport_market_demo.py",
+      "sha256": "1fbf2ec8b9fb9c0ec260d1ebe3bf14ac1ec5c39a9be1c829d7f19730218b2454"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/tests/test_sport_models.py",
+      "sha256": "ce2b832da63bd5aeb633a607245ce3395fd377d0747cc1ab94181fe123ece6bd"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/tests/test_sportsbook_import.py",
+      "sha256": "1418748a6002871652b64fbd352400cdca274ce9674315ee0b6cd1c1e62d51ce"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/tests/test_sportsbook_scraping.py",
+      "sha256": "2eb804b75ccdea719ec3057b4d5070fbcab8a121fb58a235e8268195aee413f6"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/tests/test_supplied_bookmaker_adapters.py",
+      "sha256": "8503c152bb6023416e405516b5ae082ce72774c37edd7b21e72cdef7b20b6de5"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/tests/test_trial_collection.py",
+      "sha256": "140365cc43999d3d454323ea2c6092fe1302dfd74ccaca0d53576531a376154c"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/tests/test_trial_continuation_window.py",
+      "sha256": "34d0eefe7e836999d87c57333f3c28d5ab6b355067f0f936e040b7ab3de63d41"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/tests/test_trial_study.py",
+      "sha256": "268f06eb6dd17f95b09ccc24e8122ca4b98c0386fed4513b38cb4cd0ff2e7eb9"
+    },
+    {
+      "status": "untracked-source",
+      "path": "pipeline/tests/verify_fpl_team_http.py",
+      "sha256": "ffbf707bca17998eb61d6553419f326e6683fe3b9b15055d393944cec98d6e0f"
+    }
+  ],
+  "excluded_status_count": 1028
+}

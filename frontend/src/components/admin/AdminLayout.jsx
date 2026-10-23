@@ -1,8 +1,9 @@
-import { useState } from 'react';
-import { Outlet } from 'react-router-dom';
-import AdminNavbar from './AdminNavbar';
-import AdminSidebar from './AdminSidebar';
-import AdminChatbot from './AdminChatbot';
+import { useCallback, useEffect, useState } from "react";
+import { Outlet } from "react-router-dom";
+import AdminNavbar from "./AdminNavbar";
+import AdminSidebar from "./AdminSidebar";
+import AdminChatbot from "./AdminChatbot";
+import "./AdminPages.css";
 
 /**
  * Admin Layout Wrapper
@@ -10,27 +11,37 @@ import AdminChatbot from './AdminChatbot';
  */
 
 const AdminLayout = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(
+    () => window.matchMedia("(min-width: 1024px)").matches,
+  );
 
   const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
+    setSidebarOpen((open) => !open);
   };
 
+  const closeSidebar = useCallback(() => setSidebarOpen(false), []);
+  useEffect(() => {
+    const media = window.matchMedia("(min-width: 1024px)");
+    media.addEventListener("change", closeSidebar);
+    return () => media.removeEventListener("change", closeSidebar);
+  }, [closeSidebar]);
+
   return (
-    <div className="min-h-screen bg-card">
+    <div className="admin-shell min-h-screen bg-surface">
       {/* Admin Navbar */}
-      <AdminNavbar onMenuToggle={toggleSidebar} />
+      <AdminNavbar onMenuToggle={toggleSidebar} sidebarOpen={sidebarOpen} />
 
       {/* Main Layout */}
       <div className="flex">
         {/* Sidebar */}
-        <AdminSidebar isOpen={sidebarOpen} onToggle={toggleSidebar} />
+        <AdminSidebar
+          isOpen={sidebarOpen}
+          onToggle={toggleSidebar}
+          onClose={closeSidebar}
+        />
 
         {/* Main Content Area */}
-        <main className={`
-          flex-1 min-h-[calc(100vh-4rem)] transition-all duration-300
-          ${sidebarOpen ? 'lg:ml-0' : 'lg:ml-0'}
-        `}>
+        <main className="flex-1 min-w-0 min-h-[calc(100vh-4rem)]">
           <div className="p-6 lg:p-8">
             <Outlet />
           </div>

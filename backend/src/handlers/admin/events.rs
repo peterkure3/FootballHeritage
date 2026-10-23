@@ -190,8 +190,18 @@ pub async fn get_all_events(
         }
     };
 
-    let limit: i64 = query.get("limit").and_then(|v| v.as_i64()).unwrap_or(50);
-    let offset: i64 = query.get("offset").and_then(|v| v.as_i64()).unwrap_or(0);
+    let limit: i64 = query
+        .get("limit")
+        .and_then(|v| v.as_str())
+        .and_then(|v| v.parse().ok())
+        .unwrap_or(50)
+        .clamp(1, 100);
+    let offset: i64 = query
+        .get("offset")
+        .and_then(|v| v.as_str())
+        .and_then(|v| v.parse().ok())
+        .unwrap_or(0)
+        .max(0);
     let sport = query.get("sport").and_then(|v| v.as_str());
     let status = query.get("status").and_then(|v| v.as_str());
 
@@ -338,6 +348,10 @@ pub async fn update_event(
         query_parts.push(format!("away_team = ${}", param_count));
         param_count += 1;
     }
+    if body.event_date.is_some() {
+        query_parts.push(format!("event_date = ${}::text::timestamptz", param_count));
+        param_count += 1;
+    }
     if body.status.is_some() {
         query_parts.push(format!("status = ${}", param_count));
         param_count += 1;
@@ -348,6 +362,38 @@ pub async fn update_event(
     }
     if body.away_score.is_some() {
         query_parts.push(format!("away_score = ${}", param_count));
+        param_count += 1;
+    }
+    if body.moneyline_home.is_some() {
+        query_parts.push(format!("moneyline_home = ${}", param_count));
+        param_count += 1;
+    }
+    if body.moneyline_away.is_some() {
+        query_parts.push(format!("moneyline_away = ${}", param_count));
+        param_count += 1;
+    }
+    if body.point_spread.is_some() {
+        query_parts.push(format!("point_spread = ${}", param_count));
+        param_count += 1;
+    }
+    if body.spread_home_odds.is_some() {
+        query_parts.push(format!("spread_home_odds = ${}", param_count));
+        param_count += 1;
+    }
+    if body.spread_away_odds.is_some() {
+        query_parts.push(format!("spread_away_odds = ${}", param_count));
+        param_count += 1;
+    }
+    if body.total_points.is_some() {
+        query_parts.push(format!("total_points = ${}", param_count));
+        param_count += 1;
+    }
+    if body.over_odds.is_some() {
+        query_parts.push(format!("over_odds = ${}", param_count));
+        param_count += 1;
+    }
+    if body.under_odds.is_some() {
+        query_parts.push(format!("under_odds = ${}", param_count));
         param_count += 1;
     }
 
@@ -380,6 +426,9 @@ pub async fn update_event(
     if let Some(ref away_team) = body.away_team {
         query = query.bind(away_team);
     }
+    if let Some(ref event_date) = body.event_date {
+        query = query.bind(event_date);
+    }
     if let Some(ref status) = body.status {
         query = query.bind(status);
     }
@@ -388,6 +437,30 @@ pub async fn update_event(
     }
     if let Some(away_score) = body.away_score {
         query = query.bind(away_score);
+    }
+    if let Some(moneyline_home) = body.moneyline_home {
+        query = query.bind(moneyline_home);
+    }
+    if let Some(moneyline_away) = body.moneyline_away {
+        query = query.bind(moneyline_away);
+    }
+    if let Some(point_spread) = body.point_spread {
+        query = query.bind(point_spread);
+    }
+    if let Some(spread_home_odds) = body.spread_home_odds {
+        query = query.bind(spread_home_odds);
+    }
+    if let Some(spread_away_odds) = body.spread_away_odds {
+        query = query.bind(spread_away_odds);
+    }
+    if let Some(total_points) = body.total_points {
+        query = query.bind(total_points);
+    }
+    if let Some(over_odds) = body.over_odds {
+        query = query.bind(over_odds);
+    }
+    if let Some(under_odds) = body.under_odds {
+        query = query.bind(under_odds);
     }
 
     query = query.bind(admin_id).bind(event_id);
@@ -521,5 +594,91 @@ pub async fn update_event_status(
             HttpResponse::InternalServerError()
                 .json(serde_json::json!({"error": "Failed to update event"}))
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use actix_web::{http::StatusCode, test::TestRequest, HttpMessage};
+    use sqlx::{postgres::PgPoolOptions, Row};
+
+    #[actix_rt::test]
+    #[ignore = "requires local PostgreSQL; uses only connection-local temporary tables"]
+    async fn update_event_persists_date_and_odds() {
+        dotenvy::dotenv().ok();
+        let pool = PgPoolOptions::new()
+            .max_connections(1)
+            .connect(&std::env::var("DATABASE_URL").expect("DATABASE_URL is required"))
+            .await
+            .unwrap();
+        sqlx::query("CREATE TEMP TABLE events (LIKE public.events INCLUDING DEFAULTS)")
+            .execute(&pool)
+            .await
+            .unwrap();
+        sqlx::query("CREATE TEMP TABLE admin_logs (admin_id uuid, action text, target_type text, target_id uuid)")
+            .execute(&pool)
+            .await
+            .unwrap();
+        let event_id = Uuid::new_v4();
+        let admin_id = Uuid::new_v4();
+        sqlx::query("INSERT INTO events (id, sport, league, home_team, away_team, event_date) VALUES ($1, 'football', 'test', 'Home', 'Away', NOW())")
+            .bind(event_id)
+            .execute(&pool)
+            .await
+            .unwrap();
+        let req = TestRequest::default().to_http_request();
+        req.extensions_mut().insert(crate::models::Claims {
+            sub: admin_id.to_string(),
+            email: "admin@example.test".to_string(),
+            exp: usize::MAX,
+            iat: 0,
+            iss: "test".to_string(),
+            aud: "test".to_string(),
+            session_id: "test".to_string(),
+            role: "admin".to_string(),
+        });
+        let changes = serde_json::json!({
+            "event_date": "2026-10-14T18:00:00+03:00",
+            "moneyline_home": 1.75,
+            "moneyline_away": 2.25,
+            "point_spread": -3.5,
+            "spread_home_odds": 1.85,
+            "spread_away_odds": 1.95,
+            "total_points": 45.5,
+            "over_odds": 1.9,
+            "under_odds": 2.0
+        });
+        for body in [changes.clone(), serde_json::json!({"over_odds": 2.1})] {
+            let response = update_event(
+                web::Data::new(pool.clone()),
+                web::Path::from(event_id),
+                web::Json(serde_json::from_value(body).unwrap()),
+                req.clone(),
+            )
+            .await;
+            assert_eq!(response.status(), StatusCode::OK);
+        }
+        let event = sqlx::query("SELECT * FROM events WHERE id = $1")
+            .bind(event_id)
+            .fetch_one(&pool)
+            .await
+            .unwrap();
+        assert_eq!(event.get::<Uuid, _>("updated_by"), admin_id);
+        assert_eq!(
+            event.get::<DateTime<Utc>, _>("event_date").to_rfc3339(),
+            "2026-10-14T15:00:00+00:00"
+        );
+        for (field, value) in changes.as_object().unwrap() {
+            if field != "event_date" {
+                let expected = if field == "over_odds" {
+                    BigDecimal::from_str("2.1").unwrap()
+                } else {
+                    BigDecimal::from_str(&value.to_string()).unwrap()
+                };
+                assert_eq!(event.get::<BigDecimal, _>(field.as_str()), expected);
+            }
+        }
+        pool.close().await;
     }
 }

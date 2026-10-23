@@ -3,3 +3,6 @@ pub mod analytics;
 pub mod events;
 pub mod monitoring;
 pub mod users;
+
+#[cfg(test)]
+mod tests;

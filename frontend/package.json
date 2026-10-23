@@ -9,6 +9,7 @@
     "build:production": "node scripts/validate-production-env.mjs && npm run build",
     "typecheck": "tsc --noEmit",
     "test": "playwright test",
+    "verify:intel:live": "node scripts/verify-betting-intel-live.mjs",
     "lint": "eslint .",
     "preview": "vite preview"
   },

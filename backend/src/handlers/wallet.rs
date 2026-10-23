@@ -334,6 +334,8 @@ pub async fn withdraw(
         user_id, amount
     );
 
+    monitoring.record_withdrawal().await;
+
     Ok(HttpResponse::Ok().json(BalanceResponse {
         balance: new_balance,
         currency: "USD".to_string(),

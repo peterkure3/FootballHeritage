@@ -2,7 +2,6 @@
 # Windows-specific optimizations
 rustflags = [
     "-C", "target-cpu=native",
-    "-C", "link-arg=/LTCG",  # Link-time code generation on Windows
 ]
 
 [target.x86_64-unknown-linux-gnu]

@@ -28,7 +28,7 @@ REM call venv\Scripts\activate
 
 REM Fetch new data
 echo.
-echo [1/4] Fetching raw data...
+echo [1/5] Fetching raw data...
 %PYTHON% -m etl.fetch_raw_data
 if %errorlevel% neq 0 (
     echo ERROR: Data fetch failed
@@ -37,7 +37,7 @@ if %errorlevel% neq 0 (
 
 REM Transform data
 echo.
-echo [2/4] Transforming data...
+echo [2/5] Transforming data...
 %PYTHON% -m etl.transform
 if %errorlevel% neq 0 (
     echo ERROR: Transform failed
@@ -46,7 +46,7 @@ if %errorlevel% neq 0 (
 
 REM Load to database
 echo.
-echo [3/4] Loading to database...
+echo [3/5] Loading to database...
 %PYTHON% -m etl.load_to_db
 if %errorlevel% neq 0 (
     echo ERROR: Database load failed
@@ -55,7 +55,7 @@ if %errorlevel% neq 0 (
 
 REM Generate predictions
 echo.
-echo [4/4] Generating predictions...
+echo [4/5] Generating predictions...
 %PYTHON% -m models.predict_v2
 if %errorlevel% neq 0 (
     echo ERROR: Prediction generation failed
@@ -64,6 +64,19 @@ if %errorlevel% neq 0 (
 
 echo.
 echo ========================================
+echo [5/5] Refreshing verified regional quotes and paper trial results...
+%PYTHON% -m scripts.refresh_regional_pipeline
+if %errorlevel% neq 0 (
+    echo ERROR: Regional odds and paper trial refresh failed
+    exit /b 1
+)
+
 echo Daily fetch completed successfully!
+echo Publishing sport betting intelligence snapshots...
+%PYTHON% -m etl.betting_intel
+if %errorlevel% neq 0 (
+    echo ERROR: Betting intelligence snapshot refresh failed
+    exit /b 1
+)
 echo Finished: %date% %time%
 echo ========================================

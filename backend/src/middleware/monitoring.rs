@@ -1,7 +1,7 @@
 use actix_web::{
     body::BoxBody,
     dev::{forward_ready, Service, ServiceRequest, ServiceResponse, Transform},
-    web, Error, HttpResponse,
+    web, Error,
 };
 use futures_util::future::LocalBoxFuture;
 use std::future::{ready, Ready};

@@ -148,11 +148,13 @@ where
 // ============================================================================
 
 /// Middleware factory for requiring superadmin role
+#[allow(dead_code)] // Reserved for routes that require stricter access than RequireAdmin.
 pub struct RequireSuperAdmin {
     auth_service: Rc<AuthService>,
 }
 
 impl RequireSuperAdmin {
+    #[allow(dead_code)]
     pub fn new(auth_service: Rc<AuthService>) -> Self {
         Self { auth_service }
     }
@@ -178,6 +180,7 @@ where
     }
 }
 
+#[allow(dead_code)]
 pub struct RequireSuperAdminMiddleware<S> {
     service: Rc<S>,
     auth_service: Rc<AuthService>,

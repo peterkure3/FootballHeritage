@@ -28,7 +28,7 @@ REM call venv\Scripts\activate
 
 REM Fetch football data
 echo.
-echo [1/7] Fetching football data...
+echo [1/8] Fetching football data...
 %PYTHON% -m etl.fetch_raw_data
 if %errorlevel% neq 0 (
     echo WARNING: Football data fetch had issues, but continuing with other steps...
@@ -36,7 +36,7 @@ if %errorlevel% neq 0 (
 
 REM Fetch NBA data
 echo.
-echo [2/7] Fetching NBA data...
+echo [2/8] Fetching NBA data...
 %PYTHON% -m etl.fetch_nba_data_wrapper
 if %errorlevel% neq 0 (
     echo WARNING: NBA data fetch had issues, but continuing with other steps...
@@ -44,7 +44,7 @@ if %errorlevel% neq 0 (
 
 REM Fetch NCAAB data (March Madness)
 echo.
-echo [3/7] Fetching NCAAB data...
+echo [3/8] Fetching NCAAB data...
 %PYTHON% -m etl.fetch_ncaab_odds
 if %errorlevel% neq 0 (
     echo WARNING: NCAAB data fetch had issues, but continuing with other steps...
@@ -52,7 +52,7 @@ if %errorlevel% neq 0 (
 
 REM Transform data
 echo.
-echo [4/7] Transforming data...
+echo [4/8] Transforming data...
 %PYTHON% -m etl.transform
 if %errorlevel% neq 0 (
     echo ERROR: Transform failed
@@ -61,7 +61,7 @@ if %errorlevel% neq 0 (
 
 REM Load to pipeline database (creates tables if needed)
 echo.
-echo [5/7] Loading to pipeline database...
+echo [5/8] Loading to pipeline database...
 %PYTHON% -m etl.load_to_db
 if %errorlevel% neq 0 (
     echo ERROR: Database load failed
@@ -70,15 +70,30 @@ if %errorlevel% neq 0 (
 
 REM Validate database schema (after load, tables should exist)
 echo.
-echo [6/7] Validating database schema...
+echo [6/8] Validating database schema...
 %PYTHON% check_schema.py --ensure nba_games
 if %errorlevel% neq 0 (
     echo WARNING: Schema validation had issues, but continuing...
 )
 
 REM Sync to backend database
+echo Generating predictions using the active model...
+%PYTHON% -m models.predict_v2
+if %errorlevel% neq 0 (
+    echo ERROR: Prediction generation failed
+    exit /b 1
+)
+
 echo.
-echo [7/7] Syncing to backend database...
+echo [7/8] Refreshing verified regional quotes and paper trial results...
+%PYTHON% -m scripts.refresh_regional_pipeline
+if %errorlevel% neq 0 (
+    echo ERROR: Regional odds and paper trial refresh failed
+    exit /b 1
+)
+
+echo.
+echo [8/8] Syncing to backend database...
 %PYTHON% sync_to_backend.py
 if %errorlevel% neq 0 (
     echo ERROR: Backend sync failed
@@ -88,5 +103,11 @@ if %errorlevel% neq 0 (
 echo.
 echo ========================================
 echo Daily fetch + sync completed successfully!
+echo Publishing sport betting intelligence snapshots...
+%PYTHON% -m etl.betting_intel
+if %errorlevel% neq 0 (
+    echo ERROR: Betting intelligence snapshot refresh failed
+    exit /b 1
+)
 echo Finished: %date% %time%
 echo ========================================

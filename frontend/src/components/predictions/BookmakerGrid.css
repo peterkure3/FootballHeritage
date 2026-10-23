@@ -1,0 +1,244 @@
+.bc-panel {
+  --bc-paper: #fffef9;
+  --bc-heading-ink: #42613a;
+  background: #fffef9;
+  border: 1px solid #d8e0d0;
+  border-radius: 9px;
+  overflow: hidden;
+  box-shadow: 0 3px 14px #263a2410;
+}
+.bc-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 24px;
+  padding: 26px 26px 20px;
+}
+.bc-heading h2 {
+  font:
+    500 28px/1.2 Georgia,
+    serif;
+  letter-spacing: -0.025em;
+  margin: 10px 0;
+}
+.bc-intro {
+  font-size: 12px;
+  color: var(--color-heritage-muted);
+  line-height: 1.6;
+}
+.bc-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 24px;
+  padding: 13px 26px;
+  background: #f1f4e9;
+  border-block: 1px solid #dce3d3;
+  color: #547451;
+  font-size: 10px;
+}
+.bc-legend > span {
+  display: inline-flex;
+  gap: 7px;
+  align-items: center;
+}
+.bc-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  background: #147b4c;
+}
+.bc-swatch-negative {
+  background: #b87809;
+}
+.bc-scroll {
+  overflow: auto;
+  max-height: 680px;
+  scrollbar-color: #9aae98 #f1f4e9;
+}
+.bc-scroll:focus-visible {
+  outline: 2px solid #52764d;
+  outline-offset: -2px;
+}
+.bc-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 3px;
+  padding: 14px;
+  font-size: 12px;
+}
+.bc-caption {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+.bc-table th {
+  font-weight: 650;
+}
+.bc-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+}
+.bc-head {
+  background: #e7ecd9;
+  padding: 13px 10px;
+  border-radius: 3px;
+  color: var(--bc-heading-ink);
+  white-space: nowrap;
+}
+.bc-brand {
+  background: #294b36;
+  color: var(--bc-paper);
+  border-bottom: 2px solid #c3a15c;
+}
+.bc-brand > span {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  margin-right: 7px;
+  border: 1px solid #95ae86;
+  border-radius: 4px;
+  font:
+    12px Georgia,
+    serif;
+}
+.bc-head small {
+  display: block;
+  font-size: 9px;
+  font-weight: 400;
+  opacity: 0.8;
+  margin-top: 5px;
+}
+.bc-table .bc-outcome {
+  padding: 7px 10px;
+  font-size: 10px;
+}
+.bc-table .bc-fixture {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  min-width: 225px;
+  max-width: 260px;
+  background: #f0f2e6;
+  padding: 13px 16px;
+  text-align: left;
+  border-radius: 3px;
+  box-shadow: 3px 0 0 #fffef9;
+}
+.bc-fixture > span,
+.bc-fixture time {
+  display: block;
+  font-size: 9px;
+  color: var(--color-heritage-muted);
+  font-weight: 400;
+  line-height: 1.5;
+}
+.bc-fixture strong {
+  display: block;
+  font-size: 11px;
+  margin: 6px 0;
+  line-height: 1.5;
+}
+.bc-fixture i {
+  color: #87917c;
+  font-size: 9px;
+  font-style: normal;
+  padding-inline: 3px;
+}
+.bc-cell {
+  min-width: 60px;
+  padding: 0;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.bc-cell > div {
+  display: grid;
+  place-items: center;
+  min-height: 77px;
+  height: 100%;
+  padding: 8px 5px;
+  border-radius: 3px;
+}
+.bc-positive > div {
+  background: color-mix(
+    in srgb,
+    #147b4c calc(12% + var(--heat-strength) * 78%),
+    #f1f4e9
+  );
+  color: #243a2a;
+}
+.bc-negative > div {
+  background: color-mix(
+    in srgb,
+    #b87809 calc(12% + var(--heat-strength) * 70%),
+    #fff7e7
+  );
+  color: #634315;
+}
+.bc-cell .bc-strong {
+  color: var(--bc-paper);
+}
+.bc-missing > div {
+  background: #f1f2eb;
+  color: #98a18e;
+}
+.bc-price > div {
+  background: #e7ecd9;
+  color: #243a2a;
+  font-weight: 650;
+}
+.bc-fixture:hover {
+  background: #e6eddb;
+}
+.bc-cell:nth-child(3n + 2) {
+  border-left: 3px solid #fffef9;
+}
+.bc-footnote {
+  padding: 16px 26px;
+  border-top: 1px solid #dce3d3;
+  color: var(--color-heritage-muted);
+  font-size: 11px;
+  line-height: 1.7;
+}
+.bc-footnote p {
+  margin: 0 0 7px;
+}
+.pd-tabs {
+  overflow-x: auto;
+}
+.pd-tabs button {
+  flex-shrink: 0;
+}
+@media (max-width: 600px) {
+  .bc-heading {
+    padding: 20px 16px;
+    gap: 16px;
+  }
+  .bc-heading h2 {
+    font-size: 24px;
+  }
+  .bc-heading .pd-filter-label {
+    width: 100%;
+  }
+  .bc-legend,
+  .bc-footnote {
+    padding: 14px 16px;
+  }
+  .bc-table {
+    padding: 8px;
+  }
+  .bc-table .bc-fixture {
+    min-width: 145px;
+    max-width: 145px;
+    padding: 10px;
+    overflow-wrap: anywhere;
+  }
+  .bc-cell {
+    min-width: 56px;
+  }
+}

@@ -38,7 +38,7 @@ const EventFormModal = ({ isOpen, onClose, event, onSuccess }) => {
         league: event.league || '',
         home_team: event.home_team || '',
         away_team: event.away_team || '',
-        event_date: event.event_date ? new Date(event.event_date).toISOString().slice(0, 16) : '',
+        event_date: event.event_date ? new Date(new Date(event.event_date).getTime() - new Date(event.event_date).getTimezoneOffset() * 60000).toISOString().slice(0, 16) : '',
         status: event.status || 'UPCOMING',
         home_score: event.home_score,
         away_score: event.away_score,

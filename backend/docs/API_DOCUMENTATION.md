@@ -3,7 +3,7 @@
 ## Base URL
 
 ```
-Development: http://localhost:8080
+Development: http://localhost:8888
 Production: https://yourdomain.com
 ```
 
@@ -21,6 +21,37 @@ All API endpoints are prefixed with `/api/v1` unless otherwise noted.
 6. [System](#system)
 7. [Error Responses](#error-responses)
 8. [Rate Limits](#rate-limits)
+9. [AI Picks](#ai-picks)
+
+---
+
+## AI Picks
+
+AI Picks routes require the existing `Authorization: Bearer <JWT>` header. The Rust API validates requests and stores user-owned runs and conversations. Generation calls the prediction pipeline; chat runs a RAG agent inside the Rust backend. It does not place bets or modify wallets.
+
+**Endpoints:**
+
+- `POST /api/v1/ai-picks/generate` — body `{ "sport": "Football", "competition": "Premier League", "date": "2026-10-10", "limit": 10 }`. Generation supports Football; unsupported sports return 422. Competition/date are optional and applied before ranking. Date uses UTC, limit is clamped to 1–20.
+- `GET /api/v1/ai-picks` — list the authenticated user’s runs.
+- `GET /api/v1/ai-picks/{id}` — read one owned run. Static routes are registered before `{id}`.
+- `POST /api/v1/ai-picks/chat` — body `{ "request_id": "UUID", "conversation_id": "UUID (optional)", "messages": [{ "role": "user", "content": "Explain Arsenal's next fixture" }] }`. Maximum 40 messages, 4,000 characters each; last message must be from the user. A stable `request_id` makes retries return the same saved response, including when the first response was lost. A different body reusing that ID returns 409.
+- `GET /api/v1/ai-picks/conversations` and `GET /api/v1/ai-picks/conversations/{id}` — read owned conversations/messages.
+
+Generation calls the pipeline's `GET /api/v1/ai-picks`. It uses the latest prediction from the active model, created within the last 24 hours, for unfinished fixtures in the next 30 days. Current bookmaker quotes are optional: missing quotes produce `pick_type: "prediction"` with null odds, edge, expected value, stake and bookmaker. A quote with at least a five-percentage-point edge produces `pick_type: "value"`. One selection per fixture is ranked by value edge first, then model probability. Probabilities are proportions in `[0,1]`; `edge_pct` is percentage points and `expected_value` is expected profit for a fixed one-unit reference stake. No user bankroll is accessed.
+
+Responses include `id`, `generated_at`, `picks`, `summary` and `provenance`. Saved history preserves the same selections, requested filters, summary, timestamps and provenance. No qualifying prediction is a successful empty run with an explanatory summary, rather than a fabricated pick.
+
+Configure `PIPELINE_API_URL=http://127.0.0.1:5555/api/v1`. Development defaults to this local URL; other environments require explicit configuration. Root URLs and the legacy `/api` suffix are normalized to `/api/v1`.
+
+**Rust RAG chat:**
+
+The agent retrieves recent active-model predictions and bookmaker quotes directly through `RAG_DATABASE_URL` (pipeline PostgreSQL), and retrieves supporting knowledge from PostgreSQL full-text search over `ai_rag_documents`. Prediction connections use read-only transactions and a five-second query timeout. Relevant team, league and explicit UTC date references determine fixture retrieval; follow-ups inherit the last named team. Knowledge is seeded by migration and can be extended in the database without external embeddings or vector services.
+
+`RAG_GEMINI_API_KEY` enables direct Gemini generation in Rust; `RAG_GEMINI_MODEL` defaults to `gemini-2.5-flash`. `RAG_CHAT_MODE=grounded` returns retrieved evidence directly; `auto` uses Gemini and returns retrieved evidence when generation is unavailable. Missing credentials do not disable knowledge explanations. No Node chatbot service or `CHATBOT_API_URL` is used.
+
+Replies include `reply.reply` (plain text), `reply.evidence` (source IDs such as P1/K1, source metadata and retrieved facts), `reply.mode` (`gemini_rag` or `retrieved_evidence`), and provider/retrieval availability. Assistant messages preserve this metadata in history. Sources support fixture numbers or general concepts according to their evidence type; no model accuracy, injuries or odds are invented when evidence is absent.
+
+The server owns conversation context. Submitted historical messages must match a suffix of the saved history; stale or forged history returns 409. Conversation reads and writes enforce ownership (404 for another user's ID). Each successful turn saves only one user and one assistant message atomically. Chat allows 12 new turns per user per minute; saved retries do not consume this allowance. Cancellation stops client waiting, and retrying with the same request ID recovers a completed response.
 
 ---
 

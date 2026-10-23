@@ -343,7 +343,7 @@ def fetch_football_data_org() -> None:
     logger.info("Completed football-data.org data fetch")
 
 
-def fetch_the_odds_api() -> None:
+def fetch_the_odds_api() -> bool:
     """Fetch and save data from The Odds API."""
     logger.info("Starting The Odds API data fetch")
     
@@ -353,6 +353,7 @@ def fetch_the_odds_api() -> None:
     ensure_dir(THE_ODDS_API_DIR)
 
     sports = ODDS_API_SPORTS if ODDS_API_SPORTS else [ODDS_API_SPORT]
+    failures = 0
 
     # Fetch odds
     for sport in sports:
@@ -369,6 +370,10 @@ def fetch_the_odds_api() -> None:
             )
         except Exception as e:
             logger.error(f"Failed to fetch odds for {sport}: {str(e)}")
+            failures += 1
+            if isinstance(e, requests.HTTPError) and e.response is not None and e.response.status_code == 401:
+                logger.error('The Odds API rejected this request (401). Check account credentials and usage; skipping remaining provider requests.')
+                return False
     
     # Fetch scores
     for sport in sports:
@@ -380,8 +385,13 @@ def fetch_the_odds_api() -> None:
             )
         except Exception as e:
             logger.error(f"Failed to fetch scores for {sport}: {str(e)}")
+            failures += 1
+            if isinstance(e, requests.HTTPError) and e.response is not None and e.response.status_code == 401:
+                logger.error('The Odds API rejected this request (401). Check account credentials and usage; skipping remaining provider requests.')
+                return False
     
     logger.info("Completed The Odds API data fetch")
+    return failures == 0
 
 
 def main() -> None:
@@ -402,7 +412,9 @@ def main() -> None:
     
     try:
         fetch_football_data_org()
-        fetch_the_odds_api()
+        if not fetch_the_odds_api():
+            logger.error('Raw data fetch incomplete: The Odds API requests failed. Existing data and regional collection remain available.')
+            sys.exit(1)
         logger.info("Raw data fetch completed successfully")
     except Exception as e:
         logger.error(f"Raw data fetch failed: {str(e)}", exc_info=True)
