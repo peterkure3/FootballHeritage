@@ -8,3 +8,7 @@ python-dotenv>=1,<2
 requests>=2.31,<3
 fastapi>=0.115,<1
 httpx==0.28.1
+SQLAlchemy>=2.0.23,<2.1
+psycopg2-binary>=2.9.9,<3
+beautifulsoup4>=4.12,<5
+colorama>=0.4.6,<1

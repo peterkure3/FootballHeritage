@@ -1,3 +1,4 @@
+import { databaseTls } from './database-tls.js';
 import pg from 'pg';
 import dotenv from 'dotenv';
 import { generateEmbedding } from './embeddings.js';
@@ -9,7 +10,7 @@ const pool = new pg.Pool({
   max: 20,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 5000,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+  ssl: databaseTls(),
 });
 
 async function knowledgeVectorSearch(queryEmbedding, limit = 8, threshold = 0.25) {

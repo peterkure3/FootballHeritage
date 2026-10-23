@@ -11,9 +11,14 @@ rustflags = [
     "-C", "link-arg=-fuse-ld=lld",  # Use faster linker if available
 ]
 
-# Incremental compilation for faster dev builds
+# Keep development artifacts bounded on constrained workstations.
 [profile.dev]
-incremental = true
+incremental = false
+debug = 0
+
+[profile.test]
+incremental = false
+debug = 0
 
 # Optimize dependencies even in dev mode
 [profile.dev.package."*"]

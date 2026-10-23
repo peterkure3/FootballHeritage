@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { tokenManager } from '../utils/api';
+import { api, tokenManager } from '../utils/api';
 
 // Session timeout in milliseconds (VITE_SESSION_TIMEOUT is in minutes, default 15)
 const SESSION_TIMEOUT =
@@ -7,6 +7,7 @@ const SESSION_TIMEOUT =
 
 const useAuthStore = create((set, get) => {
   let logoutTimer = null;
+  let logoutInFlight = false;
 
   // Reset the auto-logout timer
   const resetLogoutTimer = () => {
@@ -73,7 +74,15 @@ const useAuthStore = create((set, get) => {
       resetLogoutTimer();
     },
 
-    logout: () => {
+    logout: async () => {
+      if (logoutInFlight) return;
+      logoutInFlight = true;
+      try {
+        await api.logout();
+      } catch {
+        // Always clear local credentials even when the API cannot be reached.
+        // The server's session timeout remains the fallback for network failures.
+      }
       tokenManager.removeToken();
       // Remove user data from localStorage
       sessionStorage.removeItem('betting_user_data');

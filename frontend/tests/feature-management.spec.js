@@ -30,7 +30,7 @@ test("disabled feature hides navigation and blocks the direct route", async ({
   await page.route("**/api/v1/pipeline/matches?**", (route) =>
     route.fulfill({ json: [] }),
   );
-  await page.goto("/ai-picks/chat");
+  await page.goto("/ai-picks/chat", { waitUntil: "domcontentloaded" });
   await expect(
     page.getByRole("heading", { name: "Feature unavailable" }),
   ).toBeVisible();
@@ -52,11 +52,11 @@ test("failed policy requests deny feature routes while login remains available",
       json: { error: { message: "Policy unavailable" } },
     }),
   );
-  await page.goto("/ai-picks/chat");
+  await page.goto("/ai-picks/chat", { waitUntil: "domcontentloaded" });
   await expect(
     page.getByText("We could not verify access. Please try again."),
   ).toBeVisible();
-  await page.goto("/login");
+  await page.goto("/login", { waitUntil: "domcontentloaded" });
   await expect(
     page.getByRole("button", { name: "Login", exact: true }),
   ).toBeVisible();
@@ -144,7 +144,7 @@ test("administrator confirms a feature change and sees its audit entry", async (
       });
     return route.fulfill({ json: [] });
   });
-  await page.goto("/admin/features");
+  await page.goto("/admin/features", { waitUntil: "domcontentloaded" });
   await expect(
     page.getByRole("heading", { name: "Feature Management" }),
   ).toBeVisible();

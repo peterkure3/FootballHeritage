@@ -141,7 +141,7 @@ function FeatureAvailability(props) {
 
 function matchesFeature(flag, search, category) {
   if (category && flag.category !== category) return false;
-  return `${flag.key} ${flag.description}`
+  return `${flag.key} ${flag.key.replaceAll("_", " ")} ${flag.description}`
     .toLowerCase()
     .includes(search.toLowerCase());
 }

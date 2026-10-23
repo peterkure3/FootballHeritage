@@ -109,6 +109,7 @@ pub async fn chat(
     // Create HTTP client with timeout
     let client = reqwest::Client::builder()
         .timeout(std::time::Duration::from_secs(30))
+        .redirect(reqwest::redirect::Policy::none())
         .build()
         .map_err(|e| {
             error!("Failed to create HTTP client: {}", e);
@@ -119,6 +120,10 @@ pub async fn chat(
     let response = client
         .post(&chatbot_url)
         .header("Authorization", auth_header)
+        .header(
+            "X-Internal-Token",
+            std::env::var("CHATBOT_INTERNAL_TOKEN").unwrap_or_default(),
+        )
         .header("Content-Type", "application/json")
         .json(&serde_json::json!({
             "prompt": body.prompt.trim(),
@@ -192,13 +197,22 @@ pub async fn chat_health() -> Result<HttpResponse, ApiError> {
 
     let client = reqwest::Client::builder()
         .timeout(std::time::Duration::from_secs(5))
+        .redirect(reqwest::redirect::Policy::none())
         .build()
         .map_err(|e| {
             error!("Failed to create HTTP client: {}", e);
             ApiError::InternalServerError("Service configuration error".to_string())
         })?;
 
-    match client.get(&health_url).send().await {
+    match client
+        .get(&health_url)
+        .header(
+            "X-Internal-Token",
+            std::env::var("CHATBOT_INTERNAL_TOKEN").unwrap_or_default(),
+        )
+        .send()
+        .await
+    {
         Ok(response) if response.status().is_success() => {
             let body = response.json::<serde_json::Value>().await.ok();
             Ok(HttpResponse::Ok().json(serde_json::json!({

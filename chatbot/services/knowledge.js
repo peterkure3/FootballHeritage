@@ -1,3 +1,4 @@
+import { databaseTls } from './database-tls.js';
 import pg from 'pg';
 import dotenv from 'dotenv';
 import { generateEmbedding } from './embeddings.js';
@@ -9,7 +10,7 @@ const pool = new pg.Pool({
   max: 10,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 10000,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+  ssl: databaseTls(),
 });
 
 function chunkText(text, { maxChars = 1800, overlapChars = 200 } = {}) {

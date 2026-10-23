@@ -17,7 +17,7 @@ Registered keys: `registration`, `ai_picks`, `ai_chat`, `predictions`, `intellig
 5. Explicit user restriction (`enabled=false`) denies.
 6. Explicit role restriction (`enabled=false`) denies. A user allow never overrides this restriction.
 7. Otherwise use explicit user allow, then role allow, then the feature's explicit `default_enabled`.
-8. Independently, production wallet funding is unavailable unless `ALLOW_DEMO_WALLET_FUNDING=true`. This opt-in is only for an explicitly approved demo deployment; it does not implement real payments.
+8. Independently, production wallet funding is always unavailable. `ALLOW_DEMO_WALLET_FUNDING` cannot enable it. Production POSTs to `/betting/bets` and `/parlay/place` are also blocked before handlers execute until the financial lifecycle is independently verified. Read-only history and calculations retain their existing feature policy.
 
 Feature controls add restrictions to existing authorization. They do not grant an anonymous caller access to an authenticated wallet/betting endpoint. Public content remains accessible according to the guest policy; a per-account restriction cannot identify an anonymous visitor. Use guest restrictions when content must require login or be unavailable publicly. Security/account operations, logout, refresh, profile/password management and self-exclusion remain outside product maintenance restrictions. Admin feature controls stay reachable so administrators can recover from maintenance; they still require current database admin authorization.
 

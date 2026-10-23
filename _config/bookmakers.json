@@ -1,0 +1,517 @@
+{
+  "schema_version": "1.0",
+  "checked_on": "2026-10-10",
+  "purpose": "Canonical bookmaker inventory for collection and dashboard coverage; membership does not establish current prices.",
+  "snapshot_contract": "bookmaker-data-format.md",
+  "documentation": [
+    "https://the-odds-api.com/sports-odds-data/bookmaker-apis.html",
+    "https://espnbet.zendesk.com/hc/en-us/articles/40921200115725-ESPN-BET-Rebrand-to-theScore-Bet"
+  ],
+  "defaults": {
+    "sport": "football",
+    "market": "h2h",
+    "period": "FULL_TIME_90_MIN",
+    "settlement_rule": "REGULATION_TIME",
+    "odds_format": "decimal",
+    "timezone": "UTC",
+    "region": null,
+    "collector_status": "not_verified",
+    "save_immutable_snapshots": true
+  },
+  "sportsbooks": [
+    {
+      "requested_name": "DraftKings Sportsbook",
+      "bookmaker": "draftkings",
+      "oddsapi": {
+        "key": "draftkings",
+        "regions": [
+          "us"
+        ]
+      },
+      "collection_route": "existing_provider_or_site_adapter"
+    },
+    {
+      "requested_name": "FanDuel Sportsbook",
+      "bookmaker": "fanduel",
+      "oddsapi": {
+        "key": "fanduel",
+        "regions": [
+          "us"
+        ]
+      },
+      "collection_route": "existing_provider_or_site_adapter"
+    },
+    {
+      "requested_name": "Caesars Sportsbook",
+      "bookmaker": "caesars",
+      "oddsapi": {
+        "key": "williamhill_us",
+        "regions": [
+          "us"
+        ],
+        "paid_subscription_only": true
+      },
+      "collection_route": "existing_provider_or_site_adapter",
+      "note": "Repository seed currently uses provider_book_key=caesars; that differs from the current provider documentation."
+    },
+    {
+      "requested_name": "ESPN BET",
+      "bookmaker": "thescorebet",
+      "aliases": [
+        "espnbet"
+      ],
+      "current_name": "theScore Bet",
+      "oddsapi": {
+        "key": "espnbet",
+        "regions": [
+          "us2"
+        ]
+      },
+      "collection_route": "existing_provider_or_site_adapter",
+      "note": "Preserve historical source branding and regional variants."
+    },
+    {
+      "requested_name": "Fanatics Sportsbook",
+      "bookmaker": "fanatics",
+      "oddsapi": {
+        "key": "fanatics",
+        "regions": [
+          "us"
+        ],
+        "paid_subscription_only": true
+      },
+      "collection_route": "existing_provider_or_site_adapter"
+    },
+    {
+      "requested_name": "bet365",
+      "bookmaker": "bet365",
+      "oddsapi": {
+        "key": "bet365_au",
+        "regions": [
+          "au"
+        ],
+        "paid_subscription_only": true,
+        "documented_sports": [
+          "AFL",
+          "NRL"
+        ]
+      },
+      "collection_route": "football_site_adapter_or_other_verified_feed",
+      "note": "The documented bet365_au listing does not establish football coverage. Repository seed bet365/eu is not confirmed by the current provider list."
+    },
+    {
+      "requested_name": "Hard Rock Bet",
+      "bookmaker": "hardrockbet",
+      "oddsapi": {
+        "key": "hardrockbet",
+        "regions": [
+          "us2"
+        ]
+      },
+      "collection_route": "existing_provider_or_site_adapter",
+      "note": "Provider separately lists hardrockbet_az, hardrockbet_fl and hardrockbet_oh. Preserve actual state variant."
+    },
+    {
+      "requested_name": "Circa Sports",
+      "bookmaker": "circa",
+      "oddsapi": null,
+      "collection_route": "site_adapter_or_other_verified_feed",
+      "note": "Not listed in the current existing-provider bookmaker documentation; endpoint and region verification required."
+    },
+    {
+      "requested_name": "SuperBook",
+      "bookmaker": "superbook",
+      "oddsapi": null,
+      "collection_route": "site_adapter_or_other_verified_feed",
+      "note": "Not listed in the current existing-provider bookmaker documentation; endpoint and region verification required."
+    },
+    {
+      "requested_name": "Betfred",
+      "bookmaker": "betfred",
+      "oddsapi": {
+        "key": "betfred_uk",
+        "regions": [
+          "uk"
+        ]
+      },
+      "collection_route": "existing_provider_or_site_adapter",
+      "note": "Documented mapping is UK; do not assume a US offer is the same source."
+    },
+    {
+      "requested_name": "BetOnline",
+      "bookmaker": "betonlineag",
+      "oddsapi": {
+        "key": "betonlineag",
+        "regions": [
+          "us",
+          "eu"
+        ]
+      },
+      "collection_route": "site_adapter_or_verified_feed",
+      "region": null,
+      "source_url": "https://api-offering.betonline.ag/api/offering/Sports/offering-by-scheduletext",
+      "collector_status": "verified_public_feed",
+      "adapter_coverage": "Upcoming UEFA Champions League full-match 1X2",
+      "verified_at": "2026-10-14T03:45:00Z"
+    },
+    {
+      "requested_name": "Bovada",
+      "bookmaker": "bovada",
+      "oddsapi": {
+        "key": "bovada",
+        "regions": [
+          "us"
+        ]
+      },
+      "collection_route": "existing_provider_or_site_adapter"
+    },
+    {
+      "requested_name": "MyBookie",
+      "bookmaker": "mybookieag",
+      "oddsapi": {
+        "key": "mybookieag",
+        "regions": [
+          "us",
+          "eu"
+        ]
+      },
+      "collection_route": "existing_provider_or_site_adapter"
+    },
+    {
+      "requested_name": "BookMaker",
+      "bookmaker": "bookmaker",
+      "oddsapi": null,
+      "collection_route": "site_adapter_or_verified_feed",
+      "note": "Not listed in the current existing-provider bookmaker documentation; endpoint and region verification required.",
+      "region": null,
+      "source_url": "https://lines.bookmaker.eu/en/sports/soccer/uefa-champions-league/",
+      "collector_status": "verified_public_feed",
+      "adapter_coverage": "Upcoming UEFA Champions League regulation three-way moneyline",
+      "verified_at": "2026-10-14T04:49:33Z"
+    },
+    {
+      "requested_name": "Heritage Sports",
+      "bookmaker": "heritagesports",
+      "oddsapi": null,
+      "collection_route": "site_adapter_or_other_verified_feed",
+      "note": "Not listed in the current existing-provider bookmaker documentation; endpoint and region verification required."
+    },
+    {
+      "requested_name": "EveryGame",
+      "bookmaker": "everygame",
+      "oddsapi": {
+        "key": "everygame",
+        "regions": [
+          "eu"
+        ]
+      },
+      "collection_route": "existing_provider_or_site_adapter"
+    },
+    {
+      "requested_name": "SportsBetting.ag",
+      "bookmaker": "sportsbettingag",
+      "oddsapi": null,
+      "collection_route": "site_adapter_or_other_verified_feed",
+      "note": "Not listed in the current existing-provider bookmaker documentation; endpoint and region verification required."
+    },
+    {
+      "requested_name": "betPawa",
+      "bookmaker": "betpawa",
+      "region": "UG",
+      "source_url": "https://www.betpawa.ug/api/sportsbook/v4/events/lists/by-queries",
+      "verification_source": "https://www.betpawa.ug/about",
+      "oddsapi": null,
+      "collection_route": "site_adapter_or_verified_feed",
+      "collector_status": "verified_public_feed",
+      "adapter_coverage": "EPL upcoming regulation 1X2",
+      "verified_at": "2026-10-10T12:42:50Z"
+    },
+    {
+      "requested_name": "SportPesa",
+      "bookmaker": "sportpesa",
+      "region": "GLOBAL",
+      "source_url": "https://www.sportpesa.com/api/upcoming/games",
+      "oddsapi": null,
+      "collection_route": "site_adapter_or_verified_feed",
+      "collector_status": "verified_public_feed",
+      "verification_source": "https://www.sportpesa.com/en/sports-betting/football-1/",
+      "regional_landing_url": "https://ug.sportpesa.com/",
+      "adapter_coverage": "Upcoming EPL standard regulation 1X2, global offering",
+      "verified_at": "2026-10-10T13:50:42Z"
+    },
+    {
+      "requested_name": "Betika",
+      "bookmaker": "betika",
+      "region": "UG",
+      "source_url": "https://api-ug.betika.com/v1/uo/matches",
+      "oddsapi": null,
+      "collection_route": "site_adapter_or_verified_feed",
+      "collector_status": "verified_public_feed",
+      "adapter_coverage": "Upcoming soccer standard 1X2, including UEFA Champions League",
+      "verified_at": "2026-10-13T20:29:36.364026+00:00"
+    },
+    {
+      "requested_name": "Mozzart Bet",
+      "bookmaker": "mozzartbet",
+      "region": "NG",
+      "source_url": "https://www.mozzartbet.ng/",
+      "note": "Nigeria operator page verified; other regional offers must be separate variants.",
+      "oddsapi": null,
+      "collection_route": "site_adapter_or_verified_feed",
+      "collector_status": "not_verified"
+    },
+    {
+      "requested_name": "Hollywoodbets",
+      "bookmaker": "hollywoodbets",
+      "region": "ZA",
+      "source_url": null,
+      "candidate_source_url": "https://www.hollywoodbets.net/",
+      "note": "Web check denied access; source verification pending.",
+      "oddsapi": null,
+      "collection_route": "site_adapter_or_verified_feed",
+      "collector_status": "not_verified"
+    },
+    {
+      "requested_name": "Betway",
+      "bookmaker": "betway",
+      "region": "ZA",
+      "source_url": "https://www.betway.co.za/",
+      "oddsapi": null,
+      "collection_route": "site_adapter_or_verified_feed",
+      "collector_status": "not_verified"
+    },
+    {
+      "requested_name": "1xBet",
+      "bookmaker": "1xbet",
+      "region": null,
+      "source_url": "https://1xbet.com/service-api/main-line-feed/v3/games1x2",
+      "note": "Root redirected to Russian language; do not assume Uganda prices.",
+      "oddsapi": null,
+      "collection_route": "site_adapter_or_verified_feed",
+      "collector_status": "verified_public_feed",
+      "adapter_coverage": "Upcoming UEFA Champions League full-match 1X2",
+      "verified_at": "2026-10-14T02:56:00Z"
+    },
+    {
+      "requested_name": "22Bet",
+      "bookmaker": "22bet",
+      "region": "UG",
+      "source_url": "https://22bet.ug/service-api/main-line-feed/v3/games1x2",
+      "oddsapi": null,
+      "collection_route": "site_adapter_or_verified_feed",
+      "collector_status": "verified_public_feed",
+      "adapter_coverage": "Upcoming UEFA Champions League full-match 1X2",
+      "verified_at": "2026-10-14T03:45:00Z"
+    },
+    {
+      "requested_name": "Premier Bet",
+      "bookmaker": "premierbet",
+      "region": null,
+      "source_url": "https://www.premierbet.com/",
+      "note": "International landing page; country selection needed.",
+      "oddsapi": null,
+      "collection_route": "site_adapter_or_verified_feed",
+      "collector_status": "not_verified"
+    },
+    {
+      "requested_name": "Merrybet",
+      "bookmaker": "merrybet",
+      "region": "NG",
+      "source_url": null,
+      "candidate_source_url": "https://www.merrybet.com/",
+      "oddsapi": null,
+      "collection_route": "site_adapter_or_verified_feed",
+      "collector_status": "not_verified"
+    },
+    {
+      "requested_name": "NairaBET",
+      "bookmaker": "nairabet",
+      "region": "NG",
+      "source_url": "https://nairabet.com/",
+      "note": "Current root presents casino content; football coverage unverified.",
+      "oddsapi": null,
+      "collection_route": "site_adapter_or_verified_feed",
+      "collector_status": "not_verified"
+    },
+    {
+      "requested_name": "Odibets",
+      "bookmaker": "odibets",
+      "region": "KE",
+      "source_url": "https://odibets.com/",
+      "oddsapi": null,
+      "collection_route": "site_adapter_or_verified_feed",
+      "collector_status": "not_verified"
+    },
+    {
+      "requested_name": "Supabets",
+      "bookmaker": "supabets",
+      "region": "ZA",
+      "source_url": "https://new.supabets.co.za/",
+      "oddsapi": null,
+      "collection_route": "site_adapter_or_verified_feed",
+      "collector_status": "not_verified"
+    },
+    {
+      "requested_name": "World Sports Betting",
+      "bookmaker": "worldsportsbetting",
+      "region": "ZA",
+      "source_url": "https://www.worldsportsbetting.co.za/",
+      "oddsapi": null,
+      "collection_route": "site_adapter_or_verified_feed",
+      "collector_status": "not_verified"
+    },
+    {
+      "requested_name": "Easybet",
+      "bookmaker": "easybet",
+      "region": "ZA",
+      "source_url": null,
+      "candidate_source_url": "https://www.easybet.co.za/",
+      "note": "Search surfaced an explicitly unofficial affiliate site; not used as a source.",
+      "oddsapi": null,
+      "collection_route": "site_adapter_or_verified_feed",
+      "collector_status": "not_verified"
+    },
+    {
+      "requested_name": "SunBet",
+      "bookmaker": "sunbet",
+      "region": "ZA",
+      "source_url": "https://www.sunbet.co.za/en",
+      "oddsapi": null,
+      "collection_route": "site_adapter_or_verified_feed",
+      "collector_status": "not_verified"
+    },
+    {
+      "requested_name": "Gbets",
+      "bookmaker": "gbets",
+      "region": "ZA",
+      "source_url": null,
+      "candidate_source_url": "https://www.gbets.co.za/",
+      "oddsapi": null,
+      "collection_route": "site_adapter_or_verified_feed",
+      "collector_status": "not_verified"
+    },
+    {
+      "requested_name": "Playabets",
+      "bookmaker": "playabets",
+      "region": "ZA",
+      "source_url": "https://www.playabets.co.za/home/",
+      "oddsapi": null,
+      "collection_route": "site_adapter_or_verified_feed",
+      "collector_status": "not_verified"
+    },
+    {
+      "requested_name": "SportyBet",
+      "bookmaker": "sportybet",
+      "region": "NG",
+      "source_url": "https://www.sportybet.com/ng/",
+      "oddsapi": null,
+      "collection_route": "site_adapter_or_verified_feed",
+      "collector_status": "not_verified"
+    },
+    {
+      "requested_name": "BetWinner",
+      "bookmaker": "betwinner",
+      "region": null,
+      "source_url": "https://betwinner.com/",
+      "note": "Root redirected to another brand domain; retain actual final URL in capture.",
+      "oddsapi": null,
+      "collection_route": "site_adapter_or_verified_feed",
+      "collector_status": "not_verified"
+    },
+    {
+      "requested_name": "MegaPari",
+      "bookmaker": "megapari",
+      "region": null,
+      "source_url": "https://megapari.com/",
+      "note": "Root redirected to another brand domain; retain actual final URL in capture.",
+      "oddsapi": null,
+      "collection_route": "site_adapter_or_verified_feed",
+      "collector_status": "not_verified"
+    },
+    {
+      "requested_name": "Paripesa",
+      "bookmaker": "paripesa",
+      "region": null,
+      "source_url": "https://paripesa.com/en",
+      "oddsapi": null,
+      "collection_route": "site_adapter_or_verified_feed",
+      "collector_status": "not_verified"
+    },
+    {
+      "requested_name": "Fortebet",
+      "bookmaker": "fortebet",
+      "region": "UG",
+      "source_url": "https://www.fortebet.ug/api/web/v1/offer/full-prematch-en",
+      "verification_source": "https://login.fortebet.info/",
+      "oddsapi": null,
+      "collection_route": "site_adapter_or_verified_feed",
+      "collector_status": "verified_public_feed",
+      "adapter_coverage": "Upcoming soccer standard 1X2, including UEFA Champions League",
+      "verified_at": "2026-10-13T20:29:36.364083+00:00"
+    },
+    {
+      "requested_name": "Gal Sport Betting / GSB",
+      "bookmaker": "gsb",
+      "aliases": [
+        "gal_sport_betting"
+      ],
+      "region": "UG",
+      "source_url": "https://gsb.ug/",
+      "verification_source": "https://help.gsb.ug/",
+      "oddsapi": null,
+      "collection_route": "site_adapter_or_verified_feed",
+      "collector_status": "not_verified"
+    },
+    {
+      "requested_name": "TopBet",
+      "bookmaker": "topbet",
+      "region": "ZA",
+      "source_url": "https://topbet.co.za/",
+      "oddsapi": null,
+      "collection_route": "site_adapter_or_verified_feed",
+      "collector_status": "not_verified"
+    },
+    {
+      "requested_name": "BetVita",
+      "bookmaker": "betvita",
+      "region": null,
+      "source_url": null,
+      "note": "Exact operator domain and region not yet established.",
+      "oddsapi": null,
+      "collection_route": "site_adapter_or_verified_feed",
+      "collector_status": "not_verified"
+    },
+    {
+      "requested_name": "Goalkings",
+      "bookmaker": "goalkings",
+      "region": null,
+      "source_url": null,
+      "note": "Search also finds a prediction app with similar branding; operator identity not yet established.",
+      "oddsapi": null,
+      "collection_route": "site_adapter_or_verified_feed",
+      "collector_status": "not_verified"
+    },
+    {
+      "requested_name": "Cloudbet",
+      "bookmaker": "cloudbet",
+      "region": "GLOBAL",
+      "source_url": "https://www.cloudbet.com/sports-api/c/v6/sports/competitions/soccer-international-clubs-uefa-champions-league/events",
+      "oddsapi": null,
+      "collection_route": "site_adapter_or_verified_feed",
+      "collector_status": "verified_public_feed",
+      "adapter_coverage": "Upcoming UEFA Champions League full-match 1X2",
+      "verified_at": "2026-10-14T02:56:00Z"
+    },
+    {
+      "requested_name": "AbaBet",
+      "bookmaker": "ababet",
+      "region": "UG",
+      "source_url": "https://ababet.ug/",
+      "oddsapi": null,
+      "collection_route": "site_adapter_or_verified_feed",
+      "collector_status": "verified_public_feed",
+      "adapter_coverage": "Selected-day EPL and UEFA Champions League regulation Match Result",
+      "verified_at": "2026-10-14T05:02:54Z"
+    }
+  ]
+}

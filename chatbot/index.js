@@ -18,6 +18,7 @@ import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
+import { internalTokenGuard } from './services/internal-auth.js';
 import { ragChatFlow } from './flows/chat-rag.js';
 
 // Load environment variables
@@ -25,6 +26,7 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+app.use(internalTokenGuard);
 
 // ============================================================================
 // MIDDLEWARE CONFIGURATION

@@ -88,7 +88,6 @@ export const useLogout = () => {
   const queryClient = useQueryClient();
 
   return () => {
-    api.logout();
     logout();
     queryClient.clear();
     toast.success("Logged out successfully");

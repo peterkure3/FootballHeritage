@@ -28,7 +28,6 @@ const AdminNavbar = ({ onMenuToggle, sidebarOpen }) => {
 
   const handleLogout = () => {
     logout();
-    navigate("/login");
   };
 
   return (

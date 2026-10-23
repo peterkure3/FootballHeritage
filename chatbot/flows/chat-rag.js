@@ -6,6 +6,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import pg from 'pg';
 import dotenv from 'dotenv';
+import { databaseTls } from '../services/database-tls.js';
 import { getCached, setCached } from '../services/cache.js';
 import { hybridSearch, getUpcomingEvents } from '../services/retrieval.js';
 import { hybridKnowledgeSearch } from '../services/knowledge-retrieval.js';
@@ -21,6 +22,7 @@ const pool = new pg.Pool({
     max: 20,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 5000,
+    ssl: databaseTls(),
 });
 
 /**

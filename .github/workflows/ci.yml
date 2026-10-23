@@ -62,6 +62,8 @@ jobs:
         run: npm ci
       - name: Syntax check
         run: node --check index.js && for f in flows/*.js services/*.js; do node --check "$f"; done
+      - name: Private ingress and database TLS tests
+        run: node --test tests/*.test.js
 
   pipeline:
     name: Pipeline (Python)

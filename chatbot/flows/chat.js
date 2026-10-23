@@ -1,3 +1,4 @@
+import { databaseTls } from '../services/database-tls.js';
 /**
  * Genkit Chat Flow
  * 
@@ -35,7 +36,7 @@ const pool = new pg.Pool({
   max: 10,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 10000,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+  ssl: databaseTls(),
 });
 
 pool.on('connect', () => {

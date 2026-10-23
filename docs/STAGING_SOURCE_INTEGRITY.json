@@ -1152,5 +1152,12 @@
       "sha256": "ffbf707bca17998eb61d6553419f326e6683fe3b9b15055d393944cec98d6e0f"
     }
   ],
-  "excluded_status_count": 1028
+  "excluded_status_count": 1028,
+  "followup_runtime_dependencies": [
+    {
+      "path": "_config/bookmakers.json",
+      "sha256": "eea40fc2c35cff8c3c698f2855db40f0f162c3622cd3e573896d1120344c0e20",
+      "reason": "Required by pipeline/api/bookmaker_catalog.py; clean checkout regression exposed its absence."
+    }
+  ]
 }

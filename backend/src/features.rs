@@ -175,8 +175,7 @@ async fn available(
     role: &str,
 ) -> Result<bool, FeatureError> {
     if key == "wallet_funding"
-        && std::env::var("APP_ENV").as_deref() == Ok("production")
-        && std::env::var("ALLOW_DEMO_WALLET_FUNDING").as_deref() != Ok("true")
+        && std::env::var("APP_ENV").is_ok_and(|value| value.eq_ignore_ascii_case("production"))
     {
         return Ok(false);
     }
@@ -252,12 +251,12 @@ pub async fn check_request(req: &ServiceRequest) -> Result<(), FeatureError> {
     if keys.is_empty() {
         return Ok(());
     }
-    if keys.contains(&"wallet_funding")
-        && req
-            .app_data::<web::Data<crate::config::AppConfig>>()
-            .is_some_and(|c| c.app_env.eq_ignore_ascii_case("production"))
-        && std::env::var("ALLOW_DEMO_WALLET_FUNDING").as_deref() != Ok("true")
-    {
+    let production = req
+        .app_data::<web::Data<crate::config::AppConfig>>()
+        .is_some_and(|c| c.app_env.eq_ignore_ascii_case("production"));
+    let placement = req.method() == actix_web::http::Method::POST
+        && matches!(req.path(), "/api/v1/betting/bets" | "/api/v1/parlay/place");
+    if production && (keys.contains(&"wallet_funding") || placement) {
         return Err(FeatureError::Disabled);
     }
     let pool = req
@@ -565,3 +564,7 @@ mod tests {
 #[cfg(test)]
 #[path = "feature_tests.rs"]
 mod integration_tests;
+
+#[cfg(test)]
+#[path = "financial_tests.rs"]
+mod financial_tests;

@@ -49,7 +49,8 @@ pub async fn get_balance(
 
     let crypto_service = CryptoService::from_string(&config.encryption_key);
 
-    // Try to fetch wallet, create if doesn't exist
+    // Balance reads never initialize or mint a wallet. Registration and an
+    // authorized funding workflow own wallet creation.
     let wallet_result: Result<(String, String), sqlx::Error> =
         sqlx::query_as("SELECT encrypted_balance, encryption_iv FROM wallets WHERE user_id = $1")
             .bind(user_id)
@@ -59,25 +60,10 @@ pub async fn get_balance(
     let wallet = match wallet_result {
         Ok(w) => w,
         Err(sqlx::Error::RowNotFound) => {
-            // Wallet doesn't exist, create one with 0.00 balance
-            info!("Creating new wallet for user_id={}", user_id);
-            let initial_balance = BigDecimal::from_str("0.00").unwrap();
-            let (encrypted_balance, iv) = crypto_service.encrypt_balance(&initial_balance)?;
-
-            sqlx::query(
-                "INSERT INTO wallets (id, user_id, encrypted_balance, encryption_iv, created_at, updated_at) VALUES (gen_random_uuid(), $1, $2, $3, NOW(), NOW())"
-            )
-            .bind(user_id)
-            .bind(&encrypted_balance)
-            .bind(&iv)
-            .execute(pool.as_ref())
-            .await
-            .map_err(|e| {
-                error!("Failed to create wallet: {}", e);
-                AppError::Database(e)
-            })?;
-
-            (encrypted_balance, iv)
+            return Ok(HttpResponse::Ok().json(BalanceResponse {
+                balance: BigDecimal::from(0),
+                currency: "USD".into(),
+            }))
         }
         Err(e) => {
             error!("Failed to fetch wallet: {}", e);
@@ -118,6 +104,14 @@ pub async fn deposit(
         AppError::Database(e)
     })?;
 
+    // Lock the owner before looking for a wallet: a missing row cannot be locked
+    // with FOR UPDATE, so simultaneous first deposits otherwise race creation.
+    let owner = sqlx::query_scalar::<_, Uuid>(
+        "SELECT id FROM users WHERE id=$1 AND is_active AND (locked_until IS NULL OR locked_until<=NOW()) FOR UPDATE",
+    ).bind(user_id).fetch_optional(&mut *tx).await?;
+    if owner.is_none() {
+        return Err(AppError::Authentication("Account unavailable".into()));
+    }
     // Get current balance or create wallet if doesn't exist
     let wallet_result: Result<(Uuid, String, String), sqlx::Error> = sqlx::query_as(
         "SELECT id, encrypted_balance, encryption_iv FROM wallets WHERE user_id = $1 FOR UPDATE",

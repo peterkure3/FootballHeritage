@@ -1,3 +1,4 @@
+import { databaseTls } from './database-tls.js';
 /**
  * Hybrid Retrieval Service for RAG System
  * Combines vector similarity search with keyword matching
@@ -15,7 +16,7 @@ const pool = new pg.Pool({
     max: 20, // Higher for parallel queries
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 5000,
-    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+    ssl: databaseTls(),
 });
 
 pool.on('connect', () => {

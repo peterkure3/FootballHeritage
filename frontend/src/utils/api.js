@@ -131,8 +131,17 @@ export const api = {
     return response;
   },
 
-  logout: () => {
-    tokenManager.removeToken();
+  logout: async () => {
+    const token = tokenManager.getToken();
+    if (!token) return;
+    const response = await fetch(`${API_BASE_URL}/auth/logout`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      credentials: 'omit',
+      keepalive: true,
+      signal: AbortSignal.timeout(5000),
+    });
+    if (!response.ok) throw new Error('Session revocation failed');
   },
 
   // User data

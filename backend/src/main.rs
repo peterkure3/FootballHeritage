@@ -77,16 +77,23 @@ async fn main() -> std::io::Result<()> {
 
     info!("Database connection pool initialized successfully");
 
-    // Run database migrations (no-ops for already-applied versions)
-    sqlx::migrate!("./migrations")
-        .run(&db_pool)
-        .await
-        .map_err(|e| {
-            error!("Failed to run database migrations: {}", e);
-            std::io::Error::new(std::io::ErrorKind::Other, "Migration failed")
-        })?;
+    // Persistent hosts can run the dedicated migration binary with a separate
+    // credential, then serve requests with a non-owner account.
+    let run_migrations = std::env::var("RUN_MIGRATIONS")
+        .unwrap_or_else(|_| "true".into())
+        .parse::<bool>()
+        .map_err(|_| std::io::Error::other("Invalid RUN_MIGRATIONS"))?;
+    if run_migrations {
+        sqlx::migrate!("./migrations")
+            .run(&db_pool)
+            .await
+            .map_err(|e| {
+                error!("Failed to run database migrations: {}", e);
+                std::io::Error::new(std::io::ErrorKind::Other, "Migration failed")
+            })?;
+    }
 
-    info!("Database migrations completed successfully");
+    info!("Database startup checks completed successfully");
 
     // Initialize rate limiters
     let rate_limiters = web::Data::new(rates::RateLimiters::new(&config));

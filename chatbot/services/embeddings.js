@@ -1,3 +1,4 @@
+import { databaseTls } from './database-tls.js';
 /**
  * Embeddings Service for RAG System
  * Generates and manages vector embeddings for events and bets
@@ -18,7 +19,7 @@ const pool = new pg.Pool({
     max: 10,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 10000,
-    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+    ssl: databaseTls(),
 });
 
 pool.on('connect', () => {

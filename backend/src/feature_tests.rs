@@ -4,7 +4,7 @@ use actix_cors::Cors;
 use actix_web::{test, App};
 use std::sync::Arc;
 
-fn config() -> AppConfig {
+pub(super) fn config() -> AppConfig {
     serde_json::from_value(json!({
         "app_env":"test", "database_url":"unused", "jwt_secret":"feature-test-signing-key-over-32-bytes", "jwt_expiration_hours":1,
         "encryption_key":"01234567890123456789012345678901", "host":"127.0.0.1", "port":0, "https_enabled":false,
@@ -16,7 +16,7 @@ fn config() -> AppConfig {
         "health_check_interval_seconds":30
     })).unwrap()
 }
-fn user(role: &str) -> User {
+pub(super) fn user(role: &str) -> User {
     serde_json::from_value(json!({
         "id":Uuid::new_v4(),"email":format!("{role}@example.test"),"password_hash":"test-only","first_name":"Test","last_name":"Account",
         "date_of_birth":"1990-01-01","phone":null,"address":null,"is_verified":true,"is_active":true,"role":role,
@@ -86,7 +86,7 @@ async fn database_policy_and_http_enforcement() {
             .service(
                 web::scope("/api/v1/admin")
                     .wrap(crate::middleware::admin_auth::RequireAdmin::new(Rc::new(
-                        auth,
+                        auth.clone(),
                     )))
                     .configure(configure_admin)
                     .route(
@@ -110,7 +110,7 @@ async fn database_policy_and_http_enforcement() {
             )
             .route(
                 "/api/v1/auth/logout",
-                web::post().to(|| async { HttpResponse::Ok().finish() }),
+                web::post().to(crate::handlers::auth::logout),
             ),
     )
     .await;
@@ -159,6 +159,12 @@ async fn database_policy_and_http_enforcement() {
         .execute(&pool)
         .await
         .is_err());
+    assert!(
+        sqlx::query("UPDATE feature_audit_logs SET action='rewritten'")
+            .execute(&pool)
+            .await
+            .is_err()
+    );
     sqlx::query("UPDATE feature_flags SET enabled=TRUE WHERE key='wallet'")
         .execute(&pool)
         .await
@@ -300,8 +306,9 @@ async fn database_policy_and_http_enforcement() {
         .await
         .is_err());
     // A second administrator permits revocation, and an old signed JWT loses access.
+    let recovery = user("superadmin");
     sqlx::query("INSERT INTO users(id,role,is_active) VALUES($1,'superadmin',TRUE)")
-        .bind(Uuid::new_v4())
+        .bind(recovery.id)
         .execute(&pool)
         .await
         .unwrap();
@@ -326,6 +333,78 @@ async fn database_policy_and_http_enforcement() {
         .insert_header(("Authorization", format!("Bearer {admin_token}")))
         .to_request();
     assert_eq!(test::call_service(&app, req).await.status(), 403);
+    auth.create_session(
+        &recovery,
+        &recovery.id.to_string(),
+        "127.0.0.1",
+        "recovery-test",
+    );
+    let recovery_token = auth
+        .generate_token(&recovery, &recovery.id.to_string())
+        .unwrap();
+    // Maintenance and a revoked original administrator cannot strand recovery.
+    let req = test::TestRequest::patch()
+        .uri("/api/v1/admin/features/maintenance")
+        .insert_header(("Authorization", format!("Bearer {recovery_token}")))
+        .set_json(json!({"enabled":false}))
+        .to_request();
+    assert_eq!(test::call_service(&app, req).await.status(), 200);
     pool.close().await;
     bootstrap.close().await;
+}
+
+#[actix_web::test]
+async fn production_blocks_money_writes_before_business_handlers() {
+    let mut production = config();
+    production.app_env = "production".into();
+    let app = test::init_service(
+        App::new()
+            .app_data(web::Data::new(production))
+            .wrap(FeatureGate)
+            .default_service(web::to(|| async {
+                HttpResponse::Ok().body("must not execute")
+            })),
+    )
+    .await;
+    for path in [
+        "/api/v1/wallet/deposit",
+        "/api/v1/wallet/withdraw",
+        "/api/v1/betting/bets",
+        "/api/v1/parlay/place",
+    ] {
+        let response =
+            test::call_service(&app, test::TestRequest::post().uri(path).to_request()).await;
+        assert_eq!(response.status(), 403, "{path}");
+        let body: Value = test::read_body_json(response).await;
+        assert_eq!(body["error"]["code"], "FEATURE_DISABLED");
+    }
+}
+
+#[actix_web::test]
+async fn logout_revokes_only_the_verified_session_and_is_idempotent() {
+    let auth = AuthService::new(Arc::new(config()));
+    let account = user("user");
+    auth.create_session(&account, "logout-test", "127.0.0.1", "test");
+    auth.create_session(&account, "other-session", "127.0.0.1", "test");
+    let token = auth.generate_token(&account, "logout-test").unwrap();
+    let other = auth.generate_token(&account, "other-session").unwrap();
+    let app = test::init_service(
+        App::new()
+            .app_data(web::Data::new(auth.clone()))
+            .route("/logout", web::post().to(crate::handlers::auth::logout)),
+    )
+    .await;
+    for _ in 0..2 {
+        let response = test::call_service(
+            &app,
+            test::TestRequest::post()
+                .uri("/logout")
+                .insert_header(("Authorization", format!("Bearer {token}")))
+                .to_request(),
+        )
+        .await;
+        assert_eq!(response.status(), 200);
+    }
+    assert!(auth.validate_token(&token).is_err());
+    assert!(auth.validate_token(&other).is_ok());
 }

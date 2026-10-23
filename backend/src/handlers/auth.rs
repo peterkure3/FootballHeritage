@@ -284,8 +284,22 @@ pub async fn login(
     }))
 }
 
-pub async fn logout(_req: HttpRequest, _pool: web::Data<PgPool>) -> AppResult<HttpResponse> {
-    // In a real implementation, invalidate the session
+pub async fn logout(
+    req: HttpRequest,
+    auth_service: web::Data<AuthService>,
+) -> AppResult<HttpResponse> {
+    // Idempotent even for expired sessions; only a verified bearer can identify
+    // a session for revocation. Logout remains available during maintenance.
+    if let Some(token) = req
+        .headers()
+        .get("Authorization")
+        .and_then(|header| header.to_str().ok())
+        .and_then(|value| value.strip_prefix("Bearer "))
+    {
+        if let Ok(claims) = auth_service.validate_token(token.trim()) {
+            auth_service.invalidate_session(&claims.session_id);
+        }
+    }
     Ok(HttpResponse::Ok().json(serde_json::json!({
         "message": "Logged out successfully"
     })))
