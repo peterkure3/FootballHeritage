@@ -105,3 +105,8 @@ and scoped `auth.css`, with existing hooks/schemas/age confirmation unchanged.
 3. Start backend — sqlx::migrate! runs automatically; install all deps, start services
 4. Initialize RAG embeddings via chatbot/sync-embeddings.js
 5. Schedule run_daily_fetch_with_sync.bat (daily) + run_weekly_retrain.bat (weekly) in Windows Task Scheduler
+
+
+## Production feature management ? 2026-10-23
+
+Added audited global/emergency/user/role feature controls, maintenance restrictions, current-role admin authorization, last-superadmin protection, admin UI and frontend gates. Python requests now use a private token-authenticated Rust gateway; hosted database URLs and production templates/CI/runbooks are provided. Verified 26 Rust tests (three ignored), 269 Python tests (14 skips), frontend production build/lint/typecheck, 38 selected Chromium checks, six expanded cross-browser feature checks and real isolated API/CORS/funding-denial smoke tests. Full migration chain passed on temporary PostgreSQL. Docker image and hosted deployment remain unverified after daemon failure; no production release occurred. See `docs/PRODUCTION_AUDIT.md`, `docs/VERCEL_DEPLOYMENT.md`, `docs/FEATURE_MANAGEMENT.md`, `docs/PRODUCTION_CHECKLIST.md` and `stages/04-test/output/production-readiness-20261023.md`. Existing uncommitted feature work remains separate and must be included in a reviewed release checkout.

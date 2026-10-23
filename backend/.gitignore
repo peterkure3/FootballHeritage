@@ -119,7 +119,6 @@ master.key
 
 # Docker
 docker-compose.override.yml
-.dockerignore
 
 # Node modules (if any frontend tools)
 node_modules/

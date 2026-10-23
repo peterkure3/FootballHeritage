@@ -15,6 +15,9 @@ logs/
 # Environment files (per-service .env.example files are tracked instead)
 .env
 .env.local
+.env.*
+!.env.example
+!.env.*.example
 
 # Python
 __pycache__/
@@ -29,3 +32,4 @@ Thumbs.db
 # Admin credential scripts (contain password hashes — keep local only)
 backend/scripts/fix_admin_role.sql
 backend/scripts/reset_admin_password.sql
+backend/scripts/update_admin_password.sql

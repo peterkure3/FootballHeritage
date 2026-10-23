@@ -1,6 +1,6 @@
 # Production audit — 2026-10-22
 
-Status: implementation in progress; this is not production approval. Existing uncommitted work was present before this audit and must not be included indiscriminately in release commits.
+Status: implementation and local verification completed, with release blockers documented below; this is not production approval. Existing uncommitted work was present before this audit and must not be included indiscriminately in release commits.
 
 ## Applications and dependencies
 
@@ -50,6 +50,20 @@ Sources include football-data.org, The Odds API, BALLDONTLIE, CFBD, ESPN, nflver
 `.github/workflows/ci.yml` checks Rust, frontend lint/build, chatbot syntax and Python tests. Rust has unit tests and `.sqlx` offline metadata; frontend has Playwright tests; pipeline has a substantial unittest suite. `chatbot`'s test script is a placeholder. `frontend/vercel.json` already defines Vite and SPA routing; earlier deployment assessment artifacts exist under `stages/05-deploy/output/`. No active application Dockerfile was found by the repository inventory.
 
 Fallow initial invocation (`npx --no-install fallow --summary`) failed because Fallow is not installed locally. Analysis availability and baseline test results must be recorded before claiming repository-wide quality gates passed.
+
+## Implemented remediation and final evidence
+
+The feature migration, centralized evaluator/middleware, current-database admin checks, admin feature workspace, frontend route/navigation controls, private Python gateway, hosted database URL handling, production templates and CI/runbooks have been implemented. Wallet mutation reads now lock rows, production demo funding defaults to denied, database pool sizing is configurable, production origins are validated and `/ready` checks the database. Feature controls intentionally do not solve payment-provider verification, settlement completion, shared session persistence or historical-secret rotation.
+
+Local verification: 26 Rust tests passed (three existing ignored DB tests); the new DB-backed feature integration test ran against an isolated PostgreSQL cluster. The complete 17-file migration chain passed there, treating the existing comment-only migration as a no-op. Python: 269 tests completed with 14 gated skips. JavaScript policy tests, frontend lint/typecheck, guarded production build, 38 selected existing/new Chromium browser tests and six expanded feature tests across Chromium/Firefox passed. The frontend production dependency audit found zero vulnerabilities.
+
+Fallow was subsequently downloaded and run. Its repository-root baseline reported 405 issues with degraded root dependency resolution. A frontend-scoped audit reported 36 dead-code/dependency issues, 40 clone groups and 165 functions above threshold; after refactoring, the final focused health report had no complexity findings in the new feature modules/page. Overall repository Fallow gates remain failing. These counts are different scopes, not a before/after improvement claim.
+
+A redacted signature scan of tracked text files up to 2 MB found no common AWS/Google/GitHub/private-key signatures, but confirmed password hashes in `backend/scripts/update_admin_password.sql`. That helper is removed from version control and ignored while its local copy is preserved; no application source references it. This was not a complete history/provider-secret scan. Rotate exposed credentials and review history before release; existing commits still contain the old file.
+
+The Docker daemon returned an EOF during the image build, and its retry stalled. Task-owned build clients were stopped. The Dockerfile and optional Vercel Services example are provided but the container image/hosted topology are not certified. See the verification report under `stages/04-test/output/` for phase files, commits, failures and outstanding integration work in pre-existing untracked files.
+
+The real temporary-server boot also confirmed historical migrations emit a bootstrap-credential notice and insert sample NBA Cup data. Application tracing now suppresses PostgreSQL notice events without changing applied migration checksums. Verify bootstrap-account rotation and sample-data exclusion before exposing a new database; this task did not delete existing records or rewrite migration history.
 
 ## Implementation and verification plan
 

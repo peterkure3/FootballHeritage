@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "npm run typecheck && vite build",
+    "build:production": "node scripts/validate-production-env.mjs && npm run build",
     "typecheck": "tsc --noEmit",
     "test": "playwright test",
     "lint": "eslint .",
