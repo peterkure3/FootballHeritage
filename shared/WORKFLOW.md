@@ -121,6 +121,12 @@ are named. If you claim "verified", the transcript must show the verification.
 
 ## Project Quick Reference (FootballHeritage)
 
+Website collection preference (user, 2026-10-14): use Browserbase for future
+website navigation and network-data discovery when its connector is available.
+No Browserbase tools were exposed in the 2026-10-14 session; do not claim to have
+used it without an actual Browserbase session. Verified public-feed collectors
+continue to ingest their established routes directly.
+
 | Thing | Value |
 |---|---|
 | Backend (Rust) | port **8888**; `SQLX_OFFLINE=true cargo check` from `backend/`; migrations auto-run at boot |

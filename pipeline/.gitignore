@@ -49,6 +49,7 @@ ssl/
 tls/
 
 # Data files
+data/
 data/raw/**/*.json
 data/raw/**/*.csv
 data/raw/sportsbooks/
