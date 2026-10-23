@@ -1,0 +1,128 @@
+name: footballheritage-staging
+services:
+  postgres:
+    image: postgres:17-bookworm
+    environment:
+      POSTGRES_USER: staging_owner
+      POSTGRES_PASSWORD: ${STAGING_DB_PASSWORD:?generate staging secrets first}
+      STAGING_API_PASSWORD: ${STAGING_API_PASSWORD:?}
+      STAGING_PIPELINE_PASSWORD: ${STAGING_PIPELINE_PASSWORD:?}
+      STAGING_READONLY_PASSWORD: ${STAGING_READONLY_PASSWORD:?}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./postgres-init.sql:/docker-entrypoint-initdb.d/010-staging.sql:ro
+    ports: ['127.0.0.1:15439:5432']
+    networks: [private]
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U staging_owner -d postgres']
+      interval: 3s
+      timeout: 3s
+      retries: 30
+  migrate:
+    image: footballheritage-staging-api:phase2
+    environment:
+      MIGRATION_DATABASE_URL: postgresql://staging_owner:${STAGING_DB_PASSWORD}@postgres/fh_staging_app
+    command: ['/app/migrate']
+    depends_on:
+      postgres: {condition: service_healthy}
+    networks: [private]
+    restart: 'no'
+  api:
+    image: footballheritage-staging-api:phase2
+    build: {context: ../../backend}
+    environment:
+      APP_ENV: production
+      DEPLOYMENT_ENV: local-staging
+      HOST: 0.0.0.0
+      PORT: '8810'
+      HTTPS_ENABLED: 'false'
+      RUN_MIGRATIONS: 'false'
+      DATABASE_URL: postgresql://fh_api:${STAGING_API_PASSWORD}@postgres/fh_staging_app
+      DB_MAX_CONNECTIONS: '10'
+      JWT_SECRET: ${STAGING_JWT_SECRET:?}
+      ENCRYPTION_KEY: ${STAGING_ENCRYPTION_KEY:?}
+      PIPELINE_INTERNAL_TOKEN: ${STAGING_PIPELINE_TOKEN:?}
+      CHATBOT_INTERNAL_TOKEN: ${STAGING_CHATBOT_TOKEN:?}
+      PIPELINE_API_URL: http://pipeline:5555/api/v1
+      CHATBOT_SERVICE_URL: http://chatbot:3000/chat
+      RAG_DATABASE_URL: postgresql://fh_readonly:${STAGING_READONLY_PASSWORD}@postgres/fh_staging_predictions
+      RAG_MODEL_VERSION: staging-fixture
+      RAG_CHAT_MODE: grounded
+      ALLOWED_ORIGINS: https://staging.footballheritage.test:18443
+      ALLOW_DEMO_WALLET_FUNDING: 'false'
+      LOGIN_RATE_LIMIT_PER_MINUTE: '100'
+      REGISTER_RATE_LIMIT_PER_HOUR: '100'
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+    ports: ['127.0.0.1:18888:8810']
+    networks: [edge, private]
+    stop_grace_period: 40s
+    healthcheck:
+      test: ['CMD', 'curl', '--fail', '--silent', 'http://127.0.0.1:8810/ready']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  pipeline:
+    image: footballheritage-staging-pipeline:phase2
+    build: {context: ../.., dockerfile: pipeline/Dockerfile}
+    environment:
+      APP_ENV: production
+      DATABASE_URL: postgresql://fh_pipeline:${STAGING_PIPELINE_PASSWORD}@postgres/fh_staging_predictions
+      HERITAGE_DATABASE_URL: postgresql://fh_api:${STAGING_API_PASSWORD}@postgres/fh_staging_app
+      PIPELINE_INTERNAL_TOKEN: ${STAGING_PIPELINE_TOKEN:?}
+      MODEL_VERSION: staging-fixture
+      DB_HOST: postgres
+      DB_NAME: fh_staging_predictions
+      DB_USER: fh_pipeline
+      DB_PASSWORD: ${STAGING_PIPELINE_PASSWORD:?}
+    volumes: [pipeline-data:/app/pipeline/data, pipeline-models:/app/pipeline/models/model_store]
+    depends_on:
+      postgres: {condition: service_healthy}
+    networks: [private]
+    stop_grace_period: 30s
+  redis:
+    image: redis:7-alpine
+    profiles: [legacy-chatbot]
+    networks: [private]
+  chatbot:
+    image: footballheritage-staging-chatbot:phase2
+    profiles: [legacy-chatbot]
+    build: {context: ../../chatbot}
+    environment:
+      NODE_ENV: production
+      DEPLOYMENT_ENV: local-staging
+      PORT: '3000'
+      CHATBOT_INTERNAL_TOKEN: ${STAGING_CHATBOT_TOKEN:?}
+      JWT_SECRET: ${STAGING_JWT_SECRET:?}
+      DATABASE_URL: postgresql://fh_api:${STAGING_API_PASSWORD}@postgres/fh_staging_app
+      REDIS_HOST: redis
+      PGSSLMODE: disable
+      ALLOWED_ORIGINS: https://staging.footballheritage.test:18443
+    depends_on: [postgres, redis]
+    networks: [private]
+  web:
+    image: footballheritage-staging-web:phase2
+    build: {context: ../.., dockerfile: deploy/staging/web.Dockerfile}
+    ports: ['127.0.0.1:18443:443']
+    volumes: [caddy-data:/data]
+    depends_on:
+      api: {condition: service_healthy}
+    networks: [edge]
+  worker:
+    image: footballheritage-staging-pipeline:phase2
+    profiles: [workers]
+    command: ['python', '-m', 'scripts.run_trial_collection', '--help']
+    environment:
+      APP_ENV: production
+      DATABASE_URL: postgresql://fh_pipeline:${STAGING_PIPELINE_PASSWORD}@postgres/fh_staging_predictions
+    volumes: [pipeline-data:/app/pipeline/data, pipeline-models:/app/pipeline/models/model_store]
+    networks: [private]
+    restart: 'no'
+networks:
+  edge:
+  private: {internal: true}
+volumes:
+  postgres-data:
+  pipeline-data:
+  pipeline-models:
+  caddy-data:

@@ -74,3 +74,13 @@ The real temporary-server boot also confirmed historical migrations emit a boots
 5. Provide environment templates, Vercel/persistent-service deployment runbook, guarded CI and rollback checklist; run Rust, frontend and Python checks.
 
 Production must remain blocked until real-money safety, secrets rotation, external service access and staging verification are signed off. No production deployment or destructive database operation is authorized by this audit.
+
+## Phase 2 local staging findings — 2026-10-23
+
+The active chatbot is the Rust RAG agent; the Node chatbot is legacy and optional. A dedicated release worktree captures required source dependencies separately from unrelated existing work. A missing bookmaker registry and incomplete clean-CI Python dependencies were discovered and corrected. See `docs/STAGING_SOURCE_INTEGRITY.json` for provenance.
+
+Logout was a success-only stub and did not revoke server sessions. It now revokes the verified session, and all frontend logout paths invoke it before clearing storage. Production funding can no longer be enabled through the old demo environment override; production bet-placement writes are also blocked pending financial lifecycle verification. Wallet balance reads no longer create wallets, simultaneous first deposits lock their owner, and a new additive unique-owner index prevents duplicate wallets. Metrics now require current administrative authorization.
+
+The isolated native environment passed DB-backed feature/financial tests, 40 API acceptance checks and a real browser admin/user/logout flow. Its migration credential is separated from its non-owner runtime credential. The native PostgreSQL database, synthetic predictions and new secrets are isolated; no existing databases or credentials were changed. Details and explicit limitations are in [LOCAL_STAGING.md](LOCAL_STAGING.md) and the Phase 2 verification report in `stages/04-test/output/`.
+
+Docker Desktop metadata I/O errors required a normal restart. The engine recovered, but BuildKit's pinned Rust compiler still returns no version/output and produces no binary, even in a minimal application-independent build. The same compiler runs normally in a container. The release image, container port binding, signal handling, PostgreSQL 17 topology and hosted staging remain unverified. Native Windows checks do not close those gates. Historical bootstrap accounts/sample data, complete secret/history scanning, payment/settlement, model artifacts, hosted ingress and backup/restore remain production blockers.

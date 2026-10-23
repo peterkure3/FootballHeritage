@@ -1,0 +1,25 @@
+{
+    admin off
+    auto_https disable_redirects
+}
+https://staging.footballheritage.test, https://localhost {
+    tls internal
+    header {
+        X-Content-Type-Options nosniff
+        X-Frame-Options DENY
+        Referrer-Policy strict-origin-when-cross-origin
+        -Server
+    }
+    @api path /api/* /health /ready
+    handle @api {
+        reverse_proxy api:8810
+    }
+    handle /metrics {
+        respond 404
+    }
+    handle {
+        root * /srv
+        try_files {path} /index.html
+        file_server
+    }
+}

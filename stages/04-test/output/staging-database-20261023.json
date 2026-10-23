@@ -1,0 +1,8 @@
+{
+  "runtime_cannot_create_public_objects": true,
+  "runtime_cannot_truncate_audit": true,
+  "runtime_cannot_rewrite_migrations": true,
+  "complete_migration_chain": true,
+  "unique_wallet_owner_index": true,
+  "runtime_audit_update_rejected": true
+}

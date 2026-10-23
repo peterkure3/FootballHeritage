@@ -1,0 +1,14 @@
+**
+!pipeline/
+!pipeline/**
+!_config/
+!_config/bookmakers.json
+pipeline/.env
+pipeline/.env.*
+pipeline/.venv*
+pipeline/**/__pycache__
+pipeline/logs
+pipeline/data
+pipeline/models/model_store
+pipeline/tests
+pipeline/backup

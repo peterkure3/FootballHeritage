@@ -1,0 +1,162 @@
+[
+  {
+    "check": "admin login",
+    "passed": true
+  },
+  {
+    "check": "user login",
+    "passed": true
+  },
+  {
+    "check": "restricted login",
+    "passed": true
+  },
+  {
+    "check": "recovery login",
+    "passed": true
+  },
+  {
+    "check": "admin authorization",
+    "passed": true
+  },
+  {
+    "check": "/health",
+    "passed": true
+  },
+  {
+    "check": "/ready",
+    "passed": true
+  },
+  {
+    "check": "unauthorized admin rejected",
+    "passed": true
+  },
+  {
+    "check": "anonymous metrics rejected",
+    "passed": true
+  },
+  {
+    "check": "ordinary metrics rejected",
+    "passed": true
+  },
+  {
+    "check": "admin metrics accessible",
+    "passed": true
+  },
+  {
+    "check": "global disable mutation",
+    "passed": true
+  },
+  {
+    "check": "global direct API denied",
+    "passed": true
+  },
+  {
+    "check": "user override mutation",
+    "passed": true
+  },
+  {
+    "check": "selected user denied",
+    "passed": true
+  },
+  {
+    "check": "other user retains access",
+    "passed": true
+  },
+  {
+    "check": "role restriction mutation",
+    "passed": true
+  },
+  {
+    "check": "role restriction enforced",
+    "passed": true
+  },
+  {
+    "check": "emergency denies superadmin",
+    "passed": true
+  },
+  {
+    "check": "maintenance denies products",
+    "passed": true
+  },
+  {
+    "check": "maintenance keeps recovery controls accessible",
+    "passed": true
+  },
+  {
+    "check": "recovery clears maintenance",
+    "passed": true
+  },
+  {
+    "check": "unknown feature rejected",
+    "passed": true
+  },
+  {
+    "check": "audit history includes actor target timestamp",
+    "passed": true
+  },
+  {
+    "check": "production money block /wallet/deposit",
+    "passed": true
+  },
+  {
+    "check": "production money block /wallet/withdraw",
+    "passed": true
+  },
+  {
+    "check": "production money block /betting/bets",
+    "passed": true
+  },
+  {
+    "check": "production money block /parlay/place",
+    "passed": true
+  },
+  {
+    "check": "private Python rejects missing token",
+    "passed": true
+  },
+  {
+    "check": "private Python rejects incorrect",
+    "passed": true
+  },
+  {
+    "check": "private Python accepts gateway token",
+    "passed": true
+  },
+  {
+    "check": "Rust private Python gateway",
+    "passed": true
+  },
+  {
+    "check": "sports endpoint",
+    "passed": true
+  },
+  {
+    "check": "active Rust RAG chat and persistence",
+    "passed": true
+  },
+  {
+    "check": "RAG conversation reload",
+    "passed": true
+  },
+  {
+    "check": "Rust RAG emergency restriction",
+    "passed": true
+  },
+  {
+    "check": "CORS allowed",
+    "passed": true
+  },
+  {
+    "check": "CORS denied",
+    "passed": true
+  },
+  {
+    "check": "logout",
+    "passed": true
+  },
+  {
+    "check": "logged out session rejected",
+    "passed": true
+  }
+]

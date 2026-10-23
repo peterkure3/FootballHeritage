@@ -36,3 +36,4 @@ backend/scripts/update_admin_password.sql
 
 # Isolated staging build/test worktrees and artifacts
 .release/
+.staging/

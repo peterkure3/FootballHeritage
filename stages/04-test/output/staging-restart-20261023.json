@@ -1,0 +1,6 @@
+{
+  "native_forced_restart_readiness": true,
+  "prior_process_session_rejected": true,
+  "fresh_login_after_restart": true,
+  "graceful_container_shutdown_verified": false
+}

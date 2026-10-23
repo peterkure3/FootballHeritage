@@ -33,11 +33,11 @@ Copy secret-free `.env.production.example` templates into your hosting provider'
 | Rust upstream | `PIPELINE_API_URL=http://PRIVATE_PIPELINE:5555/api/v1`, strong `PIPELINE_INTERNAL_TOKEN` shared with Python; `RAG_DATABASE_URL` with read-only credentials; `RAG_CHAT_MODE=grounded` or configured Gemini key/model; `CHATBOT_SERVICE_URL` if legacy chat is retained |
 | Python | `APP_ENV=production`, same internal token, its own `DATABASE_URL` and read-only `HERITAGE_DATABASE_URL` with TLS options; `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `PGSSLMODE=require` for legacy collectors; provider keys `FOOTBALL_DATA_ORG_API_KEY`, `THE_ODDS_API_KEY`, `CFBD_API_KEY`, `BALLDONTLIE_API_KEY` |
 | Observability | `RUST_LOG=info`, `METRICS_ENABLED`, worker `LOG_LEVEL`; protect `/metrics` at ingress and route logs to your provider's private log sink |
-| Node chatbot | `NODE_ENV=production`, `DATABASE_URL`, `JWT_SECRET`, `GEMINI_API_KEY`, `ALLOWED_ORIGINS`; private ingress, optional Redis per existing service configuration |
+| Legacy optional Node chatbot | `NODE_ENV=production`, `DATABASE_URL`, `JWT_SECRET`, `CHATBOT_INTERNAL_TOKEN` (at least 32 bytes, shared only with Rust), `GEMINI_API_KEY`, `ALLOWED_ORIGINS`; private ingress, optional Redis per existing service configuration |
 
 `VITE_PIPELINE_API_URL` is obsolete: browser Python requests derive `/pipeline` from the normalized Rust API URL and forward the user bearer token. Both `https://api.example.com` and `https://api.example.com/api/v1` normalize to exactly one `/api/v1`. Never put provider keys/internal tokens/database passwords in `VITE_*`. The production validator rejects localhost and secret-like public variables. Keep `ALLOW_DEMO_WALLET_FUNDING=false`: no real payment integration is implemented.
 
-The Docker build uses the checked-in SQLx offline cache and embeds migrations. It excludes `.env`, certificates, scripts, logs, backups and local targets. The API still runs additive migrations at startup; deploy the migration-aware API during an approved release window with a backup and a suitable migration credential. A least-privilege runtime/migration credential split remains a hardening task before a larger production rollout. Do not rotate `ENCRYPTION_KEY` without a reviewed re-encryption migration: existing wallet balances depend on it.
+The Docker build uses the checked-in SQLx offline cache and embeds migrations. It excludes `.env`, certificates, scripts, logs, backups and local targets. The API defaults to additive migrations at startup for compatibility. Persistent staging uses the dedicated `/app/migrate` binary with `MIGRATION_DATABASE_URL`, followed by `RUN_MIGRATIONS=false` and a non-owner `DATABASE_URL` for the API. Grant runtime DML/sequence permissions explicitly, revoke write access to `_sqlx_migrations`, and verify audit triggers remain effective. Review migrations during an approved release window with a backup. Do not rotate `ENCRYPTION_KEY` without a reviewed re-encryption migration: existing wallet balances depend on it.
 
 ## Deployment order
 
@@ -59,3 +59,5 @@ Record the previous frontend deployment ID, API image digest, configuration vers
 ## Known limits
 
 The container image and hosted networking require platform verification; no container engine or cloud release is implied by a local build. Process-local sessions expire on API restarts. Public guest content cannot enforce the identity of a logged-out user. Existing settlement gaps, funding-provider safety, migration credential separation, provider quotas, durable worker/model storage, historical-secret remediation and repository-wide Fallow findings remain release work. Feature switches are not a regulatory/compliance approval for real-money operation.
+
+For isolated local staging configuration, exact commands, verification limits and rollback, see [LOCAL_STAGING.md](LOCAL_STAGING.md).

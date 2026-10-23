@@ -2,6 +2,8 @@
 
 No live production deployment or production database write is approved by this checklist.
 
+Phase 2 verified an isolated **native local** environment on `release/staging-20261023`. Its 40 API checks and real browser flow passed. Docker image/runtime verification and hosted staging remain blocked; use [LOCAL_STAGING.md](LOCAL_STAGING.md) and the dated Phase 2 report for scope and evidence. The active chatbot is Rust RAG; Node is optional legacy infrastructure.
+
 ## Release gates
 
 - [ ] Review and commit the pre-existing working tree changes separately; validate the complete release from a clean checkout.
@@ -19,8 +21,9 @@ No live production deployment or production database write is approved by this c
 - [ ] Verify `/health`, `/ready`, restricted `/metrics`, safe errors, rate limits and observability under actual hosted networking.
 - [ ] Run Rust tests with disposable PostgreSQL, frontend lint/typecheck/build/browser tests, Python gateway and existing pipeline suites; record baseline failures honestly.
 - [ ] Run dependency/security scans and resolve critical/high findings. Repository-wide Fallow is not currently green.
+- [ ] Keep the optional legacy Node service undeployed until its npm audit findings are remediated; initial install reported five critical vulnerabilities. The active Rust RAG chatbot does not require it.
 - [ ] Verify Vercel SPA deep links, immutable hashed assets, CSP, production API URL validation and no source/server credentials in bundle output.
-- [ ] Complete the container build and hosted runtime smoke tests; local Docker verification was interrupted by a daemon failure.
+- [ ] Complete the Rust image build, container binding/readiness/graceful shutdown and hosted runtime smoke tests; local BuildKit compiler execution still fails after daemon recovery.
 - [ ] Configure required CI/deployment checks, protected production branch and manual release approval. Record rollback image/deployment IDs and an operator.
 - [ ] Obtain explicit production approval, deploy in order from the runbook and verify smoke tests. Roll back according to the documented compatibility limits.
 
