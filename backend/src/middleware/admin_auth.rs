@@ -84,21 +84,24 @@ where
                 if let Some(token) = auth_header.strip_prefix("Bearer ") {
                     // Validate token
                     match auth_service.validate_token(token) {
-                        Ok(claims) => {
+                        Ok(mut claims) => {
                             info!(
                                 "Token validated successfully. User: {}, Role: {}",
                                 claims.email, claims.role
                             );
                             // Check if user has admin or superadmin role
-                            let current_admin = match req
-                                .app_data::<actix_web::web::Data<sqlx::PgPool>>()
+                            let current_role =
+                                match req.app_data::<actix_web::web::Data<sqlx::PgPool>>() {
+                                    Some(pool) => crate::features::identity(req.request(), pool)
+                                        .await
+                                        .ok()
+                                        .map(|(_, role)| role),
+                                    None => None,
+                                };
+                            if let Some(role) = current_role
+                                .filter(|role| matches!(role.as_str(), "admin" | "superadmin"))
                             {
-                                Some(pool) => crate::features::administrator(req.request(), pool)
-                                    .await
-                                    .is_ok(),
-                                None => false,
-                            };
-                            if current_admin {
+                                claims.role = role;
                                 // Store claims in request extensions for later use
                                 req.extensions_mut().insert(claims.clone());
 
@@ -208,9 +211,18 @@ where
                 if let Some(token) = auth_header.strip_prefix("Bearer ") {
                     // Validate token
                     match auth_service.validate_token(token) {
-                        Ok(claims) => {
+                        Ok(mut claims) => {
                             // Check if user has superadmin role
-                            if claims.role == "superadmin" {
+                            let current_role =
+                                match req.app_data::<actix_web::web::Data<sqlx::PgPool>>() {
+                                    Some(pool) => crate::features::identity(req.request(), pool)
+                                        .await
+                                        .ok()
+                                        .map(|(_, role)| role),
+                                    None => None,
+                                };
+                            if current_role.as_deref() == Some("superadmin") {
+                                claims.role = "superadmin".into();
                                 // Store claims in request extensions
                                 req.extensions_mut().insert(claims.clone());
 

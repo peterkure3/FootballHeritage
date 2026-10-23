@@ -3,6 +3,7 @@ use actix_web::{web, App, HttpServer};
 use rustls::pki_types::CertificateDer;
 use sqlx::postgres::PgPoolOptions;
 use std::rc::Rc;
+use tracing_subscriber::Layer;
 use tracing::{debug, error, info, warn};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
@@ -30,7 +31,11 @@ async fn main() -> std::io::Result<()> {
             tracing_subscriber::EnvFilter::try_from_default_env()
                 .unwrap_or_else(|_| "info,football_heritage_backend=debug".into()),
         )
-        .with(tracing_subscriber::fmt::layer())
+        .with(
+            tracing_subscriber::fmt::layer().with_filter(tracing_subscriber::filter::filter_fn(
+                |metadata| metadata.target() != "sqlx::postgres::notice",
+            )),
+        )
         .init();
 
     // Load configuration

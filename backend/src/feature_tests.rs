@@ -75,7 +75,7 @@ async fn database_policy_and_http_enforcement() {
     let app = test::init_service(
         App::new()
             .app_data(web::Data::new(pool.clone()))
-            .app_data(web::Data::new(auth))
+            .app_data(web::Data::new(auth.clone()))
             .wrap(FeatureGate)
             .wrap(
                 Cors::default()
@@ -83,7 +83,22 @@ async fn database_policy_and_http_enforcement() {
                     .allowed_methods(vec!["GET", "PATCH", "POST"])
                     .allowed_headers(vec!["authorization", "content-type"]),
             )
-            .service(web::scope("/api/v1/admin").configure(configure_admin))
+            .service(
+                web::scope("/api/v1/admin")
+                    .wrap(crate::middleware::admin_auth::RequireAdmin::new(Rc::new(
+                        auth,
+                    )))
+                    .configure(configure_admin)
+                    .route(
+                        "/whoami",
+                        web::get().to(|req: HttpRequest| async move {
+                            HttpResponse::Ok().json(
+                                crate::middleware::admin_auth::get_admin_claims(&req)
+                                    .map(|claims| claims.role),
+                            )
+                        }),
+                    ),
+            )
             .route("/api/v1/me/features", web::get().to(effective))
             .route(
                 "/api/v1/wallet/deposit",
@@ -290,6 +305,17 @@ async fn database_policy_and_http_enforcement() {
         .execute(&pool)
         .await
         .unwrap();
+    sqlx::query("UPDATE users SET role='admin' WHERE id=$1")
+        .bind(admin.id)
+        .execute(&pool)
+        .await
+        .unwrap();
+    let req = test::TestRequest::get()
+        .uri("/api/v1/admin/whoami")
+        .insert_header(("Authorization", format!("Bearer {admin_token}")))
+        .to_request();
+    let role: Value = test::call_and_read_body_json(&app, req).await;
+    assert_eq!(role, "admin");
     sqlx::query("UPDATE users SET role='user' WHERE id=$1")
         .bind(admin.id)
         .execute(&pool)
