@@ -1,3 +1,4 @@
+import { apiFetch, PIPELINE_API_URL } from '../utils/api';
 /**
  * Prediction Service
  * 
@@ -5,7 +6,7 @@
  * Provides predictions, match data, and what-if scenarios
  */
 
-const PIPELINE_API_URL = import.meta.env.VITE_PIPELINE_API_URL || 'http://localhost:5555/api/v1';
+
 
 const toNumber = (value) => {
   const n = Number(value);
@@ -34,7 +35,7 @@ export const predictionService = {
     if (!matchId) return null;
     
     try {
-      const response = await fetch(`${PIPELINE_API_URL}/predictions/${matchId}`, {
+      const response = await apiFetch(`${PIPELINE_API_URL}/predictions/${matchId}`, {
         method: 'GET',
         cache: 'no-store',
         headers: {
@@ -86,7 +87,7 @@ export const predictionService = {
       }
       
       const url = `${PIPELINE_API_URL}/matches${params.toString() ? '?' + params.toString() : ''}`;
-      const response = await fetch(url, { cache: 'no-store', signal: options.signal ?? AbortSignal.timeout(15000) });
+      const response = await apiFetch(url, { cache: 'no-store', signal: options.signal ?? AbortSignal.timeout(15000) });
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -123,7 +124,7 @@ export const predictionService = {
         away_team: awayTeam
       });
       
-      const response = await fetch(`${PIPELINE_API_URL}/predict-matchup?${params}`);
+      const response = await apiFetch(`${PIPELINE_API_URL}/predict-matchup?${params}`);
       
       if (!response.ok) {
         if (response.status === 503) {
@@ -145,7 +146,7 @@ export const predictionService = {
    */
   async healthCheck() {
     try {
-      const response = await fetch(`${PIPELINE_API_URL}/health`);
+      const response = await apiFetch(`${PIPELINE_API_URL}/health`);
       return await response.json();
     } catch (error) {
       console.error('Error checking API health:', error);

@@ -1,10 +1,11 @@
+import { apiFetch, PIPELINE_API_URL } from '../../utils/api';
 import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Search, Plus, Check, X, TrendingUp, Calendar } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import useParlayStore from '../../stores/parlayStore';
 
-const PIPELINE_API_URL = import.meta.env.VITE_PIPELINE_API_URL || "http://localhost:5555/api/v1";
+
 
 const formatDate = (dateStr) => {
   if (!dateStr) return 'TBD';
@@ -29,7 +30,7 @@ const QuickAddSearch = ({ onClose }) => {
   const { data, isLoading } = useQuery({
     queryKey: ['quick-add-bets'],
     queryFn: async () => {
-      const response = await fetch(`${PIPELINE_API_URL}/best-value-bets?limit=50&min_edge=0.02`);
+      const response = await apiFetch(`${PIPELINE_API_URL}/best-value-bets?limit=50&min_edge=0.02`);
       if (!response.ok) throw new Error('Failed to fetch bets');
       return response.json();
     },

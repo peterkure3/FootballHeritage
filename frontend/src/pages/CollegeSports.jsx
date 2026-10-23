@@ -1,3 +1,4 @@
+import { apiFetch, PIPELINE_API_URL } from '../utils/api';
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
@@ -65,7 +66,7 @@ const CollegeSports = () => {
   const [dataTimestamp, setDataTimestamp] = useState(null);
   const [isStale, setIsStale] = useState(false);
 
-  const PIPELINE_API_URL = import.meta.env.VITE_PIPELINE_API_URL || 'http://localhost:5555/api/v1';
+
 
   useEffect(() => {
     fetchNcaabData();
@@ -76,7 +77,7 @@ const CollegeSports = () => {
   const refreshNcaabData = async () => {
     try {
       setRefreshing(true);
-      await fetch(`${PIPELINE_API_URL}/ncaab/refresh`, { method: 'POST' });
+      await apiFetch(`${PIPELINE_API_URL}/ncaab/refresh`, { method: 'POST' });
       await fetchNcaabData();
     } catch (err) {
       console.error('Failed to refresh NCAAB data:', err);
@@ -89,8 +90,8 @@ const CollegeSports = () => {
   const fetchNcaabData = async () => {
     try {
       setLoading(true);
-      const PIPELINE_API_URL = import.meta.env.VITE_PIPELINE_API_URL || 'http://localhost:5555/api/v1';
-      const response = await fetch(`${PIPELINE_API_URL}/ncaab/games?limit=50`);
+
+      const response = await apiFetch(`${PIPELINE_API_URL}/ncaab/games?limit=50`);
 
       if (!response.ok) {
         throw new Error('Failed to fetch NCAAB games');

@@ -1,3 +1,4 @@
+import { defaultApiFixture } from './feature-fixture.js';
 import { test, expect } from "@playwright/test";
 import { createServer } from "node:http";
 import { existsSync, readFileSync } from "node:fs";
@@ -89,7 +90,7 @@ test("desktop visual tokens agree with supplied template", async ({
       path: testInfo.outputPath("supplied-template-desktop.png"),
       fullPage: true,
     });
-    await page.route("**/api/v1/**", (route) => route.fulfill({ json: [] }));
+    await page.route("**/api/v1/**", defaultApiFixture);
     await page.goto("/app");
     await expect(page.locator(".fh-intro h1")).toBeVisible();
     const actual = await page.evaluate(() => ({

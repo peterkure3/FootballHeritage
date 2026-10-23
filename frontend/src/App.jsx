@@ -8,6 +8,8 @@ import {
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
 import useAuthStore from "./stores/authStore";
+import AdminFeatures from './pages/AdminFeatures';
+import { FeatureBoundary } from './features/FeatureAccess';
 import ErrorBoundary from "./components/ErrorBoundary";
 
 // Pages
@@ -120,7 +122,7 @@ function App() {
         <Router>
           <div className="min-h-screen heritage-app" style={{ background: 'var(--color-surface, #f0f2ef)' }}>
           <ApplicationNavbar />
-          <Routes>
+          <FeatureBoundary><Routes>
             <Route path="/app" element={<HomePage />} />
             <Route path="/sport/:sport" element={<SportPage />} />
             <Route path="/sport/:sport/:section" element={<SportPage />} />
@@ -310,6 +312,7 @@ function App() {
               <Route path="analytics" element={<AdminAnalytics />} />
               <Route path="revenue" element={<AdminRevenue />} />
               <Route path="sportsgpt" element={<AdminSportsGPT />} />
+              <Route path="features" element={<AdminFeatures />} />
               <Route path="settings" element={<AdminSettings />} />
               <Route path="logs" element={<AdminLogs />} />
             </Route>
@@ -335,7 +338,7 @@ function App() {
                 </div>
               }
             />
-          </Routes>
+          </Routes></FeatureBoundary>
         </div>
 
         {/* Toast Notifications */}

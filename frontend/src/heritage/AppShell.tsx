@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Link } from "react-router-dom";
+import { FeatureLink as Link } from '../features/FeatureAccess';
 import { ArrowUpRight, Sparkles, Bookmark, Heart } from "lucide-react";
 import { leagues, sportPath, sports, stories, type Sport } from "./data";
 import { StoryImage } from "./ui";

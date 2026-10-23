@@ -1,8 +1,9 @@
+import { apiFetch, API_BASE_URL } from '../utils/api';
 import { useState } from 'react';
 import { SPORTS } from '../utils/constants';
 import Navbar from '../components/Navbar';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8888/api/v1';
+const API_BASE = API_BASE_URL;
 
 const SPORT_PARAM_MAP = {
   nfl: 'americanfootball',
@@ -23,7 +24,7 @@ const PlayerProps = () => {
     try {
       const dbSport = SPORT_PARAM_MAP[sport] || sport;
       const params = sport !== 'all' ? `?sport=${dbSport}` : '';
-      const res = await fetch(`${API_BASE}/player-props${params}`);
+      const res = await apiFetch(`${API_BASE}/player-props${params}`);
       if (!res.ok) throw new Error('Failed to fetch');
       const data = await res.json();
       setProps(data);

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
-import { tokenManager } from '../utils/api';
+import { tokenManager, API_BASE_URL } from '../utils/api';
 import Navbar from '../components/Navbar';
 
 const Chat = () => {
@@ -52,7 +52,7 @@ const Chat = () => {
         throw new Error('Not authenticated');
       }
 
-      const response = await fetch('http://localhost:3000/chat', {
+      const response = await fetch(`${API_BASE_URL}/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

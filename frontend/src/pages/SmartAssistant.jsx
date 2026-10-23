@@ -1,3 +1,4 @@
+import { apiFetch, PIPELINE_API_URL } from '../utils/api';
 import { useState, useRef, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
 import Navbar from '../components/Navbar';
@@ -15,7 +16,7 @@ import {
   Trophy
 } from 'lucide-react';
 
-const PIPELINE_API_URL = import.meta.env.VITE_PIPELINE_API_URL || "http://localhost:5555/api/v1";
+
 
 const formatDate = (dateStr) => {
   if (!dateStr) return 'TBD';
@@ -226,7 +227,7 @@ const SmartAssistant = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`${PIPELINE_API_URL}/smart-assistant`, {
+      const response = await apiFetch(`${PIPELINE_API_URL}/smart-assistant`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

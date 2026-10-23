@@ -1,3 +1,4 @@
+import { defaultApiFixture } from './feature-fixture.js';
 import { test, expect } from "@playwright/test";
 
 // Explicit test-only API fixtures. No mock data is shipped in the application.
@@ -28,7 +29,7 @@ const events = ["NFL", "NBA"].map((sport, index) => ({
   under_odds: 1.91,
 }));
 async function mockServices(page) {
-  await page.route("**/api/v1/**", (route) => route.fulfill({ json: [] }));
+  await page.route("**/api/v1/**", defaultApiFixture);
   await page.route("**/auth/login", (route) =>
     route.fulfill({ json: { token: "test-only-token", user } }),
   );

@@ -52,6 +52,7 @@ const AdminSidebar = ({ isOpen, onToggle }) => {
       title: 'SYSTEM',
       items: [
         { path: '/admin/settings', icon: Settings, label: 'Settings' },
+        { path: '/admin/features', icon: Settings, label: 'Feature Management' },
         { path: '/admin/logs', icon: FileText, label: 'Audit Logs' },
       ]
     }

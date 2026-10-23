@@ -1,3 +1,4 @@
+import { apiFetch, PIPELINE_API_URL } from '../utils/api';
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
@@ -7,7 +8,7 @@ import EmptyState from "../components/EmptyState";
 import { TrendingUp, DollarSign, Target, Zap, AlertTriangle, Plus, Check } from "lucide-react";
 import useParlayStore from "../stores/parlayStore";
 
-const PIPELINE_API_URL = import.meta.env.VITE_PIPELINE_API_URL || "http://localhost:5555/api/v1";
+
 
 const formatPct = (v) => {
   const n = Number(v);
@@ -69,7 +70,7 @@ const BestBets = () => {
         limit: limit.toString(),
         upcoming_only: "true",
       });
-      const response = await fetch(`${PIPELINE_API_URL}/best-value-bets?${params}`);
+      const response = await apiFetch(`${PIPELINE_API_URL}/best-value-bets?${params}`);
       if (!response.ok) throw new Error("Failed to fetch value bets");
       return response.json();
     },

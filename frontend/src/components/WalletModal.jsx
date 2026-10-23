@@ -3,6 +3,7 @@ import { useDeposit, useWithdraw } from '../hooks/useBetting';
 import { depositSchema, withdrawSchema, safeParse } from '../utils/validation';
 import { sanitize } from '../utils/api';
 import { Dialog } from '../heritage/ui';
+import { useFeatures } from '../features/useFeatures';
 
 const WalletModal = memo(({ isOpen, onClose, initialTab = 'deposit', currentBalance = 0, restoreFocus }) => {
   const [activeTab, setActiveTab] = useState(initialTab);
@@ -11,6 +12,7 @@ const WalletModal = memo(({ isOpen, onClose, initialTab = 'deposit', currentBala
 
   const depositMutation = useDeposit();
   const withdrawMutation = useWithdraw();
+  const featureAccess = useFeatures();
 
   const isLoading = depositMutation.isPending || withdrawMutation.isPending;
 
@@ -108,6 +110,9 @@ const WalletModal = memo(({ isOpen, onClose, initialTab = 'deposit', currentBala
 
   if (!isOpen) return null;
 
+  if (isOpen && (featureAccess.isError || featureAccess.data?.features?.wallet !== true || featureAccess.data?.features?.wallet_funding !== true)) {
+    return <Dialog title="Wallet unavailable" onClose={handleClose} restoreFocus={restoreFocus}><h2>Wallet unavailable</h2><p>Wallet funding is currently unavailable for your account.</p></Dialog>;
+  }
   return (
     <Dialog title="Wallet" className="fh-wallet-dialog" onClose={handleClose} restoreFocus={restoreFocus}>
       <div className="bg-card rounded-xl shadow-2xl border border-card-border w-full max-w-md overflow-hidden">

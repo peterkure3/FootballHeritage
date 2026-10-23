@@ -1,8 +1,9 @@
+import { defaultApiFixture } from './feature-fixture.js';
 import { test, expect } from "@playwright/test";
 
 // Test-only API fixture. These presentation checks do not create real accounts.
 test.beforeEach(async ({ page }) => {
-  await page.route("**/api/v1/**", (route) => route.fulfill({ json: [] }));
+  await page.route("**/api/v1/**", defaultApiFixture);
 });
 
 for (const width of [1440, 900, 390]) {

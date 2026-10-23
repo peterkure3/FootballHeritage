@@ -7,7 +7,9 @@ import {
   type Dispatch,
   type SetStateAction,
 } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { FeatureLink as Link } from "../features/FeatureAccess";
+import { useFeatures } from "../features/useFeatures";
 import {
   ChevronDown,
   Menu,
@@ -153,6 +155,8 @@ export function ScoreboardStrip({ sport = "Football" }: { sport?: Sport }) {
   );
 }
 export default function MainNavbar() {
+  const featureAccess = useFeatures();
+  const walletAvailable = !featureAccess.isError && featureAccess.data?.features?.wallet === true;
   const location = useLocation();
   const { user, isAuthenticated, logout } = useAuthStore();
   const [open, setOpen] = useState("");
@@ -193,7 +197,7 @@ export default function MainNavbar() {
           <Link to="/odds">Odds & betting</Link>
           <Link to="/bets">Bet history</Link>
           <Link to="/parlay-calculator">Parlay calculator</Link>
-          <button
+          {walletAvailable && <button
             onClick={() => {
               setWallet(true);
               setOpen("");
@@ -201,7 +205,7 @@ export default function MainNavbar() {
             }}
           >
             Wallet
-          </button>
+          </button>}
           {(user?.is_admin || user?.is_super_admin) && (
             <Link to="/admin">Administration</Link>
           )}
@@ -240,7 +244,7 @@ export default function MainNavbar() {
         <div className="fh-nav-inner">
           <Brand to="/app" />
           <nav className="fh-desktop-nav" aria-label="Sports">
-            {sports.map((sport) => (
+            {sports.filter(() => !featureAccess.isError && featureAccess.data?.features?.sports === true).map((sport) => (
               <MenuGroup
                 key={sport}
                 name={slug(sport)}
@@ -340,7 +344,7 @@ export default function MainNavbar() {
             className="fh-mobile-menu"
             aria-label="Mobile navigation"
           >
-            {sports.map((sport) => (
+            {sports.filter(() => !featureAccess.isError && featureAccess.data?.features?.sports === true).map((sport) => (
               <details key={sport}>
                 <summary>{sport}</summary>
                 <Link to={sportPath(sport)}>Visit {sport}</Link>

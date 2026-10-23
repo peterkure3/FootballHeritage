@@ -1,3 +1,4 @@
+import { apiFetch, PIPELINE_API_URL } from '../../utils/api';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { 
@@ -15,7 +16,7 @@ import {
 import { toast } from 'react-hot-toast';
 import useParlayStore from '../../stores/parlayStore';
 
-const PIPELINE_API_URL = import.meta.env.VITE_PIPELINE_API_URL || "http://localhost:5555/api/v1";
+
 
 const formatDate = (dateStr) => {
   if (!dateStr) return 'TBD';
@@ -171,7 +172,7 @@ const SuggestedParlays = () => {
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['suggested-parlays'],
     queryFn: async () => {
-      const response = await fetch(`${PIPELINE_API_URL}/suggested-parlays`);
+      const response = await apiFetch(`${PIPELINE_API_URL}/suggested-parlays`);
       if (!response.ok) throw new Error('Failed to fetch suggested parlays');
       return response.json();
     },

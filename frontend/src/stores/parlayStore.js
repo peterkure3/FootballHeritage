@@ -1,7 +1,8 @@
+import { apiFetch, PIPELINE_API_URL } from '../utils/api';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-const PIPELINE_API_URL = import.meta.env?.VITE_PIPELINE_API_URL || "http://localhost:5555/api/v1";
+
 
 /**
  * Parlay Builder Store
@@ -176,7 +177,7 @@ const useParlayStore = create(
             bet_type: bet.bet_type,
           }));
           
-          const response = await fetch(`${PIPELINE_API_URL}/parlay/enrich`, {
+          const response = await apiFetch(`${PIPELINE_API_URL}/parlay/enrich`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ legs }),

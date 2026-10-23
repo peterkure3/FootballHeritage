@@ -1,3 +1,4 @@
+import { defaultApiFixture } from './feature-fixture.js';
 import { test, expect } from "@playwright/test";
 import { existsSync, readFileSync } from "node:fs";
 
@@ -10,7 +11,7 @@ const user = {
   balance: 0,
 };
 test.beforeEach(async ({ page }) => {
-  await page.route("**/api/v1/**", (route) => route.fulfill({ json: [] }));
+  await page.route("**/api/v1/**", defaultApiFixture);
   await page.route("**/user/profile", (route) => route.fulfill({ json: user }));
 });
 

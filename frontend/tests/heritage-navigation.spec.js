@@ -1,3 +1,4 @@
+import { defaultApiFixture } from './feature-fixture.js';
 import { test, expect } from "@playwright/test";
 
 // All upstream data in this suite is explicitly mocked test data, never app fallback data.
@@ -68,8 +69,8 @@ test("NBA fixtures use canonical basketball data without including other leagues
 });
 
 test.beforeEach(async ({ page }) => {
-  await page.route("**/api/v1/**", (route) => route.fulfill({ json: [] }));
-  await page.route("**/api/v1/matches?*", (route) =>
+  await page.route("**/api/v1/**", defaultApiFixture);
+  await page.route("**/api/v1/pipeline/matches?*", (route) =>
     route.fulfill({ json: fixtures }),
   );
   await page.route("**/user/profile", (route) => route.fulfill({ json: user }));
@@ -250,7 +251,7 @@ test("match direct link opens accessible dialog and Escape restores focus", asyn
 test("scores show errors, retry, empty state and no sample scores", async ({
   page,
 }) => {
-  await page.route("**/api/v1/matches?*", (route) =>
+  await page.route("**/api/v1/pipeline/matches?*", (route) =>
     route.fulfill({
       status: 503,
       json: { error: "Test upstream unavailable" },
@@ -260,7 +261,7 @@ test("scores show errors, retry, empty state and no sample scores", async ({
   await expect(
     page.getByRole("heading", { name: "Data unavailable" }),
   ).toBeVisible();
-  await page.route("**/api/v1/matches?*", (route) =>
+  await page.route("**/api/v1/pipeline/matches?*", (route) =>
     route.fulfill({ json: [] }),
   );
   await page

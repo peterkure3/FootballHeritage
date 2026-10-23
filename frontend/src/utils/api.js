@@ -1,8 +1,16 @@
 // API utility for secure communication with the Rust betting backend
-export const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:8888/api/v1";
+import { apiBase } from './apiUrl';
+export const API_BASE_URL = apiBase(import.meta.env.VITE_API_URL || "http://localhost:8888");
+export const PIPELINE_API_URL = `${API_BASE_URL}/pipeline`;
 
 const STORAGE_KEY = "token";
+
+export function apiFetch(url, options = {}) {
+  const headers = new Headers(options.headers);
+  const token = tokenManager.getToken();
+  if (token) headers.set('Authorization', `Bearer ${token}`);
+  return fetch(url, { ...options, headers, credentials: 'omit' });
+}
 
 // Token management
 export const tokenManager = {
@@ -62,7 +70,8 @@ export const makeRequest = async (endpoint, options = {}) => {
     if (!response.ok) {
       throw new Error(
         data.message ||
-          data.error ||
+          data.error?.message ||
+          (typeof data.error === 'string' ? data.error : null) ||
           `HTTP ${response.status}: ${response.statusText}`,
       );
     }
