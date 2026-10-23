@@ -14,6 +14,7 @@ sys.path.append(str(Path(__file__).parent.parent))
 from config import API_HOST, API_PORT, API_TITLE, API_VERSION, API_DESCRIPTION
 from config import API_ALLOWED_ORIGINS
 from api.routes import router
+from api.access import private_gateway
 
 # Create FastAPI app
 app = FastAPI(
@@ -21,6 +22,9 @@ app = FastAPI(
     version=API_VERSION,
     description=API_DESCRIPTION,
 )
+
+
+app.middleware("http")(private_gateway)
 
 # Add CORS middleware
 # For production, replace ["*"] with specific domains:

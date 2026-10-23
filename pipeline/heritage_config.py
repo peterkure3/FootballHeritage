@@ -6,6 +6,7 @@ Use this to connect to the heritage database instead of the main one.
 import os
 from dotenv import load_dotenv
 from pathlib import Path
+from urllib.parse import quote
 
 # Load environment variables
 _dotenv_path = Path(__file__).resolve().parent / ".env"
@@ -22,7 +23,9 @@ DB_PASSWORD = os.getenv("DB_PASSWORD", "")
 DB_NAME = "football_heritage"  # Different database name
 
 # Build database URI
-DATABASE_URI = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+DATABASE_URI = os.getenv("HERITAGE_DATABASE_URL") or (
+    f"postgresql://{quote(DB_USER, safe='')}:{quote(DB_PASSWORD, safe='')}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+)
 
 # Display connection info (without password)
 def get_connection_info():

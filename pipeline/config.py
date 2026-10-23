@@ -4,6 +4,7 @@ Contains API keys, database URIs, file paths, and other settings.
 """
 
 import os
+from urllib.parse import quote
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -54,7 +55,9 @@ DB_NAME = os.getenv("DB_NAME", "football_betting")
 DB_USER = os.getenv("DB_USER", "postgres")
 DB_PASSWORD = os.getenv("DB_PASSWORD", "")
 
-DATABASE_URI = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+DATABASE_URI = os.getenv("DATABASE_URL") or (
+    f"postgresql://{quote(DB_USER, safe='')}:{quote(DB_PASSWORD, safe='')}@{DB_HOST}:{DB_PORT}/{quote(DB_NAME, safe='')}"
+)
 
 # Data Source Paths
 FOOTBALL_DATA_ORG_DIR = RAW_DATA_DIR / "football_data_org"
