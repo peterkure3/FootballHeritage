@@ -2,6 +2,8 @@
 
 No production deployment has been performed as part of this preparation. Replace example domains with your actual owned domains before deployment; no production frontend/admin origins were supplied in the task.
 
+For the multi-binary Rust build error, see [Rust binary selection and runtime blockers](../backend/docs/VERCEL_BINARY_SELECTION.md). The API is the explicit Cargo default; initialization/reset targets require an operator-only feature. A successful binary selection does not establish native Vercel Functions compatibility for Actix.
+
 ## Hosting topology
 
 | Component | Root | Target / command |

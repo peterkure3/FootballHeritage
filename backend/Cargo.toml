@@ -2,6 +2,11 @@
 name = "football-heritage-backend"
 version = "0.1.0"
 edition = "2021"
+default-run = "football-heritage-backend"
+autobins = false
+
+[features]
+maintenance-tools = []
 
 [profile.release]
 opt-level = "z"     # Optimize for size
@@ -83,8 +88,27 @@ num_cpus = "1.16.0"
 futures-util = { version = "0.3.30", default-features = false }
 
 [[bin]]
+name = "football-heritage-backend"
+path = "src/main.rs"
+
+[[bin]]
 name = "init_admin"
 path = "src/bin/init_admin.rs"
+required-features = ["maintenance-tools"]
+
+[[bin]]
+name = "init_wallets"
+path = "src/bin/init_wallets.rs"
+required-features = ["maintenance-tools"]
+
+[[bin]]
+name = "reset_wallets"
+path = "src/bin/reset_wallets.rs"
+required-features = ["maintenance-tools"]
+
+[[bin]]
+name = "migrate"
+path = "src/bin/migrate.rs"
 
 [dev-dependencies]
 tempfile = "3.9.0"

@@ -23,7 +23,7 @@ jobs:
       - name: Check
         run: cargo check --locked
       - name: Test
-        run: cargo test --locked
+        run: cargo test --locked --all-features
 
   frontend:
     name: Frontend (React)

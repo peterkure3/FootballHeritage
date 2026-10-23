@@ -1,5 +1,9 @@
 # Football Heritage - Codebase Index
 
+## Rust deployment binary selection — 2026-10-23
+
+`backend/Cargo.toml` explicitly selects `football-heritage-backend` (`src/main.rs`) and gates initialization/wallet-reset executables behind `maintenance-tools`. CI compiles/tests opt-in targets without running their operational entrypoints. The API still uses Actix `HttpServer`; native Vercel Rust Functions compatibility remains separate from binary selection. See `backend/docs/VERCEL_BINARY_SELECTION.md` for runtime and `PORT` requirements. Routes, authentication, feature policy and migrations are preserved; no deployment or database operation is authorized by this note.
+
 ## Soccer event dataset and simulation baseline — 2026-10-22
 
 Acquired all 3,251,294 Wyscout public events across 1,941 matches with provider MD5 and SHA-256 verification. Normalization retains 1,930 matches and quarantines 11. Added an isolated possession-bootstrap simulator, native-ID batch inference and player attribution with sampled substitutions. Seven competition models use independent chronological splits: 1,341 training, 295 validation and 294 test fixtures; 589,000 match rollouts and 29,400 player trajectories. Results are mixed versus the goal baseline and pass-count intervals are underdispersed; all models remain inactive. Unknown actors and substitution-time diagnostics remain explicit. Verification: 26 tests plus five subtests, zero Pyflakes errors, saved-model replay, batch CLI, 50,000-run convergence and full artifact certification. See `stages/03-build/output/soccer-event-simulation-20261022.md`; raw data and models are local/ignored.

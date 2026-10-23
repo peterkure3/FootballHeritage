@@ -14,7 +14,7 @@ cargo sqlx database create
 cargo sqlx migrate run
 
 # 2. Initialize admin account (interactive)
-cargo run --bin init_admin
+cargo run --features maintenance-tools --bin init_admin
 
 # 3. Start the server
 cargo run --release
@@ -382,7 +382,7 @@ cp .env.example .env
 
 ```bash
 cd backend
-cargo run --bin init_admin
+cargo run --features maintenance-tools --bin init_admin
 ```
 
 Follow the interactive prompts to create your first admin user.
