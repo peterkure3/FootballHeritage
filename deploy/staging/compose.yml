@@ -2,6 +2,7 @@ name: footballheritage-staging
 services:
   postgres:
     image: postgres:17-bookworm
+    command: ['postgres', '-c', 'timezone=UTC']
     environment:
       POSTGRES_USER: staging_owner
       POSTGRES_PASSWORD: ${STAGING_DB_PASSWORD:?generate staging secrets first}

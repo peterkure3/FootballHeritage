@@ -54,6 +54,8 @@ The browser test resolves `staging.footballheritage.test` to loopback inside Chr
 
 Bootstrap registers synthetic accounts `admin`, `recovery`, `user`, and `restricted` at `staging.example.test`; their new random password is stored only as `STAGING_ADMIN_PASSWORD` in the private environment file. Two staging superadmins support recovery tests. The sole prediction fixture is explicitly synthetic, uses model version `staging-fixture`, and does not represent model-quality or live-provider verification.
 
+Legacy pipeline timestamp columns represent UTC. Staging PostgreSQL startup and synthetic bootstrap connections explicitly select UTC; bootstrap refreshes only its named synthetic prediction/quote rows. A local-time seed was initially excluded by the correct future-evidence filters, and concrete fixture-evidence assertions now cover that boundary. The final API acceptance report has 42 passing checks, including AI Picks persistence and actual fixture retrieval by Rust RAG.
+
 The native API is a development-profile executable. It verifies source/runtime contracts but cannot establish Linux release-image correctness, OCI signal handling, or production performance. The HTTPS harness is test infrastructure, not a replacement for Vercel or the Caddy container.
 
 ## Container staging: blocked until the build worker is repaired

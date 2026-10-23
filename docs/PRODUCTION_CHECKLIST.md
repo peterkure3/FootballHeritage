@@ -2,7 +2,7 @@
 
 No live production deployment or production database write is approved by this checklist.
 
-Phase 2 verified an isolated **native local** environment on `release/staging-20261023`. Its 40 API checks and real browser flow passed. Docker image/runtime verification and hosted staging remain blocked; use [LOCAL_STAGING.md](LOCAL_STAGING.md) and the dated Phase 2 report for scope and evidence. The active chatbot is Rust RAG; Node is optional legacy infrastructure.
+Phase 2 verified an isolated **native local** environment on `release/staging-20261023`. Its 42 API checks and real browser flow passed. Docker image/runtime verification and hosted staging remain blocked; use [LOCAL_STAGING.md](LOCAL_STAGING.md) and the dated Phase 2 report for scope and evidence. The active chatbot is Rust RAG; Node is optional legacy infrastructure.
 
 ## Release gates
 

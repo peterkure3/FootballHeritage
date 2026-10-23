@@ -15,10 +15,11 @@ The release branch's final Git/clean-checkout evidence is recorded in `phase2-cl
 | Check | Result and limit |
 | --- | --- |
 | Rust feature/financial suite | 29 passed, 3 existing DB tests ignored; DB-backed tests actually ran against the new isolated test database |
+| Clean-checkout Rust CI | `cargo check --locked` and `cargo test --locked` passed across all binaries; the helper binaries also ran 9 passing crypto tests |
 | Full additive migration chain | Passed on native PostgreSQL 16; dedicated migrator reruns are idempotent |
 | Runtime DB permissions | Six checks passed: no public-schema DDL, no audit TRUNCATE, no migration UPDATE, full migration chain, unique wallet owner, rejected audit UPDATE |
 | Native Rust health/readiness | `/health` and `/ready` return 200 on configured loopback port 18888 |
-| API staging acceptance | 40/40 passed; `staging-smoke-20261023.json` lists each assertion |
+| API staging acceptance | 42/42 passed; `staging-smoke-20261023.json` lists each assertion |
 | Active Rust RAG chatbot | Real request, persistence, conversation reload and emergency denial passed using read-only synthetic prediction evidence and grounded mode |
 | Python gateway | Real missing/wrong-token requests return 403; correct internal token and Rust gateway requests return 200 |
 | Python regression suite | 269 completed, 14 gated skips, no failures after adding missing CI dependencies and runtime inventory |
@@ -48,6 +49,10 @@ Local toolchains: Node 24.13.0, Cargo/Rust 1.99 toolchain, Python 3.12.10, Postg
 - `_config/bookmakers.json`, `pipeline/requirements-model-tests.txt`: restore the required registry and declare SQLAlchemy/psycopg2/BeautifulSoup/colorama imports needed by clean CI. SQLAlchemy stays on the existing 2.0 driver family.
 - Legacy optional Node: internal token guard, verified database TLS defaults, redirect-safe Rust proxy and tests. No legacy service was required for the active Rust RAG acceptance flow.
 - `deploy/staging/*`, Dockerfiles/ignore files, templates and runbooks: isolated staging topology, private upstreams, loopback ports, synthetic bootstrap, acceptance helpers and guarded process stops. `.staging/` secrets/artifacts remain ignored.
+
+Stronger AI acceptance initially failed because the native database timezone (`Africa/Nairobi`) made the synthetic prediction's naive timestamp appear ahead of UTC. The application's freshness filters correctly excluded it. Staging seed connections/startup now explicitly select UTC and refresh only the named synthetic fixture/quote rows. The final 42 checks require that fixture in generated AI Picks and Rust RAG evidence, rather than accepting merely a nonempty reply. No production row or trained model was changed.
+
+Implementation commits are `bd4ef43` (source dependencies), `1ba3020` (verified security fixes), and `6767f2d` (staging harness/runbooks). `phase2-commit-files-20261023.json` lists their modified files. The detached clean-checkout CI report names the tested commit and distinguishes subsequent staging-helper/documentation updates from application/migration changes. Linux and remote CI remain unverified.
 
 ## Container failure evidence
 

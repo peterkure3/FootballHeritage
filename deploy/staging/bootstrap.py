@@ -15,7 +15,7 @@ os.environ["HERITAGE_DATABASE_URL"] = owner + "fh_staging_app"
 from sqlalchemy import create_engine, text
 from etl.load_to_db import ensure_schema_exists
 
-predictions = create_engine(owner + "fh_staging_predictions")
+predictions = create_engine(owner + "fh_staging_predictions", connect_args={"options": "-c timezone=UTC"})
 ensure_schema_exists(predictions)
 with predictions.begin() as connection:
     connection.execute(text("""INSERT INTO matches(match_id,competition,date,home_team,away_team,status,data_source)
@@ -25,6 +25,10 @@ with predictions.begin() as connection:
         connection.execute(text("""INSERT INTO predictions(match_id,model_version,winner,home_prob,draw_prob,away_prob)
             VALUES(990000001,'staging-fixture','home_win',0.6,0.25,0.15)"""))
         connection.execute(text("INSERT INTO odds(match_id,bookmaker,home_win,draw,away_win) VALUES(990000001,'Synthetic Test Book',2,4,5)"))
+    # Refresh only this explicitly synthetic fixture. Legacy TIMESTAMP columns
+    # represent UTC; the workstation's PostgreSQL timezone may differ.
+    connection.execute(text("UPDATE predictions SET created_at=NOW() AT TIME ZONE 'UTC' WHERE match_id=990000001 AND model_version='staging-fixture'"))
+    connection.execute(text("UPDATE odds SET created_at=NOW() AT TIME ZONE 'UTC',updated_at=NOW() AT TIME ZONE 'UTC' WHERE match_id=990000001 AND bookmaker='Synthetic Test Book'"))
     connection.execute(text("GRANT SELECT ON ALL TABLES IN SCHEMA public TO fh_readonly"))
 predictions.dispose()
 

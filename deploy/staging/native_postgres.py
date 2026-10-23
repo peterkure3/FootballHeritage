@@ -28,7 +28,7 @@ if len(sys.argv) > 1 and sys.argv[1] == "stop":
 if len(sys.argv) > 1 and sys.argv[1] == "start":
     if not (DATA / "PG_VERSION").exists():
         raise SystemExit("No previously initialized staging cluster exists.")
-    run("pg_ctl", "-D", DATA, "-l", STATE / "postgres-native.log", "-o", "-h 127.0.0.1 -p 15439", "start", "-w")
+    run("pg_ctl", "-D", DATA, "-l", STATE / "postgres-native.log", "-o", "-h 127.0.0.1 -p 15439 -c timezone=UTC", "start", "-w")
     print("Restarted only the isolated native staging cluster.")
     raise SystemExit(0)
 
@@ -46,7 +46,7 @@ try:
         "--auth-host=scram-sha-256", "--auth-local=scram-sha-256", "--encoding=UTF8", "--locale=C")
 finally:
     password.unlink(missing_ok=True)
-run("pg_ctl", "-D", DATA, "-l", STATE / "postgres-native.log", "-o", "-h 127.0.0.1 -p 15439", "start", "-w")
+run("pg_ctl", "-D", DATA, "-l", STATE / "postgres-native.log", "-o", "-h 127.0.0.1 -p 15439 -c timezone=UTC", "start", "-w")
 run("psql", "-h", "127.0.0.1", "-p", "15439", "-U", "staging_owner", "-d", "postgres",
     "-v", "ON_ERROR_STOP=1", "-f", ROOT / "deploy/staging/postgres-init.sql")
 print("Initialized new PostgreSQL 16 cluster on 127.0.0.1:15439 with isolated staging databases.")

@@ -132,6 +132,14 @@
     "passed": true
   },
   {
+    "check": "AI Picks synthetic prediction gateway and persistence",
+    "passed": true
+  },
+  {
+    "check": "saved AI Picks run reload",
+    "passed": true
+  },
+  {
     "check": "active Rust RAG chat and persistence",
     "passed": true
   },

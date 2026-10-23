@@ -1,0 +1,75 @@
+{
+  "source_commit": "6767f2ddbda860915f07f837cca0b77cd28ce80c",
+  "checkout": "D:\\Github\\FootballHeritage\\.release\\verify-20261023",
+  "initial_clean": true,
+  "final_clean": true,
+  "remote_ci_run": false,
+  "platform": "Windows; Node 24.13.0, Rust/Cargo 1.99, Python 3.12.10; isolated PostgreSQL 16.15",
+  "checks": [
+    {
+      "command": "cargo check --locked -j 2",
+      "cwd": "backend",
+      "exit_code": 0,
+      "result": "pass"
+    },
+    {
+      "command": "cargo test --locked -j 2",
+      "cwd": "backend",
+      "exit_code": 0,
+      "result": "pass"
+    },
+    {
+      "cwd": "frontend",
+      "commands": [
+        "npm ci",
+        "npm run lint",
+        "npm run build:production",
+        "node --test tests/production-policy.test.mjs",
+        "npx playwright test tests/feature-management.spec.js --project=chromium --reporter=line --workers=1"
+      ],
+      "exit_code": 0,
+      "result": "pass",
+      "browser_tests": 3,
+      "policy_tests": 3,
+      "npm_audit_vulnerabilities": 0
+    },
+    {
+      "cwd": "pipeline",
+      "command": "python -m unittest discover -s tests -v",
+      "exit_code": 0,
+      "result": "pass",
+      "tests": 269,
+      "skipped": 14
+    },
+    {
+      "cwd": "chatbot",
+      "commands": [
+        "npm ci",
+        "node --check index.js",
+        "node --check flows/*.js services/*.js (each file)",
+        "node --test tests/*.test.js"
+      ],
+      "exit_code": 0,
+      "result": "pass",
+      "guard_tests": 2,
+      "deployment_allowed": false,
+      "production_dependency_audit": {
+        "critical": 5,
+        "high": 10,
+        "moderate": 71,
+        "low": 1
+      }
+    }
+  ],
+  "rust_summary": {
+    "main_binary_passed": 29,
+    "main_binary_ignored": 3,
+    "helper_binary_crypto_tests_passed": 9
+  },
+  "limitations": [
+    "Linux/container matrix unverified",
+    "Docker build worker fails to produce a Rust artifact",
+    "Legacy Node dependency vulnerabilities block deployment",
+    "Subsequent changes affect only staging helpers/configuration and evidence/docs; application source and migrations match the clean-checked commit"
+  ]
+}

@@ -91,9 +91,14 @@ try:
     check("private Python accepts gateway token", request(prefix + "/health", headers={"X-Internal-Token": VALUES["STAGING_PIPELINE_TOKEN"]}, port=15555)[0] == 200)
     check("Rust private Python gateway", request(prefix + "/pipeline/matches", token=user)[0] == 200)
     check("sports endpoint", request(prefix + "/sports", token=user)[0] == 200)
+    status, picks, _ = request(prefix + "/ai-picks/generate", "POST", {"sport": "Football", "limit": 5}, user)
+    check("AI Picks synthetic prediction gateway and persistence", status == 200 and picks.get("provenance", {}).get("model") == "staging-fixture" and any(row.get("match_id") == 990000001 for row in picks.get("picks", [])))
+    if status == 200:
+        check("saved AI Picks run reload", request(prefix + "/ai-picks/" + picks["id"], token=user)[0] == 200)
     chat = {"messages": [{"role": "user", "content": "Show the evidence for Staging Home versus Staging Away"}], "sport": "Football"}
     status, reply, _ = request(prefix + "/ai-picks/chat", "POST", chat, user)
-    check("active Rust RAG chat and persistence", status == 200 and reply.get("conversation_id") and reply.get("reply"))
+    rag = reply.get("reply", {})
+    check("active Rust RAG chat and persistence", status == 200 and reply.get("conversation_id") and isinstance(rag, dict) and rag.get("prediction_evidence_available") is True and any(row.get("match_id") == 990000001 for row in rag.get("evidence", [])) and rag.get("mode") == "retrieved_evidence")
     if status == 200:
         check("RAG conversation reload", request(prefix + "/ai-picks/conversations/" + reply["conversation_id"], token=user)[0] == 200)
     patch("ai_chat", {"emergency_disabled": True})
