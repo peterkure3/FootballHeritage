@@ -1,0 +1,8 @@
+# SQLx hashes migration bytes: keep newer migrations identical on every OS.
+/backend/migrations/*.sql text eol=lf
+
+# Older applied migrations have mixed historical endings. Preserve their
+# existing text handling; do not globally renormalize migration history.
+/backend/migrations/2024*.sql !text !eol
+/backend/migrations/2025*.sql !text !eol
+/backend/migrations/20260*.sql !text !eol

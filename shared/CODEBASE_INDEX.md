@@ -1,5 +1,9 @@
 # Football Heritage - Codebase Index
 
+## Applied migration line endings — 2026-10-24
+
+Restored the original LF bytes for the AI Picks/Rust RAG migrations after Git's CRLF conversion caused SQLx checksum rejection. `.gitattributes` protects newer migrations while preserving older mixed history. Read-only validation of the actual SQLx-embedded source matched all 18 currently applied records; no migration or checksum record was modified. See `backend/docs/MIGRATION_CHECKSUMS.md`.
+
 ## Rust deployment binary selection — 2026-10-23
 
 `backend/Cargo.toml` explicitly selects `football-heritage-backend` (`src/main.rs`) and gates initialization/wallet-reset executables behind `maintenance-tools`. CI compiles/tests opt-in targets without running their operational entrypoints. The API still uses Actix `HttpServer`; native Vercel Rust Functions compatibility remains separate from binary selection. See `backend/docs/VERCEL_BINARY_SELECTION.md` for runtime and `PORT` requirements. Routes, authentication, feature policy and migrations are preserved; no deployment or database operation is authorized by this note.
