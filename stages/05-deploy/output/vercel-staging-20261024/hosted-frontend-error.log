@@ -1,0 +1,59 @@
+
+Vercel CLI 65.2.0 (Node.js 24.13.0)
+2026-10-24T12:33:09.543Z  Running build in Washington, D.C., USA (East) – iad1
+2026-10-24T12:33:09.544Z  Build machine configuration: 2 cores, 8 GB
+2026-10-24T12:33:09.735Z  Cloning github.com/peterkure3/FootballHeritage (Branch: feature/footballheritage-frontend, Commit: 3eae0b3)
+2026-10-24T12:33:10.375Z  Cloning completed: 640.000ms
+2026-10-24T12:33:10.429Z  Found .vercelignore
+2026-10-24T12:33:10.449Z  Removed 22 ignored files defined in .vercelignore
+2026-10-24T12:33:10.449Z  /backend/.env.example
+2026-10-24T12:33:10.449Z  /backend/.env.production.example
+2026-10-24T12:33:10.449Z  /chatbot/.env.example
+2026-10-24T12:33:10.449Z  /chatbot/.env.production.example
+2026-10-24T12:33:10.450Z  /frontend/.env
+2026-10-24T12:33:10.450Z  /frontend/.env.example
+2026-10-24T12:33:10.450Z  /frontend/.env.production.example
+2026-10-24T12:33:10.450Z  /pipeline/.env.example
+2026-10-24T12:33:10.450Z  /pipeline/.env.production.example
+2026-10-24T12:33:10.450Z  /stages/05-deploy/output/rust-vercel-20261024/adapter-reproduction.log
+2026-10-24T12:33:10.595Z  Restored build cache from previous deployment (ELMb4AB7dWEnaJvNZYpCcj9bmBof)
+2026-10-24T12:33:11.111Z  Running "vercel build"
+2026-10-24T12:33:11.120Z  Vercel CLI 65.1.0
+2026-10-24T12:33:11.763Z  Running "install" command: `npm ci`...
+2026-10-24T12:33:12.440Z  npm warn Unknown env config "cache-dir". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+2026-10-24T12:33:20.350Z  
+2026-10-24T12:33:20.350Z  added 270 packages, and audited 271 packages in 8s
+2026-10-24T12:33:20.350Z  
+2026-10-24T12:33:20.350Z  113 packages are looking for funding
+2026-10-24T12:33:20.350Z  run `npm fund` for details
+2026-10-24T12:33:20.366Z  
+2026-10-24T12:33:20.366Z  1 high severity vulnerability
+2026-10-24T12:33:20.366Z  
+2026-10-24T12:33:20.366Z  To address all issues, run:
+2026-10-24T12:33:20.366Z  npm audit fix
+2026-10-24T12:33:20.367Z  
+2026-10-24T12:33:20.367Z  Run `npm audit` for details.
+2026-10-24T12:33:20.367Z  npm warn install-scripts 3 packages have install scripts not yet covered by allowScripts:
+2026-10-24T12:33:20.367Z  npm warn install-scripts   @swc/core@1.13.5 (postinstall: node postinstall.js)
+2026-10-24T12:33:20.367Z  npm warn install-scripts   @tailwindcss/oxide@4.1.14 (postinstall: node ./scripts/install.js)
+2026-10-24T12:33:20.367Z  npm warn install-scripts   esbuild@0.28.2 (postinstall: node install.js)
+2026-10-24T12:33:20.368Z  npm warn install-scripts
+2026-10-24T12:33:20.368Z  npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+2026-10-24T12:33:20.764Z  npm warn Unknown env config "cache-dir". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+2026-10-24T12:33:20.789Z  
+2026-10-24T12:33:20.789Z  > frontend@0.0.0 build:production
+2026-10-24T12:33:20.789Z  > node scripts/validate-production-env.mjs && npm run build
+2026-10-24T12:33:20.789Z  
+2026-10-24T12:33:21.010Z  file:///vercel/path0/frontend/scripts/validate-production-env.mjs:12
+2026-10-24T12:33:21.010Z  if (!valid) throw new Error('Set VITE_API_URL to the production HTTPS API origin or its /api/v1 URL.');
+2026-10-24T12:33:21.010Z  ^
+2026-10-24T12:33:21.010Z  
+2026-10-24T12:33:21.011Z  Error: Set VITE_API_URL to the production HTTPS API origin or its /api/v1 URL.
+2026-10-24T12:33:21.011Z  at file:///vercel/path0/frontend/scripts/validate-production-env.mjs:12:19
+2026-10-24T12:33:21.011Z  at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+2026-10-24T12:33:21.011Z  at async node:internal/modules/esm/loader:647:26
+2026-10-24T12:33:21.011Z  at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+2026-10-24T12:33:21.011Z  
+2026-10-24T12:33:21.011Z  Node.js v24.22.1
+2026-10-24T12:33:21.033Z  Error: [BUILD_UTILS_SPAWN_1] Command "npm run build:production" exited with 1
+status	● Error

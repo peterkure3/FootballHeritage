@@ -1,0 +1,8 @@
+test_development_compatibility (test_gateway_access.GatewayAccessTests.test_development_compatibility) ... ok
+test_gateway_token_allows_internal_request (test_gateway_access.GatewayAccessTests.test_gateway_token_allows_internal_request) ... ok
+test_production_requires_configured_strong_token (test_gateway_access.GatewayAccessTests.test_production_requires_configured_strong_token) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.112s
+
+OK

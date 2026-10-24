@@ -1,0 +1,1 @@
+Docker build retry stalled before emitting diagnostics and was stopped. No successful Linux image build is claimed. Prior zero-byte BuildKit rustup evidence remains in stages/05-deploy/output/rust-vercel-20261024/docker-build-toolchain.log.

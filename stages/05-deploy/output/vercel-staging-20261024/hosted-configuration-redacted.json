@@ -1,0 +1,430 @@
+[
+  {
+    "service": "frontend",
+    "project": {
+      "id": "prj_T0Aus4LHcFJJRMNKtmdVXLRbd5ad",
+      "name": "football-heritage-frontend",
+      "rootDirectory": "frontend",
+      "framework": "vite",
+      "buildCommand": null,
+      "installCommand": null,
+      "outputDirectory": null,
+      "nodeVersion": "24.x",
+      "productionBranch": "feature/footballheritage-frontend"
+    },
+    "latestBuildSettings": {
+      "framework": "vite",
+      "builders": []
+    },
+    "environment": [
+      {
+        "key": "VITE_ENV",
+        "type": "encrypted",
+        "target": [
+          "preview",
+          "production"
+        ],
+        "customEnvironmentIds": []
+      },
+      {
+        "key": "VITE_SESSION_TIMEOUT",
+        "type": "encrypted",
+        "target": [
+          "preview",
+          "production"
+        ],
+        "customEnvironmentIds": []
+      },
+      {
+        "key": "VITE_ENABLE_ANALYTICS",
+        "type": "encrypted",
+        "target": [
+          "preview",
+          "production"
+        ],
+        "customEnvironmentIds": []
+      },
+      {
+        "key": "VITE_ENABLE_DEBUG",
+        "type": "encrypted",
+        "target": [
+          "preview",
+          "production"
+        ],
+        "customEnvironmentIds": []
+      },
+      {
+        "key": "VITE_API_URL",
+        "type": "encrypted",
+        "target": [
+          "production"
+        ],
+        "customEnvironmentIds": []
+      }
+    ],
+    "deployments": [
+      {
+        "id": "dpl_HCeNKYnuDKYn5D9SQriQn4jXKmFs",
+        "url": "football-heritage-frontend-5o4xb52cz-peterkure3s-projects.vercel.app",
+        "state": "READY",
+        "target": "production",
+        "gitSha": "3eae0b3c5a4391ea0cd2275cadb1c79b32d82430",
+        "gitBranch": "feature/footballheritage-frontend"
+      },
+      {
+        "id": "dpl_9qe2M3eC2N5kVgfMtHiEzwrhDCqR",
+        "url": "football-heritage-frontend-ln8yt1szj-peterkure3s-projects.vercel.app",
+        "state": "READY",
+        "target": "production",
+        "gitSha": "3eae0b3c5a4391ea0cd2275cadb1c79b32d82430",
+        "gitBranch": "feature/footballheritage-frontend"
+      },
+      {
+        "id": "dpl_BtjTUS5CYdaaFs9JjzynMToDnb7L",
+        "url": "football-heritage-frontend-13twv0t70-peterkure3s-projects.vercel.app",
+        "state": "ERROR",
+        "target": "production",
+        "gitSha": "3eae0b3c5a4391ea0cd2275cadb1c79b32d82430",
+        "gitBranch": "feature/footballheritage-frontend"
+      },
+      {
+        "id": "dpl_BFngAmaZXufF5CagVWE11N4XN7vV",
+        "url": "football-heritage-frontend-jdi8dqhoc-peterkure3s-projects.vercel.app",
+        "state": "ERROR",
+        "target": "production",
+        "gitSha": "991c98576c1da6dbe8ca9b2d903151f37ed9ddcb",
+        "gitBranch": "feature/footballheritage-frontend"
+      },
+      {
+        "id": "dpl_ELMb4AB7dWEnaJvNZYpCcj9bmBof",
+        "url": "football-heritage-frontend-iybkfmpm3-peterkure3s-projects.vercel.app",
+        "state": "READY",
+        "target": "production",
+        "gitSha": "953df5093b93b6a103ebe4f13aed8f5d5ea8f340",
+        "gitBranch": "main"
+      }
+    ]
+  },
+  {
+    "service": "backend",
+    "project": {
+      "id": "prj_0r4mFmPbEpDGrvHKLPK76tXuKxdh",
+      "name": "footballheritage-backend",
+      "rootDirectory": "backend/src",
+      "framework": "rust",
+      "buildCommand": null,
+      "installCommand": null,
+      "outputDirectory": null,
+      "nodeVersion": "24.x",
+      "productionBranch": "feature/footballheritage-frontend"
+    },
+    "latestBuildSettings": {
+      "framework": "rust",
+      "builders": []
+    },
+    "environment": [
+      {
+        "key": "DATABASE_URL",
+        "type": "sensitive",
+        "target": [
+          "production"
+        ]
+      },
+      {
+        "key": "JWT_SECRET",
+        "type": "sensitive",
+        "target": [
+          "production"
+        ]
+      },
+      {
+        "key": "JWT_EXPIRATION_HOURS",
+        "type": "sensitive",
+        "target": [
+          "production"
+        ]
+      },
+      {
+        "key": "ENCRYPTION_KEY",
+        "type": "sensitive",
+        "target": [
+          "production"
+        ]
+      },
+      {
+        "key": "HOST",
+        "type": "sensitive",
+        "target": [
+          "production"
+        ]
+      },
+      {
+        "key": "PORT",
+        "type": "sensitive",
+        "target": [
+          "production"
+        ]
+      },
+      {
+        "key": "HTTPS_ENABLED",
+        "type": "sensitive",
+        "target": [
+          "production"
+        ]
+      },
+      {
+        "key": "TLS_CERT_PATH",
+        "type": "sensitive",
+        "target": [
+          "production"
+        ]
+      },
+      {
+        "key": "TLS_KEY_PATH",
+        "type": "sensitive",
+        "target": [
+          "production"
+        ]
+      },
+      {
+        "key": "BET_RATE_LIMIT_PER_MINUTE",
+        "type": "sensitive",
+        "target": [
+          "production"
+        ]
+      },
+      {
+        "key": "LOGIN_RATE_LIMIT_PER_MINUTE",
+        "type": "sensitive",
+        "target": [
+          "production"
+        ]
+      },
+      {
+        "key": "REGISTER_RATE_LIMIT_PER_HOUR",
+        "type": "sensitive",
+        "target": [
+          "production"
+        ]
+      },
+      {
+        "key": "BCRYPT_COST",
+        "type": "sensitive",
+        "target": [
+          "production"
+        ]
+      },
+      {
+        "key": "SESSION_TIMEOUT_MINUTES",
+        "type": "sensitive",
+        "target": [
+          "production"
+        ]
+      },
+      {
+        "key": "MAX_LOGIN_ATTEMPTS",
+        "type": "sensitive",
+        "target": [
+          "production"
+        ]
+      },
+      {
+        "key": "ACCOUNT_LOCK_MINUTES",
+        "type": "sensitive",
+        "target": [
+          "production"
+        ]
+      },
+      {
+        "key": "DEFAULT_DAILY_LOSS_LIMIT",
+        "type": "sensitive",
+        "target": [
+          "production"
+        ]
+      },
+      {
+        "key": "DEFAULT_WEEKLY_LOSS_LIMIT",
+        "type": "sensitive",
+        "target": [
+          "production"
+        ]
+      },
+      {
+        "key": "DEFAULT_MONTHLY_LOSS_LIMIT",
+        "type": "sensitive",
+        "target": [
+          "production"
+        ]
+      },
+      {
+        "key": "DEFAULT_DAILY_BET_LIMIT",
+        "type": "sensitive",
+        "target": [
+          "production"
+        ]
+      },
+      {
+        "key": "DEFAULT_WEEKLY_BET_LIMIT",
+        "type": "sensitive",
+        "target": [
+          "production"
+        ]
+      },
+      {
+        "key": "DEFAULT_MONTHLY_BET_LIMIT",
+        "type": "sensitive",
+        "target": [
+          "production"
+        ]
+      },
+      {
+        "key": "DEFAULT_MAX_SINGLE_BET",
+        "type": "sensitive",
+        "target": [
+          "production"
+        ]
+      },
+      {
+        "key": "LOG_LEVEL",
+        "type": "sensitive",
+        "target": [
+          "production"
+        ]
+      },
+      {
+        "key": "FRAUD_ALERT_EMAIL",
+        "type": "sensitive",
+        "target": [
+          "production"
+        ]
+      },
+      {
+        "key": "ALLOWED_ORIGINS",
+        "type": "sensitive",
+        "target": [
+          "production"
+        ],
+        "customEnvironmentIds": []
+      },
+      {
+        "key": "CHATBOT_SERVICE_URL",
+        "type": "sensitive",
+        "target": [
+          "production"
+        ]
+      },
+      {
+        "key": "METRICS_ENABLED",
+        "type": "sensitive",
+        "target": [
+          "production"
+        ]
+      },
+      {
+        "key": "HEALTH_CHECK_INTERVAL_SECONDS",
+        "type": "sensitive",
+        "target": [
+          "production"
+        ]
+      },
+      {
+        "key": "RUST_BACKTRACE",
+        "type": "sensitive",
+        "target": [
+          "production"
+        ]
+      },
+      {
+        "key": "RAG_DATABASE_URL",
+        "type": "sensitive",
+        "target": [
+          "production"
+        ]
+      },
+      {
+        "key": "RAG_GEMINI_API_KEY",
+        "type": "sensitive",
+        "target": [
+          "production"
+        ]
+      },
+      {
+        "key": "RAG_GEMINI_MODEL",
+        "type": "sensitive",
+        "target": [
+          "production"
+        ]
+      },
+      {
+        "key": "RAG_CHAT_MODE",
+        "type": "sensitive",
+        "target": [
+          "production"
+        ]
+      },
+      {
+        "key": "RAG_MODEL_VERSION",
+        "type": "sensitive",
+        "target": [
+          "production"
+        ]
+      },
+      {
+        "key": "PIPELINE_API_URL",
+        "type": "sensitive",
+        "target": [
+          "production"
+        ]
+      },
+      {
+        "key": "PIPELINE_INTERNAL_TOKEN",
+        "type": "sensitive",
+        "target": [
+          "production"
+        ]
+      }
+    ],
+    "deployments": [
+      {
+        "id": "dpl_5fhxaLCTjrweSYTNCRkuVtY5Pni6",
+        "url": "footballheritage-backend-ny5wpfp6a-peterkure3s-projects.vercel.app",
+        "state": "ERROR",
+        "target": "production",
+        "gitSha": "3eae0b3c5a4391ea0cd2275cadb1c79b32d82430",
+        "gitBranch": "feature/footballheritage-frontend"
+      },
+      {
+        "id": "dpl_CFnEdRV2orRTDMAUYHDAuczyBR5R",
+        "url": "footballheritage-backend-psv4dimwa-peterkure3s-projects.vercel.app",
+        "state": "READY",
+        "target": "production",
+        "gitSha": "3eae0b3c5a4391ea0cd2275cadb1c79b32d82430",
+        "gitBranch": "feature/footballheritage-frontend"
+      },
+      {
+        "id": "dpl_EPtvBgCBCMcvXJPssk1MWdMP5c6J",
+        "url": "footballheritage-backend-raal6lerd-peterkure3s-projects.vercel.app",
+        "state": "ERROR",
+        "target": "production",
+        "gitSha": "991c98576c1da6dbe8ca9b2d903151f37ed9ddcb",
+        "gitBranch": "feature/footballheritage-frontend"
+      },
+      {
+        "id": "dpl_64Yj7zpABGzTEn6hv7nM9bd13dM3",
+        "url": "footballheritage-backend-2dbvxsawa-peterkure3s-projects.vercel.app",
+        "state": "ERROR",
+        "target": "production",
+        "gitSha": "953df5093b93b6a103ebe4f13aed8f5d5ea8f340",
+        "gitBranch": "main"
+      },
+      {
+        "id": "dpl_mwSUCXdZqYpQ7eECUnbMDTp6N7wE",
+        "url": "footballheritage-backend-9at5xdtw2-peterkure3s-projects.vercel.app",
+        "state": "ERROR",
+        "target": "production",
+        "gitSha": "953df5093b93b6a103ebe4f13aed8f5d5ea8f340",
+        "gitBranch": "main"
+      }
+    ]
+  }
+]

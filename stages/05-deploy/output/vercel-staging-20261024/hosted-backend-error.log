@@ -1,0 +1,239 @@
+
+Vercel CLI 65.2.0 (Node.js 24.13.0)
+2026-10-24T12:53:58.899Z  Running build in Washington, D.C., USA (East) – iad1
+2026-10-24T12:53:58.900Z  Build machine configuration: 2 cores, 8 GB
+2026-10-24T12:53:58.930Z  Cloning github.com/peterkure3/FootballHeritage (Branch: feature/footballheritage-frontend, Commit: 3eae0b3)
+2026-10-24T12:53:58.931Z  Skipping build cache, deployment was triggered without cache.
+2026-10-24T12:53:59.549Z  Cloning completed: 619.000ms
+2026-10-24T12:54:00.021Z  Running "vercel build"
+2026-10-24T12:54:00.036Z  Vercel CLI 65.1.0
+2026-10-24T12:58:01.776Z  Error: [BUILD_FAILED] Command failed with exit code 101: cargo build -p football-heritage-backend --bin football-heritage-backend --quiet --release
+2026-10-24T12:58:01.776Z  error: error communicating with database: Connection refused (os error 111)
+2026-10-24T12:58:01.776Z  --> src/handlers/admin/events.rs:101:18
+2026-10-24T12:58:01.776Z  |
+2026-10-24T12:58:01.776Z  101 |       let result = sqlx::query!(
+2026-10-24T12:58:01.776Z  |  __________________^
+2026-10-24T12:58:01.777Z  102 | |         r#"
+2026-10-24T12:58:01.777Z  103 | |         INSERT INTO events (
+2026-10-24T12:58:01.778Z  104 | |             sport, league, home_team, away_team, event_date,
+2026-10-24T12:58:01.778Z  ...   |
+2026-10-24T12:58:01.778Z  141 | |         admin_id
+2026-10-24T12:58:01.778Z  142 | |     )
+2026-10-24T12:58:01.778Z  | |_____^
+2026-10-24T12:58:01.778Z  |
+2026-10-24T12:58:01.778Z  = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query` (in Nightly builds, run with -Z macro-backtrace for more info)
+2026-10-24T12:58:01.779Z  
+2026-10-24T12:58:01.779Z  error: error communicating with database: Connection refused (os error 111)
+2026-10-24T12:58:01.779Z  --> src/handlers/admin/events.rs:149:21
+2026-10-24T12:58:01.779Z  |
+2026-10-24T12:58:01.779Z  149 |               let _ = sqlx::query!(
+2026-10-24T12:58:01.779Z  |  _____________________^
+2026-10-24T12:58:01.779Z  150 | |                 "INSERT INTO admin_logs (admin_id, action, target_type, target_id) VALUES ($1, 'create_event', 'event', $2)",
+2026-10-24T12:58:01.779Z  151 | |                 admin_id,
+2026-10-24T12:58:01.779Z  152 | |                 event.id
+2026-10-24T12:58:01.779Z  153 | |             )
+2026-10-24T12:58:01.779Z  | |_____________^
+2026-10-24T12:58:01.779Z  |
+2026-10-24T12:58:01.779Z  = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query` (in Nightly builds, run with -Z macro-backtrace for more info)
+2026-10-24T12:58:01.779Z  
+2026-10-24T12:58:01.779Z  error: error communicating with database: Connection refused (os error 111)
+2026-10-24T12:58:01.779Z  --> src/handlers/admin/events.rs:473:21
+2026-10-24T12:58:01.779Z  |
+2026-10-24T12:58:01.779Z  473 |               let _ = sqlx::query!(
+2026-10-24T12:58:01.779Z  |  _____________________^
+2026-10-24T12:58:01.779Z  474 | |                 "INSERT INTO admin_logs (admin_id, action, target_type, target_id) VALUES ($1, 'update_event', 'event', $2)",
+2026-10-24T12:58:01.779Z  475 | |                 admin_id,
+2026-10-24T12:58:01.779Z  476 | |                 event_id
+2026-10-24T12:58:01.779Z  477 | |             )
+2026-10-24T12:58:01.779Z  | |_____________^
+2026-10-24T12:58:01.779Z  |
+2026-10-24T12:58:01.779Z  = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query` (in Nightly builds, run with -Z macro-backtrace for more info)
+2026-10-24T12:58:01.779Z  
+2026-10-24T12:58:01.779Z  error: error communicating with database: Connection refused (os error 111)
+2026-10-24T12:58:01.779Z  --> src/handlers/admin/events.rs:513:21
+2026-10-24T12:58:01.779Z  |
+2026-10-24T12:58:01.779Z  513 |       let bet_count = sqlx::query!(
+2026-10-24T12:58:01.779Z  |  _____________________^
+2026-10-24T12:58:01.780Z  514 | |         "SELECT COUNT(*) as count FROM bets WHERE event_id = $1",
+2026-10-24T12:58:01.780Z  515 | |         event_id
+2026-10-24T12:58:01.780Z  516 | |     )
+2026-10-24T12:58:01.780Z  | |_____^
+2026-10-24T12:58:01.780Z  |
+2026-10-24T12:58:01.780Z  = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query` (in Nightly builds, run with -Z macro-backtrace for more info)
+2026-10-24T12:58:01.780Z  
+2026-10-24T12:58:01.780Z  error: error communicating with database: Connection refused (os error 111)
+2026-10-24T12:58:01.780Z  --> src/handlers/admin/events.rs:528:18
+2026-10-24T12:58:01.780Z  |
+2026-10-24T12:58:01.780Z  528 |     let result = sqlx::query!("DELETE FROM events WHERE id = $1", event_id)
+2026-10-24T12:58:01.780Z  |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T12:58:01.780Z  |
+2026-10-24T12:58:01.780Z  = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query` (in Nightly builds, run with -Z macro-backtrace for more info)
+2026-10-24T12:58:01.780Z  
+2026-10-24T12:58:01.780Z  error: error communicating with database: Connection refused (os error 111)
+2026-10-24T12:58:01.780Z  --> src/handlers/admin/events.rs:535:21
+2026-10-24T12:58:01.780Z  |
+2026-10-24T12:58:01.780Z  535 |               let _ = sqlx::query!(
+2026-10-24T12:58:01.780Z  |  _____________________^
+2026-10-24T12:58:01.780Z  536 | |                 "INSERT INTO admin_logs (admin_id, action, target_type, target_id) VALUES ($1, 'delete_event', 'event', $2)",
+2026-10-24T12:58:01.780Z  537 | |                 admin_id,
+2026-10-24T12:58:01.780Z  538 | |                 event_id
+2026-10-24T12:58:01.780Z  539 | |             )
+2026-10-24T12:58:01.780Z  | |_____________^
+2026-10-24T12:58:01.780Z  |
+2026-10-24T12:58:01.780Z  = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query` (in Nightly builds, run with -Z macro-backtrace for more info)
+2026-10-24T12:58:01.780Z  
+2026-10-24T12:58:01.780Z  error: error communicating with database: Connection refused (os error 111)
+2026-10-24T12:58:01.780Z  --> src/handlers/admin/events.rs:580:18
+2026-10-24T12:58:01.780Z  |
+2026-10-24T12:58:01.780Z  580 |       let result = sqlx::query!(
+2026-10-24T12:58:01.780Z  |  __________________^
+2026-10-24T12:58:01.780Z  581 | |         "UPDATE events SET status = $1, updated_by = $2, updated_at = NOW() WHERE id = $3",
+2026-10-24T12:58:01.780Z  582 | |         status,
+2026-10-24T12:58:01.780Z  583 | |         admin_claims.sub.parse::<Uuid>().unwrap(),
+2026-10-24T12:58:01.780Z  584 | |         event_id.into_inner()
+2026-10-24T12:58:01.780Z  585 | |     )
+2026-10-24T12:58:01.780Z  | |_____^
+2026-10-24T12:58:01.780Z  |
+2026-10-24T12:58:01.780Z  = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query` (in Nightly builds, run with -Z macro-backtrace for more info)
+2026-10-24T12:58:01.780Z  
+2026-10-24T12:58:01.780Z  error: error communicating with database: Connection refused (os error 111)
+2026-10-24T12:58:01.780Z  --> src/handlers/admin/monitoring.rs:43:47
+2026-10-24T12:58:01.780Z  |
+2026-10-24T12:58:01.780Z  43 |       let alerts: Result<Vec<_>, sqlx::Error> = sqlx::query!(
+2026-10-24T12:58:01.780Z  |  _______________________________________________^
+2026-10-24T12:58:01.780Z  44 | |         r#"
+2026-10-24T12:58:01.780Z  45 | |         SELECT id, user_id, alert_type, severity, description, status, created_at
+2026-10-24T12:58:01.780Z  46 | |         FROM fraud_alerts
+2026-10-24T12:58:01.780Z  ...  |
+2026-10-24T12:58:01.780Z  50 | |         "#
+2026-10-24T12:58:01.780Z  51 | |     )
+2026-10-24T12:58:01.781Z  | |_____^
+2026-10-24T12:58:01.781Z  |
+2026-10-24T12:58:01.781Z  = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query` (in Nightly builds, run with -Z macro-backtrace for more info)
+2026-10-24T12:58:01.781Z  
+2026-10-24T12:58:01.781Z  error: error communicating with database: Connection refused (os error 111)
+2026-10-24T12:58:01.781Z  --> src/handlers/admin/monitoring.rs:93:45
+2026-10-24T12:58:01.782Z  |
+2026-10-24T12:58:01.782Z  93 |       let logs: Result<Vec<_>, sqlx::Error> = sqlx::query!(
+2026-10-24T12:58:01.782Z  |  _____________________________________________^
+2026-10-24T12:58:01.782Z  94 | |         r#"
+2026-10-24T12:58:01.782Z  95 | |         SELECT
+2026-10-24T12:58:01.782Z  96 | |             l.id, l.action, l.target_type, l.target_id, l.created_at,
+2026-10-24T12:58:01.782Z  ...   |
+2026-10-24T12:58:01.782Z  102 | |         "#
+2026-10-24T12:58:01.782Z  103 | |     )
+2026-10-24T12:58:01.782Z  | |_____^
+2026-10-24T12:58:01.782Z  |
+2026-10-24T12:58:01.782Z  = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query` (in Nightly builds, run with -Z macro-backtrace for more info)
+2026-10-24T12:58:01.782Z  
+2026-10-24T12:58:01.783Z  error: error communicating with database: Connection refused (os error 111)
+2026-10-24T12:58:01.783Z  --> src/handlers/admin/users.rs:298:23
+2026-10-24T12:58:01.783Z  |
+2026-10-24T12:58:01.783Z  298 |       let user_result = sqlx::query!(
+2026-10-24T12:58:01.783Z  |  _______________________^
+2026-10-24T12:58:01.783Z  299 | |         r#"
+2026-10-24T12:58:01.783Z  300 | |         SELECT
+2026-10-24T12:58:01.783Z  301 | |             u.id, u.email, u.first_name, u.last_name, u.date_of_birth,
+2026-10-24T12:58:01.784Z  ...   |
+2026-10-24T12:58:01.784Z  314 | |         user_id
+2026-10-24T12:58:01.784Z  315 | |     )
+2026-10-24T12:58:01.784Z  | |_____^
+2026-10-24T12:58:01.784Z  |
+2026-10-24T12:58:01.784Z  = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query` (in Nightly builds, run with -Z macro-backtrace for more info)
+2026-10-24T12:58:01.785Z  
+2026-10-24T12:58:01.785Z  error: error communicating with database: Connection refused (os error 111)
+2026-10-24T12:58:01.785Z  --> src/handlers/admin/users.rs:432:18
+2026-10-24T12:58:01.785Z  |
+2026-10-24T12:58:01.785Z  432 |       let result = sqlx::query!(
+2026-10-24T12:58:01.785Z  |  __________________^
+2026-10-24T12:58:01.786Z  433 | |         "UPDATE users SET is_active = $1, updated_at = NOW() WHERE id = $2",
+2026-10-24T12:58:01.786Z  434 | |         body.is_active,
+2026-10-24T12:58:01.787Z  435 | |         user_id
+2026-10-24T12:58:01.787Z  436 | |     )
+2026-10-24T12:58:01.787Z  | |_____^
+2026-10-24T12:58:01.787Z  |
+2026-10-24T12:58:01.787Z  = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query` (in Nightly builds, run with -Z macro-backtrace for more info)
+2026-10-24T12:58:01.787Z  
+2026-10-24T12:58:01.787Z  error: error communicating with database: Connection refused (os error 111)
+2026-10-24T12:58:01.787Z  --> src/handlers/admin/users.rs:497:18
+2026-10-24T12:58:01.787Z  |
+2026-10-24T12:58:01.787Z  497 |       let result = sqlx::query!(
+2026-10-24T12:58:01.787Z  |  __________________^
+2026-10-24T12:58:01.787Z  498 | |         "UPDATE users SET is_verified = true, updated_at = NOW() WHERE id = $1",
+2026-10-24T12:58:01.787Z  499 | |         user_id
+2026-10-24T12:58:01.787Z  500 | |     )
+2026-10-24T12:58:01.787Z  | |_____^
+2026-10-24T12:58:01.787Z  |
+2026-10-24T12:58:01.787Z  = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query` (in Nightly builds, run with -Z macro-backtrace for more info)
+2026-10-24T12:58:01.787Z  
+2026-10-24T12:58:01.787Z  error: error communicating with database: Connection refused (os error 111)
+2026-10-24T12:58:01.787Z  --> src/handlers/admin/users.rs:542:13
+2026-10-24T12:58:01.787Z  |
+2026-10-24T12:58:01.787Z  542 |       let _ = sqlx::query!(
+2026-10-24T12:58:01.787Z  |  _____________^
+2026-10-24T12:58:01.787Z  543 | |         r#"
+2026-10-24T12:58:01.787Z  544 | |         INSERT INTO admin_logs (admin_id, action, target_type, target_id)
+2026-10-24T12:58:01.787Z  545 | |         VALUES ($1, $2, $3, $4)
+2026-10-24T12:58:01.787Z  ...   |
+2026-10-24T12:58:01.788Z  550 | |         target_id
+2026-10-24T12:58:01.788Z  551 | |     )
+2026-10-24T12:58:01.788Z  | |_____^
+2026-10-24T12:58:01.788Z  |
+2026-10-24T12:58:01.788Z  = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query` (in Nightly builds, run with -Z macro-backtrace for more info)
+2026-10-24T12:58:01.788Z  
+2026-10-24T12:58:01.788Z  error: error communicating with database: Connection refused (os error 111)
+2026-10-24T12:58:01.789Z  --> src/handlers/sports.rs:60:24
+2026-10-24T12:58:01.789Z  |
+2026-10-24T12:58:01.789Z  60 |       let sports_query = sqlx::query!(
+2026-10-24T12:58:01.789Z  |  ________________________^
+2026-10-24T12:58:01.790Z  61 | |         r#"
+2026-10-24T12:58:01.790Z  62 | |         SELECT
+2026-10-24T12:58:01.790Z  63 | |             sport,
+2026-10-24T12:58:01.790Z  ...  |
+2026-10-24T12:58:01.790Z  71 | |         "#
+2026-10-24T12:58:01.790Z  72 | |     )
+2026-10-24T12:58:01.790Z  | |_____^
+2026-10-24T12:58:01.790Z  |
+2026-10-24T12:58:01.790Z  = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query` (in Nightly builds, run with -Z macro-backtrace for more info)
+2026-10-24T12:58:01.790Z  
+2026-10-24T12:58:01.790Z  error: error communicating with database: Connection refused (os error 111)
+2026-10-24T12:58:01.790Z  --> src/handlers/sports.rs:88:25
+2026-10-24T12:58:01.790Z  |
+2026-10-24T12:58:01.790Z  88 |       let leagues_query = sqlx::query!(
+2026-10-24T12:58:01.790Z  |  _________________________^
+2026-10-24T12:58:01.790Z  89 | |         r#"
+2026-10-24T12:58:01.790Z  90 | |         SELECT
+2026-10-24T12:58:01.790Z  91 | |             sport,
+2026-10-24T12:58:01.790Z  ...   |
+2026-10-24T12:58:01.790Z  100 | |         "#
+2026-10-24T12:58:01.790Z  101 | |     )
+2026-10-24T12:58:01.790Z  | |_____^
+2026-10-24T12:58:01.791Z  |
+2026-10-24T12:58:01.791Z  = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query` (in Nightly builds, run with -Z macro-backtrace for more info)
+2026-10-24T12:58:01.791Z  
+2026-10-24T12:58:01.791Z  error: error communicating with database: Connection refused (os error 111)
+2026-10-24T12:58:01.791Z  --> src/handlers/sports.rs:222:48
+2026-10-24T12:58:01.791Z  |
+2026-10-24T12:58:01.791Z  222 |       let leagues: Result<Vec<_>, sqlx::Error> = sqlx::query!(
+2026-10-24T12:58:01.791Z  |  ________________________________________________^
+2026-10-24T12:58:01.791Z  223 | |         r#"
+2026-10-24T12:58:01.791Z  224 | |         SELECT
+2026-10-24T12:58:01.791Z  225 | |             league,
+2026-10-24T12:58:01.791Z  ...   |
+2026-10-24T12:58:01.791Z  236 | |         sport_name
+2026-10-24T12:58:01.791Z  237 | |     )
+2026-10-24T12:58:01.791Z  | |_____^
+2026-10-24T12:58:01.791Z  |
+2026-10-24T12:58:01.791Z  = note: this error originates in the macro `$crate::sqlx_macros::expand_query` which comes from the expansion of the macro `sqlx::query` (in Nightly builds, run with -Z macro-backtrace for more info)
+2026-10-24T12:58:01.791Z  
+2026-10-24T12:58:01.791Z  warning: unused import: `std::str::FromStr`
+2026-10-24T12:58:01.791Z  --> src/handlers/admin/events.rs:11:5
+2026-10-24T12:58:01.791Z  |
+2026-10-24T12:58:01.791Z  11 | use std::str::FromStr;
+2026-10-24T12:58:01.791Z  |     ^^^^^^^^^^^^^^^^^
+2026-10-24T12:58:01.791Z  |
+2026-10-24T12:58:01.791Z  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+2026-10-24T12:58:01.791Z  
+2026-10-24T12:58:01.791Z  error: could not compile `football-heritage-backend` (bin "football-heritage-backend") due to 16 previous errors; 1 warning emitted
+2026-10-24T12:58:01.791Z  Fix: Review the build output above and fix the reported error before running `vercel build` again.
+status	● Error

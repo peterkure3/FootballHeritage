@@ -1,6 +1,8 @@
 // API utility for secure communication with the Rust betting backend
-import { apiBase } from './apiUrl';
-export const API_BASE_URL = apiBase(import.meta.env.VITE_API_URL || "http://localhost:8888");
+import { apiBase, productionApiBase } from './apiUrl';
+export const API_BASE_URL = import.meta.env.PROD
+  ? productionApiBase(import.meta.env.VITE_API_URL)
+  : apiBase(import.meta.env.VITE_API_URL || "http://localhost:8888");
 export const PIPELINE_API_URL = `${API_BASE_URL}/pipeline`;
 
 const STORAGE_KEY = "token";

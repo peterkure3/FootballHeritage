@@ -1,0 +1,7 @@
+test_hosted_urls_keep_tls_options_and_separate_database_credentials (test_production_database_config.ProductionDatabaseConfigTests.test_hosted_urls_keep_tls_options_and_separate_database_credentials) ... ok
+test_special_password_characters_do_not_change_the_database_host (test_production_database_config.ProductionDatabaseConfigTests.test_special_password_characters_do_not_change_the_database_host) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.071s
+
+OK

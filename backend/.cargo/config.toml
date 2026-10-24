@@ -2,6 +2,10 @@
 # @vercel/rust reads build.target without guarding a missing build table.
 # Keep the host default; forcing Linux here would break Windows development.
 
+[env]
+# Deploy builds use the checked-in .sqlx cache, never a live database.
+SQLX_OFFLINE = "true"
+
 [target.x86_64-pc-windows-msvc]
 # Windows-specific optimizations
 rustflags = [

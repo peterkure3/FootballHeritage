@@ -1,0 +1,44 @@
+
+> frontend@0.0.0 build:production
+> node scripts/validate-production-env.mjs && npm run build
+
+Production frontend configuration validated.
+
+> frontend@0.0.0 build
+> npm run typecheck && vite build
+
+
+> frontend@0.0.0 typecheck
+> tsc --noEmit
+
+vite v7.3.7 building client environment for production...
+transforming...
+✓ 1930 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                    1.00 kB │ gzip:   0.48 kB
+dist/assets/css/index-C2DbRklO.css               148.36 kB │ gzip:  28.40 kB
+dist/assets/js/ParlayBuilderSidebar-CJG4cIvO.js    9.01 kB │ gzip:   3.02 kB │ map:    23.38 kB
+dist/assets/js/ui-vendor-Ytm1JTyN.js              28.54 kB │ gzip:  10.88 kB │ map:    94.30 kB
+dist/assets/js/state-vendor-pnCtG4d_.js           42.98 kB │ gzip:  12.97 kB │ map:   157.99 kB
+dist/assets/js/react-vendor-DJtk3mZD.js           52.70 kB │ gzip:  18.63 kB │ map:   492.74 kB
+dist/assets/js/index-wVcGXhMc.js                 660.95 kB │ gzip: 175.31 kB │ map: 2,252.23 kB
+✓ built in 43.97s
+
+✨ [vite-plugin-compression]:algorithm=gzip - compressed file successfully: 
+dist/D:/Github/FootballHeritage/frontend/assets/js/state-vendor-pnCtG4d_.js.gz   41.97kb / gzip: 12.65kb
+dist/D:/Github/FootballHeritage/frontend/assets/js/ui-vendor-Ytm1JTyN.js.gz      27.87kb / gzip: 10.60kb
+dist/D:/Github/FootballHeritage/frontend/assets/css/index-C2DbRklO.css.gz        144.88kb / gzip: 27.41kb
+dist/D:/Github/FootballHeritage/frontend/assets/js/react-vendor-DJtk3mZD.js.gz   51.46kb / gzip: 18.18kb
+dist/D:/Github/FootballHeritage/frontend/assets/js/index-wVcGXhMc.js.gz          645.46kb / gzip: 170.61kb
+
+
+
+✨ [vite-plugin-compression]:algorithm=brotliCompress - compressed file successfully: 
+dist/D:/Github/FootballHeritage/frontend/assets/js/react-vendor-DJtk3mZD.js.br   51.46kb / brotliCompress: 16.35kb
+dist/D:/Github/FootballHeritage/frontend/assets/js/state-vendor-pnCtG4d_.js.br   41.97kb / brotliCompress: 11.41kb
+dist/D:/Github/FootballHeritage/frontend/assets/js/ui-vendor-Ytm1JTyN.js.br      27.87kb / brotliCompress: 9.21kb
+dist/D:/Github/FootballHeritage/frontend/assets/css/index-C2DbRklO.css.br        144.88kb / brotliCompress: 23.26kb
+dist/D:/Github/FootballHeritage/frontend/assets/js/index-wVcGXhMc.js.br          645.46kb / brotliCompress: 139.10kb
+
+

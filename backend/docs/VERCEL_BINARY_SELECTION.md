@@ -41,6 +41,12 @@ The same expression exists in standalone build and dev-server startup; the legac
 
 Local verification and complete logs: [2026-10-24 investigation](../../stages/05-deploy/output/rust-vercel-20261024.md). No Cargo manifest, lockfile, API route or migration change is needed for this exception.
 
+## SQLx compile-time database failure — authenticated follow-up
+
+The later hosted build at commit `3eae0b3` passed binary resolution but failed with 16 SQLx macro `Connection refused` errors. Cargo configuration now defaults `SQLX_OFFLINE=true` through `[env]`, using the checked-in `.sqlx` cache without connecting to a database at build time. Existing environment overrides remain supported for separately authorized query-cache maintenance. This build setting does not disable runtime migrations: explicitly configure `RUN_MIGRATIONS=false` and `APP_ENV=production` before invoking the deployed API.
+
+Authenticated inspection found the hosted project root set to `backend/src`; use the package root `backend` for a reviewed deployment configuration. Both Vercel projects currently designate `feature/footballheritage-frontend` as their production branch. No project root, environment scope, deployment or database was changed by this follow-up. See the [updated hosted findings](../../stages/05-deploy/output/vercel-staging-20261024.md).
+
 ## Persistent-container PORT contract
 
 `AppConfig::from_env` reads `PORT` as a `u16`; `main.rs` constructs its bind address from `config.host` and `config.port` and passes it to Actix. The source fallback is `8080`; the existing Docker image overrides it to `8888`. Set `HOST=0.0.0.0` and `HTTPS_ENABLED=false` behind trusted TLS ingress and let the host's `PORT` override the image default. For a future Vercel container project, configure its `PORT` setting explicitly to match the server; an image's `EXPOSE` declaration alone is not an ingress configuration.

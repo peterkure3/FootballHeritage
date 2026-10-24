@@ -2,6 +2,18 @@
 
 No production deployment has been performed as part of this preparation. Replace example domains with your actual owned domains before deployment; no production frontend/admin origins were supplied in the task.
 
+## Frontend `VITE_API_URL` build failure
+
+Authenticated follow-up: global CLI 65.2.0 is working and signed in as `peterkure3`. The hosted frontend root is `frontend`; its latest existing production deployment is `READY`. `VITE_API_URL` is present only in Production, while the other four frontend variables also cover Preview. Both projects currently designate `feature/footballheritage-frontend` as their **production branch**. Review that designation before pushing or redeploying; this branch is not presently a Preview target. Earlier logged-out/access-blocked observations below describe the initial investigation.
+
+The hosted backend root is currently `backend/src`; the intended package root is `backend`. Its latest failed build reports 16 compile-time SQLx database connection errors. Repository Cargo config now defaults to the checked-in offline query cache, preserving database-free builds. Before any runtime smoke test, explicitly set backend `APP_ENV=production` and `RUN_MIGRATIONS=false` in the reviewed target scope; neither name was present in the hosted environment inventory. No hosting settings or deployments were changed during inspection.
+
+`frontend/vercel.json` deliberately runs `npm run build:production`. The validator loads Vite's production environment and process overrides, and requires an HTTPS Rust API origin or its `/api/v1` URL. A local HTTP development URL in `.env` is not valid deployment configuration. Set `VITE_API_URL` in **football-heritage-frontend**, scoped to the deployment's Preview or Production environment; check branch-specific Preview overrides too. Do not put this variable only in the Rust project or point it at the Vite site or private FastAPI service. `VITE_PIPELINE_API_URL` is obsolete: browser pipeline traffic goes through Rust's authenticated `/api/v1/pipeline` gateway.
+
+The validator and production API client share the same URL checks. Production bundles cannot silently fall back to localhost, even if someone bypasses the validation script. Missing/invalid URLs and secret-like public variables remain errors. Do not bypass validation, insert a fake backend URL, or relax HTTPS to obtain a green hosted build. The `.env.production.example` URL is a template, not a running API.
+
+On this Windows workstation, the working checkout is `D:\Github\FootballHeritage`; `C:\FootballHeritage` contains backups. CLI 65.2.0 can be run with `npx --yes --package=vercel@65.2.0 vercel --version`; the global installation was incomplete and the CLI authentication check reported logged out. The catalog project IDs are `prj_T0Aus4LHcFJJRMNKtmdVXLRbd5ad` (frontend) and `prj_0r4mFmPbEpDGrvHKLPK76tXuKxdh` (backend), in team `team_PbpiKdM3J9zfUN4UpZnixHZy`. No local `.vercel/project.json` or `.vercel/repo.json` mapping was found. Authenticate and verify each project's folder, team and root before deliberately linking it; no link or cloud setting was changed during diagnosis. Actual hosted environment scopes remain unverified because team-scoped connector reads returned 403. See [the staging investigation](../stages/05-deploy/output/vercel-staging-20261024.md).
+
 For the multi-binary Rust build error, see [Rust binary selection and runtime blockers](../backend/docs/VERCEL_BINARY_SELECTION.md). The API is the explicit Cargo default; initialization/reset targets require an operator-only feature. A successful binary selection does not establish native Vercel Functions compatibility for Actix.
 
 ## Hosting topology

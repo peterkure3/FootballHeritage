@@ -1,0 +1,108 @@
+{
+  "note": "Local .env inventory only; not the hosted Vercel environment. No database connection made.",
+  "frontend": {
+    "keys": [
+      "VITE_API_URL",
+      "VITE_ENABLE_ANALYTICS",
+      "VITE_ENABLE_DEBUG",
+      "VITE_ENV",
+      "VITE_SESSION_TIMEOUT"
+    ],
+    "api_url_configured": true,
+    "api_url_uses_https": false
+  },
+  "backend": {
+    "keys": [
+      "ACCOUNT_LOCK_MINUTES",
+      "ALLOWED_ORIGINS",
+      "BCRYPT_COST",
+      "BET_RATE_LIMIT_PER_MINUTE",
+      "CHATBOT_SERVICE_URL",
+      "DATABASE_URL",
+      "DEFAULT_DAILY_BET_LIMIT",
+      "DEFAULT_DAILY_LOSS_LIMIT",
+      "DEFAULT_MAX_SINGLE_BET",
+      "DEFAULT_MONTHLY_BET_LIMIT",
+      "DEFAULT_MONTHLY_LOSS_LIMIT",
+      "DEFAULT_WEEKLY_BET_LIMIT",
+      "DEFAULT_WEEKLY_LOSS_LIMIT",
+      "ENCRYPTION_KEY",
+      "FRAUD_ALERT_EMAIL",
+      "HEALTH_CHECK_INTERVAL_SECONDS",
+      "HOST",
+      "HTTPS_ENABLED",
+      "JWT_EXPIRATION_HOURS",
+      "JWT_SECRET",
+      "LOGIN_RATE_LIMIT_PER_MINUTE",
+      "LOG_LEVEL",
+      "MAX_LOGIN_ATTEMPTS",
+      "METRICS_ENABLED",
+      "PIPELINE_API_URL",
+      "PIPELINE_INTERNAL_TOKEN",
+      "PORT",
+      "RAG_CHAT_MODE",
+      "RAG_DATABASE_URL",
+      "RAG_GEMINI_API_KEY",
+      "RAG_GEMINI_MODEL",
+      "RAG_MODEL_VERSION",
+      "REGISTER_RATE_LIMIT_PER_HOUR",
+      "RUST_BACKTRACE",
+      "SESSION_TIMEOUT_MINUTES",
+      "TLS_CERT_PATH",
+      "TLS_KEY_PATH"
+    ],
+    "database": {
+      "configured": true,
+      "postgres_scheme": true,
+      "expected_database": true,
+      "neon_host": false,
+      "pooled_host": false,
+      "tls_requested": false
+    },
+    "rag_database": {
+      "configured": true,
+      "postgres_scheme": true,
+      "expected_database": true,
+      "neon_host": false,
+      "pooled_host": false,
+      "tls_requested": false
+    },
+    "run_migrations_explicitly_disabled": false,
+    "demo_wallet_funding_enabled": false,
+    "jwt_secret_valid_length": true,
+    "encryption_key_valid_bytes": true,
+    "pipeline_token_configured": true
+  },
+  "pipeline": {
+    "keys": [
+      "API_PORT",
+      "BALLDONTLIE_API_KEY",
+      "CFBD_API_KEY",
+      "DATABASE_URL",
+      "DB_HOST",
+      "DB_NAME",
+      "DB_PASSWORD",
+      "DB_PORT",
+      "DB_USER",
+      "END_YEAR",
+      "FOOTBALL_DATA_ORG_API_KEY",
+      "LOG_LEVEL",
+      "OUTPUT_DIR",
+      "PIPELINE_INTERNAL_TOKEN",
+      "START_YEAR",
+      "THE_ODDS_API_KEY"
+    ],
+    "database": {
+      "configured": true,
+      "postgres_scheme": true,
+      "expected_database": true,
+      "neon_host": false,
+      "pooled_host": false,
+      "tls_requested": false
+    },
+    "heritage_database": {
+      "configured": false
+    },
+    "backend_internal_token_matches": true
+  }
+}

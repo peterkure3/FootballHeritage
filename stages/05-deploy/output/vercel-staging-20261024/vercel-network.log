@@ -1,0 +1,8 @@
+{"node":"v24.13.0","networkEnvironmentNames":[]}
+{"host":"api.vercel.com","dns":[{"address":"76.76.21.112","family":4}]}
+{"host":"vercel.com","dns":[{"address":"64.239.123.193","family":4},{"address":"64.239.123.65","family":4}]}
+{"method":"fetch","url":"https://vercel.com","status":200,"milliseconds":343}
+{"method":"fetch","url":"https://vercel.com/.well-known/openid-configuration","status":200,"milliseconds":767}
+{"method":"fetch","url":"https://api.vercel.com/v2/user","status":403,"milliseconds":4461}
+{"method":"https-ipv4","host":"api.vercel.com","status":403,"milliseconds":1236}
+{"method":"https-ipv4","host":"vercel.com","status":200,"milliseconds":1653}

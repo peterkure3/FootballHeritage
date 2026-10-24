@@ -1,0 +1,16 @@
+
+> frontend@0.0.0 build:production
+> node scripts/validate-production-env.mjs && npm run build
+
+file:///D:/Github/FootballHeritage/frontend/scripts/validate-production-env.mjs:12
+if (!valid) throw new Error('Set VITE_API_URL to the production HTTPS API origin or its /api/v1 URL.');
+                  ^
+
+Error: Set VITE_API_URL to the production HTTPS API origin or its /api/v1 URL.
+    at file:///D:/Github/FootballHeritage/frontend/scripts/validate-production-env.mjs:12:19
+    at ModuleJob.run (node:internal/modules/esm/module_job:413:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:660:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+
+Node.js v24.13.0

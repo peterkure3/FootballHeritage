@@ -1,5 +1,13 @@
 # Football Heritage - Codebase Index
 
+## Authenticated Vercel build diagnosis — 2026-10-24
+
+CLI login completed as `peterkure3`; GET-only inspection confirms frontend root `frontend`, backend root `backend/src`, and both production branches set to `feature/footballheritage-frontend`. Frontend's latest existing production deployment is READY, but `VITE_API_URL` lacks Preview scope. The latest backend build fails on 16 SQLx compile-time connection errors. Added Cargo `[env] SQLX_OFFLINE="true"` to use checked-in query metadata without shell flags or a live build database. Hosted `APP_ENV` and `RUN_MIGRATIONS` are absent; do not cold-start the API until production controls and migration disabling are configured. No cloud settings, deployments or database operations were changed. See `stages/05-deploy/output/vercel-staging-20261024.md` and its redacted hosted inventory/logs.
+
+## Vercel staging environment diagnosis — 2026-10-24
+
+Reproduced the frontend production build's rejection of the local HTTP API URL. Build validator and production API client now share the strict HTTPS URL contract; production cannot fall back to localhost. Seven policy/config tests, lint, a fixture-URL Vite build, locked Rust check/build and 31 database-free Rust tests pass; five isolated pipeline tests and syntax checks pass. Pinned CLI 65.2.0 works but is logged out; no local Vercel links exist and team-scoped settings/env reads require authorization. The current checkout is D:, while C:\FootballHeritage contains backups. No hosting/Neon mutation was performed. See `stages/05-deploy/output/vercel-staging-20261024.md` for service mappings, required staging variables, direct RAG connection requirements and Linux/hosting blockers.
+
 ## Rust Vercel adapter and Windows database launchers — 2026-10-24
 
 Added an empty `[build]` table to the Cargo config after reproducing the upstream Rust adapter's unsafe `config?.build.target` dereference. Host target, manifest, lockfile and API remain unchanged. Current upstream standalone HTTP proxy support means Actix does not always require `vercel_runtime`; deployed adapter/settings still need team access and hosted verification. Backup/restore BAT launchers now probe working Python 3 interpreters, including `py -3`, and provide help-only verification. See `stages/05-deploy/output/rust-vercel-20261024.md` for diagnostics, checks and remaining blockers.

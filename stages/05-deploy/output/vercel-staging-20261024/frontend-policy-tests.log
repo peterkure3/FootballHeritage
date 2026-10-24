@@ -1,0 +1,15 @@
+✔ production API contract accepts HTTPS origin and a single API prefix (2.3636ms)
+✔ production API contract rejects missing, local and unsafe destinations (3.2597ms)
+✔ public secret-like variables stay forbidden without disclosing their values (1.8097ms)
+✔ validator loads Vite production files and respects process environment precedence (4263.988ms)
+✔ API base adds the prefix exactly once (4.9768ms)
+✔ unknown keys and missing policy never grant access (0.6126ms)
+✔ feature routes and essential account operations remain distinct (0.7288ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 5575.6097

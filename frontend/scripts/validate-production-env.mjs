@@ -1,16 +1,22 @@
 import { loadEnv } from 'vite';
+import { pathToFileURL } from 'node:url';
+import { productionApiBase } from '../src/utils/apiUrl.js';
 
-const env = { ...loadEnv('production', process.cwd(), ''), ...process.env };
-const value = env.VITE_API_URL;
-let valid = false;
-try {
-  const url = new URL(value);
-  valid = url.protocol === 'https:' && !!url.hostname && !['localhost','127.0.0.1','[::1]'].includes(url.hostname)
-    && !url.username && !url.password && !url.search && !url.hash
-    && ['', '/', '/api/v1', '/api/v1/'].includes(url.pathname);
-} catch { /* Fail without echoing configuration values. */ }
-if (!valid) throw new Error('Set VITE_API_URL to the production HTTPS API origin or its /api/v1 URL.');
-if (Object.keys(env).some(key => /^VITE_.*(?:SECRET|TOKEN|PASSWORD|PRIVATE_KEY|API_KEY)$/.test(key))) {
-  throw new Error('Secret-like VITE variables are forbidden: browser bundles are public.');
+export function validateProductionEnv(env) {
+  const base = productionApiBase(env.VITE_API_URL);
+  if (Object.keys(env).some(key => /^VITE_.*(?:SECRET|TOKEN|PASSWORD|PRIVATE_KEY|API_KEY)$/.test(key))) {
+    throw new Error('Secret-like VITE variables are forbidden: browser bundles are public.');
+  }
+  return base;
 }
-console.log('Production frontend configuration validated.');
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  try {
+    validateProductionEnv({ ...loadEnv('production', process.cwd(), ''), ...process.env });
+    console.log('Production frontend configuration validated.');
+  } catch (error) {
+    console.error(error.message);
+    console.error('Set VITE_API_URL in the frontend Vercel project for the deployment scope (Preview or Production), including any branch override. The URL must point to the Rust API, not Vite or FastAPI.');
+    process.exitCode = 1;
+  }
+}

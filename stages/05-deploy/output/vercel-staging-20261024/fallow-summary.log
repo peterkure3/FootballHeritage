@@ -1,0 +1,35 @@
+   0.233229400s  WARN fallow: 'node_modules' does not exist. Package exports and conditional exports cannot be read, framework plugins that activate on an installed package stay inactive, and dependency classification degrades, so imports and dependencies can be misreported. Run npm install / pnpm install / yarn / bun install first.
+   0.562769300s  WARN Graph cache decoded but not reused: resolver, entry points, or plugins changed
+
+■ Metrics: dead files 10.7% (20 of 187) · dead exports 7.0% (17 of 243) · MI 89.1 (good) · 2 churn hotspots
+  187 files analyzed
+  36 entry points detected (32 plugin, 3 package.json, 1 default index)
+  20 refactoring targets — start with frontend/src/pages/AiPicks.jsx (untested risk)
+
+── Dead Code ──────────────────────────────────────
+      20  Unused files
+      17  Unused exports
+       1  Unresolved imports
+
+      38  Total
+✗ 38 issues (0.68s)
+
+── Duplication ────────────────────────────────────
+note: skipped 18 files matching default duplicates ignores
+  (--explain-skipped for the list)
+note: module wiring excluded from clones
+  (--dupes-no-ignore-imports to include it)
+      23  Clone families
+      43  Clone groups
+   1,737  Duplicated lines
+    5.2%  Duplication rate
+⚠ 5.2% duplication (0.22s)
+
+── Complexity ─────────────────────────────────────
+    1949  Functions analyzed
+     177  Above threshold
+   89.1   Average maintainability (good)
+✓ 1949 functions analyzed (0.41s)
+
+Failed: dead-code (38 issues), dupes (43 clone groups), health (177 above threshold): start with frontend/src/pages/AiPicks.jsx
+Setup: `fallow init` writes a config; `fallow agent install --dry-run` previews the agent guide, skills, MCP server, and commit gate (hide this hint: `fallow init --decline`).
