@@ -11,12 +11,12 @@ import pandas as pd
 from sklearn.calibration import CalibratedClassifierCV
 from sklearn.frozen import FrozenEstimator
 from sklearn.preprocessing import LabelEncoder
-from threadpoolctl import threadpool_limits
 
 sys.path.append(str(Path(__file__).parent.parent))
 from models.features import build_feature_frame
 from models.validation import forward_folds, probability_metrics
 from models.selection import fit_odds_aware
+from models.training_resources import training_threads
 
 
 def rolling_evaluation(X: pd.DataFrame, fixtures: pd.DataFrame, encoder: LabelEncoder,
@@ -39,8 +39,8 @@ def rolling_evaluation(X: pd.DataFrame, fixtures: pd.DataFrame, encoder: LabelEn
             tuning_mask = fixtures.iloc[development].date.dt.normalize().ge(tune_boundary).to_numpy()
             splits = {"train": development[~tuning_mask], "tune": development[tuning_mask],
                       "calibration": calibration}
-            with threadpool_limits(limits=threads):
-                calibrated, selection = fit_odds_aware(X, y, splits, trees)
+            with training_threads(threads):
+                calibrated, selection = fit_odds_aware(X, y, splits, trees, threads=threads)
         elif strategy == "stacking":
             model = model_factory()
             model.fit(X.iloc[development], y[development], dates=fixtures.iloc[development].date)
@@ -48,7 +48,8 @@ def rolling_evaluation(X: pd.DataFrame, fixtures: pd.DataFrame, encoder: LabelEn
             calibrated.fit(X.iloc[calibration], y[calibration])
         else:
             raise ValueError(f"Unknown model strategy: {strategy}")
-        probabilities = calibrated.predict_proba(X.iloc[test])
+        with training_threads(threads):
+            probabilities = calibrated.predict_proba(X.iloc[test])
         covered = X.iloc[test].odds_missing.eq(0).to_numpy()
         market = None
         if covered.any():

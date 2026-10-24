@@ -1,5 +1,7 @@
 """Select and calibrate separate market and history experts without test labels."""
 
+from contextlib import nullcontext
+
 import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator, ClassifierMixin, clone
@@ -14,6 +16,7 @@ from sklearn.utils.validation import check_is_fitted
 
 from models.features import FEATURE_NAMES
 from models.validation import probability_metrics
+from models.training_resources import training_threads
 
 
 class OddsAwareClassifier(ClassifierMixin, BaseEstimator):
@@ -51,11 +54,13 @@ class OddsAwareClassifier(ClassifierMixin, BaseEstimator):
         return self.classes_[self.predict_proba(X).argmax(axis=1)]
 
 
-def expert_candidates(columns: list[str], trees: int = 200) -> dict[str, BaseEstimator]:
+def expert_candidates(columns: list[str], trees: int = 200,
+                      logistic_max_iter: int = 2000, logistic_solver: str = "lbfgs") -> dict[str, BaseEstimator]:
     candidates = {
         f"logistic_C_{strength}": make_pipeline(
             ColumnTransformer([("features", StandardScaler(), columns)]),
-            LogisticRegression(C=strength, max_iter=2000, random_state=42),
+            LogisticRegression(C=strength, max_iter=logistic_max_iter,
+                               solver=logistic_solver, random_state=42),
         ) for strength in [0.01, 0.1, 1.0]
     }
     candidates["hist_gradient"] = make_pipeline(
@@ -67,8 +72,41 @@ def expert_candidates(columns: list[str], trees: int = 200) -> dict[str, BaseEst
     return candidates
 
 
+def selection_sample(indices: np.ndarray, y: np.ndarray, limit: int = None) -> np.ndarray:
+    """Deterministic class-proportional sample from the training period only."""
+    if limit is None or len(indices) <= limit:
+        return indices
+    classes, counts = np.unique(y[indices], return_counts=True)
+    if limit < len(classes):
+        raise ValueError("Selection row limit must allow every outcome class")
+    allocation = np.maximum(1, np.floor(counts * limit / len(indices)).astype(int))
+    while allocation.sum() > limit:
+        allocation[np.argmax(allocation)] -= 1
+    while allocation.sum() < limit:
+        allocation[np.argmax(counts * limit / len(indices) - allocation)] += 1
+    rng = np.random.default_rng(42)
+    selected = np.concatenate([rng.choice(indices[y[indices] == label], size=size, replace=False)
+                               for label, size in zip(classes, allocation)])
+    # Retain original chronological order even if source indices are not contiguous.
+    return indices[np.isin(indices, selected)]
+
+
 def fit_odds_aware(X: pd.DataFrame, y: np.ndarray, splits: dict[str, np.ndarray],
-                   trees: int = 200) -> tuple[OddsAwareClassifier, dict]:
+                   trees: int = 200, *, progress=None, selection_max_rows: int = None,
+                   logistic_max_iter: int = 2000,
+                   logistic_solver: str = "lbfgs", threads: int = 2) -> tuple[OddsAwareClassifier, dict]:
+    """Apply an explicit CPU budget before entering any blocking estimator fit."""
+    with training_threads(threads):
+        return _fit_odds_aware(X, y, splits, trees, progress=progress,
+                              selection_max_rows=selection_max_rows,
+                              logistic_max_iter=logistic_max_iter,
+                              logistic_solver=logistic_solver)
+
+
+def _fit_odds_aware(X: pd.DataFrame, y: np.ndarray, splits: dict[str, np.ndarray],
+                    trees: int = 200, *, progress=None, selection_max_rows: int = None,
+                    logistic_max_iter: int = 2000,
+                    logistic_solver: str = "lbfgs") -> tuple[OddsAwareClassifier, dict]:
     """Select on tuning data, refit development, calibrate on a separate period."""
     train, tune, calibration = [splits[name] for name in ["train", "tune", "calibration"]]
     for indices in [train, tune, calibration]:
@@ -76,28 +114,39 @@ def fit_odds_aware(X: pd.DataFrame, y: np.ndarray, splits: dict[str, np.ndarray]
             raise ValueError("Expert selection periods require all outcome classes")
     development = np.concatenate([train, tune])
     experts, report = {}, {}
+    observed_odds = X.odds_missing.eq(0).to_numpy()
     history_columns = FEATURE_NAMES[FEATURE_NAMES.index("home_elo"):FEATURE_NAMES.index("odds_missing")]
     for name, columns in [("market", FEATURE_NAMES), ("history", history_columns)]:
         # Missing market priors must not teach the market expert fabricated prices.
-        fit_indices = train[X.iloc[train].odds_missing.eq(0).to_numpy()] if name == "market" else train
-        tuning = tune[X.iloc[tune].odds_missing.eq(0).to_numpy()] if name == "market" else tune
-        refit = development[X.iloc[development].odds_missing.eq(0).to_numpy()] if name == "market" else development
-        calibrate = calibration[X.iloc[calibration].odds_missing.eq(0).to_numpy()] if name == "market" else calibration
+        fit_indices = train[observed_odds[train]] if name == "market" else train
+        tuning = tune[observed_odds[tune]] if name == "market" else tune
+        refit = development[observed_odds[development]] if name == "market" else development
+        calibrate = calibration[observed_odds[calibration]] if name == "market" else calibration
         if any(len(np.unique(y[indices])) != 3 for indices in [fit_indices, tuning, refit, calibrate]):
             raise ValueError("Market expert needs observed odds and all classes in each period")
-        candidates = expert_candidates(columns, trees)
+        sampled = selection_sample(fit_indices, y, selection_max_rows)
+        candidates = expert_candidates(columns, trees, logistic_max_iter, logistic_solver)
+        # Reuse these slices across candidates rather than copying the corpus four times.
+        fit_X, fit_y = X.iloc[sampled], y[sampled]
+        tune_X, tune_y = X.iloc[tuning], y[tuning]
+        step = progress.step if progress is not None else lambda *_: nullcontext()
         scores = {}
         for label, candidate in candidates.items():
-            candidate.fit(X.iloc[fit_indices], y[fit_indices])
-            scores[label] = probability_metrics(y[tuning], candidate.predict_proba(X.iloc[tuning]),
-                                                ["away_win", "draw", "home_win"])
+            with step(f"{name}/{label}: fit + tune", len(sampled)):
+                candidate.fit(fit_X, fit_y)
+                scores[label] = probability_metrics(tune_y, candidate.predict_proba(tune_X),
+                                                    ["away_win", "draw", "home_win"])
         winner = min(scores, key=lambda label: scores[label]["log_loss"])
-        model = clone(candidates[winner]).fit(X.iloc[refit], y[refit])
+        del fit_X, fit_y, tune_X, tune_y
+        with step(f"{name}/{winner}: full development refit", len(refit)):
+            model = clone(candidates[winner]).fit(X.iloc[refit], y[refit])
         calibrated = CalibratedClassifierCV(FrozenEstimator(model), method="sigmoid", cv=2)
-        calibrated.fit(X.iloc[calibrate], y[calibrate])
+        with step(f"{name}: calibration", len(calibrate)):
+            calibrated.fit(X.iloc[calibrate], y[calibrate])
         experts[name] = calibrated
         report[name] = {"selected": winner, "features": columns, "tuning": scores,
-                        "fit_samples": len(refit), "calibration_samples": len(calibrate)}
+                        "fit_samples": len(refit), "calibration_samples": len(calibrate),
+                        "selection_samples": len(sampled)}
     result = OddsAwareClassifier(experts["market"], experts["history"])
     result.market_, result.history_ = experts["market"], experts["history"]
     result._set_contract(X)

@@ -16,7 +16,6 @@ from sklearn.calibration import CalibratedClassifierCV
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.frozen import FrozenEstimator
 from sklearn.preprocessing import LabelEncoder
-from threadpoolctl import threadpool_limits
 import xgboost as xgb
 
 sys.path.append(str(Path(__file__).parent.parent))
@@ -28,6 +27,8 @@ from models.features import FEATURE_SCHEMA_VERSION, FEATURE_NAMES, build_feature
 from models.ensemble import TemporalStackingClassifier
 from models.validation import chronological_split, probability_metrics
 from models.selection import fit_odds_aware
+from models.training_progress import TrainingProgress
+from models.training_resources import training_threads
 
 logger = setup_logger(__name__, LOG_LEVEL)
 MODEL_VERSION = "2.1.0"
@@ -91,7 +92,9 @@ def dataset_report(fixtures: pd.DataFrame, splits: dict) -> dict:
 
 
 def train_model(output_dir: Path = None, trees: int = 200, threads: int = 2,
-                dry_run: bool = False, strategy: str = "odds-aware") -> dict:
+                dry_run: bool = False, strategy: str = "odds-aware", *,
+                selection_max_rows: int = None, logistic_max_iter: int = 2000,
+                logistic_solver: str = "lbfgs") -> dict:
     df = load_training_data()
     X, fixtures = build_feature_frame(df)
     mask = fixtures.result.notna()
@@ -114,8 +117,10 @@ def train_model(output_dir: Path = None, trees: int = 200, threads: int = 2,
     selection = None
     if strategy == "odds-aware":
         logger.info("Selecting separate market and history experts on the tuning period")
-        with threadpool_limits(limits=threads):
-            calibrated, selection = fit_odds_aware(X, y, splits, trees)
+        with training_threads(threads), TrainingProgress(total=12, logger=logger) as progress:
+            calibrated, selection = fit_odds_aware(
+                X, y, splits, trees, progress=progress, selection_max_rows=selection_max_rows,
+                logistic_max_iter=logistic_max_iter, logistic_solver=logistic_solver, threads=threads)
         # These are selection-period scores before development refitting.
         tune_metrics = selection["market"]["tuning"][selection["market"]["selected"]]
     elif strategy == "stacking":
@@ -130,7 +135,9 @@ def train_model(output_dir: Path = None, trees: int = 200, threads: int = 2,
         calibrated.fit(X.iloc[calibration], y[calibration])
     else:
         raise ValueError(f"Unknown model strategy: {strategy}")
-    probabilities = calibrated.predict_proba(X.iloc[test])
+    # Histogram inference also uses OpenMP; keep evaluation within the same CPU budget.
+    with training_threads(threads):
+        probabilities = calibrated.predict_proba(X.iloc[test])
     test_metrics = probability_metrics(y[test], probabilities, list(encoder.classes_))
     baseline_columns = ["fair_away_prob", "fair_draw_prob", "fair_home_prob"]
     covered = X.iloc[test].odds_missing.eq(0).to_numpy()
@@ -154,7 +161,9 @@ def train_model(output_dir: Path = None, trees: int = 200, threads: int = 2,
                "market_comparison": comparison, "test_by_competition": by_league,
                "test_without_odds": probability_metrics(y[test][missing], probabilities[missing], list(encoder.classes_)) if missing.any() else None,
                "selection": selection,
-               "parameters": {"trees": trees, "threads": threads, "strategy": strategy}, "status": "candidate",
+               "parameters": {"trees": trees, "threads": threads, "strategy": strategy,
+                              "selection_max_rows": selection_max_rows, "logistic_max_iter": logistic_max_iter,
+                              "logistic_solver": logistic_solver}, "status": "candidate",
                "dependencies": {name: package_version(name) for name in ["numpy", "pandas", "scikit-learn", "xgboost", "lightgbm", "joblib"]}}
     joblib.dump(calibrated, output_dir / f"model_v{MODEL_VERSION}.pkl")
     joblib.dump(encoder, output_dir / f"label_encoder_v{MODEL_VERSION}.pkl")
@@ -171,10 +180,20 @@ def main() -> None:
     parser.add_argument("--threads", type=int, default=2)
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--strategy", choices=["odds-aware", "stacking"], default="odds-aware")
+    parser.add_argument("--selection-max-rows", type=int,
+                        help="Cap candidate fitting rows only; final refit and holdouts remain complete (odds-aware)")
+    parser.add_argument("--logistic-max-iter", type=int, default=2000,
+                        help="Logistic solver iteration limit (odds-aware; default: 2000)")
+    parser.add_argument("--logistic-solver", choices=["lbfgs", "saga", "newton-cholesky"], default="lbfgs",
+                        help="Logistic solver (odds-aware; default: lbfgs)")
     args = parser.parse_args()
     if args.trees < 10 or args.threads < 1:
         parser.error("--trees must be >= 10 and --threads must be >= 1")
-    train_model(args.output_dir, args.trees, args.threads, args.dry_run, args.strategy)
+    if args.logistic_max_iter < 1 or (args.selection_max_rows is not None and args.selection_max_rows < 3):
+        parser.error("--logistic-max-iter must be positive and --selection-max-rows must be >= 3")
+    train_model(args.output_dir, args.trees, args.threads, args.dry_run, args.strategy,
+                selection_max_rows=args.selection_max_rows, logistic_max_iter=args.logistic_max_iter,
+                logistic_solver=args.logistic_solver)
 
 
 if __name__ == "__main__":

@@ -31,7 +31,8 @@ REM call venv\Scripts\activate
 REM Train model
 echo.
 echo [1/2] Training model...
-%PYTHON% -m models.train_model_v2
+REM Forward optional tuning flags, e.g. --threads 4 --selection-max-rows 100000.
+%PYTHON% -u -m models.train_model_v2 %*
 if %errorlevel% neq 0 (
     echo ERROR: Model training failed
     exit /b 1

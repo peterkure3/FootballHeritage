@@ -1,5 +1,9 @@
 # Football Heritage - Codebase Index
 
+## Retraining progress and Windows CPU-probe hang — 2026-10-24
+
+Odds-aware weekly training now reports 12 candidate/refit/calibration stages with a live elapsed/ETA heartbeat. Explicit OpenMP budgets avoid the reproduced Joblib PowerShell physical-core detection hang; inference and rolling evaluation also respect the requested CPU budget. Optional selection-only row caps and logistic solver/iteration flags preserve complete development refits and chronological holdouts. Defaults produced identical probabilities and selection scores on 240 deterministic fixtures. See `docs/TRAINING_PERFORMANCE.md` and `stages/04-test/output/training-progress-20261024.md`.
+
 ## Applied migration line endings — 2026-10-24
 
 Restored the original LF bytes for the AI Picks/Rust RAG migrations after Git's CRLF conversion caused SQLx checksum rejection. `.gitattributes` protects newer migrations while preserving older mixed history. Read-only validation of the actual SQLx-embedded source matched all 18 currently applied records; no migration or checksum record was modified. See `backend/docs/MIGRATION_CHECKSUMS.md`.
