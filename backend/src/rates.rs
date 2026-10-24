@@ -14,6 +14,14 @@ use std::time::Duration;
 use tracing::{info, warn};
 use uuid::Uuid;
 
+/// Governor's period is the refill time for ONE request, not the whole burst.
+fn request_quota(max_requests: u32, window_seconds: u64) -> Quota {
+    let burst = NonZeroU32::new(max_requests).expect("rate limit must be positive");
+    Quota::with_period(Duration::from_secs(window_seconds) / burst.get())
+        .expect("rate limit refill period must be positive")
+        .allow_burst(burst)
+}
+
 /// Rate limiter types for different operations
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum RateLimitType {
@@ -36,9 +44,7 @@ pub struct RateLimiter {
 impl RateLimiter {
     /// Create a new rate limiter with specified quota
     pub fn new(limit_type: RateLimitType, max_requests: u32, window_seconds: u64) -> Self {
-        let quota = Quota::with_period(Duration::from_secs(window_seconds))
-            .unwrap()
-            .allow_burst(NonZeroU32::new(max_requests).unwrap());
+        let quota = request_quota(max_requests, window_seconds);
 
         let limiter = Arc::new(GovernorRateLimiter::direct(quota));
 
@@ -108,9 +114,7 @@ impl UserRateLimiter {
     /// Check if a request is allowed for a specific user
     pub fn check(&self, user_id: Uuid) -> AppResult<()> {
         let limiter = self.user_limiters.entry(user_id).or_insert_with(|| {
-            let quota = Quota::with_period(Duration::from_secs(self.window_seconds))
-                .unwrap()
-                .allow_burst(NonZeroU32::new(self.max_requests).unwrap());
+            let quota = request_quota(self.max_requests, self.window_seconds);
             Arc::new(GovernorRateLimiter::direct(quota))
         });
 
@@ -180,9 +184,7 @@ impl IpRateLimiter {
             .ip_limiters
             .entry(ip_address.to_string())
             .or_insert_with(|| {
-                let quota = Quota::with_period(Duration::from_secs(self.window_seconds))
-                    .unwrap()
-                    .allow_burst(NonZeroU32::new(self.max_requests).unwrap());
+                let quota = request_quota(self.max_requests, self.window_seconds);
                 Arc::new(GovernorRateLimiter::direct(quota))
             });
 
@@ -329,6 +331,26 @@ pub struct RateLimiterStats {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn quota_refills_at_the_configured_rate_without_removing_burst_protection() {
+        let clock = governor::clock::FakeRelativeClock::default();
+        let limiter = GovernorRateLimiter::direct_with_clock(request_quota(10, 60), &clock);
+        for _ in 0..10 {
+            assert!(limiter.check().is_ok());
+        }
+        assert!(limiter.check().is_err());
+        clock.advance(Duration::from_secs(5));
+        assert!(limiter.check().is_err());
+        clock.advance(Duration::from_secs(1));
+        assert!(limiter.check().is_ok());
+        assert!(limiter.check().is_err());
+        clock.advance(Duration::from_secs(60));
+        for _ in 0..10 {
+            assert!(limiter.check().is_ok());
+        }
+        assert!(limiter.check().is_err());
+    }
 
     #[test]
     fn test_rate_limiter_allows_within_quota() {

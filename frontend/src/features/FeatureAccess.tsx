@@ -51,7 +51,7 @@ function UnavailableMessage({
 export function FeatureBoundary({ children }: { children: ReactNode }) {
   const { pathname } = useLocation();
   const feature = featureForPath(pathname);
-  const query = useFeatures();
+  const query = useFeatures({ poll: true });
   if (!feature) return children;
   if (query.isPending)
     return (

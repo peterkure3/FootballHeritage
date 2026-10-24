@@ -17,6 +17,22 @@ const flags = [
   "college",
 ];
 
+test("feature consumers share one request and one refresh timer", async ({ page }) => {
+  await page.clock.install();
+  let requests = 0;
+  await page.route("**/api/v1/me/features", (route) => {
+    requests += 1;
+    return route.fulfill({
+      json: { features: Object.fromEntries(flags.map((key) => [key, key !== "ai_chat"])) },
+    });
+  });
+  await page.goto("/ai-picks/chat", { waitUntil: "domcontentloaded" });
+  await expect(page.getByRole("heading", { name: "Feature unavailable" })).toBeVisible();
+  expect(requests).toBe(1);
+  await page.clock.fastForward(15001);
+  await expect.poll(() => requests).toBe(2);
+});
+
 test("disabled feature hides navigation and blocks the direct route", async ({
   page,
 }) => {

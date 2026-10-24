@@ -8,6 +8,7 @@ use std::time::Duration;
 use uuid::Uuid;
 
 use crate::middleware::jwt_auth::get_claims;
+use crate::pipeline_gateway::normalize_pipeline_url;
 
 #[derive(Clone)]
 pub struct AiPicksService {
@@ -29,17 +30,6 @@ impl AiPicksService {
                 })
                 .map(|url| normalize_pipeline_url(&url)),
         })
-    }
-}
-
-fn normalize_pipeline_url(url: &str) -> String {
-    let url = url.trim().trim_end_matches('/');
-    if url.ends_with("/api/v1") {
-        url.to_string()
-    } else if url.ends_with("/api") {
-        format!("{url}/v1")
-    } else {
-        format!("{url}/api/v1")
     }
 }
 
@@ -131,7 +121,10 @@ pub async fn generate(
     let response = service
         .client
         .get(format!("{}/ai-picks", base.trim_end_matches('/')))
-        .header("X-Internal-Token", std::env::var("PIPELINE_INTERNAL_TOKEN").unwrap_or_default())
+        .header(
+            "X-Internal-Token",
+            std::env::var("PIPELINE_INTERNAL_TOKEN").unwrap_or_default(),
+        )
         .query(&query)
         .send()
         .await;
