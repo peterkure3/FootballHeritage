@@ -1,0 +1,19 @@
+/usr/local/cargo/bin/cargo
+/usr/local/cargo/bin/rustc
+lrwxrwxrwx 1 root root 6 Oct 21  2025 /usr/local/cargo/bin/cargo -> rustup
+lrwxrwxrwx 1 root root 6 Oct 21  2025 /usr/local/cargo/bin/rustc -> rustup
+cargo 1.90.0 (840b83a10 2025-07-30)
+rustc 1.90.0 (1159e78c4 2025-09-14)
+Default host: x86_64-unknown-linux-gnu
+rustup home:  /usr/local/rustup
+
+installed toolchains
+--------------------
+1.90.0-x86_64-unknown-linux-gnu (active, default)
+
+active toolchain
+----------------
+name: 1.90.0-x86_64-unknown-linux-gnu
+active because: it's the default toolchain
+installed targets:
+  x86_64-unknown-linux-gnu

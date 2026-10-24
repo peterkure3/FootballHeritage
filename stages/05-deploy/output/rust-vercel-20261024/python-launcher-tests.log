@@ -1,0 +1,10 @@
+test_all_aliases_fail (__main__.PythonLauncherTests.test_all_aliases_fail) ... ok
+test_missing_interpreters (__main__.PythonLauncherTests.test_missing_interpreters) ... ok
+test_prefers_py_launcher (__main__.PythonLauncherTests.test_prefers_py_launcher) ... ok
+test_python_without_launcher (__main__.PythonLauncherTests.test_python_without_launcher) ... ok
+test_store_alias_failure_falls_back (__main__.PythonLauncherTests.test_store_alias_failure_falls_back) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.709s
+
+OK

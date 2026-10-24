@@ -1,5 +1,9 @@
 # Football Heritage - Codebase Index
 
+## Rust Vercel adapter and Windows database launchers — 2026-10-24
+
+Added an empty `[build]` table to the Cargo config after reproducing the upstream Rust adapter's unsafe `config?.build.target` dereference. Host target, manifest, lockfile and API remain unchanged. Current upstream standalone HTTP proxy support means Actix does not always require `vercel_runtime`; deployed adapter/settings still need team access and hosted verification. Backup/restore BAT launchers now probe working Python 3 interpreters, including `py -3`, and provide help-only verification. See `stages/05-deploy/output/rust-vercel-20261024.md` for diagnostics, checks and remaining blockers.
+
 ## Retraining progress and Windows CPU-probe hang — 2026-10-24
 
 Odds-aware weekly training now reports 12 candidate/refit/calibration stages with a live elapsed/ETA heartbeat. Explicit OpenMP budgets avoid the reproduced Joblib PowerShell physical-core detection hang; inference and rolling evaluation also respect the requested CPU budget. Optional selection-only row caps and logistic solver/iteration flags preserve complete development refits and chronological holdouts. Defaults produced identical probabilities and selection scores on 240 deterministic fixtures. See `docs/TRAINING_PERFORMANCE.md` and `stages/04-test/output/training-progress-20261024.md`.

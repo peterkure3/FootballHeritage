@@ -1,0 +1,19 @@
+usage: restore_databases.py [-h] --backup-dir BACKUP_DIR [--db-host DB_HOST]
+                            [--db-port DB_PORT] [--db-user DB_USER]
+                            [--db-password DB_PASSWORD] [--clean]
+                            [--database {football_betting,football_heritage,all}]
+
+Restore Football Heritage databases from backup
+
+options:
+  -h, --help            show this help message and exit
+  --backup-dir, -b BACKUP_DIR
+                        Directory containing backup files
+  --db-host DB_HOST     Database host (default: localhost)
+  --db-port DB_PORT     Database port (default: 5432)
+  --db-user DB_USER     Database user (default: postgres)
+  --db-password, -p DB_PASSWORD
+                        Database password (or set DB_PASSWORD env var)
+  --clean, -c           Drop existing databases before restore (clean restore)
+  --database, -d {football_betting,football_heritage,all}
+                        Which database to restore (default: all)

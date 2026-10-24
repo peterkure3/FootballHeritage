@@ -1,0 +1,45 @@
+   Compiling tempfile v3.23.0
+   Compiling football-heritage-backend v0.1.0 (D:\Github\FootballHeritage\backend)
+    Finished `test` profile [unoptimized] target(s) in 58.38s
+warning: the following packages contain code that will be rejected by a future version of Rust: sqlx-postgres v0.7.4
+note: to see what the problems were, use the option `--future-incompat-report`, or run `cargo report future-incompatibilities --id 8`
+     Running unittests src\main.rs (target\debug\deps\football_heritage_backend-881e49d688ed2951.exe)
+
+running 34 tests
+test betting_simple::tests::test_calculate_potential_win ... ok
+test betting_simple::tests::test_validate_bet_amount ... ok
+test auth::tests::test_session_management ... ok
+test crypto::tests::test_csrf_token ... ok
+test crypto::tests::test_balance_encryption ... ok
+test handlers::admin::events::tests::update_event_persists_date_and_odds ... ignored, requires local PostgreSQL; uses only connection-local temporary tables
+test handlers::admin::tests::metrics_use_winning_payouts_and_event_pages_respect_offsets ... ignored, requires local PostgreSQL; uses connection-local temporary tables only
+test features::tests::precedence ... ok
+test handlers::admin::tests::user_search_is_bound_and_pagination_totals_follow_filters ... ignored, requires local PostgreSQL; uses connection-local temporary tables only
+test auth::tests::test_jwt_token_generation_and_validation ... ok
+test features::tests::sensitive_route_coverage ... ok
+test handlers::ai_picks::picks_tests::chat_context_accepts_only_a_suffix_of_saved_history ... ok
+test features::integration_tests::production_blocks_money_writes_before_business_handlers ... ok
+test features::integration_tests::logout_revokes_only_the_verified_session_and_is_idempotent ... ok
+test handlers::ai_picks::picks_tests::pipeline_url_accepts_root_legacy_and_versioned_urls ... ok
+test pipeline_gateway::tests::validates_server_configuration_without_exposing_secrets ... ok
+test rag::tests::chat_rate_limit_is_per_user_and_expires ... ok
+test rag::tests::requested_competition_and_date_exclude_other_fixtures ... ok
+test rag::tests::retrieval_uses_last_named_team_for_followups ... ok
+test rag::tests::generated_references_must_exist_in_retrieved_evidence ... ok
+test rates::tests::quota_refills_at_the_configured_rate_without_removing_burst_protection ... ok
+test rag::tests::evidence_reply_never_invents_missing_odds ... ok
+test pipeline_gateway::tests::missing_server_settings_are_503_not_a_client_400 ... ok
+test utils::tests::test_validate_age_invalid ... ok
+test utils::tests::test_validate_age_valid ... ok
+test utils::tests::test_sanitize_string ... ok
+test utils::tests::test_validate_bet_type ... ok
+test utils::tests::test_validate_selection ... ok
+test rates::tests::test_rate_limiter_blocks_over_quota ... ok
+test rates::tests::test_rate_limiter_allows_within_quota ... ok
+test rates::tests::test_ip_rate_limiter ... ok
+test rates::tests::test_user_rate_limiter ... ok
+test crypto::tests::test_password_hashing ... ok
+test pipeline_gateway::tests::forwards_both_reported_paths_queries_and_the_private_token ... ok
+
+test result: ok. 31 passed; 0 failed; 3 ignored; 0 measured; 2 filtered out; finished in 1.04s
+

@@ -1,3 +1,7 @@
+[build]
+# @vercel/rust reads build.target without guarding a missing build table.
+# Keep the host default; forcing Linux here would break Windows development.
+
 [target.x86_64-pc-windows-msvc]
 # Windows-specific optimizations
 rustflags = [

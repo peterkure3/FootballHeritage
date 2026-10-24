@@ -1,0 +1,75 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile:
+#1 transferring dockerfile: 1.05kB 2.7s done
+#1 DONE 3.6s
+
+#2 [internal] load metadata for docker.io/library/debian:bookworm-slim
+#2 ...
+
+#3 [internal] load metadata for docker.io/library/rust:1.90-bookworm
+#3 DONE 2.6s
+
+#2 [internal] load metadata for docker.io/library/debian:bookworm-slim
+#2 DONE 17.2s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 32B 0.0s
+#4 transferring context: 156B 0.1s done
+#4 DONE 2.0s
+
+#5 [internal] load build context
+#5 DONE 0.0s
+
+#6 [stage-1 1/5] FROM docker.io/library/debian:bookworm-slim@sha256:7ff6ba31527b9e336162fa061746c366c4b2032f4d2cff2078bea43f78efe3f8
+#6 resolve docker.io/library/debian:bookworm-slim@sha256:7ff6ba31527b9e336162fa061746c366c4b2032f4d2cff2078bea43f78efe3f8
+#6 resolve docker.io/library/debian:bookworm-slim@sha256:7ff6ba31527b9e336162fa061746c366c4b2032f4d2cff2078bea43f78efe3f8 3.0s done
+#6 CACHED
+
+#7 [stage-1 2/5] RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates curl     && rm -rf /var/lib/apt/lists/* && useradd --system --uid 10001 app
+#7 ...
+
+#8 [build 1/4] FROM docker.io/library/rust:1.90-bookworm@sha256:3914072ca0c3b8aad871db9169a651ccfce30cf58303e5d6f2db16d1d8a7e58f
+#8 resolve docker.io/library/rust:1.90-bookworm@sha256:3914072ca0c3b8aad871db9169a651ccfce30cf58303e5d6f2db16d1d8a7e58f 3.7s done
+#8 DONE 4.0s
+
+#5 [internal] load build context
+#5 transferring context:
+#5 transferring context: 611.28kB 0.5s done
+#5 DONE 2.2s
+
+#7 [stage-1 2/5] RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates curl     && rm -rf /var/lib/apt/lists/* && useradd --system --uid 10001 app
+#7 ...
+
+#9 [build 2/4] WORKDIR /app
+#9 CACHED
+
+#10 [build 3/4] COPY . .
+#10 DONE 2.1s
+
+#7 [stage-1 2/5] RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates curl     && rm -rf /var/lib/apt/lists/* && useradd --system --uid 10001 app
+#7 ...
+
+#11 [build 4/4] RUN --mount=type=cache,target=/usr/local/cargo/registry     --mount=type=cache,target=/app/target     cargo --version && rustc --version     && cargo build --locked --release --bin football-heritage-backend --bin migrate     && cp /app/target/release/football-heritage-backend /app/server     && cp /app/target/release/migrate /app/migrate
+#11 3.306 cp: cannot stat '/app/target/release/football-heritage-backend': No such file or directory
+#11 ERROR: process "/bin/sh -c cargo --version && rustc --version     && cargo build --locked --release --bin football-heritage-backend --bin migrate     && cp /app/target/release/football-heritage-backend /app/server     && cp /app/target/release/migrate /app/migrate" did not complete successfully: exit code: 1
+
+#7 [stage-1 2/5] RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates curl     && rm -rf /var/lib/apt/lists/* && useradd --system --uid 10001 app
+#7 CANCELED
+------
+ > [build 4/4] RUN --mount=type=cache,target=/usr/local/cargo/registry     --mount=type=cache,target=/app/target     cargo --version && rustc --version     && cargo build --locked --release --bin football-heritage-backend --bin migrate     && cp /app/target/release/football-heritage-backend /app/server     && cp /app/target/release/migrate /app/migrate:
+3.306 cp: cannot stat '/app/target/release/football-heritage-backend': No such file or directory
+------
+Dockerfile:8
+--------------------
+   7 |     ENV CARGO_BUILD_JOBS=2 CARGO_TARGET_DIR=/app/target
+   8 | >>> RUN --mount=type=cache,target=/usr/local/cargo/registry \
+   9 | >>>     --mount=type=cache,target=/app/target \
+  10 | >>>     cargo --version && rustc --version \
+  11 | >>>     && cargo build --locked --release --bin football-heritage-backend --bin migrate \
+  12 | >>>     && cp /app/target/release/football-heritage-backend /app/server \
+  13 | >>>     && cp /app/target/release/migrate /app/migrate
+  14 |     
+--------------------
+ERROR: failed to build: failed to solve: process "/bin/sh -c cargo --version && rustc --version     && cargo build --locked --release --bin football-heritage-backend --bin migrate     && cp /app/target/release/football-heritage-backend /app/server     && cp /app/target/release/migrate /app/migrate" did not complete successfully: exit code: 1

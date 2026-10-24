@@ -1,0 +1,12 @@
+usage: backup_databases.py [-h] [--output-dir OUTPUT_DIR]
+                           [--db-password DB_PASSWORD]
+
+Backup Football Heritage databases
+
+options:
+  -h, --help            show this help message and exit
+  --output-dir, -o OUTPUT_DIR
+                        Output directory for backups (default:
+                        D:\Github\FootballHeritage\backups)
+  --db-password, -p DB_PASSWORD
+                        Database password (or set DB_PASSWORD env var)

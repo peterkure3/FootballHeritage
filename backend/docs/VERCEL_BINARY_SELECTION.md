@@ -26,12 +26,20 @@ The existing Dockerfile builds/copies only the API and dedicated migrator and st
 
 Repository inspection found no active backend `vercel.json`, `Dockerfile.vercel`, or `vercel_runtime` dependency. `deploy/vercel-services.example.json` is an optional example, not an active root configuration. The frontend's Vercel configuration belongs to the Vite project and does not adapt the Rust API.
 
-1. **Native Rust Functions:** Vercel's documented Rust entrypoints use the `vercel_runtime` request bridge. Our `#[actix_web::main]` starts a listening `HttpServer` instead. Selecting the API binary is insufficient for that runtime. See [Vercel's Rust runtime documentation](https://vercel.com/docs/functions/runtimes/rust).
+1. **Rust runtime modes (corrected 2026-10-24):** the documented `api/` function-handler mode uses `vercel_runtime`. However, the current upstream `@vercel/rust` adapter also selects standalone HTTP proxy mode for whole-app binaries without that dependency. Our Actix `HttpServer` can satisfy that mode by honoring `PORT`; adding `vercel_runtime` or rewriting routes is not required for the standalone adapter. Confirm the deployed adapter version and entrypoint before choosing a mode. See [upstream standalone implementation](https://github.com/vercel/vercel/blob/main/packages/rust/src/standalone-server.ts) and [handler documentation](https://vercel.com/docs/functions/runtimes/rust).
 2. **Container runtime:** Vercel supports HTTP containers in Beta through a `Dockerfile.vercel` or an explicitly selected container service entrypoint. That is a different deployment model and has not been activated or verified here. It scales instances down, so it must not be treated as an always-on host. See [Container Runtime](https://vercel.com/docs/functions/runtimes/container).
 3. **Sessions/rate limits:** the current API stores these in process-local memory. Automatic multi-instance scaling would lose consistent authentication/rate-limit state. Use the existing single-instance persistent-host plan until shared state is implemented and tested.
 4. **Artifact/configuration:** the previously documented local container-build failure remains unresolved. Verify the intended Git SHA and `backend` project root: current source also declares `migrate`, whereas the reported error listed only four binaries. Dashboard runtime settings and a hosted deployment were not verified by this change.
 
 No adapter, deployment, account/bootstrap operation, database connection or migration is introduced by this fix. Routes, authentication, feature middleware, migration files and financial restrictions remain unchanged. Staging URLs, private-service ingress and secure environment settings must be verified before hosted runtime acceptance.
+
+## Adapter config failure — 2026-10-24
+
+The subsequent `Cannot read properties of undefined (reading 'target')` is reproducible from the adapter expression `cargoBuildConfiguration?.build.target`. Our valid `.cargo/config.toml` existed without a `[build]` table. Optional chaining guards the config object, but not its missing `build` property. The project workaround adds an empty `[build]` table, retaining Cargo's host target and artifact layout. Do not force a Linux target globally: local Windows builds must continue to work. The upstream fix would guard `build` as well.
+
+The same expression exists in standalone build and dev-server startup; the legacy handler builder also reads this property. The upstream source explains both reported errors: standalone binary selection respects `default-run`, then artifact discovery encounters the missing table. This is an adapter assumption about a valid Cargo configuration, not a Rust compiler diagnostic. The exact failed remote build's adapter version and stack remain unverified because team-scoped API access returned 403.
+
+Local verification and complete logs: [2026-10-24 investigation](../../stages/05-deploy/output/rust-vercel-20261024.md). No Cargo manifest, lockfile, API route or migration change is needed for this exception.
 
 ## Persistent-container PORT contract
 

@@ -1,0 +1,1 @@
+   6.617219300s  WARN fallow: 'node_modules' does not exist. Package exports and conditional exports cannot be read, framework plugins that activate on an installed package stay inactive, and dependency classification degrades, so imports and dependencies can be misreported. Run npm install / pnpm install / yarn / bun install first.
