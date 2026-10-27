@@ -102,6 +102,10 @@ class RegionalPipelineTests(unittest.TestCase):
         rows = normalize_betpawa(payload,self.observed,'raw.json','run')
         self.assertEqual(rows[0]['competition'], 'UEFA Champions League')
         self.assertEqual(rows[0]['country'], 'International')
+        event['region']['name'] = 'Spain'
+        event['competition']['name'] = 'La Liga'
+        self.assertEqual(normalize_betpawa(payload,self.observed,'raw.json','run')[0]['competition'], 'La Liga')
+        event['region']['name'] = 'International'
         event['competition']['name'] = 'AFC Champions League'
         self.assertEqual(normalize_betpawa(payload,self.observed,'raw.json','run'), [])
 

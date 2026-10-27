@@ -30,7 +30,7 @@ REM call venv\Scripts\activate
 
 REM Train model
 echo.
-echo [1/2] Training model...
+echo [1/3] Training model...
 REM Forward optional tuning flags, e.g. --threads 4 --selection-max-rows 100000.
 %PYTHON% -u -m models.train_model_v2 %*
 if %errorlevel% neq 0 (
@@ -38,9 +38,17 @@ if %errorlevel% neq 0 (
     exit /b 1
 )
 
+echo.
+echo [2/3] Training and forecasting the additional domestic leagues...
+%PYTHON% -u -m models.train_football_leagues --publish
+if %errorlevel% neq 0 (
+    echo ERROR: League model training or forecast publication failed
+    exit /b 1
+)
+
 REM Generate predictions
 echo.
-echo [2/2] Generating predictions...
+echo [3/3] Generating predictions...
 %PYTHON% -m models.predict_v2
 if %errorlevel% neq 0 (
     echo ERROR: Prediction generation failed

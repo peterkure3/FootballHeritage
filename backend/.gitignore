@@ -295,3 +295,6 @@ grafana_data/
 # Personal notes
 NOTES.md
 TODO.personal.md
+
+.vercel
+.env*

@@ -5,6 +5,7 @@ Save JSON responses to data/raw/ directories.
 
 import sys
 import os
+import time
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, List, Optional
@@ -339,6 +340,8 @@ def fetch_football_data_org() -> None:
             )
         except Exception as e:
             logger.error(f"Failed to fetch matches for {comp_code}: {str(e)}")
+        finally:
+            time.sleep(7)  # Stay within the provider's free-tier request limit.
     
     logger.info("Completed football-data.org data fetch")
 

@@ -106,6 +106,33 @@ class PostgreSQLDashboardTests(unittest.TestCase):
         self.assertEqual(market["comparisons"][0]["decimal_odds"], 2.)
         self.assertEqual(len(market["quotes"]), 2)
 
+    def test_competitions_retain_sufficient_history_and_exclude_started_only_leagues(self):
+        for identifier in range(1, 101):
+            self.fixture(identifier, self.now - timedelta(days=identifier), 'home_win', 'FINISHED', 'Primera Division')
+        self.fixture(101, self.now + timedelta(days=1), status='LIVE', league='Live only')
+        self.fixture(102, self.now - timedelta(days=1), 'draw', 'FINISHED', 'Sparse')
+        self.fixture(103, self.now + timedelta(days=1), league='Upcoming')
+        data = dashboard.fixtures(1, 5, 'Unknown')
+        self.assertEqual(data['competitions'], ['Primera Division', 'Upcoming'])
+        self.assertEqual(data['competition_labels']['Primera Division'], 'La Liga')
+        self.assertEqual(data['items'], [])
+
+    def test_league_forecast_drives_grid_probabilities_and_ev_with_provenance(self):
+        self.fixture(1,self.now+timedelta(days=1),league='Primera Division')
+        candidate={'match_id':1,'competition':'Primera Division','home_team':'Home','away_team':'Away',
+            'kickoff':(self.now+timedelta(days=1)).replace(tzinfo=timezone.utc).isoformat(),
+            'trained_at':(self.now-timedelta(hours=2)).replace(tzinfo=timezone.utc).isoformat(),
+            'feature_cutoff':(self.now-timedelta(hours=1)).replace(tzinfo=timezone.utc).isoformat(),
+            'generated_at':self.now.replace(tzinfo=timezone.utc).isoformat(),
+            'model_version':'league-PD-test','model_kind':'evaluated_league_candidate',
+            'probabilities':{'home_win':.6,'draw':.25,'away_win':.15},'winner':'home_win'}
+        self.connection.execute(text("INSERT INTO odds (match_id,bookmaker,home_win,draw,away_win,updated_at) VALUES (1,'Fresh',2,3,5,:now)"),{'now':self.now})
+        with patch.object(dashboard,'load_predictions',return_value={1:candidate}):
+            item=dashboard.fixtures(1,5)['items'][0]
+        self.assertEqual(item['prediction']['model_version'],'league-PD-test')
+        self.assertFalse(item['prediction']['active'])
+        self.assertAlmostEqual(item['market']['comparisons'][0]['estimated_ev_units'],.2)
+
     def test_evaluation_excludes_post_kickoff_unknown_invalid_and_deduplicates(self):
         yesterday = self.now - timedelta(days=1)
         for identifier in [1, 2, 4]:

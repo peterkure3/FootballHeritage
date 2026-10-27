@@ -360,13 +360,13 @@ def normalize_ababet(html, observed, raw_ref, run_id):
 
 
 def normalize_betpawa(payload, observed, raw_ref, run_id):
+    from football_competitions import PUBLIC_LEAGUES
     records = []
     for batch in payload.get('responses', []):
         for event in batch.get('responses', []):
             competition = event.get('competition', {}).get('name')
             country = event.get('region', {}).get('name')
-            if event.get('category', {}).get('id') != '2' or (country, competition) not in {
-                ('England', 'Premier League'), ('International', 'UEFA Champions League')}:
+            if event.get('category', {}).get('id') != '2' or (country, competition) not in PUBLIC_LEAGUES:
                 continue
             if event.get('results') or event.get('scoreboard'):
                 continue

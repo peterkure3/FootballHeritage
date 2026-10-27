@@ -11,21 +11,32 @@ mod auth;
 mod betting_simple;
 mod config;
 mod crypto;
+mod durable_gateway;
 mod errors;
 mod features;
 mod handlers;
 mod middleware;
 mod models;
 mod monitoring;
+mod pick_selection;
 mod pipeline_gateway;
+mod published;
+mod published_picks;
 mod rag;
 mod rates;
+#[cfg(test)]
+mod session_tests;
+mod sessions;
 mod utils;
 
 use config::AppConfig;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    run_server().await
+}
+
+pub(crate) async fn run_server() -> std::io::Result<()> {
     // Initialize tracing
     tracing_subscriber::registry()
         .with(
@@ -43,7 +54,7 @@ async fn main() -> std::io::Result<()> {
     dotenvy::dotenv().ok();
     let config = AppConfig::from_env().map_err(|e| {
         error!("Failed to load configuration: {}", e);
-        std::io::Error::new(std::io::ErrorKind::Other, e)
+        std::io::Error::other(e)
     })?;
 
     info!("Starting Football Heritage Betting API Server");
@@ -72,7 +83,7 @@ async fn main() -> std::io::Result<()> {
         .await
         .map_err(|e| {
             error!("Failed to connect to database: {}", e);
-            std::io::Error::new(std::io::ErrorKind::Other, "Database connection failed")
+            std::io::Error::other("Database connection failed")
         })?;
 
     info!("Database connection pool initialized successfully");
@@ -89,7 +100,7 @@ async fn main() -> std::io::Result<()> {
             .await
             .map_err(|e| {
                 error!("Failed to run database migrations: {}", e);
-                std::io::Error::new(std::io::ErrorKind::Other, "Migration failed")
+                std::io::Error::other("Migration failed")
             })?;
     }
 
@@ -103,49 +114,44 @@ async fn main() -> std::io::Result<()> {
 
     // Initialize auth service (Clone-able, shared across all handlers and middleware)
     let config_arc = std::sync::Arc::new(config.clone());
-    let auth_service = auth::AuthService::new(config_arc);
+    let auth_service = auth::AuthService::new(config_arc).with_database(db_pool.clone());
     let ai_picks_service = handlers::ai_picks::AiPicksService::from_env().map_err(|e| {
         error!("Failed to initialize AI Picks service: {}", e);
-        std::io::Error::new(
-            std::io::ErrorKind::Other,
-            "AI Picks client initialization failed",
-        )
+        std::io::Error::other("AI Picks client initialization failed")
     })?;
-    let rag_agent = web::Data::new(rag::RagAgent::from_env().map_err(|_| {
-        std::io::Error::new(
-            std::io::ErrorKind::Other,
-            "RAG agent configuration is invalid",
-        )
-    })?);
+    let rag_agent = web::Data::new(
+        rag::RagAgent::from_env()
+            .map_err(|_| std::io::Error::other("RAG agent configuration is invalid"))?,
+    );
 
     // Initialize TLS configuration if HTTPS is enabled
     let tls_config = if config.https_enabled {
         Some({
             let cert_file = std::fs::File::open(&config.tls_cert_path).map_err(|e| {
                 error!("Failed to read TLS certificate: {}", e);
-                std::io::Error::new(std::io::ErrorKind::Other, "TLS certificate error")
+                std::io::Error::other("TLS certificate error")
             })?;
             let mut cert_reader = std::io::BufReader::new(cert_file);
             let certs: Vec<CertificateDer> = rustls_pemfile::certs(&mut cert_reader)
                 .collect::<Result<Vec<_>, _>>()
                 .map_err(|e| {
                     error!("Failed to parse certificates: {}", e);
-                    std::io::Error::new(std::io::ErrorKind::Other, "Certificate parse error")
+                    std::io::Error::other("Certificate parse error")
                 })?;
 
             let key_file = std::fs::File::open(&config.tls_key_path).map_err(|e| {
                 error!("Failed to read TLS private key: {}", e);
-                std::io::Error::new(std::io::ErrorKind::Other, "TLS key error")
+                std::io::Error::other("TLS key error")
             })?;
             let mut key_reader = std::io::BufReader::new(key_file);
             let key = rustls_pemfile::private_key(&mut key_reader)
                 .map_err(|e| {
                     error!("Failed to parse private key: {}", e);
-                    std::io::Error::new(std::io::ErrorKind::Other, "Private key parse error")
+                    std::io::Error::other("Private key parse error")
                 })?
                 .ok_or_else(|| {
                     error!("No private key found in TLS key file");
-                    std::io::Error::new(std::io::ErrorKind::Other, "No TLS private key")
+                    std::io::Error::other("No TLS private key")
                 })?;
 
             rustls::ServerConfig::builder()
@@ -153,13 +159,21 @@ async fn main() -> std::io::Result<()> {
                 .with_single_cert(certs, key)
                 .map_err(|e| {
                     error!("Failed to create TLS configuration: {}", e);
-                    std::io::Error::new(std::io::ErrorKind::Other, "TLS configuration error")
+                    std::io::Error::other("TLS configuration error")
                 })?
         })
     } else {
         None
     };
 
+    let workers = match std::env::var("HTTP_WORKERS") {
+        Ok(value) => value
+            .parse::<usize>()
+            .ok()
+            .filter(|count| *count > 0)
+            .ok_or_else(|| std::io::Error::other("HTTP_WORKERS must be positive"))?,
+        Err(_) => num_cpus::get() * 2,
+    };
     let bind_addr = format!("{}:{}", config.host, config.port);
 
     info!("Starting server on {}", bind_addr);
@@ -188,10 +202,16 @@ async fn main() -> std::io::Result<()> {
                 actix_web::http::header::AUTHORIZATION,
                 actix_web::http::header::CONTENT_TYPE,
                 actix_web::http::header::ACCEPT,
+                actix_web::http::header::HeaderName::from_static("idempotency-key"),
             ])
             .expose_headers(vec![
                 actix_web::http::header::AUTHORIZATION,
                 actix_web::http::header::CONTENT_TYPE,
+                actix_web::http::header::HeaderName::from_static("x-gateway-pending"),
+                actix_web::http::header::HeaderName::from_static("x-data-source"),
+                actix_web::http::header::HeaderName::from_static("x-generated-at"),
+                actix_web::http::header::HeaderName::from_static("x-fresh-until"),
+                actix_web::http::header::RETRY_AFTER,
             ])
             .supports_credentials()
             .max_age(3600);
@@ -216,6 +236,10 @@ async fn main() -> std::io::Result<()> {
             .wrap(crate::middleware::security_headers::SecurityHeaders)
             .service(
                 web::scope("/api/v1")
+                    .route(
+                        "/predictions/{match_id}",
+                        web::get().to(published::prediction),
+                    )
                     .route("/me/features", web::get().to(features::effective))
                     .route(
                         "/pipeline/{tail:.*}",
@@ -420,14 +444,10 @@ async fn main() -> std::io::Result<()> {
     if let Some(tls) = tls_config {
         server
             .bind_rustls_0_23(bind_addr, tls)?
-            .workers(num_cpus::get() * 2)
+            .workers(workers)
             .run()
             .await
     } else {
-        server
-            .bind(bind_addr)?
-            .workers(num_cpus::get() * 2)
-            .run()
-            .await
+        server.bind(bind_addr)?.workers(workers).run().await
     }
 }

@@ -19,7 +19,7 @@ from models.sport_predict import candidate_directory
 from scripts.record_edge_trial import run as record_trial
 from scripts.refresh_paper_trial import collect_results
 from scripts.sync_verified_odds import sync
-from scripts.sync_bookmaker_grid import sync_grid
+from scripts.sync_bookmaker_grid import sync_grid, capture_cache_rejections
 
 
 def continue_frozen_trial(capture, audit, day, stamp):
@@ -41,7 +41,9 @@ def continue_frozen_trial(capture, audit, day, stamp):
     seen = {result_key(row['home'], row['away'], row['kickoff'])
             for trial in trials for row in trial['fixtures']}
     records = [json.loads(line) for line in (capture/'odds_snapshots.jsonl').read_text().splitlines() if line]
+    rejected = capture_cache_rejections(capture)
     records = [row for row in records if row['bookmaker'] == 'bovada'
+        and row['bookmaker'] not in rejected
         and row.get('country') == 'England' and row.get('competition') == 'Premier League'
         and row['commence_time'].startswith(day)
         and result_key(row['home_team'], row['away_team'], row['commence_time']) not in seen]
@@ -137,12 +139,16 @@ def main():
     stamp = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
     day = datetime.now(timezone.utc).date().isoformat()
     capture = RAW_DATA_DIR/'sportsbooks'/stamp
-    targets = BASE_DIR.parent/'stages/03-build/output/regional-live-targets.json'
+    targets = BASE_DIR.parent/'_config/bookmakers.json'
     audit = PROCESSED_DATA_DIR/'regional_audits'
     audit.mkdir(exist_ok=True)
     report = {'capture': str(capture), 'errors': {}}
     try:
-        subprocess.run([sys.executable,'-m','etl.scrape_sportsbooks','--targets',str(targets),'--output-dir',str(capture)],check=True)
+        collector_python = BASE_DIR/'.venv-scrapling/Scripts/python.exe'
+        if not collector_python.exists():
+            raise FileNotFoundError('Scrapling environment unavailable')
+        subprocess.run([str(collector_python),'-m','etl.scrape_sportsbooks',
+            '--transport','scrapling','--targets',str(targets),'--output-dir',str(capture)],check=True)
         report['bookmaker_grid'] = sync_grid(capture, apply=True)
         report.update(sync(capture,day,audit/(stamp+'_ingestion.json'),apply=True))
         report['trial_continuation'] = continue_upcoming_trials(capture,audit,day,stamp)
@@ -169,6 +175,14 @@ def main():
     except (OSError, subprocess.SubprocessError) as exc:
         report['errors']['nba_public_odds'] = type(exc).__name__
     from etl.betting_intel import refresh as refresh_intelligence
+    from models.predict_football_leagues import REGISTRY, predict as predict_leagues
+    if REGISTRY.exists():
+        try:
+            league_run = MODEL_DIR/'league_models'/json.loads(REGISTRY.read_text(encoding='utf-8'))['run_directory']
+            league_forecasts = predict_leagues(league_run, publish=True)
+            report['league_forecasts'] = league_forecasts['coverage']
+        except (OSError, ValueError, KeyError, RuntimeError, SQLAlchemyError) as exc:
+            report['errors']['league_forecasts'] = type(exc).__name__
     try:
         report['betting_intelligence'] = refresh_intelligence()
     except (OSError, ValueError, RuntimeError, SQLAlchemyError) as exc:

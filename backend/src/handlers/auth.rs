@@ -92,6 +92,7 @@ pub async fn register(
         .to_string();
 
     // Create user
+    let mut transaction = pool.begin().await?;
     let user_id = Uuid::new_v4();
     let user = sqlx::query_as::<_, User>(
         r#"
@@ -105,10 +106,10 @@ pub async fn register(
     .bind(&password_hash)
     .bind(&body.first_name)
     .bind(&body.last_name)
-    .bind(&body.date_of_birth)
+    .bind(body.date_of_birth)
     .bind(&body.phone)
     .bind(&body.address)
-    .fetch_one(pool.as_ref())
+    .fetch_one(&mut *transaction)
     .await
     .map_err(|e| {
         error!("Failed to create user: {}", e);
@@ -130,7 +131,7 @@ pub async fn register(
     .bind(user_id)
     .bind(&encrypted_balance)
     .bind(&iv)
-    .execute(pool.as_ref())
+    .execute(&mut *transaction)
     .await
     .map_err(|e| {
         error!("Failed to create wallet: {}", e);
@@ -153,23 +154,30 @@ pub async fn register(
     .bind(config.default_weekly_loss_limit)
     .bind(config.default_monthly_loss_limit)
     .bind(config.default_max_single_bet)
-    .execute(pool.as_ref())
+    .execute(&mut *transaction)
     .await
     .map_err(|e| {
         error!("Failed to create gambling limits: {}", e);
         AppError::Database(e)
     })?;
 
-    info!("User registered successfully: {}", user.email);
-
-    monitoring.record_registration().await;
-
     // Generate JWT token
     let session_id = generate_session_id();
     let user_agent = extract_user_agent(&req);
 
-    auth_service.create_session(&user, &session_id, &ip_address, &user_agent);
+    auth_service
+        .create_session_in_transaction(
+            &mut transaction,
+            &user,
+            &session_id,
+            &ip_address,
+            &user_agent,
+        )
+        .await?;
     let token = auth_service.generate_token(&user, &session_id)?;
+    transaction.commit().await?;
+    info!(user_id = %user.id, "User registered successfully");
+    monitoring.record_registration().await;
 
     Ok(HttpResponse::Created().json(AuthResponse {
         token,
@@ -209,6 +217,9 @@ pub async fn login(
         .ok_or_else(|| AppError::Authentication("Invalid credentials".to_string()))?;
 
     // Check if account is locked
+    if !user.is_active {
+        return Err(AppError::Authentication("Invalid credentials".to_string()));
+    }
     if let Some(locked_until) = user.locked_until {
         if locked_until > Utc::now() {
             return Err(AppError::AccountLocked);
@@ -226,49 +237,59 @@ pub async fn login(
         .verify_password(body.password.as_bytes(), &parsed_hash)
         .is_err()
     {
-        // Increment failed login attempts
+        let lock_minutes = i64::try_from(config.account_lock_minutes)
+            .map_err(|_| AppError::Configuration("Invalid account lock duration".into()))?;
+        // The threshold is evaluated against the locked database row, not the
+        // stale user snapshot read before another instance's password check.
         sqlx::query(
-            "UPDATE users SET failed_login_attempts = failed_login_attempts + 1, updated_at = NOW() WHERE id = $1"
+            "UPDATE users SET failed_login_attempts=failed_login_attempts+1,
+            locked_until=CASE WHEN failed_login_attempts+1 >= $2
+                THEN NOW()+($3 * INTERVAL '1 minute') ELSE locked_until END,
+            updated_at=NOW() WHERE id=$1",
         )
         .bind(user.id)
+        .bind(i64::from(config.max_login_attempts))
+        .bind(lock_minutes)
         .execute(pool.as_ref())
-        .await
-        .ok();
-
-        // Lock account if max attempts exceeded
-        if user.failed_login_attempts + 1 >= config.max_login_attempts as i32 {
-            let lock_duration = chrono::Duration::minutes(config.account_lock_minutes as i64);
-            sqlx::query("UPDATE users SET locked_until = $1, updated_at = NOW() WHERE id = $2")
-                .bind(Utc::now() + lock_duration)
-                .bind(user.id)
-                .execute(pool.as_ref())
-                .await
-                .ok();
-        }
+        .await?;
 
         return Err(AppError::Authentication("Invalid credentials".to_string()));
     }
 
     // Reset failed login attempts and update last login
-    sqlx::query(
-        "UPDATE users SET failed_login_attempts = 0, login_count = login_count + 1, last_login = NOW(), updated_at = NOW() WHERE id = $1"
+    let mut transaction = pool.begin().await?;
+    let updated = sqlx::query(
+        "UPDATE users SET failed_login_attempts = 0, login_count = login_count + 1, last_login = NOW(), updated_at = NOW()
+         WHERE id = $1 AND is_active AND (locked_until IS NULL OR locked_until<=NOW())"
     )
     .bind(user.id)
-    .execute(pool.as_ref())
+    .execute(&mut *transaction)
     .await
     .map_err(|e| {
         error!("Failed to update user login info: {}", e);
         AppError::Database(e)
     })?;
 
-    info!("User logged in successfully: {}", user.email);
+    if updated.rows_affected() != 1 {
+        return Err(AppError::Authentication("Account is unavailable".into()));
+    }
 
     // Generate JWT token
     let session_id = generate_session_id();
     let user_agent = extract_user_agent(&req);
 
-    auth_service.create_session(&user, &session_id, &ip_address, &user_agent);
+    auth_service
+        .create_session_in_transaction(
+            &mut transaction,
+            &user,
+            &session_id,
+            &ip_address,
+            &user_agent,
+        )
+        .await?;
     let token = auth_service.generate_token(&user, &session_id)?;
+    transaction.commit().await?;
+    info!(user_id = %user.id, "User logged in successfully");
 
     Ok(HttpResponse::Ok().json(AuthResponse {
         token,
@@ -296,8 +317,12 @@ pub async fn logout(
         .and_then(|header| header.to_str().ok())
         .and_then(|value| value.strip_prefix("Bearer "))
     {
-        if let Ok(claims) = auth_service.validate_token(token.trim()) {
-            auth_service.invalidate_session(&claims.session_id);
+        match auth_service.validate_request_token(token.trim()).await {
+            Ok(claims) => auth_service.revoke_request_session(&claims).await?,
+            Err(AppError::Database(_)) => return Ok(HttpResponse::ServiceUnavailable().json(
+                serde_json::json!({"error":{"code":"AUTH_STORAGE_UNAVAILABLE","message":"Logout could not be verified. Try again."}})
+            )),
+            Err(_) => {},
         }
     }
     Ok(HttpResponse::Ok().json(serde_json::json!({

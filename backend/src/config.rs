@@ -180,7 +180,9 @@ impl AppConfig {
             {
                 return Err(anyhow::anyhow!("Production ALLOWED_ORIGINS must contain exact HTTPS origins without trailing slashes"));
             }
-            if env::var("PIPELINE_INTERNAL_TOKEN").map_or(true, |s| s.len() < 32) {
+            if env::var_os("PUBLICATION_STREAM_ID").is_none()
+                && env::var("PIPELINE_INTERNAL_TOKEN").map_or(true, |s| s.len() < 32)
+            {
                 return Err(anyhow::anyhow!(
                     "Production PIPELINE_INTERNAL_TOKEN must contain at least 32 bytes"
                 ));

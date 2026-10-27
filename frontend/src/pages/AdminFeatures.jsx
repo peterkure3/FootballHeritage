@@ -1,4 +1,12 @@
 import { useState } from "react";
+import {
+  Layers3,
+  CheckCircle2,
+  ShieldAlert,
+  Wrench,
+  ArrowDown,
+  ShieldCheck,
+} from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { makeRequest } from "../utils/api";
 import { FeatureGrid, FeatureFilters } from "../features/FeatureControls";
@@ -79,15 +87,26 @@ export default function AdminFeatures() {
     if (!mutation.isPending) setPending(null);
   };
   return (
-    <section className="feature-workspace">
-      <header>
-        <p>Platform controls</p>
-        <h1>Feature Management</h1>
-        <p>
-          Global and emergency restrictions apply to every account, including
-          administrators.
-        </p>
+    <section className="feature-workspace admin-page">
+      <header className="feature-page-heading">
+        <div>
+          <p className="admin-eyebrow">Workspace / Platform controls</p>
+          <h1>Feature Management</h1>
+          <p>Manage what’s available, who can access it, and when.</p>
+        </div>
+        <a className="admin-button" href="#feature-audit-history">
+          <ArrowDown size={15} aria-hidden="true" /> View audit history
+        </a>
       </header>
+      <FeatureOverview features={features} ready={flags.isSuccess} />
+      <div className="feature-policy-note">
+        <ShieldCheck size={19} aria-hidden="true" />
+        <p>
+          <strong>Global rules come first.</strong> Global and emergency
+          restrictions apply to every account, including administrators. Changes
+          require confirmation and are recorded in the audit history.
+        </p>
+      </div>
       <FeatureFeedback flags={flags} access={access} mutation={mutation} />
       <FeatureErrors queries={[flags, users, access, audit]} />
       <FeatureFilters
@@ -101,6 +120,7 @@ export default function AdminFeatures() {
         selectedUser={selectedUser}
         setSelectedUser={setSelectedUser}
         users={userList(users)}
+        usersLoading={users.isFetching}
       />
       <FeatureGrid
         features={features}
@@ -110,6 +130,12 @@ export default function AdminFeatures() {
         {...userAccess}
         busy={mutation.isPending}
         confirm={confirm}
+        loading={flags.isPending}
+        failed={flags.isError}
+        clearFilters={() => {
+          setSearch("");
+          setCategory("");
+        }}
       />
       <FeatureHistory
         rows={auditRows(audit)}
@@ -123,6 +149,60 @@ export default function AdminFeatures() {
         cancel={cancel}
       />
     </section>
+  );
+}
+
+function FeatureOverview({ features, ready }) {
+  const controls = features.filter((flag) => flag.key !== "maintenance");
+  const maintenance = features.find((flag) => flag.key === "maintenance");
+  const items = [
+    {
+      label: "Product features",
+      value: controls.length,
+      detail: "Across the platform",
+      Icon: Layers3,
+      tone: "neutral",
+    },
+    {
+      label: "Globally enabled",
+      value: controls.filter((flag) => flag.enabled && !flag.emergency_disabled)
+        .length,
+      detail: "Subject to role & user rules",
+      Icon: CheckCircle2,
+      tone: "green",
+    },
+    {
+      label: "Emergency restrictions",
+      value: controls.filter((flag) => flag.emergency_disabled).length,
+      detail: "Access paused for all accounts",
+      Icon: ShieldAlert,
+      tone: "amber",
+    },
+    {
+      label: "Maintenance mode",
+      value: maintenance
+        ? maintenance.enabled || maintenance.emergency_disabled
+          ? "Active"
+          : "Off"
+        : "Not configured",
+      detail: "Platform-wide maintenance",
+      Icon: Wrench,
+      tone: "neutral",
+    },
+  ];
+  return (
+    <div className="feature-overview" aria-label="Feature overview">
+      {items.map((item) => (
+        <div className={`feature-metric ${item.tone}`} key={item.label}>
+          <div>
+            <span>{item.label}</span>
+            <item.Icon size={18} aria-hidden="true" />
+          </div>
+          <strong>{ready ? item.value : "—"}</strong>
+          <small>{item.detail}</small>
+        </div>
+      ))}
+    </div>
   );
 }
 
@@ -145,13 +225,21 @@ function auditRows(query) {
 function FeatureFeedback({ flags, access, mutation }) {
   return (
     <>
-      {flags.isPending && <p role="status">Loading features...</p>}
+      {flags.isPending && (
+        <p className="feature-feedback" role="status">
+          Loading features...
+        </p>
+      )}
       {mutation.isSuccess && (
-        <p role="status">
+        <p className="feature-feedback success" role="status">
           Feature access updated and recorded in audit history.
         </p>
       )}
-      {access.isFetching && <p role="status">Loading user access...</p>}
+      {access.isFetching && (
+        <p className="feature-feedback" role="status">
+          Loading user access...
+        </p>
+      )}
     </>
   );
 }

@@ -28,7 +28,9 @@ function FixtureToolbar({ filters, setFilters, feed }) {
           >
             <option value="">All competitions</option>
             {competitions.map((league) => (
-              <option key={league}>{league}</option>
+              <option key={league} value={league}>
+                {feed.data?.competition_labels?.[league] ?? league}
+              </option>
             ))}
           </select>
         </label>
@@ -66,7 +68,7 @@ function FixtureList({ data, filters, setFilters, busy, comparison }) {
         <span>
           <strong>{data.total_count}</strong> upcoming fixtures
         </span>
-        <span>Soccer · active v{data.active_model_version}</span>
+        <span>Soccer · league models / active v{data.active_model_version}</span>
         <span>Updated {new Date(data.generated_at).toLocaleTimeString()}</span>
       </div>
       {comparison ? (
@@ -164,8 +166,8 @@ export default function Predictions() {
           <Layers3 size={25} />
           <strong>Models, with context.</strong>
           <p>
-            Live fixtures use the active soccer model. Explore independent sport
-            candidates in the model lab.
+            Fixtures show evaluated league forecasts where available, alongside
+            the active soccer model. Explore sport candidates in the model lab.
           </p>
         </div>
       </header>

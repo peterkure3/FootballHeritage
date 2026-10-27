@@ -46,3 +46,6 @@ dist-ssr
 certs/
 ssl/
 tls/
+
+.vercel
+.env*

@@ -1,4 +1,4 @@
-use actix_web::{web, HttpResponse};
+use actix_web::{web, HttpRequest, HttpResponse};
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use sqlx::{PgPool, Postgres, QueryBuilder};
@@ -38,9 +38,22 @@ pub struct DeviggedOddsQuery {
 }
 
 pub async fn get_devigged_odds(
+    req: HttpRequest,
     pool: web::Data<PgPool>,
     query: web::Query<DeviggedOddsQuery>,
 ) -> AppResult<HttpResponse> {
+    if std::env::var("APP_ENV").is_ok_and(|v| v != "development")
+        || std::env::var_os("PUBLICATION_STREAM_ID").is_some()
+    {
+        return Ok(crate::durable_gateway::serve_path(
+            req,
+            web::Bytes::new(),
+            pool,
+            "intelligence/devigged-odds",
+        )
+        .await
+        .unwrap_or_else(|error| actix_web::ResponseError::error_response(&error)));
+    }
     let mut qb: QueryBuilder<Postgres> = QueryBuilder::new(
         "SELECT d.id, d.event_id, d.pipeline_match_id, e.home_team as event_home_team, e.away_team as event_away_team, e.event_date as event_date, d.bookmaker, d.market, d.outcome_a, d.outcome_b, d.odds_a, d.odds_b, d.fair_prob_a, d.fair_prob_b, d.vig, d.source_updated_at, d.created_at FROM devigged_odds d LEFT JOIN events e ON e.id = d.event_id",
     );
@@ -113,9 +126,22 @@ pub struct EvBetsQuery {
 }
 
 pub async fn get_ev_bets(
+    req: HttpRequest,
     pool: web::Data<PgPool>,
     query: web::Query<EvBetsQuery>,
 ) -> AppResult<HttpResponse> {
+    if std::env::var("APP_ENV").is_ok_and(|v| v != "development")
+        || std::env::var_os("PUBLICATION_STREAM_ID").is_some()
+    {
+        return Ok(crate::durable_gateway::serve_path(
+            req,
+            web::Bytes::new(),
+            pool,
+            "intelligence/ev-bets",
+        )
+        .await
+        .unwrap_or_else(|error| actix_web::ResponseError::error_response(&error)));
+    }
     let mut qb: QueryBuilder<Postgres> = QueryBuilder::new(
         "SELECT b.id, b.event_id, b.pipeline_match_id, e.home_team as event_home_team, e.away_team as event_away_team, e.event_date as event_date, e.league as league, b.bookmaker, b.market, b.selection, b.odds, b.stake, b.true_probability, b.expected_value, b.expected_value_pct, b.source_updated_at, b.created_at FROM ev_bets b LEFT JOIN events e ON e.id = b.event_id",
     );
@@ -200,9 +226,22 @@ pub struct ArbitrageQuery {
 }
 
 pub async fn get_arbitrage(
+    req: HttpRequest,
     pool: web::Data<PgPool>,
     query: web::Query<ArbitrageQuery>,
 ) -> AppResult<HttpResponse> {
+    if std::env::var("APP_ENV").is_ok_and(|v| v != "development")
+        || std::env::var_os("PUBLICATION_STREAM_ID").is_some()
+    {
+        return Ok(crate::durable_gateway::serve_path(
+            req,
+            web::Bytes::new(),
+            pool,
+            "intelligence/arbitrage",
+        )
+        .await
+        .unwrap_or_else(|error| actix_web::ResponseError::error_response(&error)));
+    }
     let mut qb: QueryBuilder<Postgres> = QueryBuilder::new(
         "SELECT a.id, a.event_id, a.pipeline_match_id, e.home_team as event_home_team, e.away_team as event_away_team, e.event_date as event_date, a.market, a.selection_a, a.selection_b, a.book_a, a.book_b, a.odds_a, a.odds_b, a.arb_percentage, a.total_stake, a.stake_a, a.stake_b, a.source_updated_at, a.created_at FROM arbitrage a LEFT JOIN events e ON e.id = a.event_id",
     );
@@ -271,7 +310,26 @@ fn python_command() -> Command {
 /// POST /api/v1/intelligence/refresh
 ///
 /// Triggers the compute_intelligence pipeline script to refresh EV bets, devigged odds, and arbitrage data.
-pub async fn refresh_intelligence() -> HttpResponse {
+pub async fn refresh_intelligence(
+    req: HttpRequest,
+    pool: web::Data<PgPool>,
+) -> Result<HttpResponse, crate::features::FeatureError> {
+    crate::features::administrator(&req, &pool).await?;
+    if std::env::var("APP_ENV").is_ok_and(|v| v != "development")
+        || std::env::var_os("PUBLICATION_STREAM_ID").is_some()
+    {
+        return crate::durable_gateway::serve_path(
+            req,
+            web::Bytes::new(),
+            pool,
+            "intelligence/refresh",
+        )
+        .await;
+    }
+    Ok(refresh_intelligence_locally())
+}
+
+fn refresh_intelligence_locally() -> HttpResponse {
     // Run the compute_intelligence script from the pipeline directory
     let pipeline_dir = std::env::var("PIPELINE_DIR").unwrap_or_else(|_| "../pipeline".to_string());
 

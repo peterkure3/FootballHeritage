@@ -73,8 +73,7 @@ impl SimpleBettingService {
             user_id,
             wallet_id,
             &bet_request.amount,
-            &current_balance,
-            &new_balance,
+            (&current_balance, &new_balance),
             bet.id,
         )
         .await?;
@@ -93,7 +92,6 @@ impl SimpleBettingService {
         // Step 12: Run fraud detection asynchronously (after commit)
         tokio::spawn({
             let pool = pool.clone();
-            let user_id = user_id;
             let amount = bet_request.amount.clone();
             async move {
                 if let Err(e) = Self::detect_fraud_patterns(&pool, user_id, &amount).await {
@@ -432,8 +430,7 @@ impl SimpleBettingService {
         user_id: Uuid,
         wallet_id: Uuid,
         amount: &BigDecimal,
-        balance_before: &BigDecimal,
-        balance_after: &BigDecimal,
+        balances: (&BigDecimal, &BigDecimal),
         bet_id: Uuid,
     ) -> AppResult<()> {
         let metadata = serde_json::json!({
@@ -455,9 +452,9 @@ impl SimpleBettingService {
         .bind(user_id)
         .bind(wallet_id)
         .bind(amount)
-        .bind(balance_before)
-        .bind(balance_after)
-        .bind(format!("Bet placed on event"))
+        .bind(balances.0)
+        .bind(balances.1)
+        .bind("Bet placed on event".to_string())
         .bind(&metadata)
         .execute(&mut **tx)
         .await

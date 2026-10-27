@@ -12,6 +12,7 @@ pub struct AuthService {
     config: Arc<AppConfig>,
     jwt_secret: String,
     active_sessions: Arc<DashMap<String, SessionInfo>>,
+    database: Option<sqlx::PgPool>,
 }
 
 #[derive(Debug, Clone)]
@@ -32,6 +33,79 @@ impl AuthService {
             jwt_secret: config.jwt_secret.clone(),
             config,
             active_sessions: Arc::new(DashMap::new()),
+            database: None,
+        }
+    }
+
+    pub fn with_database(mut self, pool: sqlx::PgPool) -> Self {
+        self.database = Some(pool);
+        self
+    }
+
+    #[cfg(test)]
+    pub async fn create_persistent_session(
+        &self,
+        user: &User,
+        session_id: &str,
+        ip_address: &str,
+        user_agent: &str,
+    ) -> AppResult<()> {
+        if let Some(pool) = &self.database {
+            crate::sessions::create(
+                pool,
+                user,
+                session_id,
+                ip_address,
+                user_agent,
+                self.config.jwt_expiration_hours,
+            )
+            .await
+        } else {
+            self.create_session(user, session_id, ip_address, user_agent);
+            Ok(())
+        }
+    }
+
+    pub async fn validate_request_token(&self, token: &str) -> AppResult<Claims> {
+        if let Some(pool) = &self.database {
+            let claims = self.decode_token(token)?;
+            crate::sessions::validate(pool, &claims, self.config.session_timeout_minutes).await?;
+            Ok(claims)
+        } else {
+            self.validate_token(token)
+        }
+    }
+
+    pub async fn create_session_in_transaction(
+        &self,
+        connection: &mut sqlx::PgConnection,
+        user: &User,
+        session_id: &str,
+        ip_address: &str,
+        user_agent: &str,
+    ) -> AppResult<()> {
+        if self.database.is_some() {
+            crate::sessions::create(
+                connection,
+                user,
+                session_id,
+                ip_address,
+                user_agent,
+                self.config.jwt_expiration_hours,
+            )
+            .await
+        } else {
+            self.create_session(user, session_id, ip_address, user_agent);
+            Ok(())
+        }
+    }
+
+    pub async fn revoke_request_session(&self, claims: &Claims) -> AppResult<()> {
+        if let Some(pool) = &self.database {
+            crate::sessions::revoke(pool, claims).await
+        } else {
+            self.invalidate_session(&claims.session_id);
+            Ok(())
         }
     }
 
@@ -54,22 +128,30 @@ impl AuthService {
         let header = Header::default();
         let key = EncodingKey::from_secret(self.jwt_secret.as_ref());
 
-        encode(&header, &claims, &key).map_err(|e| AppError::JWT(e))
+        encode(&header, &claims, &key).map_err(AppError::Jwt)
     }
 
     /// Validate and decode JWT token
     pub fn validate_token(&self, token: &str) -> AppResult<Claims> {
+        let claims = self.decode_token(token)?;
+        // This synchronous helper cannot query durable storage. Fail closed
+        // if a runtime caller accidentally uses it on a database-backed service.
+        if self.database.is_some() {
+            return Err(AppError::SessionExpired);
+        }
+        self.ensure_active_session(&claims)?;
+        Ok(claims)
+    }
+
+    fn decode_token(&self, token: &str) -> AppResult<Claims> {
         let key = DecodingKey::from_secret(self.jwt_secret.as_ref());
         let mut validation = Validation::default();
         validation.set_issuer(&["football-heritage-api"]);
         validation.set_audience(&["football-heritage-client"]);
         validation.set_required_spec_claims(&["exp", "sub"]);
 
-        let token_data =
-            decode::<Claims>(token, &key, &validation).map_err(|e| AppError::JWT(e))?;
+        let token_data = decode::<Claims>(token, &key, &validation).map_err(AppError::Jwt)?;
         let claims = token_data.claims;
-
-        self.ensure_active_session(&claims)?;
 
         Ok(claims)
     }
@@ -240,7 +322,7 @@ impl AuthService {
 
         let mut token_bytes = [0u8; 32];
         thread_rng().fill_bytes(&mut token_bytes);
-        format!("refresh_{}", general_purpose::STANDARD.encode(&token_bytes))
+        format!("refresh_{}", general_purpose::STANDARD.encode(token_bytes))
     }
 
     /// Validate refresh token format
@@ -290,7 +372,7 @@ impl AuthService {
 
         let mut token_bytes = [0u8; 32];
         thread_rng().fill_bytes(&mut token_bytes);
-        format!("reset_{}", general_purpose::STANDARD.encode(&token_bytes))
+        format!("reset_{}", general_purpose::STANDARD.encode(token_bytes))
     }
 
     /// Validate password reset token format
@@ -307,7 +389,7 @@ impl AuthService {
 
         let mut token_bytes = [0u8; 32];
         thread_rng().fill_bytes(&mut token_bytes);
-        format!("verify_{}", general_purpose::STANDARD.encode(&token_bytes))
+        format!("verify_{}", general_purpose::STANDARD.encode(token_bytes))
     }
 
     /// Validate email verification token format
@@ -490,15 +572,4 @@ mod tests {
         auth_service.invalidate_session(session_id);
         assert!(auth_service.get_session(session_id).is_none());
     }
-}
-
-/// Standalone JWT verification function for use in handlers
-/// This is a convenience function that doesn't require AuthService
-pub fn verify_jwt(token: &str, secret: &str) -> AppResult<Claims> {
-    let key = DecodingKey::from_secret(secret.as_ref());
-    let validation = Validation::default();
-
-    let token_data = decode::<Claims>(token, &key, &validation).map_err(|e| AppError::JWT(e))?;
-
-    Ok(token_data.claims)
 }

@@ -46,6 +46,19 @@ pub struct UserActivity {
     pub win_rate: f64,
 }
 
+type ProfileRow = (
+    Uuid,
+    String,
+    String,
+    String,
+    NaiveDate,
+    Option<String>,
+    Option<String>,
+    bool,
+    Option<String>,
+    DateTime<Utc>,
+);
+
 pub async fn get_profile(req: HttpRequest, pool: web::Data<PgPool>) -> AppResult<HttpResponse> {
     let claims = get_user_claims(&req)
         .ok_or_else(|| AppError::Authentication("Unauthorized".to_string()))?;
@@ -53,7 +66,7 @@ pub async fn get_profile(req: HttpRequest, pool: web::Data<PgPool>) -> AppResult
     let user_id = Uuid::parse_str(&claims.sub)
         .map_err(|_| AppError::Authentication("Invalid user ID".to_string()))?;
 
-    let user: (Uuid, String, String, String, NaiveDate, Option<String>, Option<String>, bool, Option<String>, DateTime<Utc>) = sqlx::query_as(
+    let user: ProfileRow = sqlx::query_as(
         r#"
         SELECT id, email, first_name, last_name, date_of_birth, phone, address, is_verified, role, created_at
         FROM users

@@ -59,7 +59,7 @@ pub enum AppError {
     Encryption(String),
 
     #[error("JWT error: {0}")]
-    JWT(#[from] jsonwebtoken::errors::Error),
+    Jwt(#[from] jsonwebtoken::errors::Error),
 
     #[error("IO error: {0}")]
     IO(#[from] std::io::Error),
@@ -150,7 +150,7 @@ impl AppError {
                 "This event is no longer available for betting".to_string()
             }
             AppError::Encryption(_) => "Encryption error occurred".to_string(),
-            AppError::JWT(_) => "Authentication token error".to_string(),
+            AppError::Jwt(_) => "Authentication token error".to_string(),
             AppError::IO(_) => "File operation failed".to_string(),
             AppError::Configuration(_) => "Server configuration error".to_string(),
             AppError::AgeVerificationFailed => "You must be 21 or older to register".to_string(),
@@ -206,7 +206,7 @@ impl ResponseError for AppError {
             AppError::OddsChanged => StatusCode::CONFLICT,
             AppError::EventNotAvailable => StatusCode::GONE,
             AppError::Encryption(_) => StatusCode::INTERNAL_SERVER_ERROR,
-            AppError::JWT(_) => StatusCode::UNAUTHORIZED,
+            AppError::Jwt(_) => StatusCode::UNAUTHORIZED,
             AppError::IO(_) => StatusCode::INTERNAL_SERVER_ERROR,
             AppError::Configuration(_) => StatusCode::INTERNAL_SERVER_ERROR,
             AppError::AgeVerificationFailed => StatusCode::BAD_REQUEST,
@@ -245,7 +245,7 @@ impl AppError {
             AppError::OddsChanged => "ODDS_CHANGED",
             AppError::EventNotAvailable => "EVENT_NOT_AVAILABLE",
             AppError::Encryption(_) => "ENCRYPTION_ERROR",
-            AppError::JWT(_) => "JWT_ERROR",
+            AppError::Jwt(_) => "JWT_ERROR",
             AppError::IO(_) => "IO_ERROR",
             AppError::Configuration(_) => "CONFIGURATION_ERROR",
             AppError::AgeVerificationFailed => "AGE_VERIFICATION_FAILED",

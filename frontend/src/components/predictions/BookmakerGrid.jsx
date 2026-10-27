@@ -77,7 +77,7 @@ function formatValue(value, ev, odds) {
 
 function modelDescription(prediction) {
   if (!prediction) return "Current prediction unavailable";
-  return `Model v${prediction.model_version} · Generated ${timestamp(prediction.generated_at)} · ${prediction.status}`;
+  return `${prediction.model_kind === "evaluated_league_candidate" ? "Evaluated league model" : "Model"} v${prediction.model_version} · Generated ${timestamp(prediction.generated_at)} · ${prediction.status}`;
 }
 
 function quoteDescription(quote, outcome) {

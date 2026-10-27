@@ -18,7 +18,8 @@ class SportsbookScrapingTests(unittest.TestCase):
         directory = {'withRegions': [{'regions': [
             {'region': {'name': region}, 'competitions': [{'competition': {'name': league, 'id': identifier}}]}
             for region, league, identifier in [('England', 'Premier League', 'pl'),
-                ('International', 'UEFA Champions League', 'cl'), ('International', 'AFC Champions League', 'afc')]
+                ('International', 'UEFA Champions League', 'cl'), ('Spain', 'La Liga', 'pd'),
+                ('Germany', 'Bundesliga', 'bl'), ('International', 'AFC Champions League', 'afc')]
         ]}]}
         metadata = Mock(status_code=200, content=json.dumps(directory).encode())
         metadata.json.return_value = directory
@@ -29,8 +30,8 @@ class SportsbookScrapingTests(unittest.TestCase):
             (output / 'raw').mkdir()
             get_public_source('betpawa', response.url, output)
             queries = json.loads(request.call_args.kwargs['params']['q'])['queries']
-            self.assertEqual([q['query']['zones']['competitions'] for q in queries], [['pl'], ['cl']])
-            self.assertEqual([q['take'] for q in queries], [100, 100])
+            self.assertEqual([q['query']['zones']['competitions'] for q in queries], [['pl'], ['cl'], ['pd'], ['bl']])
+            self.assertEqual([q['take'] for q in queries], [100] * 4)
 
     def test_primary_feed_retries_transport_failure_but_not_access_denial(self):
         denied = Mock(status_code=403)

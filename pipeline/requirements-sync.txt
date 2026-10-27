@@ -1,0 +1,4 @@
+# Isolated transport environment; leaves ML dependency versions unchanged.
+psycopg2-binary>=2.9.11,<3
+python-dotenv>=1.0,<2
+httpx==0.28.1

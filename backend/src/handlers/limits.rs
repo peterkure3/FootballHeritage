@@ -35,20 +35,22 @@ pub struct SelfExcludeRequest {
     pub duration_days: i64,
 }
 
+type LimitsRow = (
+    Option<BigDecimal>,
+    Option<BigDecimal>,
+    Option<BigDecimal>,
+    Option<BigDecimal>,
+    Option<BigDecimal>,
+    Option<BigDecimal>,
+    Option<BigDecimal>,
+    Option<DateTime<Utc>>,
+);
+
 pub async fn get_limits(_req: HttpRequest, pool: web::Data<PgPool>) -> AppResult<HttpResponse> {
     // TODO: Extract user_id from JWT token
     let user_id = Uuid::new_v4();
 
-    let limits: (
-        Option<BigDecimal>,
-        Option<BigDecimal>,
-        Option<BigDecimal>,
-        Option<BigDecimal>,
-        Option<BigDecimal>,
-        Option<BigDecimal>,
-        Option<BigDecimal>,
-        Option<DateTime<Utc>>,
-    ) = sqlx::query_as(
+    let limits: LimitsRow = sqlx::query_as(
         r#"
         SELECT daily_bet_limit, weekly_bet_limit, monthly_bet_limit,
                daily_loss_limit, weekly_loss_limit, monthly_loss_limit,

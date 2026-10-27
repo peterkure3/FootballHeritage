@@ -19,6 +19,7 @@ sys.path.append(str(Path(__file__).parent.parent))
 from config import BASE_DIR, RAW_DATA_DIR, THE_ODDS_API_KEY, THE_ODDS_API_BASE_URL
 from etl.sportsbook_parsers import normalize_bovada
 from etl.scrapling_transport import RobotsDisallowed
+from football_competitions import LEAGUES, PUBLIC_LEAGUES
 from etl.regional_sportsbooks import normalize_ababet, normalize_fortebet, normalize_betpawa, normalize_sportpesa, normalize_betika, normalize_cloudbet, normalize_1xbet, normalize_22bet, normalize_betonline, normalize_bookmaker
 
 DIRECT_URLS = {
@@ -123,8 +124,7 @@ def get_public_source(book: str, url: str, output: Path, http=None) -> dict:
             ids = [competition['competition']['id'] for category in metadata.json().get('withRegions', [])
                    for region in category.get('regions', [])
                    for competition in region.get('competitions', [])
-                   if (region['region']['name'], competition['competition']['name']) in {
-                       ('England', 'Premier League'), ('International', 'UEFA Champions League')}]
+                   if (region['region']['name'], competition['competition']['name']) in PUBLIC_LEAGUES]
             if not ids or len(ids) != len(set(ids)):
                 return row | {'status':'ambiguous_competition_directory','observed_at':utc_now()}
             kwargs['params'] = {'q': json.dumps({'queries':[{'query':{'eventType':'UPCOMING','categories':['2'],
@@ -165,6 +165,8 @@ def get_public_source(book: str, url: str, output: Path, http=None) -> dict:
         row.update(http_status=response.status_code, observed_at=observed,
                    final_url=response.url, content_type=content_type,
                    bytes=len(response_body), raw_capture_ref=str(raw.relative_to(output)))
+        row['http_audit'] = [{'observed_at': observed, 'headers': {
+            key: response.headers.get(key) for key in ['Date', 'Age', 'Last-Modified']}}]
         if book == 'sportpesa':
             row['content_range'] = response.headers.get('Content-Range')
         if response.status_code in {401, 403, 451}:
@@ -347,7 +349,7 @@ def main() -> None:
     parser.add_argument("--provider-fallback", action="store_true")
     parser.add_argument("--provider-only", action="store_true", help="Collect mapped bookmaker feeds without repeating public-site requests")
     parser.add_argument("--normalize-run", type=Path, help="Normalize an existing capture without network requests")
-    parser.add_argument("--sports", nargs="+", default=["soccer_epl", "soccer_uefa_champs_league"])
+    parser.add_argument("--sports", nargs="+", default=[league[3] for league in LEAGUES])
     args = parser.parse_args()
     if args.normalize_run:
         print(json.dumps(normalize_saved_run(args.normalize_run), indent=2))

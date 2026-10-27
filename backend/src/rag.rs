@@ -46,6 +46,8 @@ pub struct Message {
 pub struct RagAgent {
     client: Client,
     predictions: Option<PgPool>,
+    published_mode: bool,
+    stream: Option<Uuid>,
     api_key: Option<String>,
     model: String,
     grounded_only: bool,
@@ -70,8 +72,11 @@ struct Prediction {
 
 impl RagAgent {
     pub fn from_env() -> anyhow::Result<Self> {
-        let predictions = std::env::var("RAG_DATABASE_URL")
-            .ok()
+        let published_mode = std::env::var("APP_ENV").is_ok_and(|value| value != "development")
+            || std::env::var_os("PUBLICATION_STREAM_ID").is_some();
+        let predictions = (!published_mode)
+            .then(|| std::env::var("RAG_DATABASE_URL").ok())
+            .flatten()
             .filter(|v| !v.trim().is_empty())
             .map(|url| {
                 PgPoolOptions::new()
@@ -97,6 +102,10 @@ impl RagAgent {
                 .timeout(Duration::from_secs(18))
                 .build()?,
             predictions,
+            published_mode,
+            stream: std::env::var("PUBLICATION_STREAM_ID")
+                .ok()
+                .and_then(|v| v.parse().ok()),
             api_key: std::env::var("RAG_GEMINI_API_KEY")
                 .or_else(|_| std::env::var("GEMINI_API_KEY"))
                 .ok()
@@ -118,17 +127,32 @@ impl RagAgent {
         let keywords = keywords(prompt);
         let query = keywords.join(" OR ");
         if !query.is_empty() {
-            match sqlx::query_as::<_, (String,String,String)>(
+            match tokio::time::timeout(Duration::from_secs(3), sqlx::query_as::<_, (String,String,String)>(
                 "SELECT source_id,title,content FROM ai_rag_documents WHERE search_vector @@ websearch_to_tsquery('english',$1) ORDER BY ts_rank_cd(search_vector,websearch_to_tsquery('english',$1)) DESC,source_id LIMIT 4"
-            ).bind(&query).fetch_all(pool).await {
-                Ok(rows) => for (source,title,content) in rows {
+            ).bind(&query).fetch_all(pool)).await {
+                Ok(Ok(rows)) => for (source,title,content) in rows {
                     evidence.push(json!({"id":format!("K{}",evidence.len()+1),"kind":"knowledge","source":source,"title":title,"content":content}));
                 },
-                Err(_) => tracing::warn!("RAG knowledge retrieval unavailable"),
+                _ => tracing::warn!("RAG knowledge retrieval unavailable"),
             }
         }
         let mut prediction_available = false;
-        if let Some(predictions) = &self.predictions {
+        if self.published_mode {
+            if let Some(stream) = self.stream {
+                match tokio::time::timeout(
+                    Duration::from_secs(10),
+                    published_predictions(pool, stream, messages),
+                )
+                .await
+                {
+                    Ok(Ok(Some(values))) => {
+                        prediction_available = true;
+                        evidence.extend(values);
+                    }
+                    _ => tracing::warn!("RAG published prediction retrieval unavailable"),
+                }
+            }
+        } else if let Some(predictions) = &self.predictions {
             let rows = sqlx::query_as::<_, Prediction>(r#"
                 SELECT m.match_id,m.home_team,m.away_team,m.competition,
                     m.date AT TIME ZONE 'UTC' AS match_date,
@@ -223,6 +247,55 @@ impl RagAgent {
             "model":if mode=="gemini_rag" {Some(&self.model)} else {None},"provider_status":provider_status,
             "prediction_evidence_available":prediction_available})
     }
+}
+
+async fn published_predictions(
+    pool: &PgPool,
+    stream: Uuid,
+    messages: &[Message],
+) -> Result<Option<Vec<Value>>, sqlx::Error> {
+    let mut candidates = Vec::new();
+    let result = crate::published_picks::visit_candidates(pool, stream, None, None, |mut value| {
+        // Apply conversation league/day filters before the bounded relevance window.
+        if select_predictions(messages, vec![value.clone()]).is_empty() {
+            return;
+        }
+        value["kind"] = json!("prediction");
+        value["source"] = json!(format!("published:{stream}:{}", value["record_key"].as_str().unwrap_or_default()));
+        value["stream_id"] = json!(stream);
+        value["freshness"] = json!({"state":"fresh","published_at":value["published_at"],
+            "generated_at":value["prediction_created_at"],"publication_version":value["publication_version"],
+            "max_evidence_age_hours":24});
+        retain_relevant(messages, &mut candidates, value);
+    }).await?;
+    Ok(result.map(|_| {
+        select_predictions(messages, candidates)
+            .into_iter()
+            .enumerate()
+            .map(|(index, mut value)| {
+                value["id"] = json!(format!("P{}", index + 1));
+                value
+            })
+            .collect()
+    }))
+}
+
+fn retain_relevant(messages: &[Message], candidates: &mut Vec<Value>, value: Value) {
+    candidates.push(value);
+    candidates.sort_by_cached_key(|pick| {
+        let scores: Vec<_> = messages
+            .iter()
+            .rev()
+            .filter(|m| m.role == "user")
+            .map(|m| std::cmp::Reverse(score_prediction(&m.content, pick)))
+            .collect();
+        (
+            scores,
+            pick["match_date"].as_str().unwrap_or_default().to_string(),
+            pick["match_id"].as_i64().unwrap_or_default(),
+        )
+    });
+    candidates.truncate(200);
 }
 
 fn keywords(query: &str) -> Vec<String> {
@@ -478,5 +551,27 @@ mod tests {
         assert!(reply.contains("60.0%"));
         assert!(reply.contains("No recent bookmaker quote"));
         assert!(reply.contains("[P1]"));
+    }
+
+    #[test]
+    fn bounded_retrieval_retains_named_teams_after_the_first_two_hundred_rows() {
+        let messages = vec![Message {
+            role: "user".into(),
+            content: "Explain TailClub".into(),
+        }];
+        let mut candidates = Vec::new();
+        for id in 0..350 {
+            retain_relevant(
+                &messages,
+                &mut candidates,
+                json!({"match_id":id,
+                "home_team":if id==349 {"TailClub"} else {"OtherClub"},
+                "away_team":"Visitors","match_date":"2026-11-01T12:00:00Z"}),
+            );
+        }
+        assert_eq!(candidates.len(), 200);
+        let selected = select_predictions(&messages, candidates);
+        assert_eq!(selected.len(), 1);
+        assert_eq!(selected[0]["match_id"], 349);
     }
 }

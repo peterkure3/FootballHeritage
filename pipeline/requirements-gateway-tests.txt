@@ -1,0 +1,5 @@
+-r requirements-model-tests.txt
+-r requirements-sync.txt
+joblib>=1.3,<2
+lightgbm>=4,<5
+xgboost>=2,<4

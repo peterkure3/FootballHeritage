@@ -121,7 +121,7 @@ impl CryptoService {
             .map_err(|e| AppError::Encryption(format!("Encryption failed: {}", e)))?;
 
         let encrypted_balance = general_purpose::STANDARD.encode(&ciphertext);
-        let iv = general_purpose::STANDARD.encode(&nonce_bytes);
+        let iv = general_purpose::STANDARD.encode(nonce_bytes);
 
         Ok((encrypted_balance, iv))
     }
@@ -164,7 +164,7 @@ impl CryptoService {
     pub fn generate_csrf_token(&self) -> String {
         let mut token_bytes = [0u8; 32];
         thread_rng().fill_bytes(&mut token_bytes);
-        general_purpose::STANDARD.encode(&token_bytes)
+        general_purpose::STANDARD.encode(token_bytes)
     }
 
     /// Verify CSRF token
@@ -196,7 +196,7 @@ impl CryptoService {
     pub fn generate_session_token(&self) -> String {
         let mut token_bytes = [0u8; 64];
         thread_rng().fill_bytes(&mut token_bytes);
-        general_purpose::STANDARD.encode(&token_bytes)
+        general_purpose::STANDARD.encode(token_bytes)
     }
 
     /// Create HMAC signature for sensitive data
@@ -263,7 +263,7 @@ impl CryptoService {
     pub fn generate_api_key(&self) -> String {
         let mut key_bytes = [0u8; 32];
         thread_rng().fill_bytes(&mut key_bytes);
-        format!("fh_{}", general_purpose::STANDARD.encode(&key_bytes))
+        format!("fh_{}", general_purpose::STANDARD.encode(key_bytes))
     }
 
     /// Obfuscate sensitive data for logging

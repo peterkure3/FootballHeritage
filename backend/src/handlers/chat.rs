@@ -9,8 +9,7 @@ use reqwest;
 use serde::{Deserialize, Serialize};
 use tracing::{error, info};
 
-use crate::auth::verify_jwt;
-use crate::config::AppConfig;
+use crate::auth::AuthService;
 use crate::errors::ApiError;
 
 // ============================================================================
@@ -61,7 +60,9 @@ pub struct ErrorResponse {
 pub async fn chat(
     req: HttpRequest,
     body: web::Json<ChatRequest>,
-    config: web::Data<AppConfig>,
+    auth_service: web::Data<AuthService>,
+    pool: web::Data<sqlx::PgPool>,
+    agent: web::Data<crate::rag::RagAgent>,
 ) -> Result<HttpResponse, ApiError> {
     // Extract and verify JWT token
     let auth_header = req
@@ -80,16 +81,17 @@ pub async fn chat(
     let token = &auth_header[7..]; // Skip "Bearer "
 
     // Verify JWT token
-    let claims = verify_jwt(token, &config.jwt_secret)
-        .map_err(|_| ApiError::Unauthorized("Invalid or expired token".to_string()))?;
+    let claims = match auth_service.validate_request_token(token).await {
+        Ok(claims) => claims,
+        Err(crate::errors::AppError::Database(_)) => return Ok(HttpResponse::ServiceUnavailable().json(
+            serde_json::json!({"error":{"code":"AUTH_STORAGE_UNAVAILABLE","message":"Authentication is temporarily unavailable."}})
+        )),
+        Err(_) => return Err(ApiError::Unauthorized("Invalid or expired token".to_string())),
+    };
 
     let user_id = claims.sub;
 
-    info!(
-        "Chat request from user {}: '{}'",
-        user_id,
-        &body.prompt[..body.prompt.len().min(50)]
-    );
+    info!("Chat request from user {}", user_id);
 
     // Validate input
     if body.prompt.trim().is_empty() {
@@ -102,7 +104,33 @@ pub async fn chat(
         ));
     }
 
-    // Chatbot service URL (configurable via environment)
+    if std::env::var("APP_ENV").is_ok_and(|v| v != "development")
+        || std::env::var_os("PUBLICATION_STREAM_ID").is_some()
+    {
+        let user = uuid::Uuid::parse_str(&user_id)
+            .map_err(|_| ApiError::Unauthorized("Invalid user".into()))?;
+        if !agent.allow_request(user) {
+            return Ok(HttpResponse::TooManyRequests()
+                .json(serde_json::json!({"error":"Chat rate limit exceeded"})));
+        }
+        let answer = agent
+            .answer(
+                &pool,
+                &[crate::rag::Message {
+                    role: "user".into(),
+                    content: body.prompt.trim().into(),
+                }],
+            )
+            .await;
+        return Ok(HttpResponse::Ok().json(ChatResponse {
+            response: answer["reply"].as_str().unwrap_or_default().to_string(),
+            confidence: None,
+            data: Some(answer),
+            timestamp: Some(chrono::Utc::now().to_rfc3339()),
+        }));
+    }
+
+    // Development-only legacy chatbot integration.
     let chatbot_url = std::env::var("CHATBOT_SERVICE_URL")
         .unwrap_or_else(|_| "http://localhost:3000/chat".to_string());
 
@@ -189,7 +217,24 @@ pub async fn chat(
  * Checks if the chatbot service is available
  * Useful for monitoring and debugging
  */
-pub async fn chat_health() -> Result<HttpResponse, ApiError> {
+pub async fn chat_health(pool: web::Data<sqlx::PgPool>) -> Result<HttpResponse, ApiError> {
+    if std::env::var("APP_ENV").is_ok_and(|v| v != "development")
+        || std::env::var_os("PUBLICATION_STREAM_ID").is_some()
+    {
+        let connected = tokio::time::timeout(
+            std::time::Duration::from_secs(3),
+            sqlx::query("SELECT 1").execute(pool.get_ref()),
+        )
+        .await
+        .is_ok_and(|r| r.is_ok());
+        let status = if connected {
+            HttpResponse::Ok
+        } else {
+            HttpResponse::ServiceUnavailable
+        };
+        return Ok(status().json(serde_json::json!({"status":if connected{"healthy"}else{"unhealthy"},
+            "chatbot_service":if connected{"available"}else{"unavailable"},"details":{"mode":"rust_rag","prediction_source":"published_postgresql"}})));
+    }
     let chatbot_url = std::env::var("CHATBOT_SERVICE_URL")
         .unwrap_or_else(|_| "http://localhost:3000".to_string());
 

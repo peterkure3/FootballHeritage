@@ -148,8 +148,12 @@ pub async fn identity(
         .app_data::<web::Data<crate::auth::AuthService>>()
         .ok_or(FeatureError::Unauthorized)?;
     let claims = auth
-        .validate_token(token)
-        .map_err(|_| FeatureError::Unauthorized)?;
+        .validate_request_token(token)
+        .await
+        .map_err(|error| match error {
+            crate::errors::AppError::Database(error) => FeatureError::Storage(error),
+            _ => FeatureError::Unauthorized,
+        })?;
     let id = claims
         .sub
         .parse::<Uuid>()

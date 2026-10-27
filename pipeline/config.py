@@ -126,6 +126,7 @@ TRACKED_COMPETITIONS = [
     "CL",    # Champions League (2001)
     # "WC",    # World Cup (2000)
     "EC",    # European Championship (2018)
+    "PD", "BL1", "SA", "FL1", "PPL", "DED", "ELC", "BSA",
 ]
 
 # Alternative: Use competition IDs directly

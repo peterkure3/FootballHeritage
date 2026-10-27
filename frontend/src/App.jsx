@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react';
 import {
   BrowserRouter as Router,
   Routes,
@@ -9,47 +10,50 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
 import useAuthStore from "./stores/authStore";
 import ErrorBoundary from "./components/ErrorBoundary";
-import AdminFeatures from './pages/AdminFeatures';
 import { FeatureBoundary } from './features/FeatureAccess';
 
-// Pages
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Dashboard from "./pages/Dashboard";
-import Profile from "./pages/Profile";
-import Odds from "./pages/Odds";
-import BetHistory from "./pages/BetHistory";
-import Chat from "./pages/Chat";
-import Sports from './pages/Sports';
-import ParlayCalculator from './pages/ParlayCalculator';
-import AdminDashboard from './pages/AdminDashboard';
-import AdminBets from './pages/AdminBets';
-import AdminEvents from './pages/AdminEvents';
-import AdminUsers from './pages/AdminUsers';
-import AdminAnalytics from './pages/AdminAnalytics';
-import AdminRevenue from './pages/AdminRevenue';
-import AdminSettings from './pages/AdminSettings';
-import AdminLogs from './pages/AdminLogs';
-import AdminSportsGPT from './pages/AdminSportsGPT';
 import AdminLayout from './components/admin/AdminLayout';
-import Predictions from "./pages/Predictions";
-import DeviggedOdds from "./pages/DeviggedOdds";
-import EVBets from "./pages/EVBets";
-import Arbitrage from "./pages/Arbitrage";
-import BestBets from "./pages/BestBets";
-import SmartAssistant from "./pages/SmartAssistant";
-import CollegeSports from "./pages/CollegeSports";
-import MarchMadnessBracket from "./pages/MarchMadnessBracket";
-import FPLAdvisor from "./pages/FPLAdvisor";
-import PlayerProps from "./pages/PlayerProps";
-import HomePage, { StoryPage } from './heritage/HomePage';
-import SportPage, { TeamsPage } from './heritage/SportPage';
-import { BestPicksPage, AiChatPage } from './heritage/AiPages';
-import BettingIntel from './heritage/BettingIntel';
 import MainNavbar from './heritage/MainNavbar';
-import Landing from './landing/Landing';
 import LandingNavbar from './landing/LandingNavbar';
 import { safeReturnTo } from './utils/authRedirect';
+
+const Login = lazy(() => import('./pages/Login'));
+const Register = lazy(() => import('./pages/Register'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Profile = lazy(() => import('./pages/Profile'));
+const Odds = lazy(() => import('./pages/Odds'));
+const BetHistory = lazy(() => import('./pages/BetHistory'));
+const Chat = lazy(() => import('./pages/Chat'));
+const Sports = lazy(() => import('./pages/Sports'));
+const ParlayCalculator = lazy(() => import('./pages/ParlayCalculator'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const AdminBets = lazy(() => import('./pages/AdminBets'));
+const AdminEvents = lazy(() => import('./pages/AdminEvents'));
+const AdminUsers = lazy(() => import('./pages/AdminUsers'));
+const AdminAnalytics = lazy(() => import('./pages/AdminAnalytics'));
+const AdminRevenue = lazy(() => import('./pages/AdminRevenue'));
+const AdminSettings = lazy(() => import('./pages/AdminSettings'));
+const AdminLogs = lazy(() => import('./pages/AdminLogs'));
+const AdminSportsGPT = lazy(() => import('./pages/AdminSportsGPT'));
+const AdminFeatures = lazy(() => import('./pages/AdminFeatures'));
+const Predictions = lazy(() => import('./pages/Predictions'));
+const DeviggedOdds = lazy(() => import('./pages/DeviggedOdds'));
+const EVBets = lazy(() => import('./pages/EVBets'));
+const Arbitrage = lazy(() => import('./pages/Arbitrage'));
+const BestBets = lazy(() => import('./pages/BestBets'));
+const SmartAssistant = lazy(() => import('./pages/SmartAssistant'));
+const CollegeSports = lazy(() => import('./pages/CollegeSports'));
+const MarchMadnessBracket = lazy(() => import('./pages/MarchMadnessBracket'));
+const FPLAdvisor = lazy(() => import('./pages/FPLAdvisor'));
+const PlayerProps = lazy(() => import('./pages/PlayerProps'));
+const HomePage = lazy(() => import('./heritage/HomePage'));
+const StoryPage = lazy(() => import('./heritage/HomePage').then(module => ({ default: module.StoryPage })));
+const SportPage = lazy(() => import('./heritage/SportPage'));
+const TeamsPage = lazy(() => import('./heritage/SportPage').then(module => ({ default: module.TeamsPage })));
+const BestPicksPage = lazy(() => import('./heritage/AiPages').then(module => ({ default: module.BestPicksPage })));
+const AiChatPage = lazy(() => import('./heritage/AiPages').then(module => ({ default: module.AiChatPage })));
+const BettingIntel = lazy(() => import('./heritage/BettingIntel'));
+const Landing = lazy(() => import('./landing/Landing'));
 
 // Create React Query client with optimized settings
 const queryClient = new QueryClient({
@@ -123,6 +127,7 @@ function App() {
         <Router>
           <div className="min-h-screen heritage-app" style={{ background: 'var(--color-surface, #f0f2ef)' }}>
           <ApplicationNavbar />
+          <Suspense fallback={<div className="fh-container" role="status" aria-live="polite">Loading page…</div>}>
           <FeatureBoundary><Routes>
             <Route path="/app" element={<HomePage />} />
             <Route path="/sport/:sport" element={<SportPage />} />
@@ -342,7 +347,7 @@ function App() {
                 </div>
               }
             />
-          </Routes></FeatureBoundary>
+          </Routes></FeatureBoundary></Suspense>
         </div>
 
         {/* Toast Notifications */}

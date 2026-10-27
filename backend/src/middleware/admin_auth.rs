@@ -16,6 +16,12 @@ use tracing::{error, info, warn};
 
 use crate::auth::AuthService;
 
+fn storage_unavailable() -> HttpResponse {
+    HttpResponse::ServiceUnavailable().json(serde_json::json!({
+        "error":{"code":"AUTH_STORAGE_UNAVAILABLE","message":"Authentication is temporarily unavailable."}
+    }))
+}
+
 // ============================================================================
 // ADMIN ROLE MIDDLEWARE
 // ============================================================================
@@ -83,7 +89,7 @@ where
                 // Extract token
                 if let Some(token) = auth_header.strip_prefix("Bearer ") {
                     // Validate token
-                    match auth_service.validate_token(token) {
+                    match auth_service.validate_request_token(token).await {
                         Ok(mut claims) => {
                             info!(
                                 "Token validated successfully. User: {}, Role: {}",
@@ -92,10 +98,17 @@ where
                             // Check if user has admin or superadmin role
                             let current_role =
                                 match req.app_data::<actix_web::web::Data<sqlx::PgPool>>() {
-                                    Some(pool) => crate::features::identity(req.request(), pool)
-                                        .await
-                                        .ok()
-                                        .map(|(_, role)| role),
+                                    Some(pool) => {
+                                        match crate::features::identity(req.request(), pool).await {
+                                            Ok((_, role)) => Some(role),
+                                            Err(crate::features::FeatureError::Storage(_)) => {
+                                                return Ok(req
+                                                    .into_response(storage_unavailable())
+                                                    .map_into_boxed_body());
+                                            }
+                                            Err(_) => None,
+                                        }
+                                    }
                                     None => None,
                                 };
                             if let Some(role) = current_role
@@ -121,6 +134,10 @@ where
                                 }));
                                 return Ok(req.into_response(response).map_into_boxed_body());
                             }
+                        }
+                        Err(crate::errors::AppError::Database(_)) => {
+                            let response = storage_unavailable();
+                            return Ok(req.into_response(response).map_into_boxed_body());
                         }
                         Err(e) => {
                             // Invalid token
@@ -213,15 +230,22 @@ where
                 // Extract token
                 if let Some(token) = auth_header.strip_prefix("Bearer ") {
                     // Validate token
-                    match auth_service.validate_token(token) {
+                    match auth_service.validate_request_token(token).await {
                         Ok(mut claims) => {
                             // Check if user has superadmin role
                             let current_role =
                                 match req.app_data::<actix_web::web::Data<sqlx::PgPool>>() {
-                                    Some(pool) => crate::features::identity(req.request(), pool)
-                                        .await
-                                        .ok()
-                                        .map(|(_, role)| role),
+                                    Some(pool) => {
+                                        match crate::features::identity(req.request(), pool).await {
+                                            Ok((_, role)) => Some(role),
+                                            Err(crate::features::FeatureError::Storage(_)) => {
+                                                return Ok(req
+                                                    .into_response(storage_unavailable())
+                                                    .map_into_boxed_body());
+                                            }
+                                            Err(_) => None,
+                                        }
+                                    }
                                     None => None,
                                 };
                             if current_role.as_deref() == Some("superadmin") {
@@ -241,6 +265,10 @@ where
                                 }));
                                 return Ok(req.into_response(response).map_into_boxed_body());
                             }
+                        }
+                        Err(crate::errors::AppError::Database(_)) => {
+                            let response = storage_unavailable();
+                            return Ok(req.into_response(response).map_into_boxed_body());
                         }
                         Err(_) => {
                             // Invalid token

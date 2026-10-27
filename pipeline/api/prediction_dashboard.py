@@ -8,6 +8,8 @@ from sqlalchemy import text
 from api.db import get_db_connection
 from config import MODEL_VERSION
 from api.bookmaker_catalog import bookmaker_catalog
+from football_competitions import DISPLAY_NAMES
+from api.league_predictions import load_predictions, fixture_prediction
 
 OUTCOMES = ("home_win", "draw", "away_win")
 PROBABILITY_KEYS = ("home_prob", "draw_prob", "away_prob")
@@ -104,8 +106,18 @@ def fixtures(page, page_size, competition=None, match_date=None):
     with get_db_connection().connect() as connection:
         total = connection.execute(text(f"SELECT COUNT(*) FROM matches m WHERE {filters}"), params).scalar()
         rows = connection.execute(text(query), params).mappings().all()
-        leagues = connection.execute(text(f"SELECT DISTINCT m.competition FROM matches m WHERE m.date > {UTC_NOW} AND m.result IS NULL AND m.competition IS NOT NULL ORDER BY m.competition")).scalars().all()
+        # Retain leagues between fixture refreshes once 100 completed results exist.
+        leagues = connection.execute(text(f"""SELECT m.competition FROM matches m
+            WHERE m.competition IS NOT NULL AND m.competition <> ''
+            GROUP BY m.competition HAVING
+                COUNT(*) FILTER (WHERE m.result IN ('home_win','draw','away_win')
+                    AND m.date < {UTC_NOW}) >= 100
+                OR COUNT(*) FILTER (WHERE m.date > {UTC_NOW} AND m.result IS NULL
+                    AND UPPER(COALESCE(m.status,'')) NOT IN
+                    ('FINISHED','CANCELLED','CANCELED','POSTPONED','LIVE','IN_PLAY','PAUSED')) > 0
+            ORDER BY m.competition""")).scalars().all()
     now = datetime.now(timezone.utc)
+    league_forecasts = load_predictions()
     items = []
     for row in rows:
         probabilities = valid_probabilities(row)
@@ -118,11 +130,17 @@ def fixtures(page, page_size, competition=None, match_date=None):
                 "status": "invalid" if probabilities is None else "current" if fresh else "stale",
                 "active": True, "generated_at": utc(generated), "feature_cutoff": None,
                 "input_quality": "not_recorded", "fallback_inputs": None}
+        league_prediction = fixture_prediction(row, league_forecasts, now)
+        if league_prediction is not None:
+            prediction = league_prediction
+            probabilities = prediction['probabilities']
+            fresh = prediction['status'] == 'current'
         items.append({"match_id": row["match_id"], "sport": "football", "competition": row["competition"],
             "home_team": row["home_team"], "away_team": row["away_team"], "kickoff": utc(row["date"]),
             "status": row["status"], "prediction": prediction,
             "market": quote_comparison(probabilities, row["quotes"], now, fresh)})
     return {"items": items, "bookmakers": bookmaker_catalog(), "total_count": total, "page": page, "page_size": page_size, "competitions": leagues,
+            "competition_labels": DISPLAY_NAMES,
             "generated_at": now.isoformat(), "active_model_version": MODEL_VERSION,
             "timezone_basis": "stored_pipeline_timestamps_assumed_UTC", "max_evidence_age_hours": 24}
 

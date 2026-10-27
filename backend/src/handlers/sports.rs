@@ -124,7 +124,7 @@ pub async fn get_sports(pool: web::Data<PgPool>) -> HttpResponse {
 
         leagues_by_sport
             .entry(league.sport)
-            .or_insert_with(Vec::new)
+            .or_default()
             .push(league_info);
     }
 

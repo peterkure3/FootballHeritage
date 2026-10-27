@@ -51,6 +51,11 @@ pub async fn proxy(
     body: web::Bytes,
     pool: web::Data<PgPool>,
 ) -> Result<HttpResponse, FeatureError> {
+    if std::env::var("APP_ENV").is_ok_and(|value| value != "development")
+        || std::env::var_os("PUBLICATION_STREAM_ID").is_some()
+    {
+        return crate::durable_gateway::serve(req, body, pool).await;
+    }
     let base = std::env::var("PIPELINE_API_URL").ok();
     let token = std::env::var("PIPELINE_INTERNAL_TOKEN").ok();
     proxy_with_config(

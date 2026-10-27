@@ -99,7 +99,11 @@ fn calculate_parlay_metrics(bets: &[ParlayBet], stake: f64) -> ParlayCalculation
     // 7. Kelly Criterion = (prob × odds - 1) / (odds - 1)
     // Capped at 25% to prevent over-betting
     let kelly_raw = ((combined_prob * combined_odds) - 1.0) / (combined_odds - 1.0);
-    let kelly = kelly_raw.max(0.0).min(0.25);
+    let kelly = if kelly_raw.is_nan() {
+        0.0
+    } else {
+        kelly_raw.clamp(0.0, 0.25)
+    };
 
     // 8. Risk assessment
     let risk_level = assess_risk(bets.len(), combined_prob, ev);
@@ -240,7 +244,7 @@ pub async fn save_parlay(
     let metrics = calculate_parlay_metrics(&body.bets, body.stake);
 
     // Start transaction
-    let mut tx = pool.begin().await.map_err(|e| AppError::Database(e))?;
+    let mut tx = pool.begin().await.map_err(AppError::Database)?;
 
     // Insert parlay
     let parlay_id = sqlx::query_scalar::<_, Uuid>(
@@ -293,7 +297,7 @@ pub async fn save_parlay(
         })?;
     }
 
-    tx.commit().await.map_err(|e| AppError::Database(e))?;
+    tx.commit().await.map_err(AppError::Database)?;
 
     info!("Parlay saved successfully: {}", parlay_id);
 
@@ -357,7 +361,7 @@ pub async fn get_parlay(
             .bind(user_id)
             .fetch_optional(pool.get_ref())
             .await
-            .map_err(|e| AppError::Database(e))?
+            .map_err(AppError::Database)?
             .ok_or_else(|| AppError::UserNotFound)?;
 
     // Fetch legs
@@ -367,7 +371,7 @@ pub async fn get_parlay(
     .bind(parlay_id)
     .fetch_all(pool.get_ref())
     .await
-    .map_err(|e| AppError::Database(e))?;
+    .map_err(AppError::Database)?;
 
     Ok(HttpResponse::Ok().json(ParlayWithLegs { parlay, legs }))
 }
@@ -431,7 +435,7 @@ pub async fn delete_parlay(
         .bind(user_id)
         .execute(pool.get_ref())
         .await
-        .map_err(|e| AppError::Database(e))?;
+        .map_err(AppError::Database)?;
 
     if result.rows_affected() == 0 {
         return Err(AppError::UserNotFound);

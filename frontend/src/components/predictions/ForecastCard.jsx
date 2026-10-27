@@ -127,17 +127,35 @@ function Market({ market, labels, status }) {
   );
 }
 
+function ModelEvidence({ prediction }) {
+  if (!prediction?.test_metrics) return null;
+  return <>
+    <dt>Held-out evaluation</dt>
+    <dd>{prediction.test_metrics.samples} games · {percent(prediction.test_metrics.accuracy)} accuracy</dd>
+    <dt>Model inputs</dt>
+    <dd>League match history; bookmaker prices excluded</dd>
+  </>;
+}
+
+function modelStatus(model) {
+  if (model.status === "current" && model.model_kind === "evaluated_league_candidate")
+    return "Evaluated league model";
+  return statuses[model.status] || "Prediction pending";
+}
+
 function Provenance({ prediction, market, labels }) {
+  const model = prediction || {};
   return (
     <details className="pd-details">
       <summary>Model & source details</summary>
       <dl>
         <dt>Model version</dt>
-        <dd>{prediction?.model_version || "Unavailable"}</dd>
+        <dd>{model.model_version || "Unavailable"}</dd>
         <dt>Prediction generated</dt>
-        <dd>{date(prediction?.generated_at)}</dd>
-        <dt>Feature cutoff / fallback inputs</dt>
-        <dd>Not recorded for stored predictions</dd>
+        <dd>{date(model.generated_at)}</dd>
+        <dt>Feature cutoff</dt>
+        <dd>{date(model.feature_cutoff)}</dd>
+        <ModelEvidence prediction={model} />
         <dt>Market settlement</dt>
         <dd>Regulation time · home / draw / away</dd>
         <dt>Freshness policy</dt>
@@ -176,7 +194,7 @@ export default function ForecastCard({ fixture }) {
         <span
           className={`pd-badge ${model.status === "current" ? "pd-badge-green" : ""}`}
         >
-          {statuses[model.status] || "Prediction pending"}
+          {modelStatus(model)}
         </span>
       </header>
       <h2>

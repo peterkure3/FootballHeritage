@@ -1,5 +1,89 @@
 # Football Heritage - Codebase Index
 
+## Admin Features UI — 2026-10-27
+
+Refreshed `/admin/features` with availability metrics, separated search and user
+access controls, responsive feature cards, status badges, and an audit panel.
+Confirmation and policy endpoints are preserved. Five Chromium browser tests,
+targeted lint, and production build/typecheck passed; desktop/mobile fixtures
+were visually reviewed. See `stages/03-build/output/admin-features-ui-20261027.md`.
+
+## Durable gateway completion — 2026-10-27
+
+Production/staging gateway paths now read PostgreSQL response snapshots or queue
+explicit durable computations, with no Windows HTTP/local-process fallback.
+Existing Python interfaces retain their filters, models and numerical behavior;
+private/admin requests use scoped idempotency and leased execution. Native
+intelligence lists/refresh and legacy chat also use publications/Rust RAG.
+Ranking snapshots expire at kickoff/evidence boundaries. Strict Clippy is fixed
+without suppressions. See `docs/durable-gateway.md` and the current phase report
+for executed checks and local measurements. Neon remains staging; no deployment,
+credentials or scheduled-task changes were made.
+
+## Published RAG retrieval — 2026-10-26 continuation
+
+RAG now shares the AI Picks publication candidate reader and application pool in
+configured non-development environments or whenever a publication stream is set.
+The legacy prediction database URL is not parsed in this mode. Retrieval keeps a
+bounded relevance window across all eligible pages and includes publication
+provenance and observed fresh quotes. See `docs/published-rag.md` for contracts
+and the remaining gateway domains. Gateway migration and production readiness
+remain incomplete; Neon stays staging and no deployment/credential changes occur.
+
+## Durable sessions and published AI Picks — 2026-10-26 continuation
+
+The session blocker described in the earlier foundation entry is now fixed in
+source with Neon-owned `auth_sessions` and async shared-pool validation. Real
+independent-process HTTP checks verify restart, revocation, atomic registration
+rollback/retry and concurrent login locking. See `docs/auth-session-design.md`.
+
+AI Picks generation now reads approved published model/fixture records in every
+configured non-development environment or when a stream is configured. The Rust
+selection port matches 12 frozen Python cases and an authenticated multi-page
+HTTP comparison with Python offline. Source projection rejects other sports,
+publishes the explicit model manifest atomically and excludes future-dated quotes
+before choosing the latest observed quote. See `docs/published-ai-picks.md` and
+`stages/03-build/output/published-ai-picks-20261026.md` for phase evidence.
+
+Still pending: RAG/local database separation, remaining gateway domains,
+multi-sport adapters, restricted Neon transport/role validation, representative
+performance measurements and hosted Vercel checks. No production deployment or
+credential change. Keep the existing Neon project for staging.
+
+## Architecture audit and publication foundation — 2026-10-26
+
+Added architecture/API/schema audits, target/ownership/sync/migration/Windows/
+deployment/rollback/performance documents and `pipeline/sync/`: allowlisted
+versioned bundles, atomic source capture/outbox, commit receipts, retries,
+tombstones, dead-letter recovery and reconciliation. Existing models, producers,
+legacy sync and gateway remain intact. Native Rust `/api/v1/predictions/{match_id}`
+reads publications with pending/freshness states; legacy chat no longer logs or
+slices prompt text. Frontend routes are lazy-loaded; Zod has a focused 4.x security
+update. See `stages/03-build/output/publication-foundation-20261026.md` for checks.
+
+User decision: current Neon project stays staging; production target later.
+Publication DDL succeeded only on isolated child `codex-publication-contract-20261026`
+(`br-lucky-wind-b4r6rgn1`); parent staging is untouched. No deployment, credential
+change, local operational migration or model promotion. Gateway, AI Picks/RAG,
+multi-sport publication and hosted end-to-end verification remain before cutover.
+
+Critical serverless finding: `auth.rs::ensure_active_session` requires an
+instance-local DashMap session. Persistent Neon-owned sessions and independent
+instance/restart verification are required before release; local browser tests
+do not validate that behavior. See the audit/migration plan.
+
+## Manager-feature feasibility and Clásico form audit — 2026-10-26
+
+Exact saved-model replay confirms 25 October Barcelona–Real Madrid form inputs: Barcelona WWWWW, Madrid WWLWW; probabilities 60.2710% / 15.0580% / 24.6710%. Form was league-scoped and managers were absent. Added a research-only lagged manager-state layer and chronological ablation over 1,819 verified Wyscout matches after seven metadata quarantines. Held-out accuracy was unchanged at 50.85%; log loss improved only 0.00388 with a bootstrap interval crossing zero. Current-match coaches are never exposed to their own prediction vectors. No serving changes or retrospective forecast edits; multi-season, announcement-dated assignments remain necessary for production. Details: `stages/03-build/output/manager-impact-and-clasico-form-20261026.md`.
+
+## League models and bookmaker grid — 2026-10-25
+
+La Liga and nine other supported competitions are available in the grid menu. Added country-scoped competition identities, reviewed domestic club aliases, full-inventory Scrapling refresh, HTTP cache evidence and secondary-ingestion cache exclusions. Refreshed official histories/fixtures and imported 459 timestamped sportsbook observations across three audited captures. Eight additional domestic models trained on 20,211 completed matches and generated 191 pre-match forecasts, published separately from the global active model with explicit provenance. Daily refresh regenerates league forecasts; weekly retraining includes the additional models. Championship's held-out log loss was worse than its prior baseline. Unavailable sources, missing adapters and exhausted paid-feed quota remain documented. No hosted deployment. See `stages/03-build/output/league-models-and-grid-20261025.md` for sources, metrics and verification.
+
+## Hosted login/CORS runtime repair — 2026-10-24
+
+Browser CORS failures masked Vercel HTTP 500 startup errors: the backend could not initialize its database, then a malformed `HTTPS_ENABLED` value blocked configuration loading. The user supplied the correct Neon staging URL securely; added Production `APP_ENV=production` and `RUN_MIGRATIONS=false`, normalized the three non-secret HTTP/origin settings, and redeployed existing commit `d8aaa59`. Both preflights and anonymous features now return 200 with the exact frontend CORS origin; invalid login JSON returns 400 with CORS, and an untrusted origin remains blocked. No application source, migrations, wallet operations or account login records were changed. See `stages/05-deploy/output/vercel-cors-20261024.md`.
+
 ## Authenticated Vercel build diagnosis — 2026-10-24
 
 CLI login completed as `peterkure3`; GET-only inspection confirms frontend root `frontend`, backend root `backend/src`, and both production branches set to `feature/footballheritage-frontend`. Frontend's latest existing production deployment is READY, but `VITE_API_URL` lacks Preview scope. The latest backend build fails on 16 SQLx compile-time connection errors. Added Cargo `[env] SQLX_OFFLINE="true"` to use checked-in query metadata without shell flags or a live build database. Hosted `APP_ENV` and `RUN_MIGRATIONS` are absent; do not cold-start the API until production controls and migration disabling are configured. No cloud settings, deployments or database operations were changed. See `stages/05-deploy/output/vercel-staging-20261024.md` and its redacted hosted inventory/logs.
@@ -7,6 +91,14 @@ CLI login completed as `peterkure3`; GET-only inspection confirms frontend root 
 ## Vercel staging environment diagnosis — 2026-10-24
 
 Reproduced the frontend production build's rejection of the local HTTP API URL. Build validator and production API client now share the strict HTTPS URL contract; production cannot fall back to localhost. Seven policy/config tests, lint, a fixture-URL Vite build, locked Rust check/build and 31 database-free Rust tests pass; five isolated pipeline tests and syntax checks pass. Pinned CLI 65.2.0 works but is logged out; no local Vercel links exist and team-scoped settings/env reads require authorization. The current checkout is D:, while C:\FootballHeritage contains backups. No hosting/Neon mutation was performed. See `stages/05-deploy/output/vercel-staging-20261024.md` for service mappings, required staging variables, direct RAG connection requirements and Linux/hosting blockers.
+
+## Local prediction API database repair — 2026-10-24
+
+Corrected the local pipeline `DATABASE_URL` database path to `football_betting`; its empty path overrode `DB_NAME` and connected to `postgres`, where `matches` did not exist. Restarted the local Python API. Rust gateway fixtures, operations and paper-trials endpoints now return HTTP 200; fixture page 1 contains six of 18 upcoming fixtures. No schema or data changes. See `stages/03-build/output/local-prediction-db-fix-20261024.md`.
+
+## Local frontend login routing repair — 2026-10-24
+
+Local `frontend/.env` now points to `http://127.0.0.1:8888/api/v1`: on this machine `localhost:8888` reaches a different Docker/WSL service instead of the native Rust backend. Verified real browser login, profile redirect, authenticated reload/profile request and logout. The existing smoke script encountered a separate logout-navigation race; a focused browser check passed. Two isolated QA accounts remain. See `stages/03-build/output/local-login-fix-20261024.md`.
 
 ## Rust Vercel adapter and Windows database launchers — 2026-10-24
 

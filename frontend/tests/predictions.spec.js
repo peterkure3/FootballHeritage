@@ -173,6 +173,65 @@ test("complete probabilities, decimal quotes, missing market, and pagination", a
   await expect(page.locator(".pd-forecast")).toHaveCount(1);
 });
 
+test("La Liga uses its database key and league options survive empty filters", async ({ page }) => {
+  await page.route("**/prediction-dashboard/fixtures?*", (route) => route.fulfill({ json: {
+    items: [], competitions: ["Bundesliga", "Primera Division", "Serie A"],
+    competition_labels: { "Primera Division": "La Liga" }, total_count: 0,
+    active_model_version: "2.0.0", generated_at: now,
+  } }));
+  await page.goto("/predictions?view=comparisons");
+  const select = page.getByRole("combobox", { name: "Competition", exact: true });
+  await expect(select.getByRole("option", { name: "La Liga", exact: true })).toHaveAttribute("value", "Primera Division");
+  const request = page.waitForRequest((request) => new URL(request.url()).searchParams.get("competition") === "Primera Division");
+  await select.selectOption({ label: "La Liga" });
+  await request;
+  await expect(select.getByRole("option")).toHaveCount(4);
+  await expect(page.getByText("No upcoming fixtures match these filters.")).toBeVisible();
+});
+
+test("evaluated league models show their provenance and held-out sample", async ({ page }) => {
+  await page.route("**/prediction-dashboard/fixtures?*", (route) => route.fulfill({ json: {
+    items: [{ ...forecast, prediction: { ...forecast.prediction,
+      model_kind: "evaluated_league_candidate", model_version: "league-PD-test", active: false,
+      feature_cutoff: now, test_metrics: { samples: 379, accuracy: 0.5277 } } }],
+    competitions: ["Primera Division"], total_count: 1, generated_at: now, active_model_version: "2.0.0",
+  } }));
+  await page.goto("/predictions");
+  await expect(page.getByText("Evaluated league model", { exact: true })).toBeVisible();
+  await page.getByText("Model & source details", { exact: true }).click();
+  await expect(page.getByText("379 games · 52.8% accuracy", { exact: true })).toBeVisible();
+  await expect(page.getByText("League match history; bookmaker prices excluded", { exact: true })).toBeVisible();
+});
+
+test("live league forecasts render in the bookmaker grid", async ({ page }) => {
+  test.skip(process.env.RUN_LEAGUE_LIVE_TESTS !== "1", "Requires the authenticated local API on port 5567");
+  test.setTimeout(60000);
+  let live;
+  await page.route("**/prediction-dashboard/fixtures?*", async (route) => {
+    const query = new URL(route.request().url()).search.slice(1);
+    const code = "import config,os,sys,requests; sys.stdout.reconfigure(encoding='utf-8'); r=requests.get('http://127.0.0.1:5567/api/v1/prediction-dashboard/fixtures',params=sys.argv[1],headers={'x-internal-token':os.getenv('PIPELINE_INTERNAL_TOKEN','')},timeout=20); r.raise_for_status(); print(r.text)";
+    live = JSON.parse(execFileSync("py", ["-3", "-c", code, query], {
+      cwd: fileURLToPath(new URL("../../pipeline/", import.meta.url)), encoding: "utf8", windowsHide: true,
+    }));
+    await route.fulfill({ json: live });
+  });
+  await page.goto("/predictions?view=comparisons");
+  const select = page.getByRole("combobox", { name: "Competition", exact: true });
+  const filtered = page.waitForResponse((response) => new URL(response.url()).searchParams.get("competition") === "Primera Division");
+  await select.selectOption({ label: "La Liga" });
+  await filtered;
+  await expect(page.locator(".bc-table tbody tr")).toHaveCount(20);
+  await expect(select).toHaveValue("Primera Division");
+  expect(live.competitions).toHaveLength(10);
+  expect(JSON.stringify(live)).not.toContain("\uFFFD");
+  expect(live.items.every((item) => item.prediction?.model_kind === "evaluated_league_candidate")).toBe(true);
+  await expect(page.locator(".bc-table tbody tr").first()).toContainText("%");
+  await page.screenshot({ path: "../stages/03-build/output/league-grid-live-20261025.png" });
+  await page.setViewportSize({ width: 1440, height: 1100 });
+  await page.locator(".bc-table tbody tr").first().scrollIntoViewIfNeeded();
+  await page.screenshot({ path: "../stages/03-build/output/league-grid-probabilities-20261025.png" });
+});
+
 test("all requested bookmakers remain visible across pages without invented prices", async ({
   page,
 }) => {

@@ -1,0 +1,324 @@
+[
+  {
+    "method": "GET",
+    "path": "ai-picks",
+    "admin": false,
+    "side_effect": false,
+    "ttl_seconds": 30
+  },
+  {
+    "method": "GET",
+    "path": "best-value-bets",
+    "admin": false,
+    "side_effect": false,
+    "ttl_seconds": 30
+  },
+  {
+    "method": "GET",
+    "path": "betting-intel",
+    "admin": false,
+    "side_effect": false,
+    "ttl_seconds": 300
+  },
+  {
+    "method": "GET",
+    "path": "betting-intel/{sport}",
+    "admin": false,
+    "side_effect": false,
+    "ttl_seconds": 300
+  },
+  {
+    "method": "GET",
+    "path": "fpl/advice",
+    "admin": false,
+    "side_effect": false,
+    "ttl_seconds": 300
+  },
+  {
+    "method": "GET",
+    "path": "fpl/fixtures",
+    "admin": false,
+    "side_effect": false,
+    "ttl_seconds": 300
+  },
+  {
+    "method": "GET",
+    "path": "fpl/players",
+    "admin": false,
+    "side_effect": false,
+    "ttl_seconds": 300
+  },
+  {
+    "method": "POST",
+    "path": "fpl/refresh",
+    "admin": true,
+    "side_effect": true,
+    "ttl_seconds": 300
+  },
+  {
+    "method": "POST",
+    "path": "fpl/team/evaluate",
+    "admin": false,
+    "side_effect": false,
+    "ttl_seconds": 300
+  },
+  {
+    "method": "GET",
+    "path": "health",
+    "admin": false,
+    "side_effect": false,
+    "ttl_seconds": 300
+  },
+  {
+    "method": "GET",
+    "path": "intelligence/arbitrage",
+    "admin": false,
+    "side_effect": false,
+    "ttl_seconds": 30
+  },
+  {
+    "method": "POST",
+    "path": "intelligence/arbitrage/scan",
+    "admin": false,
+    "side_effect": true,
+    "ttl_seconds": 300
+  },
+  {
+    "method": "POST",
+    "path": "intelligence/devig",
+    "admin": false,
+    "side_effect": true,
+    "ttl_seconds": 300
+  },
+  {
+    "method": "GET",
+    "path": "intelligence/devigged-odds",
+    "admin": false,
+    "side_effect": false,
+    "ttl_seconds": 30
+  },
+  {
+    "method": "POST",
+    "path": "intelligence/ev",
+    "admin": false,
+    "side_effect": true,
+    "ttl_seconds": 300
+  },
+  {
+    "method": "GET",
+    "path": "intelligence/ev-bets",
+    "admin": false,
+    "side_effect": false,
+    "ttl_seconds": 30
+  },
+  {
+    "method": "POST",
+    "path": "intelligence/ev/batch",
+    "admin": false,
+    "side_effect": true,
+    "ttl_seconds": 300
+  },
+  {
+    "method": "POST",
+    "path": "intelligence/refresh",
+    "admin": true,
+    "side_effect": true,
+    "ttl_seconds": 300
+  },
+  {
+    "method": "GET",
+    "path": "matches",
+    "admin": false,
+    "side_effect": false,
+    "ttl_seconds": 300
+  },
+  {
+    "method": "GET",
+    "path": "ncaab/bracket",
+    "admin": false,
+    "side_effect": false,
+    "ttl_seconds": 300
+  },
+  {
+    "method": "GET",
+    "path": "ncaab/games",
+    "admin": false,
+    "side_effect": false,
+    "ttl_seconds": 300
+  },
+  {
+    "method": "GET",
+    "path": "ncaab/odds",
+    "admin": false,
+    "side_effect": false,
+    "ttl_seconds": 300
+  },
+  {
+    "method": "GET",
+    "path": "ncaab/predictions",
+    "admin": false,
+    "side_effect": false,
+    "ttl_seconds": 300
+  },
+  {
+    "method": "POST",
+    "path": "ncaab/refresh",
+    "admin": true,
+    "side_effect": true,
+    "ttl_seconds": 300
+  },
+  {
+    "method": "POST",
+    "path": "parlay/enrich",
+    "admin": false,
+    "side_effect": false,
+    "ttl_seconds": 300
+  },
+  {
+    "method": "GET",
+    "path": "predict-matchup",
+    "admin": false,
+    "side_effect": false,
+    "ttl_seconds": 300
+  },
+  {
+    "method": "GET",
+    "path": "prediction-dashboard/fixtures",
+    "admin": false,
+    "side_effect": false,
+    "ttl_seconds": 300
+  },
+  {
+    "method": "GET",
+    "path": "prediction-dashboard/operations",
+    "admin": false,
+    "side_effect": false,
+    "ttl_seconds": 300
+  },
+  {
+    "method": "GET",
+    "path": "prediction-dashboard/paper-trials",
+    "admin": false,
+    "side_effect": false,
+    "ttl_seconds": 300
+  },
+  {
+    "method": "GET",
+    "path": "predictions/accuracy-data",
+    "admin": false,
+    "side_effect": false,
+    "ttl_seconds": 300
+  },
+  {
+    "method": "GET",
+    "path": "predictions/backtest",
+    "admin": true,
+    "side_effect": true,
+    "ttl_seconds": 300
+  },
+  {
+    "method": "GET",
+    "path": "predictions/elo-ratings",
+    "admin": false,
+    "side_effect": false,
+    "ttl_seconds": 300
+  },
+  {
+    "method": "GET",
+    "path": "predictions/history-data",
+    "admin": false,
+    "side_effect": false,
+    "ttl_seconds": 300
+  },
+  {
+    "method": "POST",
+    "path": "predictions/run-pipeline",
+    "admin": true,
+    "side_effect": true,
+    "ttl_seconds": 300
+  },
+  {
+    "method": "GET",
+    "path": "predictions/upcoming",
+    "admin": false,
+    "side_effect": false,
+    "ttl_seconds": 300
+  },
+  {
+    "method": "POST",
+    "path": "predictions/update-elo",
+    "admin": true,
+    "side_effect": true,
+    "ttl_seconds": 300
+  },
+  {
+    "method": "POST",
+    "path": "predictions/update-results",
+    "admin": true,
+    "side_effect": true,
+    "ttl_seconds": 300
+  },
+  {
+    "method": "GET",
+    "path": "predictions/validate-data",
+    "admin": true,
+    "side_effect": true,
+    "ttl_seconds": 300
+  },
+  {
+    "method": "GET",
+    "path": "predictions/value-bets",
+    "admin": false,
+    "side_effect": false,
+    "ttl_seconds": 300
+  },
+  {
+    "method": "GET",
+    "path": "predictions/versions",
+    "admin": false,
+    "side_effect": false,
+    "ttl_seconds": 300
+  },
+  {
+    "method": "GET",
+    "path": "predictions/{match_id}",
+    "admin": false,
+    "side_effect": false,
+    "ttl_seconds": 300
+  },
+  {
+    "method": "POST",
+    "path": "smart-assistant",
+    "admin": false,
+    "side_effect": false,
+    "ttl_seconds": 300
+  },
+  {
+    "method": "GET",
+    "path": "sport-models",
+    "admin": false,
+    "side_effect": false,
+    "ttl_seconds": 300
+  },
+  {
+    "method": "POST",
+    "path": "sport-models/preview",
+    "admin": false,
+    "side_effect": false,
+    "ttl_seconds": 300
+  },
+  {
+    "method": "GET",
+    "path": "sport-models/teams",
+    "admin": false,
+    "side_effect": false,
+    "ttl_seconds": 300
+  },
+  {
+    "method": "GET",
+    "path": "suggested-parlays",
+    "admin": false,
+    "side_effect": false,
+    "ttl_seconds": 30
+  }
+]

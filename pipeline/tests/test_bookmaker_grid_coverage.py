@@ -11,6 +11,37 @@ from etl.regional_sportsbooks import snapshot
 
 
 class BookmakerCoverageTests(unittest.TestCase):
+    def test_laliga_aliases_link_exact_fixture_without_changing_source(self):
+        from datetime import datetime, timezone
+        record = snapshot('betpawa', 'spanish1', 'FC Barcelona', 'Real Madrid',
+            datetime(2026,10,25,20,tzinfo=timezone.utc), '2026-10-25T14:00:00Z',
+            'raw/feed.json', 'run', {'HOME':(2,'1'),'DRAW':(3,'x'),'AWAY':(4,'2')},
+            'LaLiga', 'Spain', '1', 'https://www.betpawa.ug/')
+        fixtures = pd.DataFrame([{'match_id':1,'date':'2026-10-25T20:00:00Z',
+            'home_team':'FC Barcelona','away_team':'Real Madrid CF','competition':'Primera Division'}])
+        self.assertEqual(len(matched_grid_quotes(fixtures, [record])), 1)
+        self.assertEqual(record['away_team'], 'Real Madrid')
+        self.assertTrue(matched_grid_quotes(fixtures.assign(date='2026-10-25T21:00:00Z'), [record]).empty)
+        record['country'] = 'Chile'
+        self.assertTrue(matched_grid_quotes(fixtures, [record]).empty)
+
+    def test_domestic_competitions_are_country_scoped(self):
+        from football_competitions import canonical_competition
+        for name in ['La Liga', 'Primera Division', 'soccer_spain_la_liga', 'Spain - La Liga']:
+            self.assertEqual(canonical_competition(name, 'Spain'), 'Primera Division')
+            self.assertIsNone(canonical_competition(name, 'Chile'))
+        self.assertEqual(canonical_competition('1. Bundesliga', 'Germany'), 'Bundesliga')
+        self.assertIsNone(canonical_competition('Bundesliga', 'Austria'))
+        self.assertIsNone(canonical_competition('Premier League', 'Israel'))
+
+    def test_cache_evidence_in_standard_source_report_is_enforced(self):
+        with TemporaryDirectory() as directory:
+            capture = Path(directory)
+            source = {'bookmaker': 'bovada', 'http_status': 200, 'http_audit': [
+                {'observed_at': '2026-10-25T12:00:00Z', 'headers': {'Age': '600'}}]}
+            (capture/'source_report.json').write_text(json.dumps({'direct_sources': [source]}), encoding='utf-8')
+            self.assertIn('bovada', capture_cache_rejections(capture))
+
     def test_cache_evidence_does_not_make_an_old_response_fresh(self):
         with TemporaryDirectory() as directory:
             capture = Path(directory)

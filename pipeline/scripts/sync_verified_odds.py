@@ -21,12 +21,15 @@ EPL_ALIASES = {'Bournemouth':'AFC Bournemouth', 'Ipswich':'Ipswich Town FC',
 
 
 def sync(capture, match_date, output, apply=False):
+    from scripts.sync_bookmaker_grid import capture_cache_rejections
     if output.exists():
         raise ValueError('Choose a new audit path; existing reports are immutable')
     source = capture / 'odds_snapshots.jsonl'
     payload = source.read_bytes()
     records = [json.loads(line) for line in payload.decode().splitlines() if line.strip()]
-    records = [r for r in records if r.get('country') == 'England' and r.get('competition') == 'Premier League']
+    rejected = capture_cache_rejections(capture)
+    records = [r for r in records if r['bookmaker'] not in rejected
+               and r.get('country') == 'England' and r.get('competition') == 'Premier League']
     odds = normalize_snapshots(records) if records else pd.DataFrame()
     if not odds.empty:
         for side in ['home','away']:

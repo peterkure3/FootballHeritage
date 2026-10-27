@@ -11,14 +11,9 @@ from sqlalchemy import text
 from api.db import get_db_connection
 from models.data import match_odds_to_fixtures
 from models.import_sportsbook_odds import normalize_snapshots
+from football_competitions import canonical_competition
+from grid_team_aliases import TEAM_ALIASES
 
-COMPETITIONS = {
-    'soccer_epl': 'Premier League', 'England Premier League': 'Premier League',
-    'England - Premier League': 'Premier League',
-    'soccer_uefa_champs_league': 'UEFA Champions League',
-    'UEFA - Champions League': 'UEFA Champions League',
-    'UEFA Champions League': 'UEFA Champions League',
-}
 CL_TEAM_ALIASES = {
     'Inter': 'FC Internazionale Milano', 'Internazionale': 'FC Internazionale Milano',
     'Inter Milan': 'FC Internazionale Milano', 'Inter Milano': 'FC Internazionale Milano',
@@ -52,14 +47,18 @@ def matched_grid_quotes(fixtures, records):
     if not records or fixtures.empty:
         return pd.DataFrame()
     odds = normalize_snapshots(records)
-    odds['competition'] = odds.competition.replace(COMPETITIONS)
+    odds['competition'] = [canonical_competition(row.competition, row.country)
+                           for row in odds.itertuples()]
     joined = []
     for competition, offers in odds.groupby('competition'):
         offers = offers.copy()
+        reviewed = TEAM_ALIASES.get(competition, {})
         if competition == 'UEFA Champions League':
+            reviewed = CL_TEAM_ALIASES
+        if reviewed:
             for side in ['home', 'away']:
                 names = offers[side + '_team']
-                aliases = {name.casefold(): canonical for name, canonical in CL_TEAM_ALIASES.items()}
+                aliases = {name.casefold(): canonical for name, canonical in reviewed.items()}
                 offers[side + '_team'] = names.str.casefold().map(aliases).combine_first(names)
         matches = fixtures[fixtures.competition.eq(competition)]
         if not matches.empty:
@@ -96,11 +95,16 @@ def capture_cache_rejections(capture):
     """Honor HTTP cache evidence when the collector retained it."""
     audit = capture / 'cache-audit.json'
     if not audit.exists():
+        audit = capture / 'source_report.json'
+    if not audit.exists():
         return {}
     rejected = {}
-    for source in json.loads(audit.read_text(encoding='utf-8')):
+    sources = json.loads(audit.read_text(encoding='utf-8'))
+    if isinstance(sources, dict):
+        sources = sources['direct_sources']
+    for source in sources:
         responses = source.get('http_audit', [])
-        if not responses or source.get('http_status') != 200:
+        if not responses or source.get('http_status') not in {200, 206}:
             rejected[source['bookmaker']] = 'source_unavailable'
             continue
         response = responses[-1]

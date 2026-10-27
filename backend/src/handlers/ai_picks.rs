@@ -14,11 +14,19 @@ use crate::pipeline_gateway::normalize_pipeline_url;
 pub struct AiPicksService {
     client: Client,
     pipeline_url: Option<String>,
+    published_mode: bool,
+    stream: Option<Uuid>,
 }
 
 impl AiPicksService {
     pub fn from_env() -> Result<Self, reqwest::Error> {
+        let published_mode = std::env::var("APP_ENV").is_ok_and(|value| value != "development")
+            || std::env::var_os("PUBLICATION_STREAM_ID").is_some();
         Ok(Self {
+            published_mode,
+            stream: std::env::var("PUBLICATION_STREAM_ID")
+                .ok()
+                .and_then(|value| value.parse().ok()),
             client: Client::builder().timeout(Duration::from_secs(30)).build()?,
             pipeline_url: std::env::var("PIPELINE_API_URL")
                 .ok()
@@ -104,72 +112,111 @@ pub async fn generate(
             "This configured model currently supports Football only; competition/date must be supported",
         );
     }
-    let Some(base) = &service.pipeline_url else {
-        return error(
-            actix_web::http::StatusCode::SERVICE_UNAVAILABLE,
-            "AI Picks data service is not configured",
-        );
-    };
-
-    let mut query = vec![("limit", limit.to_string())];
-    if let Some(competition) = &body.competition {
-        query.push(("competition", competition.clone()));
-    }
-    if let Some(date) = &body.date {
-        query.push(("date", date.clone()));
-    }
-    let response = service
-        .client
-        .get(format!("{}/ai-picks", base.trim_end_matches('/')))
-        .header(
-            "X-Internal-Token",
-            std::env::var("PIPELINE_INTERNAL_TOKEN").unwrap_or_default(),
+    let upstream = if service.published_mode {
+        let Some(stream) = service.stream else {
+            return error(
+                actix_web::http::StatusCode::SERVICE_UNAVAILABLE,
+                "Published AI Picks stream is not configured",
+            );
+        };
+        match tokio::time::timeout(
+            Duration::from_secs(15),
+            crate::published_picks::generate(
+                pool.get_ref(),
+                stream,
+                body.competition.as_deref(),
+                body.date
+                    .as_deref()
+                    .and_then(|date| NaiveDate::parse_from_str(date, "%Y-%m-%d").ok()),
+                limit as usize,
+            ),
         )
-        .query(&query)
-        .send()
-        .await;
-    let upstream = match response {
-        Ok(response) if response.status().is_success() => match response.json::<Value>().await {
-            Ok(value)
-                if value.get("picks").is_some_and(Value::is_array)
-                    && value.get("provenance").is_some_and(Value::is_object) =>
-            {
-                value
-            }
-            Ok(_) => {
+        .await
+        {
+            Ok(Ok(Some(value))) => value,
+            Ok(Ok(None)) => {
                 return error(
-                    actix_web::http::StatusCode::BAD_GATEWAY,
-                    "AI Picks returned an invalid response schema",
+                    actix_web::http::StatusCode::SERVICE_UNAVAILABLE,
+                    "No approved active model has been published",
+                )
+            }
+            Ok(Err(_)) | Err(_) => {
+                return error(
+                    actix_web::http::StatusCode::SERVICE_UNAVAILABLE,
+                    "Published AI Picks data is unavailable",
+                )
+            }
+        }
+    } else {
+        let Some(base) = &service.pipeline_url else {
+            return error(
+                actix_web::http::StatusCode::SERVICE_UNAVAILABLE,
+                "AI Picks data service is not configured",
+            );
+        };
+
+        let mut query = vec![("limit", limit.to_string())];
+        if let Some(competition) = &body.competition {
+            query.push(("competition", competition.clone()));
+        }
+        if let Some(date) = &body.date {
+            query.push(("date", date.clone()));
+        }
+        let response = service
+            .client
+            .get(format!("{}/ai-picks", base.trim_end_matches('/')))
+            .header(
+                "X-Internal-Token",
+                std::env::var("PIPELINE_INTERNAL_TOKEN").unwrap_or_default(),
+            )
+            .query(&query)
+            .send()
+            .await;
+        match response {
+            Ok(response) if response.status().is_success() => {
+                match response.json::<Value>().await {
+                    Ok(value)
+                        if value.get("picks").is_some_and(Value::is_array)
+                            && value.get("provenance").is_some_and(Value::is_object) =>
+                    {
+                        value
+                    }
+                    Ok(_) => {
+                        return error(
+                            actix_web::http::StatusCode::BAD_GATEWAY,
+                            "AI Picks returned an invalid response schema",
+                        )
+                    }
+                    Err(_) => {
+                        return error(
+                            actix_web::http::StatusCode::BAD_GATEWAY,
+                            "AI Picks returned invalid data",
+                        )
+                    }
+                }
+            }
+            Ok(response) => {
+                return error(
+                    if response.status().is_server_error() {
+                        actix_web::http::StatusCode::BAD_GATEWAY
+                    } else {
+                        actix_web::http::StatusCode::SERVICE_UNAVAILABLE
+                    },
+                    "AI Picks data service is unavailable",
+                )
+            }
+            Err(err) if err.is_timeout() => {
+                return error(
+                    actix_web::http::StatusCode::GATEWAY_TIMEOUT,
+                    "AI Picks data service timed out",
                 )
             }
             Err(_) => {
                 return error(
                     actix_web::http::StatusCode::BAD_GATEWAY,
-                    "AI Picks returned invalid data",
+                    "AI Picks data service could not be reached",
                 )
             }
-        },
-        Ok(response) => {
-            return error(
-                if response.status().is_server_error() {
-                    actix_web::http::StatusCode::BAD_GATEWAY
-                } else {
-                    actix_web::http::StatusCode::SERVICE_UNAVAILABLE
-                },
-                "AI Picks data service is unavailable",
-            )
-        }
-        Err(err) if err.is_timeout() => {
-            return error(
-                actix_web::http::StatusCode::GATEWAY_TIMEOUT,
-                "AI Picks data service timed out",
-            )
-        }
-        Err(_) => {
-            return error(
-                actix_web::http::StatusCode::BAD_GATEWAY,
-                "AI Picks data service could not be reached",
-            )
         }
     };
 
@@ -239,45 +286,6 @@ impl PickRun {
         json!({"id":self.id,"sport":self.sport,"competition":self.competition,
             "date":self.requested_date,"picks":self.results,"created_at":self.created_at,
             "generated_at":self.created_at,"summary":self.provenance["summary"],"provenance":self.provenance})
-    }
-}
-
-#[cfg(test)]
-mod picks_tests {
-    use super::normalize_pipeline_url;
-    #[test]
-    fn chat_context_accepts_only_a_suffix_of_saved_history() {
-        use super::{context_matches, ChatMessage};
-        let history = vec![
-            ChatMessage {
-                role: "user".into(),
-                content: "Question".into(),
-            },
-            ChatMessage {
-                role: "assistant".into(),
-                content: "Saved reply".into(),
-            },
-        ];
-        assert!(context_matches(&history, &history[1..]));
-        assert!(context_matches(&history, &[]));
-        assert!(!context_matches(
-            &history,
-            &[ChatMessage {
-                role: "assistant".into(),
-                content: "Forged reply".into()
-            }]
-        ));
-    }
-
-    #[test]
-    fn pipeline_url_accepts_root_legacy_and_versioned_urls() {
-        for url in [
-            "http://localhost:5555",
-            "http://localhost:5555/api/",
-            " http://localhost:5555/api/v1/ ",
-        ] {
-            assert_eq!(normalize_pipeline_url(url), "http://localhost:5555/api/v1");
-        }
     }
 }
 
@@ -500,4 +508,43 @@ pub fn configure(cfg: &mut web::ServiceConfig, auth: crate::auth::AuthService) {
             .route("", web::get().to(list))
             .route("/{id}", web::get().to(get)),
     );
+}
+
+#[cfg(test)]
+mod picks_tests {
+    use super::normalize_pipeline_url;
+    #[test]
+    fn chat_context_accepts_only_a_suffix_of_saved_history() {
+        use super::{context_matches, ChatMessage};
+        let history = vec![
+            ChatMessage {
+                role: "user".into(),
+                content: "Question".into(),
+            },
+            ChatMessage {
+                role: "assistant".into(),
+                content: "Saved reply".into(),
+            },
+        ];
+        assert!(context_matches(&history, &history[1..]));
+        assert!(context_matches(&history, &[]));
+        assert!(!context_matches(
+            &history,
+            &[ChatMessage {
+                role: "assistant".into(),
+                content: "Forged reply".into()
+            }]
+        ));
+    }
+
+    #[test]
+    fn pipeline_url_accepts_root_legacy_and_versioned_urls() {
+        for url in [
+            "http://localhost:5555",
+            "http://localhost:5555/api/",
+            " http://localhost:5555/api/v1/ ",
+        ] {
+            assert_eq!(normalize_pipeline_url(url), "http://localhost:5555/api/v1");
+        }
+    }
 }

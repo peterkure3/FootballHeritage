@@ -66,11 +66,11 @@ where
             if let Some(auth_header) = req.headers().get("Authorization") {
                 if let Ok(auth_str) = auth_header.to_str() {
                     // Check if it's a Bearer token
-                    if auth_str.starts_with("Bearer ") {
-                        let token = &auth_str[7..]; // Remove "Bearer " prefix
+                    if let Some(token) = auth_str.strip_prefix("Bearer ") {
+                        // Remove "Bearer " prefix
 
                         // Validate token
-                        match auth_service.validate_token(token) {
+                        match auth_service.validate_request_token(token).await {
                             Ok(claims) => {
                                 // Store claims in request extensions for handlers to use
                                 req.extensions_mut().insert(claims);
@@ -80,6 +80,12 @@ where
                                     .call(req)
                                     .await
                                     .map(|res| res.map_into_boxed_body());
+                            }
+                            Err(crate::errors::AppError::Database(_)) => {
+                                let response = HttpResponse::ServiceUnavailable().json(serde_json::json!({
+                                    "error":{"code":"AUTH_STORAGE_UNAVAILABLE","message":"Authentication is temporarily unavailable."}
+                                }));
+                                return Ok(req.into_response(response).map_into_boxed_body());
                             }
                             Err(_) => {
                                 // Invalid token

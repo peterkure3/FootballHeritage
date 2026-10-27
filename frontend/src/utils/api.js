@@ -1,5 +1,6 @@
 // API utility for secure communication with the Rust betting backend
 import { apiBase, productionApiBase } from './apiUrl';
+import { publishedFetch } from './publishedFetch.mjs';
 export const API_BASE_URL = import.meta.env.PROD
   ? productionApiBase(import.meta.env.VITE_API_URL)
   : apiBase(import.meta.env.VITE_API_URL || "http://localhost:8888");
@@ -11,7 +12,7 @@ export function apiFetch(url, options = {}) {
   const headers = new Headers(options.headers);
   const token = tokenManager.getToken();
   if (token) headers.set('Authorization', `Bearer ${token}`);
-  return fetch(url, { ...options, headers, credentials: 'omit' });
+  return publishedFetch(fetch, url, { ...options, headers, credentials: 'omit' });
 }
 
 // Token management
@@ -50,7 +51,7 @@ export const makeRequest = async (endpoint, options = {}) => {
   };
 
   try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+    const response = await publishedFetch(fetch, `${API_BASE_URL}${endpoint}`, config);
 
     // Handle 401 Unauthorized
     if (response.status === 401 && endpoint !== "/auth/login" && endpoint !== "/auth/register") {
