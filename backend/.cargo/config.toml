@@ -15,7 +15,7 @@ rustflags = [
 [target.x86_64-unknown-linux-gnu]
 # Linux-specific optimizations
 rustflags = [
-    "-C", "target-cpu=native",
+    "-C", "target-cpu=x86-64",
     "-C", "link-arg=-fuse-ld=lld",  # Use faster linker if available
 ]
 
