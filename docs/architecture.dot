@@ -1,0 +1,50 @@
+digraph FootballHeritage {
+  graph [rankdir=LR, bgcolor="#f5f7fa", pad="0.5", nodesep="0.45", ranksep="0.8", fontname="Arial", label="FootballHeritage | System Architecture\nHosted release + current local frontend improvements • 28 October 2026", labelloc=t, fontsize=25];
+  node [shape=box, style="rounded,filled", fillcolor=white, color="#c4cdd5", fontname="Arial", fontsize=13, margin="0.2,0.15"];
+  edge [fontname="Arial", fontsize=10, color="#526577", arrowsize=0.8];
+  subgraph cluster_browser {
+    label="USER DEVICE"; fontname="Arial"; fontsize=16; color="#c4cdd5"; style=rounded;
+    browser [label="React 19 + Vite frontend\nRoutes • feature gates • React Query\nPredictions • intelligence • account UI", fillcolor="#e3f2eb"];
+    cache [label="Local frontend improvement\nSettled history loads before secondary panels\n2-minute session cache for public history only\nBackground refresh • exact filter keys", fillcolor="#fff3d5"];
+    browser -> cache [label="safe historical evidence", dir=both];
+  }
+  subgraph cluster_vercel {
+    label="VERCEL — HOSTED APPLICATION"; fontname="Arial"; fontsize=16; color="#c4cdd5"; style=rounded;
+    static [label="Frontend deployment\nStatic HTML / JS / CSS"];
+    api [label="Rust + Actix-web API\nAuthentication / durable sessions\nFeature policy • admin • betting / wallet\nPublished AI Picks + Rust RAG", fillcolor="#e3f2eb"];
+    gateway [label="Durable gateway\n/api/v1/pipeline/* compatibility routes\nRead snapshots or queue computation\n202 pending → client polls → saved response"];
+    api -> gateway [label="authorized data requests"];
+  }
+  subgraph cluster_neon {
+    label="NEON POSTGRESQL — CURRENT STAGING DATABASE"; fontname="Arial"; fontsize=16; color="#c4cdd5"; style=rounded;
+    appdb [shape=cylinder, label="Application data\nUsers • sessions • policies\nEvents • markets • bets / wallet", fillcolor="#e6effb"];
+    publications [shape=cylinder, label="Published datasets\nFixture bundles + model metadata\nSimulation bundles • freshness / provenance", fillcolor="#e6effb"];
+    jobs [shape=cylinder, label="Gateway jobs + response snapshots\nUser / stream scope • idempotency\nLeases • expiry • stored results", fillcolor="#e6effb"];
+  }
+  subgraph cluster_windows {
+    label="PRIVATE WINDOWS HOST — PYTHON COMPUTATION"; fontname="Arial"; fontsize=16; color="#c4cdd5"; style=rounded;
+    etl [label="Collectors + ETL\nProvider identity mapping\nFixtures • results • bookmaker observations"];
+    localdb [shape=cylinder, label="Local PostgreSQL\nSports history • features • forecasts\nOdds • trials • simulation evidence", fillcolor="#e6effb"];
+    models [label="Python models + analytics\nTraining / inference • simulations\nEV / devig / arbitrage • FPL / trials\nSaved active + candidate artifacts"];
+    publisher [label="Publication worker\nValidated bundles • transactional outbox\nReceipts • retry / reconciliation"];
+    compute [label="Gateway computation worker\nClaim leased jobs • bounded child process\nPrewarm defaults • commit saved responses"];
+    schedule [label="Windows Task Scheduler\nSeparate publication + gateway tasks\nHost must be awake; user signed in", fillcolor="#fff3d5"];
+    etl -> localdb [label="ingest"];
+    localdb -> models [label="history / features", dir=both];
+    localdb -> publisher [label="approved outputs"];
+    compute -> models [label="existing Python interfaces"];
+    schedule -> publisher [style=dashed];
+    schedule -> compute [style=dashed];
+  }
+  sources [label="External sports / bookmaker providers\nVerified feeds + website collectors", fillcolor="#eee8f7"];
+  sources -> etl;
+  static -> browser [label="deliver application"];
+  browser -> api [label="HTTPS API + auth\nexplicit pending polling"];
+  api -> appdb [label="SQL / session validation", dir=both];
+  api -> publications [label="published reads / RAG"];
+  gateway -> jobs [label="enqueue / read result", dir=both];
+  publisher -> publications [label="outbound TLS publication"];
+  compute -> jobs [label="outbound TLS\nclaim / complete", dir=both];
+  note [shape=note, label="Serving boundary\nVercel never calls the Windows host over HTTP.\nPython owns computation; Rust serves stored outputs.\nFreshness and kickoff limits protect actionable rankings.\nLegacy Node / Genkit chatbot is superseded by Rust RAG\nin the hosted published mode.", fillcolor="#ffffff"];
+  gateway -> note [style=dotted, arrowhead=none];
+}

@@ -4,6 +4,7 @@ import { predictionService } from "../../services/predictionService";
 import Pagination from "./Pagination";
 import QueryState from "./QueryState";
 import EvidenceTable from "./EvidenceTable";
+import { publicSnapshot } from "../../utils/publicSnapshot.mjs";
 
 const date = (value) =>
   value ? new Date(value).toLocaleString() : "Unavailable";
@@ -211,23 +212,25 @@ export default function PredictionResults() {
     model_version: "",
   });
   const [paging, setPaging] = useState({ page: 1, result_filter: "all" });
-  const versions = useQuery({
-    queryKey: ["prediction-versions"],
-    queryFn: ({ signal }) => predictionService.getVersions(signal),
-    retry: 1,
-  });
   const feed = useQuery({
     queryKey: ["prediction-history", filters, paging],
-    queryFn: ({ signal }) =>
+    ...publicSnapshot(["prediction-history", filters, paging], ({ signal }) =>
       predictionService.getHistory(
         { ...filters, ...paging, page_size: 10 },
         signal,
-      ),
+      )),
+    retry: 1,
+  });
+  const versions = useQuery({
+    queryKey: ["prediction-versions"],
+    ...publicSnapshot(["prediction-versions"], ({ signal }) => predictionService.getVersions(signal)),
+    enabled: !feed.isPending,
     retry: 1,
   });
   const summary = useQuery({
     queryKey: ["prediction-accuracy", filters],
-    queryFn: ({ signal }) => predictionService.getAccuracy(filters, signal),
+    ...publicSnapshot(["prediction-accuracy", filters], ({ signal }) => predictionService.getAccuracy(filters, signal)),
+    enabled: !feed.isPending,
     retry: 1,
   });
   return (
@@ -249,6 +252,7 @@ export default function PredictionResults() {
         query={summary}
         loading="Loading performance evidence…"
         failure="Performance unavailable"
+        showRefresh
       >
         {(data) => <PerformanceSummary data={data} />}
       </QueryState>
@@ -272,6 +276,7 @@ export default function PredictionResults() {
         query={feed}
         loading="Loading settled history…"
         failure="History unavailable"
+        showRefresh
       >
         {(data) => (
           <HistoryResults

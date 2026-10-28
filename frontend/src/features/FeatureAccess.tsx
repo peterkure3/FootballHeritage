@@ -35,10 +35,10 @@ function UnavailableMessage({
 }) {
   return (
     <main className="fh-container" style={{ padding: "3rem 1rem" }}>
-      <h1>Feature unavailable</h1>
+      <h1>{failed ? "Connection interrupted" : "Feature unavailable"}</h1>
       <p>
         {failed
-          ? "We could not verify access. Please try again."
+          ? "We could not check access. We’ll retry automatically, or you can check again now."
           : "This feature is currently unavailable for your account."}
       </p>
       <button className="fh-button" onClick={retry}>

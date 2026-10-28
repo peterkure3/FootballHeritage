@@ -12,6 +12,7 @@ export function useFeatures({ poll = false } = {}) {
     // The application boundary owns polling; navigation consumers share its cache.
     refetchInterval: poll ? 15000 : false,
     refetchOnWindowFocus: true,
-    retry: false,
+    retry: 2,
+    retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 3000),
   });
 }
