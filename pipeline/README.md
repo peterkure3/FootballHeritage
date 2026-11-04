@@ -1,5 +1,10 @@
 # Sports Betting Prediction Pipeline and API
 
+For the current local collection, prediction, reporting and scheduling commands,
+start with [Running without an AI agent](docs/UNATTENDED_PIPELINE.md).
+Use `run_pipeline.bat doctor` to check the environment and
+`run_pipeline.bat daily --public-only` for the official/public-feed workflow.
+
 Production-ready pipeline for football and NCAA basketball predictions using XGBoost, with FastAPI REST API and Airflow orchestration.
 
 ## Features

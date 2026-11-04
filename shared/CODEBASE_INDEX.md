@@ -1,5 +1,103 @@
 # Football Heritage - Codebase Index
 
+## Champions League odds, training and Monte Carlo — 2026-11-04
+
+Official CL history refreshed and a new isolated global candidate trained on
+11,467 completed fixtures (1,917 held-out; 48.83% accuracy, 1.01701 log loss).
+Three public bookmaker capture rounds were retained. Final accepted markets cover
+all nine official fixtures across BetPawa, Ababet and Cloudbet; reversed listings,
+stale Bovada data and unknown-open-status 22Bet prices are excluded. Nine million
+seeded score pairs simulated; no valid arbitrage or full-screen qualifying pick.
+Four classifier forecasts excluded for insufficient history; their simulations
+remain exploratory. New reusable `scripts.analyze_champions_league` and
+`scripts.report_champions_league` produce matched current-date analysis without
+publishing. Six identity/orientation/Poisson checks passed; candidate remains
+inactive. Report: `stages/03-build/output/ucl-20261104T144639Z/final/report.md`.
+
+## Pipeline operation without AI agents — 2026-11-04
+
+Added a locked, bounded job runner and portable current-date market reports,
+connected the existing daily/weekly batch entry points, and inventoried all 94
+top-level output scripts with maintained replacements or explicit archive/opt-in
+dispositions. The isolated Python 3.12 environment has an exact dependency lock;
+pandas 3/SQLAlchemy incompatibility and NFL research cache dtype drift were fixed.
+Real public daily ingestion/prediction/backend sync, regional markets, and explicit
+inactive candidate export passed. Full pytest: 391 passed, 31 skipped, 75 subtests;
+final report/runner/source/cache checks: 23 passed. Windows tasks are registered
+and Ready: daily 06:00 (public-only), Sunday 03:00 (candidate training), computer
+local time and signed-in account. Operational guide:
+`pipeline/docs/UNATTENDED_PIPELINE.md`. Verification and limitations:
+`stages/03-build/output/pipeline-autonomy-20261104.md`.
+
+## Market refresh and football training — 2026-11-03
+
+Ran existing daily ingestion, regional Scrapling collection, form import, isolated
+global candidate training, active prediction regeneration and backend sync.
+Candidate uses 11,447 completed fixtures; 1,920 held-out fixtures score 48.65%
+accuracy and 1.01809 log loss. It remains inactive. Matched bookmaker log loss is
+better on the limited 56-fixture subset; no betting advantage established.
+Final market export contains 16 candidate previews for today's 18 football
+fixtures, with two history exclusions, active picks, NBA markets and explicit
+coverage limitations. No arbitrage passed existing freshness/skew checks.
+Paid Odds API returned 401; public collectors supplied quotes. Export normalizes
+the existing intelligence engine's fraction-valued `ev_pct` into explicit
+`gross_ev_fraction` and `gross_ev_pct` fields without changing serving behavior.
+Report: `stages/03-build/output/market-refresh-20261103/report.md`.
+
+## Prediction accuracy goal — 2026-10-31
+
+Active research goal: history-only reviewed identity consistency improved a paired
+retrospective soccer comparison from 48.26% to 49.63% (1,894 fixtures, +26 correct).
+Context-feature experiments were rejected. New candidate remains inactive;
+prospective confirmation and other sports remain outstanding. No staging,
+commits or production changes. See `stages/03-build/output/accuracy-progress-20261031.md`.
+
+Prospective follow-up: 45 paired future soccer forecasts frozen under
+`pipeline/data/processed/accuracy_shadow/20261031-paired/`; initial assessment
+zero settled, 45 pending. Recorder/evaluator and four adversarial checks added.
+Cross-batch aggregation and further evidence remain outstanding; see
+`stages/03-build/output/accuracy-shadow-20261031.md`.
+
+Follow-up: deduplicated study aggregation implemented and tested. NBA baseline
+replayed, stale training input diagnosed (zero October results), and 81 completed
+NBA games captured in isolated research with real observation times. No NBA
+accuracy improvement or production import claimed. See
+`stages/03-build/output/accuracy-multisport-progress-20261031.md`.
+
+## Today’s markets and candidate picks — 2026-10-31
+
+Existing Scrapling collectors refreshed soccer and independently validated NBA
+markets. Reviewed output covers 24 soccer fixtures (8 EPL), with cache/freshness
+exclusions and explicit candidate paper picks. NBA Utah–Portland preview has no
+positive-EV selection. No production model promotion. Final report:
+`stages/03-build/output/today-picks-20261031-reviewed/report.md`.
+
+## Paired frozen soccer backtest — 2026-10-31
+
+`models.compare_frozen_models` replays installed 2.0.0 and an explicit 2.1.0
+candidate using shared causal features, preserving artifacts and serving settings.
+Current canonical corpus: 11,373 completed fixtures, 2019-08-09 to 2026-10-30.
+Accuracy 51.56% versus 52.44%; candidate test replay reproduced saved metrics.
+Training overlap and legacy feature semantics limit interpretation. Report and
+per-fixture predictions: `stages/04-test/output/model-comparison-20261031/`.
+
+## Canonical event sports — 2026-10-31
+
+Local backend sports normalized to SOCCER/BASKETBALL/NFL with a future-write
+trigger; repeated provider snapshots are reconciled before football/NBA export.
+See `stages/03-build/output/event-sport-identities-20261031.md` for counts,
+verification and scope. Backend migration and preview/apply repair utility included.
+
+## ML research safeguards — 2026-10-30
+
+Added isolated provenance-gated feature experiments, NBA play-by-play snapshot
+auditing, and paired-score distribution metrics in the existing soccer evaluator.
+The current NBA pilot reconciles 36,332 events across 71 completed games; raw
+provider sequence regressions remain documented and possession use is unapproved.
+Production models are unchanged; real forecasting improvement is unmeasured and
+historical availability adapters remain pending. See
+`pipeline/docs/ML_RESEARCH.md` and `stages/03-build/output/ml-research-20261030.md`.
+
 ## Admin Features UI — 2026-10-27
 
 Refreshed `/admin/features` with availability metrics, separated search and user
@@ -718,6 +816,28 @@ and scoped `auth.css`, with existing hooks/schemas/age confirmation unchanged.
 - Follow-up verified: actual Pegasus SSH transport and 20-fixture apply passed; source fields, all 20 event UUIDs and moneyline pairs matched, with 4,189 backend events and updates-only repeat preview. A dedicated Windows SSH key and scripts/install_pegasus_sync.ps1 were prepared. Public-key installation and task registration remain pending.
 - Automation verified: the key is installed and FootballHeritagePegasusSync runs at sign-in and every 30 minutes while the Windows user is signed in. First scheduled sync processed 20 fixtures with LastTaskResult=0; task returned to Ready. An independent key tunnel also passed and closed automatically. See stages/03-build/output/pegasus-sync-schedule-20261013.json. This supersedes the earlier pending-authentication notes above.
 - Schedule changed at the user's request on 2026-10-13: Pegasus collection now runs at 08:00 Africa/Kampala; the timer shows next run 2026-10-14 08:00 EAT. Windows sync remains every 30 minutes while signed in.
+
+## Accuracy experiments - 2026-11-01
+
+Latest NFL refit evaluated through nested historical replicas at week-8 cutoffs: 679/1,044 correct (65.04%) vs preseason 686/1,044 (65.71%), worse log loss/Brier. No refit improvement supported. Actual November 1 artifact has zero independent results; 14 future forecasts frozen, with hash-verified final-result/tie-void assessor. 34 tests passed; all six replicas/comparators and 14 forecasts independently replayed to 1e-12. No production change, staging or commits. See `stages/04-test/output/nfl-refit-performance-20261101/summary.md`; assess later with `scripts.assess_nfl_refit`.
+
+User-requested NFL model training completed: `pipeline/models/model_store/research/nfl_trained_20261101/model.pkl`, history-only C=1.0, base fit on 3,284 decisive 2014–2025 games and sigmoid calibration on 107 available 2026 games. Twelve ties stay in history. Existing sport input schema is preserved; new artifact is inactive and outside serving. Prior 2026 holdout scores do not apply to this refit. New split test plus 10 existing sport-model tests passed; model hashes/reload/probabilities verified. No production change, staging or commits. Reproduce with `models.train_nfl_asof`; see `pipeline/docs/NFL_HISTORY_VALIDATION.md`.
+
+User-requested NFL expansion completed: official nflverse capture has 13 PBP seasons (2014–2026), 598,931 plays; normalized exports include 7,125 scores (2000–2026). New prepared snapshot has 3,403 fully PBP-covered games. Hash-keyed aggregation cache measured ~91× faster for that stage; shared features and train-only scaler reuse reduce repeated work. Six season folds and 2026 holdout retained history-only; refreshed/reference both score 61/107, with modest inconclusive probability-score improvement and worse bin-calibration diagnostic. Local batch prediction 4.3 ms vs 8.8 ms; no API/accuracy guarantee. 31 tests passed; existing CI discovers new tests. No production change, staging or commits. See `pipeline/docs/NFL_HISTORY_VALIDATION.md` and `stages/03-build/output/nfl-history-improvement-results-20261101.md`.
+
+NFL efficiency ablation rejected: three nested development folds slightly favored efficiency (58.41% vs 57.67% on 541 targets), but frozen retrospective validation on identical 120 fixtures favored history-only (79/120, 65.83%) over efficiency (74/120, 61.67%), with worse efficiency log loss and Brier. Raw PBP/feature replay passed; 21 focused/existing tests passed. No comparison to the main NFL artifact's different headline period is justified. Research comparator only; no production change, staging or commits. See `stages/03-build/output/accuracy-nfl-efficiency-results-20261101.md`.
+
+NBA history now preserves verified first observation times across captures: 80 unchanged results retain October 31 timestamps, seven new finals use November 1 timestamps, with raw-source hash/link verification. New 58-game batches expand each frozen study to 64 unique fixtures (six settled, 58 pending); 51 recaptures are excluded. Model weights/policy are unchanged and both model arms use 8,197 eligible results. Twenty-three affected tests passed. See `stages/03-build/output/accuracy-observation-history-20261101.md`. Current candidate performance is still only 5/6 versus 4/6; no production promotion, staging or commits.
+
+First actual prospective NBA results: six unique settled games, candidate 5/6 versus original 4/6, log loss 0.5406 versus 0.6385. All six finals agree between primary and independently reconciled sources; 51 original fixtures remain pending. The separate freshness study is 4/6 in both arms on the same six games. Sample is too small for promotion. New isolated capture has 88 finals, 87 independently matched, and requires preserving earlier verified observation times before future batch replay. See `stages/03-build/output/accuracy-first-prospective-results-20261101.md`. Production remains unchanged; nothing staged or committed.
+
+NBA cumulative evaluation is implemented in `scripts.assess_nba_accuracy_study`, retaining earliest fixture forecasts and keeping model/freshness hypotheses separate. Raw-result hashes and trial linkage are checked; latest observations are re-scored rather than trusting receipt totals. Actual reports each contain zero settled and 57 pending games. Result capture covers the prior US-day scoreboard; later reconciliation is no longer fixed to October 31. Twenty-one affected tests passed, including full synthetic capture/aggregation and modified-source rejection. See `stages/03-build/output/accuracy-study-accumulation-20261101.md`. Future finals and additional prospective batches remain required; no production changes or staging.
+
+The frozen inactivity candidate now has a separate prospective trial: 57 future paired NBA games, identical 8,189-result eligible histories, seven changed winner choices. Explicit state replay matches the training feature contract; forecast queries are isolated. Thirty-two tests passed. Initial assessment: zero settled, 57 pending. See `stages/03-build/output/accuracy-nba-model-shadow-20261101.md`. Do not pool this with the ordinary-feature NBA freshness trial.
+
+NBA training follow-up: recency weighting and gradient boosting were rejected on 5,220 development predictions. A fixed 90-day inactivity reset improved development accuracy from 64.06% to 64.39% and retrospective reserved-period accuracy from 64.37% to 65.01% (seven extra correct out of 1,089); log loss 0.6327 to 0.6241. Accuracy's paired day-bootstrap interval includes zero. Twenty-three focused/regression tests passed. Research artifact requires its explicit inactivity feature contract; production is unchanged. See `stages/03-build/output/accuracy-nba-training-results-20261101.md`. This candidate needs a separate prospective comparison; the freshness trial uses different features and weights.
+
+Research only: the soccer identity candidate improved retrospective history-only accuracy from 48.26% to 49.63%; its prospective trial has 45 frozen forecasts. The NBA input-freshness trial adds 80 independently reconciled observed results and freezes 57 paired future forecasts with identical model weights. All NBA probabilities replayed exactly; six winner choices changed, with zero settled results at the initial assessment. Eighteen focused tests, Python compilation and diff whitespace checks passed. No production model changes, staging or commits. See `stages/03-build/output/accuracy-nba-freshness-20261101.md` and `accuracy-shadow-20261031.md`. Prospective improvement remains unestablished.
 
 ## User dashboard UI - 2026-10-22
 

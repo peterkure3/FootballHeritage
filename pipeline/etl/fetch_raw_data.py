@@ -308,7 +308,7 @@ class TheOddsApiFetcher:
             raise
 
 
-def fetch_football_data_org() -> None:
+def fetch_football_data_org() -> bool:
     """Fetch and save data from football-data.org."""
     logger.info("Starting football-data.org data fetch")
     
@@ -317,6 +317,7 @@ def fetch_football_data_org() -> None:
     
     ensure_dir(FOOTBALL_DATA_ORG_DIR)
     
+    failures = 0
     # Fetch competitions
     try:
         competitions = fetcher.fetch_competitions()
@@ -326,6 +327,7 @@ def fetch_football_data_org() -> None:
         )
     except Exception as e:
         logger.error(f"Failed to fetch competitions: {str(e)}")
+        failures += 1
     
     # Fetch matches for tracked competitions
     date_from = (datetime.now() - timedelta(days=7)).strftime("%Y-%m-%d")
@@ -340,10 +342,12 @@ def fetch_football_data_org() -> None:
             )
         except Exception as e:
             logger.error(f"Failed to fetch matches for {comp_code}: {str(e)}")
+            failures += 1
         finally:
             time.sleep(7)  # Stay within the provider's free-tier request limit.
     
     logger.info("Completed football-data.org data fetch")
+    return failures == 0
 
 
 def fetch_the_odds_api() -> bool:
@@ -403,6 +407,8 @@ def main() -> None:
 
     parser = argparse.ArgumentParser(description="Fetch football data and odds")
     parser.add_argument("--no-cache", action="store_true", help="Bypass local cache for this run")
+    parser.add_argument("--source", choices=["all", "football", "odds"], default="all",
+                        help="Run official fixture and paid odds collection independently")
     args = parser.parse_args()
 
     if args.no_cache:
@@ -414,9 +420,10 @@ def main() -> None:
     logger.info("Starting raw data fetch")
     
     try:
-        fetch_football_data_org()
-        if not fetch_the_odds_api():
-            logger.error('Raw data fetch incomplete: The Odds API requests failed. Existing data and regional collection remain available.')
+        football_ok = fetch_football_data_org() if args.source in {"all", "football"} else True
+        odds_ok = fetch_the_odds_api() if args.source in {"all", "odds"} else True
+        if not football_ok or not odds_ok:
+            logger.error('Raw data fetch incomplete; see source errors. Independent collectors remain available.')
             sys.exit(1)
         logger.info("Raw data fetch completed successfully")
     except Exception as e:

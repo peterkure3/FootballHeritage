@@ -41,3 +41,12 @@ backend/scripts/update_admin_password.sql
 .env*
 !/.env.example
 .venv-*/
+
+# Locally trained models and research data (back up separately from source).
+/pipeline/models/model_store/
+/stages/**/output/**/*.pkl
+/stages/**/output/**/*.parquet
+/stages/**/output/**/*.npy
+/stages/**/output/**/*.npz
+/stages/**/output/**/*.jsonl
+/stages/**/output/**/raw/

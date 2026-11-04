@@ -1,2 +1,6 @@
 # Optional transport; install in an isolated environment.
 scrapling[all]>=0.4.15,<0.5
+python-dotenv>=1,<2
+requests>=2.31,<3
+beautifulsoup4>=4.12,<5
+tzdata>=2024.1
