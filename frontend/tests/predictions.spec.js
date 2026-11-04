@@ -418,6 +418,17 @@ test("filters share the exact date and model scope; correctness filters the tabl
     page.getByText("Pre-kickoff accuracy", { exact: true }),
   ).toBeVisible();
   await expect(page.getByText("v2.0.0", { exact: true })).toHaveCount(1);
+  const competition = page.getByRole("combobox", { name: "Competition", exact: true });
+  await expect(competition).toContainText("All competitions");
+  await expect(competition).toContainText("Test League");
+  const competitionRequest = page.waitForRequest((request) =>
+    request.url().includes("/history-data") &&
+    new URL(request.url()).searchParams.get("league") === "Test League",
+  );
+  await competition.selectOption("Test League");
+  await competitionRequest;
+  await expect(competition).toHaveValue("Test League");
+  await competition.selectOption("");
   const summaryRequest = page.waitForRequest(
     (request) =>
       request.url().includes("/accuracy-data") &&

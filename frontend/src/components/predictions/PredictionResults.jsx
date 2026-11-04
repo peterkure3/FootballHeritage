@@ -106,7 +106,7 @@ function HistoryTable({ data }) {
 function activePeriod(filters) {
   return filters.start_date || filters.end_date ? "custom" : filters.days;
 }
-function HistoryFilters({ filters, setFilters, setPaging, versions }) {
+function HistoryFilters({ filters, setFilters, setPaging, versions, competitions }) {
   function filter(key, value) {
     setFilters((previous) => ({ ...previous, [key]: value }));
     setPaging((previous) => ({ ...previous, page: 1 }));
@@ -115,11 +115,17 @@ function HistoryFilters({ filters, setFilters, setPaging, versions }) {
     <div className="pd-filters pd-history-filters">
       <label>
         Competition
-        <input
+        <select
           value={filters.league}
-          placeholder="Exact competition name"
           onChange={(event) => filter("league", event.target.value)}
-        />
+        >
+          <option value="">All competitions</option>
+          {competitions.map((competition) => (
+            <option key={competition} value={competition}>
+              {competition}
+            </option>
+          ))}
+        </select>
       </label>
       <label>
         Model version
@@ -212,6 +218,17 @@ export default function PredictionResults() {
     model_version: "",
   });
   const [paging, setPaging] = useState({ page: 1, result_filter: "all" });
+  const competitionOptions = useQuery({
+    queryKey: ["prediction-competitions"],
+    ...publicSnapshot(["prediction-competitions"], ({ signal }) =>
+      predictionService.getAccuracy({}, signal),
+    ),
+    retry: 1,
+  });
+  const competitions = [...new Set([
+    ...(competitionOptions.data?.by_league ?? []).map((item) => item.league),
+    filters.league,
+  ])].filter(Boolean).sort((a, b) => a.localeCompare(b));
   const feed = useQuery({
     queryKey: ["prediction-history", filters, paging],
     ...publicSnapshot(["prediction-history", filters, paging], ({ signal }) =>
@@ -247,6 +264,7 @@ export default function PredictionResults() {
         setFilters={setFilters}
         setPaging={setPaging}
         versions={versions.data?.versions ?? []}
+        competitions={competitions}
       />
       <QueryState
         query={summary}
