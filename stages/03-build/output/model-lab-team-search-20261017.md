@@ -1,0 +1,11 @@
+# Model Lab team search — 2026-10-17
+
+Follow-up: user reported fields could not be clicked or typed into. Removed the initial empty model selection by selecting the newest candidate automatically. Fields remain editable while team requests load or fail, and the open dropdown reports the request state. Preview submission still requires valid, distinct teams. Live Chromium verification against localhost:5173 and the running API confirmed mouse selection of Kansas City Chiefs and keyboard selection of Buffalo Bills. Checked all 13 candidate team endpoints successfully. Added a delayed-response regression test to ensure typing works before suggestions arrive.
+
+Home and away fields now provide searchable dropdowns using the selected candidate's saved training history. The read-only `/api/v1/sport-models/teams` endpoint scopes non-soccer teams to the requested training league and validates candidate paths using the existing model-store guard.
+
+The shared TeamSearch component supports substring search, mouse/touch selection, arrow keys, Enter, Escape, and visible focus. Both fields reset when the candidate changes. The opposing team is excluded and preview submission requires two different known teams. Loading, empty and failed team lists have explicit messages; failures offer retry. Team requests are cached per candidate and cancelled when obsolete.
+
+Validation: changed-file ESLint and production build passed; two Python history-discovery tests passed. A temporary HTTP server returned 32 teams from the actual NFL candidate `20261015T194812812329Z` and rejected an invalid candidate with HTTP 422. Chromium checks cover mobile preview submission, case-insensitive partial search, browsing, empty search, duplicate exclusion, keyboard selection/dismissal, candidate reset and failed-request recovery. See the focused `Model lab team` and `candidate preview` tests in `frontend/tests/predictions.spec.js`.
+
+All three focused Chromium tests passed. Fallow summary/audit also ran. Repository-wide audit remains failing with dead-code and complexity findings; report saved in `model-lab-fallow-20261017.json`. Extracted status handling to simplify the updated form. Existing unrelated work was preserved. Restart the pipeline API if its running process does not auto-reload the new team endpoint.

@@ -1,0 +1,745 @@
+{
+  "project": "footballheritage-staging",
+  "branch": "staging",
+  "database": "footballheritage_predictions_staging",
+  "observed_date": "2026-10-26",
+  "catalog": {
+    "columns": [
+      {
+        "type": "integer",
+        "table": "matches",
+        "column": "match_id",
+        "nullable": "NO",
+        "position": 1
+      },
+      {
+        "type": "text",
+        "table": "matches",
+        "column": "sport_type",
+        "nullable": "YES",
+        "position": 2
+      },
+      {
+        "type": "text",
+        "table": "matches",
+        "column": "competition",
+        "nullable": "YES",
+        "position": 3
+      },
+      {
+        "type": "date",
+        "table": "matches",
+        "column": "season",
+        "nullable": "YES",
+        "position": 4
+      },
+      {
+        "type": "timestamp without time zone",
+        "table": "matches",
+        "column": "date",
+        "nullable": "YES",
+        "position": 5
+      },
+      {
+        "type": "text",
+        "table": "matches",
+        "column": "home_team",
+        "nullable": "NO",
+        "position": 6
+      },
+      {
+        "type": "text",
+        "table": "matches",
+        "column": "away_team",
+        "nullable": "NO",
+        "position": 7
+      },
+      {
+        "type": "integer",
+        "table": "matches",
+        "column": "home_score",
+        "nullable": "YES",
+        "position": 8
+      },
+      {
+        "type": "integer",
+        "table": "matches",
+        "column": "away_score",
+        "nullable": "YES",
+        "position": 9
+      },
+      {
+        "type": "text",
+        "table": "matches",
+        "column": "result",
+        "nullable": "YES",
+        "position": 10
+      },
+      {
+        "type": "integer",
+        "table": "matches",
+        "column": "home_shots",
+        "nullable": "YES",
+        "position": 11
+      },
+      {
+        "type": "integer",
+        "table": "matches",
+        "column": "away_shots",
+        "nullable": "YES",
+        "position": 12
+      },
+      {
+        "type": "double precision",
+        "table": "matches",
+        "column": "home_possession",
+        "nullable": "YES",
+        "position": 13
+      },
+      {
+        "type": "double precision",
+        "table": "matches",
+        "column": "away_possession",
+        "nullable": "YES",
+        "position": 14
+      },
+      {
+        "type": "integer",
+        "table": "matches",
+        "column": "home_corners",
+        "nullable": "YES",
+        "position": 15
+      },
+      {
+        "type": "integer",
+        "table": "matches",
+        "column": "away_corners",
+        "nullable": "YES",
+        "position": 16
+      },
+      {
+        "type": "integer",
+        "table": "matches",
+        "column": "home_yellow_cards",
+        "nullable": "YES",
+        "position": 17
+      },
+      {
+        "type": "integer",
+        "table": "matches",
+        "column": "away_yellow_cards",
+        "nullable": "YES",
+        "position": 18
+      },
+      {
+        "type": "integer",
+        "table": "matches",
+        "column": "home_red_cards",
+        "nullable": "YES",
+        "position": 19
+      },
+      {
+        "type": "integer",
+        "table": "matches",
+        "column": "away_red_cards",
+        "nullable": "YES",
+        "position": 20
+      },
+      {
+        "type": "double precision",
+        "table": "matches",
+        "column": "home_xg",
+        "nullable": "YES",
+        "position": 21
+      },
+      {
+        "type": "double precision",
+        "table": "matches",
+        "column": "away_xg",
+        "nullable": "YES",
+        "position": 22
+      },
+      {
+        "type": "text",
+        "table": "matches",
+        "column": "venue",
+        "nullable": "YES",
+        "position": 23
+      },
+      {
+        "type": "text",
+        "table": "matches",
+        "column": "referee",
+        "nullable": "YES",
+        "position": 24
+      },
+      {
+        "type": "integer",
+        "table": "matches",
+        "column": "attendance",
+        "nullable": "YES",
+        "position": 25
+      },
+      {
+        "type": "text",
+        "table": "matches",
+        "column": "status",
+        "nullable": "NO",
+        "position": 26
+      },
+      {
+        "type": "text",
+        "table": "matches",
+        "column": "data_source",
+        "nullable": "NO",
+        "position": 27
+      },
+      {
+        "type": "integer",
+        "table": "matches",
+        "column": "home_team_wins_last_n",
+        "nullable": "YES",
+        "position": 28
+      },
+      {
+        "type": "integer",
+        "table": "matches",
+        "column": "home_team_draws_last_n",
+        "nullable": "YES",
+        "position": 29
+      },
+      {
+        "type": "integer",
+        "table": "matches",
+        "column": "home_team_losses_last_n",
+        "nullable": "YES",
+        "position": 30
+      },
+      {
+        "type": "integer",
+        "table": "matches",
+        "column": "away_team_wins_last_n",
+        "nullable": "YES",
+        "position": 31
+      },
+      {
+        "type": "integer",
+        "table": "matches",
+        "column": "away_team_draws_last_n",
+        "nullable": "YES",
+        "position": 32
+      },
+      {
+        "type": "integer",
+        "table": "matches",
+        "column": "away_team_losses_last_n",
+        "nullable": "YES",
+        "position": 33
+      },
+      {
+        "type": "double precision",
+        "table": "matches",
+        "column": "home_team_avg_gd_last_n",
+        "nullable": "YES",
+        "position": 34
+      },
+      {
+        "type": "double precision",
+        "table": "matches",
+        "column": "away_team_avg_gd_last_n",
+        "nullable": "YES",
+        "position": 35
+      },
+      {
+        "type": "timestamp without time zone",
+        "table": "matches",
+        "column": "created_at",
+        "nullable": "YES",
+        "position": 36
+      },
+      {
+        "type": "timestamp without time zone",
+        "table": "matches",
+        "column": "updated_at",
+        "nullable": "YES",
+        "position": 37
+      },
+      {
+        "type": "character varying",
+        "table": "nba_games",
+        "column": "game_id",
+        "nullable": "NO",
+        "position": 1
+      },
+      {
+        "type": "character varying",
+        "table": "nba_games",
+        "column": "sport_key",
+        "nullable": "YES",
+        "position": 2
+      },
+      {
+        "type": "character varying",
+        "table": "nba_games",
+        "column": "sport",
+        "nullable": "NO",
+        "position": 3
+      },
+      {
+        "type": "character varying",
+        "table": "nba_games",
+        "column": "sport_title",
+        "nullable": "YES",
+        "position": 4
+      },
+      {
+        "type": "timestamp without time zone",
+        "table": "nba_games",
+        "column": "commence_time",
+        "nullable": "YES",
+        "position": 5
+      },
+      {
+        "type": "character varying",
+        "table": "nba_games",
+        "column": "home_team",
+        "nullable": "YES",
+        "position": 6
+      },
+      {
+        "type": "character varying",
+        "table": "nba_games",
+        "column": "away_team",
+        "nullable": "YES",
+        "position": 7
+      },
+      {
+        "type": "integer",
+        "table": "nba_games",
+        "column": "home_score",
+        "nullable": "YES",
+        "position": 8
+      },
+      {
+        "type": "integer",
+        "table": "nba_games",
+        "column": "away_score",
+        "nullable": "YES",
+        "position": 9
+      },
+      {
+        "type": "boolean",
+        "table": "nba_games",
+        "column": "completed",
+        "nullable": "YES",
+        "position": 10
+      },
+      {
+        "type": "timestamp without time zone",
+        "table": "nba_games",
+        "column": "last_update",
+        "nullable": "YES",
+        "position": 11
+      },
+      {
+        "type": "character varying",
+        "table": "nba_games",
+        "column": "source_file",
+        "nullable": "YES",
+        "position": 12
+      },
+      {
+        "type": "timestamp without time zone",
+        "table": "nba_games",
+        "column": "created_at",
+        "nullable": "YES",
+        "position": 13
+      },
+      {
+        "type": "timestamp without time zone",
+        "table": "nba_games",
+        "column": "updated_at",
+        "nullable": "YES",
+        "position": 14
+      },
+      {
+        "type": "integer",
+        "table": "odds",
+        "column": "id",
+        "nullable": "NO",
+        "position": 1
+      },
+      {
+        "type": "integer",
+        "table": "odds",
+        "column": "match_id",
+        "nullable": "YES",
+        "position": 2
+      },
+      {
+        "type": "text",
+        "table": "odds",
+        "column": "bookmaker",
+        "nullable": "NO",
+        "position": 3
+      },
+      {
+        "type": "double precision",
+        "table": "odds",
+        "column": "home_win",
+        "nullable": "YES",
+        "position": 4
+      },
+      {
+        "type": "double precision",
+        "table": "odds",
+        "column": "draw",
+        "nullable": "YES",
+        "position": 5
+      },
+      {
+        "type": "double precision",
+        "table": "odds",
+        "column": "away_win",
+        "nullable": "YES",
+        "position": 6
+      },
+      {
+        "type": "timestamp without time zone",
+        "table": "odds",
+        "column": "updated_at",
+        "nullable": "YES",
+        "position": 7
+      },
+      {
+        "type": "timestamp without time zone",
+        "table": "odds",
+        "column": "created_at",
+        "nullable": "YES",
+        "position": 8
+      },
+      {
+        "type": "integer",
+        "table": "prediction_history",
+        "column": "id",
+        "nullable": "NO",
+        "position": 1
+      },
+      {
+        "type": "integer",
+        "table": "prediction_history",
+        "column": "match_id",
+        "nullable": "YES",
+        "position": 2
+      },
+      {
+        "type": "text",
+        "table": "prediction_history",
+        "column": "model_version",
+        "nullable": "NO",
+        "position": 3
+      },
+      {
+        "type": "text",
+        "table": "prediction_history",
+        "column": "winner",
+        "nullable": "NO",
+        "position": 4
+      },
+      {
+        "type": "double precision",
+        "table": "prediction_history",
+        "column": "home_prob",
+        "nullable": "NO",
+        "position": 5
+      },
+      {
+        "type": "double precision",
+        "table": "prediction_history",
+        "column": "draw_prob",
+        "nullable": "NO",
+        "position": 6
+      },
+      {
+        "type": "double precision",
+        "table": "prediction_history",
+        "column": "away_prob",
+        "nullable": "NO",
+        "position": 7
+      },
+      {
+        "type": "timestamp without time zone",
+        "table": "prediction_history",
+        "column": "created_at",
+        "nullable": "YES",
+        "position": 8
+      },
+      {
+        "type": "timestamp without time zone",
+        "table": "prediction_history",
+        "column": "locked_at",
+        "nullable": "YES",
+        "position": 9
+      },
+      {
+        "type": "integer",
+        "table": "predictions",
+        "column": "id",
+        "nullable": "NO",
+        "position": 1
+      },
+      {
+        "type": "integer",
+        "table": "predictions",
+        "column": "match_id",
+        "nullable": "YES",
+        "position": 2
+      },
+      {
+        "type": "text",
+        "table": "predictions",
+        "column": "model_version",
+        "nullable": "NO",
+        "position": 3
+      },
+      {
+        "type": "text",
+        "table": "predictions",
+        "column": "winner",
+        "nullable": "NO",
+        "position": 4
+      },
+      {
+        "type": "double precision",
+        "table": "predictions",
+        "column": "home_prob",
+        "nullable": "NO",
+        "position": 5
+      },
+      {
+        "type": "double precision",
+        "table": "predictions",
+        "column": "draw_prob",
+        "nullable": "NO",
+        "position": 6
+      },
+      {
+        "type": "double precision",
+        "table": "predictions",
+        "column": "away_prob",
+        "nullable": "NO",
+        "position": 7
+      },
+      {
+        "type": "timestamp without time zone",
+        "table": "predictions",
+        "column": "created_at",
+        "nullable": "YES",
+        "position": 8
+      }
+    ],
+    "indexes": [
+      {
+        "name": "idx_matches_away_team",
+        "table": "matches",
+        "definition": "CREATE INDEX idx_matches_away_team ON public.matches USING btree (away_team)"
+      },
+      {
+        "name": "idx_matches_competition",
+        "table": "matches",
+        "definition": "CREATE INDEX idx_matches_competition ON public.matches USING btree (competition)"
+      },
+      {
+        "name": "idx_matches_date",
+        "table": "matches",
+        "definition": "CREATE INDEX idx_matches_date ON public.matches USING btree (date)"
+      },
+      {
+        "name": "idx_matches_home_team",
+        "table": "matches",
+        "definition": "CREATE INDEX idx_matches_home_team ON public.matches USING btree (home_team)"
+      },
+      {
+        "name": "idx_matches_status",
+        "table": "matches",
+        "definition": "CREATE INDEX idx_matches_status ON public.matches USING btree (status)"
+      },
+      {
+        "name": "matches_pkey",
+        "table": "matches",
+        "definition": "CREATE UNIQUE INDEX matches_pkey ON public.matches USING btree (match_id)"
+      },
+      {
+        "name": "nba_games_pkey",
+        "table": "nba_games",
+        "definition": "CREATE UNIQUE INDEX nba_games_pkey ON public.nba_games USING btree (game_id)"
+      },
+      {
+        "name": "idx_odds_bookmaker",
+        "table": "odds",
+        "definition": "CREATE INDEX idx_odds_bookmaker ON public.odds USING btree (bookmaker)"
+      },
+      {
+        "name": "idx_odds_match_id",
+        "table": "odds",
+        "definition": "CREATE INDEX idx_odds_match_id ON public.odds USING btree (match_id)"
+      },
+      {
+        "name": "odds_pkey",
+        "table": "odds",
+        "definition": "CREATE UNIQUE INDEX odds_pkey ON public.odds USING btree (id)"
+      },
+      {
+        "name": "idx_prediction_history_locked_at",
+        "table": "prediction_history",
+        "definition": "CREATE INDEX idx_prediction_history_locked_at ON public.prediction_history USING btree (locked_at)"
+      },
+      {
+        "name": "idx_prediction_history_match_id",
+        "table": "prediction_history",
+        "definition": "CREATE INDEX idx_prediction_history_match_id ON public.prediction_history USING btree (match_id)"
+      },
+      {
+        "name": "prediction_history_match_id_key",
+        "table": "prediction_history",
+        "definition": "CREATE UNIQUE INDEX prediction_history_match_id_key ON public.prediction_history USING btree (match_id)"
+      },
+      {
+        "name": "prediction_history_pkey",
+        "table": "prediction_history",
+        "definition": "CREATE UNIQUE INDEX prediction_history_pkey ON public.prediction_history USING btree (id)"
+      },
+      {
+        "name": "idx_predictions_created_at",
+        "table": "predictions",
+        "definition": "CREATE INDEX idx_predictions_created_at ON public.predictions USING btree (created_at)"
+      },
+      {
+        "name": "idx_predictions_match_id",
+        "table": "predictions",
+        "definition": "CREATE INDEX idx_predictions_match_id ON public.predictions USING btree (match_id)"
+      },
+      {
+        "name": "predictions_pkey",
+        "table": "predictions",
+        "definition": "CREATE UNIQUE INDEX predictions_pkey ON public.predictions USING btree (id)"
+      }
+    ],
+    "constraints": [
+      {
+        "name": "matches_pkey",
+        "type": "p",
+        "table": "matches",
+        "definition": "PRIMARY KEY (match_id)"
+      },
+      {
+        "name": "matches_result_check",
+        "type": "c",
+        "table": "matches",
+        "definition": "CHECK ((result = ANY (ARRAY['home_win'::text, 'draw'::text, 'away_win'::text])))"
+      },
+      {
+        "name": "matches_sport_type_check",
+        "type": "c",
+        "table": "matches",
+        "definition": "CHECK ((sport_type = ANY (ARRAY['football'::text, 'basketball'::text])))"
+      },
+      {
+        "name": "nba_games_pkey",
+        "type": "p",
+        "table": "nba_games",
+        "definition": "PRIMARY KEY (game_id)"
+      },
+      {
+        "name": "odds_match_id_fkey",
+        "type": "f",
+        "table": "odds",
+        "definition": "FOREIGN KEY (match_id) REFERENCES matches(match_id) ON DELETE CASCADE"
+      },
+      {
+        "name": "odds_pkey",
+        "type": "p",
+        "table": "odds",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "name": "prediction_history_away_prob_check",
+        "type": "c",
+        "table": "prediction_history",
+        "definition": "CHECK (((away_prob >= (0)::double precision) AND (away_prob <= (1)::double precision)))"
+      },
+      {
+        "name": "prediction_history_draw_prob_check",
+        "type": "c",
+        "table": "prediction_history",
+        "definition": "CHECK (((draw_prob >= (0)::double precision) AND (draw_prob <= (1)::double precision)))"
+      },
+      {
+        "name": "prediction_history_home_prob_check",
+        "type": "c",
+        "table": "prediction_history",
+        "definition": "CHECK (((home_prob >= (0)::double precision) AND (home_prob <= (1)::double precision)))"
+      },
+      {
+        "name": "prediction_history_match_id_fkey",
+        "type": "f",
+        "table": "prediction_history",
+        "definition": "FOREIGN KEY (match_id) REFERENCES matches(match_id) ON DELETE CASCADE"
+      },
+      {
+        "name": "prediction_history_match_id_key",
+        "type": "u",
+        "table": "prediction_history",
+        "definition": "UNIQUE (match_id)"
+      },
+      {
+        "name": "prediction_history_pkey",
+        "type": "p",
+        "table": "prediction_history",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "name": "prediction_history_winner_check",
+        "type": "c",
+        "table": "prediction_history",
+        "definition": "CHECK ((winner = ANY (ARRAY['home_win'::text, 'draw'::text, 'away_win'::text])))"
+      },
+      {
+        "name": "predictions_away_prob_check",
+        "type": "c",
+        "table": "predictions",
+        "definition": "CHECK (((away_prob >= (0)::double precision) AND (away_prob <= (1)::double precision)))"
+      },
+      {
+        "name": "predictions_draw_prob_check",
+        "type": "c",
+        "table": "predictions",
+        "definition": "CHECK (((draw_prob >= (0)::double precision) AND (draw_prob <= (1)::double precision)))"
+      },
+      {
+        "name": "predictions_home_prob_check",
+        "type": "c",
+        "table": "predictions",
+        "definition": "CHECK (((home_prob >= (0)::double precision) AND (home_prob <= (1)::double precision)))"
+      },
+      {
+        "name": "predictions_match_id_fkey",
+        "type": "f",
+        "table": "predictions",
+        "definition": "FOREIGN KEY (match_id) REFERENCES matches(match_id) ON DELETE CASCADE"
+      },
+      {
+        "name": "predictions_pkey",
+        "type": "p",
+        "table": "predictions",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "name": "predictions_winner_check",
+        "type": "c",
+        "table": "predictions",
+        "definition": "CHECK ((winner = ANY (ARRAY['home_win'::text, 'draw'::text, 'away_win'::text])))"
+      }
+    ]
+  }
+}

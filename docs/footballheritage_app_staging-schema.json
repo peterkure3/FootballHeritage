@@ -1,0 +1,4255 @@
+{
+  "project": "footballheritage-staging",
+  "branch": "staging",
+  "database": "footballheritage_app_staging",
+  "observed_date": "2026-10-26",
+  "catalog": {
+    "columns": [
+      {
+        "type": "bigint",
+        "table": "_sqlx_migrations",
+        "column": "version",
+        "nullable": "NO",
+        "position": 1
+      },
+      {
+        "type": "text",
+        "table": "_sqlx_migrations",
+        "column": "description",
+        "nullable": "NO",
+        "position": 2
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "_sqlx_migrations",
+        "column": "installed_on",
+        "nullable": "NO",
+        "position": 3
+      },
+      {
+        "type": "boolean",
+        "table": "_sqlx_migrations",
+        "column": "success",
+        "nullable": "NO",
+        "position": 4
+      },
+      {
+        "type": "bytea",
+        "table": "_sqlx_migrations",
+        "column": "checksum",
+        "nullable": "NO",
+        "position": 5
+      },
+      {
+        "type": "bigint",
+        "table": "_sqlx_migrations",
+        "column": "execution_time",
+        "nullable": "NO",
+        "position": 6
+      },
+      {
+        "type": "bigint",
+        "table": "admin_dashboard_summary",
+        "column": "total_active_users",
+        "nullable": "YES",
+        "position": 1
+      },
+      {
+        "type": "bigint",
+        "table": "admin_dashboard_summary",
+        "column": "new_users_today",
+        "nullable": "YES",
+        "position": 2
+      },
+      {
+        "type": "bigint",
+        "table": "admin_dashboard_summary",
+        "column": "active_users_today",
+        "nullable": "YES",
+        "position": 3
+      },
+      {
+        "type": "bigint",
+        "table": "admin_dashboard_summary",
+        "column": "bets_today",
+        "nullable": "YES",
+        "position": 4
+      },
+      {
+        "type": "numeric",
+        "table": "admin_dashboard_summary",
+        "column": "bet_volume_today",
+        "nullable": "YES",
+        "position": 5
+      },
+      {
+        "type": "bigint",
+        "table": "admin_dashboard_summary",
+        "column": "pending_bets",
+        "nullable": "YES",
+        "position": 6
+      },
+      {
+        "type": "numeric",
+        "table": "admin_dashboard_summary",
+        "column": "revenue_today",
+        "nullable": "YES",
+        "position": 7
+      },
+      {
+        "type": "bigint",
+        "table": "admin_dashboard_summary",
+        "column": "live_events",
+        "nullable": "YES",
+        "position": 8
+      },
+      {
+        "type": "bigint",
+        "table": "admin_dashboard_summary",
+        "column": "upcoming_events",
+        "nullable": "YES",
+        "position": 9
+      },
+      {
+        "type": "bigint",
+        "table": "admin_dashboard_summary",
+        "column": "pending_alerts",
+        "nullable": "YES",
+        "position": 10
+      },
+      {
+        "type": "bigint",
+        "table": "admin_dashboard_summary",
+        "column": "critical_alerts",
+        "nullable": "YES",
+        "position": 11
+      },
+      {
+        "type": "uuid",
+        "table": "admin_logs",
+        "column": "id",
+        "nullable": "NO",
+        "position": 1
+      },
+      {
+        "type": "uuid",
+        "table": "admin_logs",
+        "column": "admin_id",
+        "nullable": "NO",
+        "position": 2
+      },
+      {
+        "type": "character varying",
+        "table": "admin_logs",
+        "column": "action",
+        "nullable": "NO",
+        "position": 3
+      },
+      {
+        "type": "character varying",
+        "table": "admin_logs",
+        "column": "target_type",
+        "nullable": "YES",
+        "position": 4
+      },
+      {
+        "type": "uuid",
+        "table": "admin_logs",
+        "column": "target_id",
+        "nullable": "YES",
+        "position": 5
+      },
+      {
+        "type": "jsonb",
+        "table": "admin_logs",
+        "column": "details",
+        "nullable": "YES",
+        "position": 6
+      },
+      {
+        "type": "character varying",
+        "table": "admin_logs",
+        "column": "ip_address",
+        "nullable": "YES",
+        "position": 7
+      },
+      {
+        "type": "text",
+        "table": "admin_logs",
+        "column": "user_agent",
+        "nullable": "YES",
+        "position": 8
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "admin_logs",
+        "column": "created_at",
+        "nullable": "YES",
+        "position": 9
+      },
+      {
+        "type": "uuid",
+        "table": "ai_chat_requests",
+        "column": "id",
+        "nullable": "NO",
+        "position": 1
+      },
+      {
+        "type": "uuid",
+        "table": "ai_chat_requests",
+        "column": "user_id",
+        "nullable": "NO",
+        "position": 2
+      },
+      {
+        "type": "uuid",
+        "table": "ai_chat_requests",
+        "column": "conversation_id",
+        "nullable": "NO",
+        "position": 3
+      },
+      {
+        "type": "jsonb",
+        "table": "ai_chat_requests",
+        "column": "request",
+        "nullable": "NO",
+        "position": 4
+      },
+      {
+        "type": "jsonb",
+        "table": "ai_chat_requests",
+        "column": "response",
+        "nullable": "NO",
+        "position": 5
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "ai_chat_requests",
+        "column": "created_at",
+        "nullable": "NO",
+        "position": 6
+      },
+      {
+        "type": "uuid",
+        "table": "ai_conversations",
+        "column": "id",
+        "nullable": "NO",
+        "position": 1
+      },
+      {
+        "type": "uuid",
+        "table": "ai_conversations",
+        "column": "user_id",
+        "nullable": "NO",
+        "position": 2
+      },
+      {
+        "type": "character varying",
+        "table": "ai_conversations",
+        "column": "sport",
+        "nullable": "YES",
+        "position": 3
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "ai_conversations",
+        "column": "created_at",
+        "nullable": "NO",
+        "position": 4
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "ai_conversations",
+        "column": "updated_at",
+        "nullable": "NO",
+        "position": 5
+      },
+      {
+        "type": "uuid",
+        "table": "ai_messages",
+        "column": "id",
+        "nullable": "NO",
+        "position": 1
+      },
+      {
+        "type": "uuid",
+        "table": "ai_messages",
+        "column": "conversation_id",
+        "nullable": "NO",
+        "position": 2
+      },
+      {
+        "type": "uuid",
+        "table": "ai_messages",
+        "column": "user_id",
+        "nullable": "NO",
+        "position": 3
+      },
+      {
+        "type": "character varying",
+        "table": "ai_messages",
+        "column": "role",
+        "nullable": "NO",
+        "position": 4
+      },
+      {
+        "type": "text",
+        "table": "ai_messages",
+        "column": "content",
+        "nullable": "NO",
+        "position": 5
+      },
+      {
+        "type": "character varying",
+        "table": "ai_messages",
+        "column": "source",
+        "nullable": "NO",
+        "position": 6
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "ai_messages",
+        "column": "created_at",
+        "nullable": "NO",
+        "position": 7
+      },
+      {
+        "type": "jsonb",
+        "table": "ai_messages",
+        "column": "metadata",
+        "nullable": "NO",
+        "position": 8
+      },
+      {
+        "type": "bigint",
+        "table": "ai_messages",
+        "column": "sequence",
+        "nullable": "NO",
+        "position": 9
+      },
+      {
+        "type": "uuid",
+        "table": "ai_pick_runs",
+        "column": "id",
+        "nullable": "NO",
+        "position": 1
+      },
+      {
+        "type": "uuid",
+        "table": "ai_pick_runs",
+        "column": "user_id",
+        "nullable": "NO",
+        "position": 2
+      },
+      {
+        "type": "character varying",
+        "table": "ai_pick_runs",
+        "column": "sport",
+        "nullable": "NO",
+        "position": 3
+      },
+      {
+        "type": "character varying",
+        "table": "ai_pick_runs",
+        "column": "competition",
+        "nullable": "YES",
+        "position": 4
+      },
+      {
+        "type": "date",
+        "table": "ai_pick_runs",
+        "column": "requested_date",
+        "nullable": "YES",
+        "position": 5
+      },
+      {
+        "type": "character varying",
+        "table": "ai_pick_runs",
+        "column": "model_version",
+        "nullable": "NO",
+        "position": 6
+      },
+      {
+        "type": "jsonb",
+        "table": "ai_pick_runs",
+        "column": "provenance",
+        "nullable": "NO",
+        "position": 7
+      },
+      {
+        "type": "jsonb",
+        "table": "ai_pick_runs",
+        "column": "results",
+        "nullable": "NO",
+        "position": 8
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "ai_pick_runs",
+        "column": "created_at",
+        "nullable": "NO",
+        "position": 9
+      },
+      {
+        "type": "text",
+        "table": "ai_rag_documents",
+        "column": "source_id",
+        "nullable": "NO",
+        "position": 1
+      },
+      {
+        "type": "text",
+        "table": "ai_rag_documents",
+        "column": "title",
+        "nullable": "NO",
+        "position": 2
+      },
+      {
+        "type": "text",
+        "table": "ai_rag_documents",
+        "column": "content",
+        "nullable": "NO",
+        "position": 3
+      },
+      {
+        "type": "tsvector",
+        "table": "ai_rag_documents",
+        "column": "search_vector",
+        "nullable": "YES",
+        "position": 4
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "ai_rag_documents",
+        "column": "updated_at",
+        "nullable": "NO",
+        "position": 5
+      },
+      {
+        "type": "uuid",
+        "table": "arbitrage",
+        "column": "id",
+        "nullable": "NO",
+        "position": 1
+      },
+      {
+        "type": "uuid",
+        "table": "arbitrage",
+        "column": "event_id",
+        "nullable": "YES",
+        "position": 2
+      },
+      {
+        "type": "text",
+        "table": "arbitrage",
+        "column": "pipeline_match_id",
+        "nullable": "YES",
+        "position": 3
+      },
+      {
+        "type": "text",
+        "table": "arbitrage",
+        "column": "market",
+        "nullable": "NO",
+        "position": 4
+      },
+      {
+        "type": "text",
+        "table": "arbitrage",
+        "column": "selection_a",
+        "nullable": "NO",
+        "position": 5
+      },
+      {
+        "type": "text",
+        "table": "arbitrage",
+        "column": "selection_b",
+        "nullable": "NO",
+        "position": 6
+      },
+      {
+        "type": "text",
+        "table": "arbitrage",
+        "column": "book_a",
+        "nullable": "NO",
+        "position": 7
+      },
+      {
+        "type": "text",
+        "table": "arbitrage",
+        "column": "book_b",
+        "nullable": "NO",
+        "position": 8
+      },
+      {
+        "type": "double precision",
+        "table": "arbitrage",
+        "column": "odds_a",
+        "nullable": "NO",
+        "position": 9
+      },
+      {
+        "type": "double precision",
+        "table": "arbitrage",
+        "column": "odds_b",
+        "nullable": "NO",
+        "position": 10
+      },
+      {
+        "type": "double precision",
+        "table": "arbitrage",
+        "column": "arb_percentage",
+        "nullable": "NO",
+        "position": 11
+      },
+      {
+        "type": "numeric",
+        "table": "arbitrage",
+        "column": "total_stake",
+        "nullable": "NO",
+        "position": 12
+      },
+      {
+        "type": "numeric",
+        "table": "arbitrage",
+        "column": "stake_a",
+        "nullable": "NO",
+        "position": 13
+      },
+      {
+        "type": "numeric",
+        "table": "arbitrage",
+        "column": "stake_b",
+        "nullable": "NO",
+        "position": 14
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "arbitrage",
+        "column": "source_updated_at",
+        "nullable": "YES",
+        "position": 15
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "arbitrage",
+        "column": "created_at",
+        "nullable": "NO",
+        "position": 16
+      },
+      {
+        "type": "integer",
+        "table": "backtest_results",
+        "column": "id",
+        "nullable": "NO",
+        "position": 1
+      },
+      {
+        "type": "character varying",
+        "table": "backtest_results",
+        "column": "model_name",
+        "nullable": "NO",
+        "position": 2
+      },
+      {
+        "type": "timestamp without time zone",
+        "table": "backtest_results",
+        "column": "start_date",
+        "nullable": "YES",
+        "position": 3
+      },
+      {
+        "type": "timestamp without time zone",
+        "table": "backtest_results",
+        "column": "end_date",
+        "nullable": "YES",
+        "position": 4
+      },
+      {
+        "type": "integer",
+        "table": "backtest_results",
+        "column": "total_predictions",
+        "nullable": "YES",
+        "position": 5
+      },
+      {
+        "type": "double precision",
+        "table": "backtest_results",
+        "column": "brier_score",
+        "nullable": "YES",
+        "position": 6
+      },
+      {
+        "type": "double precision",
+        "table": "backtest_results",
+        "column": "log_loss",
+        "nullable": "YES",
+        "position": 7
+      },
+      {
+        "type": "double precision",
+        "table": "backtest_results",
+        "column": "accuracy",
+        "nullable": "YES",
+        "position": 8
+      },
+      {
+        "type": "double precision",
+        "table": "backtest_results",
+        "column": "roi_flat_stake",
+        "nullable": "YES",
+        "position": 9
+      },
+      {
+        "type": "double precision",
+        "table": "backtest_results",
+        "column": "roi_kelly",
+        "nullable": "YES",
+        "position": 10
+      },
+      {
+        "type": "jsonb",
+        "table": "backtest_results",
+        "column": "details",
+        "nullable": "YES",
+        "position": 11
+      },
+      {
+        "type": "timestamp without time zone",
+        "table": "backtest_results",
+        "column": "created_at",
+        "nullable": "YES",
+        "position": 12
+      },
+      {
+        "type": "uuid",
+        "table": "bets",
+        "column": "id",
+        "nullable": "NO",
+        "position": 1
+      },
+      {
+        "type": "uuid",
+        "table": "bets",
+        "column": "user_id",
+        "nullable": "NO",
+        "position": 2
+      },
+      {
+        "type": "uuid",
+        "table": "bets",
+        "column": "event_id",
+        "nullable": "NO",
+        "position": 3
+      },
+      {
+        "type": "character varying",
+        "table": "bets",
+        "column": "bet_type",
+        "nullable": "NO",
+        "position": 4
+      },
+      {
+        "type": "character varying",
+        "table": "bets",
+        "column": "selection",
+        "nullable": "NO",
+        "position": 5
+      },
+      {
+        "type": "numeric",
+        "table": "bets",
+        "column": "odds",
+        "nullable": "NO",
+        "position": 6
+      },
+      {
+        "type": "numeric",
+        "table": "bets",
+        "column": "amount",
+        "nullable": "NO",
+        "position": 7
+      },
+      {
+        "type": "numeric",
+        "table": "bets",
+        "column": "potential_win",
+        "nullable": "NO",
+        "position": 8
+      },
+      {
+        "type": "character varying",
+        "table": "bets",
+        "column": "status",
+        "nullable": "YES",
+        "position": 9
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "bets",
+        "column": "settled_at",
+        "nullable": "YES",
+        "position": 10
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "bets",
+        "column": "created_at",
+        "nullable": "YES",
+        "position": 11
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "bets",
+        "column": "updated_at",
+        "nullable": "YES",
+        "position": 12
+      },
+      {
+        "type": "uuid",
+        "table": "bets",
+        "column": "settled_by",
+        "nullable": "YES",
+        "position": 13
+      },
+      {
+        "type": "uuid",
+        "table": "betting_patterns",
+        "column": "id",
+        "nullable": "NO",
+        "position": 1
+      },
+      {
+        "type": "uuid",
+        "table": "betting_patterns",
+        "column": "user_id",
+        "nullable": "NO",
+        "position": 2
+      },
+      {
+        "type": "character varying",
+        "table": "betting_patterns",
+        "column": "pattern_type",
+        "nullable": "NO",
+        "position": 3
+      },
+      {
+        "type": "jsonb",
+        "table": "betting_patterns",
+        "column": "pattern_data",
+        "nullable": "NO",
+        "position": 4
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "betting_patterns",
+        "column": "detected_at",
+        "nullable": "YES",
+        "position": 5
+      },
+      {
+        "type": "boolean",
+        "table": "betting_patterns",
+        "column": "is_flagged",
+        "nullable": "YES",
+        "position": 6
+      },
+      {
+        "type": "uuid",
+        "table": "betting_patterns",
+        "column": "reviewed_by",
+        "nullable": "YES",
+        "position": 7
+      },
+      {
+        "type": "text",
+        "table": "betting_patterns",
+        "column": "review_notes",
+        "nullable": "YES",
+        "position": 8
+      },
+      {
+        "type": "uuid",
+        "table": "devigged_odds",
+        "column": "id",
+        "nullable": "NO",
+        "position": 1
+      },
+      {
+        "type": "uuid",
+        "table": "devigged_odds",
+        "column": "event_id",
+        "nullable": "YES",
+        "position": 2
+      },
+      {
+        "type": "text",
+        "table": "devigged_odds",
+        "column": "pipeline_match_id",
+        "nullable": "YES",
+        "position": 3
+      },
+      {
+        "type": "text",
+        "table": "devigged_odds",
+        "column": "bookmaker",
+        "nullable": "NO",
+        "position": 4
+      },
+      {
+        "type": "text",
+        "table": "devigged_odds",
+        "column": "market",
+        "nullable": "NO",
+        "position": 5
+      },
+      {
+        "type": "text",
+        "table": "devigged_odds",
+        "column": "outcome_a",
+        "nullable": "NO",
+        "position": 6
+      },
+      {
+        "type": "text",
+        "table": "devigged_odds",
+        "column": "outcome_b",
+        "nullable": "NO",
+        "position": 7
+      },
+      {
+        "type": "double precision",
+        "table": "devigged_odds",
+        "column": "odds_a",
+        "nullable": "NO",
+        "position": 8
+      },
+      {
+        "type": "double precision",
+        "table": "devigged_odds",
+        "column": "odds_b",
+        "nullable": "NO",
+        "position": 9
+      },
+      {
+        "type": "double precision",
+        "table": "devigged_odds",
+        "column": "fair_prob_a",
+        "nullable": "NO",
+        "position": 10
+      },
+      {
+        "type": "double precision",
+        "table": "devigged_odds",
+        "column": "fair_prob_b",
+        "nullable": "NO",
+        "position": 11
+      },
+      {
+        "type": "double precision",
+        "table": "devigged_odds",
+        "column": "vig",
+        "nullable": "NO",
+        "position": 12
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "devigged_odds",
+        "column": "source_updated_at",
+        "nullable": "YES",
+        "position": 13
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "devigged_odds",
+        "column": "created_at",
+        "nullable": "NO",
+        "position": 14
+      },
+      {
+        "type": "uuid",
+        "table": "devigged_odds_archive",
+        "column": "id",
+        "nullable": "NO",
+        "position": 1
+      },
+      {
+        "type": "uuid",
+        "table": "devigged_odds_archive",
+        "column": "original_id",
+        "nullable": "YES",
+        "position": 2
+      },
+      {
+        "type": "uuid",
+        "table": "devigged_odds_archive",
+        "column": "event_id",
+        "nullable": "YES",
+        "position": 3
+      },
+      {
+        "type": "text",
+        "table": "devigged_odds_archive",
+        "column": "pipeline_match_id",
+        "nullable": "YES",
+        "position": 4
+      },
+      {
+        "type": "text",
+        "table": "devigged_odds_archive",
+        "column": "bookmaker",
+        "nullable": "NO",
+        "position": 5
+      },
+      {
+        "type": "text",
+        "table": "devigged_odds_archive",
+        "column": "market",
+        "nullable": "NO",
+        "position": 6
+      },
+      {
+        "type": "text",
+        "table": "devigged_odds_archive",
+        "column": "outcome_a",
+        "nullable": "NO",
+        "position": 7
+      },
+      {
+        "type": "text",
+        "table": "devigged_odds_archive",
+        "column": "outcome_b",
+        "nullable": "NO",
+        "position": 8
+      },
+      {
+        "type": "double precision",
+        "table": "devigged_odds_archive",
+        "column": "odds_a",
+        "nullable": "NO",
+        "position": 9
+      },
+      {
+        "type": "double precision",
+        "table": "devigged_odds_archive",
+        "column": "odds_b",
+        "nullable": "NO",
+        "position": 10
+      },
+      {
+        "type": "double precision",
+        "table": "devigged_odds_archive",
+        "column": "fair_prob_a",
+        "nullable": "NO",
+        "position": 11
+      },
+      {
+        "type": "double precision",
+        "table": "devigged_odds_archive",
+        "column": "fair_prob_b",
+        "nullable": "NO",
+        "position": 12
+      },
+      {
+        "type": "double precision",
+        "table": "devigged_odds_archive",
+        "column": "vig",
+        "nullable": "NO",
+        "position": 13
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "devigged_odds_archive",
+        "column": "source_updated_at",
+        "nullable": "YES",
+        "position": 14
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "devigged_odds_archive",
+        "column": "original_created_at",
+        "nullable": "YES",
+        "position": 15
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "devigged_odds_archive",
+        "column": "archived_at",
+        "nullable": "NO",
+        "position": 16
+      },
+      {
+        "type": "uuid",
+        "table": "ev_bets",
+        "column": "id",
+        "nullable": "NO",
+        "position": 1
+      },
+      {
+        "type": "uuid",
+        "table": "ev_bets",
+        "column": "event_id",
+        "nullable": "YES",
+        "position": 2
+      },
+      {
+        "type": "text",
+        "table": "ev_bets",
+        "column": "pipeline_match_id",
+        "nullable": "YES",
+        "position": 3
+      },
+      {
+        "type": "text",
+        "table": "ev_bets",
+        "column": "bookmaker",
+        "nullable": "YES",
+        "position": 4
+      },
+      {
+        "type": "text",
+        "table": "ev_bets",
+        "column": "market",
+        "nullable": "NO",
+        "position": 5
+      },
+      {
+        "type": "text",
+        "table": "ev_bets",
+        "column": "selection",
+        "nullable": "NO",
+        "position": 6
+      },
+      {
+        "type": "double precision",
+        "table": "ev_bets",
+        "column": "odds",
+        "nullable": "NO",
+        "position": 7
+      },
+      {
+        "type": "numeric",
+        "table": "ev_bets",
+        "column": "stake",
+        "nullable": "NO",
+        "position": 8
+      },
+      {
+        "type": "double precision",
+        "table": "ev_bets",
+        "column": "true_probability",
+        "nullable": "NO",
+        "position": 9
+      },
+      {
+        "type": "double precision",
+        "table": "ev_bets",
+        "column": "expected_value",
+        "nullable": "NO",
+        "position": 10
+      },
+      {
+        "type": "double precision",
+        "table": "ev_bets",
+        "column": "expected_value_pct",
+        "nullable": "NO",
+        "position": 11
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "ev_bets",
+        "column": "source_updated_at",
+        "nullable": "YES",
+        "position": 12
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "ev_bets",
+        "column": "created_at",
+        "nullable": "NO",
+        "position": 13
+      },
+      {
+        "type": "uuid",
+        "table": "events",
+        "column": "id",
+        "nullable": "NO",
+        "position": 1
+      },
+      {
+        "type": "character varying",
+        "table": "events",
+        "column": "sport",
+        "nullable": "NO",
+        "position": 2
+      },
+      {
+        "type": "character varying",
+        "table": "events",
+        "column": "league",
+        "nullable": "NO",
+        "position": 3
+      },
+      {
+        "type": "character varying",
+        "table": "events",
+        "column": "home_team",
+        "nullable": "NO",
+        "position": 4
+      },
+      {
+        "type": "character varying",
+        "table": "events",
+        "column": "away_team",
+        "nullable": "NO",
+        "position": 5
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "events",
+        "column": "event_date",
+        "nullable": "NO",
+        "position": 6
+      },
+      {
+        "type": "character varying",
+        "table": "events",
+        "column": "status",
+        "nullable": "YES",
+        "position": 7
+      },
+      {
+        "type": "integer",
+        "table": "events",
+        "column": "home_score",
+        "nullable": "YES",
+        "position": 8
+      },
+      {
+        "type": "integer",
+        "table": "events",
+        "column": "away_score",
+        "nullable": "YES",
+        "position": 9
+      },
+      {
+        "type": "numeric",
+        "table": "events",
+        "column": "moneyline_home",
+        "nullable": "YES",
+        "position": 10
+      },
+      {
+        "type": "numeric",
+        "table": "events",
+        "column": "moneyline_away",
+        "nullable": "YES",
+        "position": 11
+      },
+      {
+        "type": "numeric",
+        "table": "events",
+        "column": "point_spread",
+        "nullable": "YES",
+        "position": 12
+      },
+      {
+        "type": "numeric",
+        "table": "events",
+        "column": "spread_home_odds",
+        "nullable": "YES",
+        "position": 13
+      },
+      {
+        "type": "numeric",
+        "table": "events",
+        "column": "spread_away_odds",
+        "nullable": "YES",
+        "position": 14
+      },
+      {
+        "type": "numeric",
+        "table": "events",
+        "column": "total_points",
+        "nullable": "YES",
+        "position": 15
+      },
+      {
+        "type": "numeric",
+        "table": "events",
+        "column": "over_odds",
+        "nullable": "YES",
+        "position": 16
+      },
+      {
+        "type": "numeric",
+        "table": "events",
+        "column": "under_odds",
+        "nullable": "YES",
+        "position": 17
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "events",
+        "column": "created_at",
+        "nullable": "YES",
+        "position": 18
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "events",
+        "column": "updated_at",
+        "nullable": "YES",
+        "position": 19
+      },
+      {
+        "type": "uuid",
+        "table": "events",
+        "column": "created_by",
+        "nullable": "YES",
+        "position": 20
+      },
+      {
+        "type": "uuid",
+        "table": "events",
+        "column": "updated_by",
+        "nullable": "YES",
+        "position": 21
+      },
+      {
+        "type": "uuid",
+        "table": "events",
+        "column": "settled_by",
+        "nullable": "YES",
+        "position": 22
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "events",
+        "column": "settled_at",
+        "nullable": "YES",
+        "position": 23
+      },
+      {
+        "type": "character varying",
+        "table": "events",
+        "column": "external_id",
+        "nullable": "YES",
+        "position": 24
+      },
+      {
+        "type": "character varying",
+        "table": "events",
+        "column": "external_source",
+        "nullable": "YES",
+        "position": 25
+      },
+      {
+        "type": "bigint",
+        "table": "feature_audit_logs",
+        "column": "id",
+        "nullable": "NO",
+        "position": 1
+      },
+      {
+        "type": "uuid",
+        "table": "feature_audit_logs",
+        "column": "administrator_id",
+        "nullable": "NO",
+        "position": 2
+      },
+      {
+        "type": "text",
+        "table": "feature_audit_logs",
+        "column": "action",
+        "nullable": "NO",
+        "position": 3
+      },
+      {
+        "type": "text",
+        "table": "feature_audit_logs",
+        "column": "feature_key",
+        "nullable": "NO",
+        "position": 4
+      },
+      {
+        "type": "text",
+        "table": "feature_audit_logs",
+        "column": "target",
+        "nullable": "NO",
+        "position": 5
+      },
+      {
+        "type": "jsonb",
+        "table": "feature_audit_logs",
+        "column": "before_value",
+        "nullable": "NO",
+        "position": 6
+      },
+      {
+        "type": "jsonb",
+        "table": "feature_audit_logs",
+        "column": "after_value",
+        "nullable": "NO",
+        "position": 7
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "feature_audit_logs",
+        "column": "created_at",
+        "nullable": "NO",
+        "position": 8
+      },
+      {
+        "type": "text",
+        "table": "feature_flags",
+        "column": "key",
+        "nullable": "NO",
+        "position": 1
+      },
+      {
+        "type": "text",
+        "table": "feature_flags",
+        "column": "description",
+        "nullable": "NO",
+        "position": 2
+      },
+      {
+        "type": "text",
+        "table": "feature_flags",
+        "column": "category",
+        "nullable": "NO",
+        "position": 3
+      },
+      {
+        "type": "boolean",
+        "table": "feature_flags",
+        "column": "enabled",
+        "nullable": "NO",
+        "position": 4
+      },
+      {
+        "type": "boolean",
+        "table": "feature_flags",
+        "column": "emergency_disabled",
+        "nullable": "NO",
+        "position": 5
+      },
+      {
+        "type": "boolean",
+        "table": "feature_flags",
+        "column": "maintenance_allowed",
+        "nullable": "NO",
+        "position": 6
+      },
+      {
+        "type": "boolean",
+        "table": "feature_flags",
+        "column": "default_enabled",
+        "nullable": "NO",
+        "position": 7
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "feature_flags",
+        "column": "updated_at",
+        "nullable": "NO",
+        "position": 8
+      },
+      {
+        "type": "uuid",
+        "table": "fraud_alerts",
+        "column": "id",
+        "nullable": "NO",
+        "position": 1
+      },
+      {
+        "type": "uuid",
+        "table": "fraud_alerts",
+        "column": "user_id",
+        "nullable": "YES",
+        "position": 2
+      },
+      {
+        "type": "character varying",
+        "table": "fraud_alerts",
+        "column": "alert_type",
+        "nullable": "NO",
+        "position": 3
+      },
+      {
+        "type": "character varying",
+        "table": "fraud_alerts",
+        "column": "severity",
+        "nullable": "NO",
+        "position": 4
+      },
+      {
+        "type": "text",
+        "table": "fraud_alerts",
+        "column": "description",
+        "nullable": "NO",
+        "position": 5
+      },
+      {
+        "type": "jsonb",
+        "table": "fraud_alerts",
+        "column": "metadata",
+        "nullable": "YES",
+        "position": 6
+      },
+      {
+        "type": "character varying",
+        "table": "fraud_alerts",
+        "column": "status",
+        "nullable": "YES",
+        "position": 7
+      },
+      {
+        "type": "uuid",
+        "table": "fraud_alerts",
+        "column": "reviewed_by",
+        "nullable": "YES",
+        "position": 8
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "fraud_alerts",
+        "column": "reviewed_at",
+        "nullable": "YES",
+        "position": 9
+      },
+      {
+        "type": "text",
+        "table": "fraud_alerts",
+        "column": "notes",
+        "nullable": "YES",
+        "position": 10
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "fraud_alerts",
+        "column": "created_at",
+        "nullable": "YES",
+        "position": 11
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "fraud_alerts",
+        "column": "updated_at",
+        "nullable": "YES",
+        "position": 12
+      },
+      {
+        "type": "uuid",
+        "table": "gambling_limits",
+        "column": "id",
+        "nullable": "NO",
+        "position": 1
+      },
+      {
+        "type": "uuid",
+        "table": "gambling_limits",
+        "column": "user_id",
+        "nullable": "NO",
+        "position": 2
+      },
+      {
+        "type": "numeric",
+        "table": "gambling_limits",
+        "column": "daily_loss_limit",
+        "nullable": "YES",
+        "position": 3
+      },
+      {
+        "type": "numeric",
+        "table": "gambling_limits",
+        "column": "weekly_loss_limit",
+        "nullable": "YES",
+        "position": 4
+      },
+      {
+        "type": "numeric",
+        "table": "gambling_limits",
+        "column": "monthly_loss_limit",
+        "nullable": "YES",
+        "position": 5
+      },
+      {
+        "type": "numeric",
+        "table": "gambling_limits",
+        "column": "daily_bet_limit",
+        "nullable": "YES",
+        "position": 6
+      },
+      {
+        "type": "numeric",
+        "table": "gambling_limits",
+        "column": "weekly_bet_limit",
+        "nullable": "YES",
+        "position": 7
+      },
+      {
+        "type": "numeric",
+        "table": "gambling_limits",
+        "column": "monthly_bet_limit",
+        "nullable": "YES",
+        "position": 8
+      },
+      {
+        "type": "numeric",
+        "table": "gambling_limits",
+        "column": "max_single_bet",
+        "nullable": "YES",
+        "position": 9
+      },
+      {
+        "type": "integer",
+        "table": "gambling_limits",
+        "column": "session_time_limit",
+        "nullable": "YES",
+        "position": 10
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "gambling_limits",
+        "column": "self_exclusion_until",
+        "nullable": "YES",
+        "position": 11
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "gambling_limits",
+        "column": "created_at",
+        "nullable": "YES",
+        "position": 12
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "gambling_limits",
+        "column": "updated_at",
+        "nullable": "YES",
+        "position": 13
+      },
+      {
+        "type": "uuid",
+        "table": "nba_cup_upcoming_games",
+        "column": "id",
+        "nullable": "YES",
+        "position": 1
+      },
+      {
+        "type": "character varying",
+        "table": "nba_cup_upcoming_games",
+        "column": "sport",
+        "nullable": "YES",
+        "position": 2
+      },
+      {
+        "type": "character varying",
+        "table": "nba_cup_upcoming_games",
+        "column": "league",
+        "nullable": "YES",
+        "position": 3
+      },
+      {
+        "type": "character varying",
+        "table": "nba_cup_upcoming_games",
+        "column": "home_team",
+        "nullable": "YES",
+        "position": 4
+      },
+      {
+        "type": "character varying",
+        "table": "nba_cup_upcoming_games",
+        "column": "away_team",
+        "nullable": "YES",
+        "position": 5
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "nba_cup_upcoming_games",
+        "column": "event_date",
+        "nullable": "YES",
+        "position": 6
+      },
+      {
+        "type": "character varying",
+        "table": "nba_cup_upcoming_games",
+        "column": "status",
+        "nullable": "YES",
+        "position": 7
+      },
+      {
+        "type": "integer",
+        "table": "nba_cup_upcoming_games",
+        "column": "home_score",
+        "nullable": "YES",
+        "position": 8
+      },
+      {
+        "type": "integer",
+        "table": "nba_cup_upcoming_games",
+        "column": "away_score",
+        "nullable": "YES",
+        "position": 9
+      },
+      {
+        "type": "numeric",
+        "table": "nba_cup_upcoming_games",
+        "column": "moneyline_home",
+        "nullable": "YES",
+        "position": 10
+      },
+      {
+        "type": "numeric",
+        "table": "nba_cup_upcoming_games",
+        "column": "moneyline_away",
+        "nullable": "YES",
+        "position": 11
+      },
+      {
+        "type": "numeric",
+        "table": "nba_cup_upcoming_games",
+        "column": "point_spread",
+        "nullable": "YES",
+        "position": 12
+      },
+      {
+        "type": "numeric",
+        "table": "nba_cup_upcoming_games",
+        "column": "spread_home_odds",
+        "nullable": "YES",
+        "position": 13
+      },
+      {
+        "type": "numeric",
+        "table": "nba_cup_upcoming_games",
+        "column": "spread_away_odds",
+        "nullable": "YES",
+        "position": 14
+      },
+      {
+        "type": "numeric",
+        "table": "nba_cup_upcoming_games",
+        "column": "total_points",
+        "nullable": "YES",
+        "position": 15
+      },
+      {
+        "type": "numeric",
+        "table": "nba_cup_upcoming_games",
+        "column": "over_odds",
+        "nullable": "YES",
+        "position": 16
+      },
+      {
+        "type": "numeric",
+        "table": "nba_cup_upcoming_games",
+        "column": "under_odds",
+        "nullable": "YES",
+        "position": 17
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "nba_cup_upcoming_games",
+        "column": "created_at",
+        "nullable": "YES",
+        "position": 18
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "nba_cup_upcoming_games",
+        "column": "updated_at",
+        "nullable": "YES",
+        "position": 19
+      },
+      {
+        "type": "uuid",
+        "table": "odds_offers",
+        "column": "id",
+        "nullable": "NO",
+        "position": 1
+      },
+      {
+        "type": "text",
+        "table": "odds_offers",
+        "column": "provider",
+        "nullable": "NO",
+        "position": 2
+      },
+      {
+        "type": "text",
+        "table": "odds_offers",
+        "column": "provider_event_id",
+        "nullable": "NO",
+        "position": 3
+      },
+      {
+        "type": "uuid",
+        "table": "odds_offers",
+        "column": "event_id",
+        "nullable": "YES",
+        "position": 4
+      },
+      {
+        "type": "text",
+        "table": "odds_offers",
+        "column": "book_key",
+        "nullable": "NO",
+        "position": 5
+      },
+      {
+        "type": "text",
+        "table": "odds_offers",
+        "column": "market",
+        "nullable": "NO",
+        "position": 6
+      },
+      {
+        "type": "text",
+        "table": "odds_offers",
+        "column": "selection",
+        "nullable": "NO",
+        "position": 7
+      },
+      {
+        "type": "double precision",
+        "table": "odds_offers",
+        "column": "line",
+        "nullable": "YES",
+        "position": 8
+      },
+      {
+        "type": "text",
+        "table": "odds_offers",
+        "column": "participant",
+        "nullable": "YES",
+        "position": 9
+      },
+      {
+        "type": "double precision",
+        "table": "odds_offers",
+        "column": "odds_decimal",
+        "nullable": "NO",
+        "position": 10
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "odds_offers",
+        "column": "source_updated_at",
+        "nullable": "YES",
+        "position": 11
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "odds_offers",
+        "column": "created_at",
+        "nullable": "NO",
+        "position": 12
+      },
+      {
+        "type": "uuid",
+        "table": "parlay_calculations",
+        "column": "id",
+        "nullable": "NO",
+        "position": 1
+      },
+      {
+        "type": "uuid",
+        "table": "parlay_calculations",
+        "column": "user_id",
+        "nullable": "NO",
+        "position": 2
+      },
+      {
+        "type": "integer",
+        "table": "parlay_calculations",
+        "column": "num_legs",
+        "nullable": "NO",
+        "position": 3
+      },
+      {
+        "type": "numeric",
+        "table": "parlay_calculations",
+        "column": "total_stake",
+        "nullable": "NO",
+        "position": 4
+      },
+      {
+        "type": "numeric",
+        "table": "parlay_calculations",
+        "column": "combined_odds",
+        "nullable": "NO",
+        "position": 5
+      },
+      {
+        "type": "numeric",
+        "table": "parlay_calculations",
+        "column": "combined_probability",
+        "nullable": "NO",
+        "position": 6
+      },
+      {
+        "type": "numeric",
+        "table": "parlay_calculations",
+        "column": "expected_value",
+        "nullable": "NO",
+        "position": 7
+      },
+      {
+        "type": "numeric",
+        "table": "parlay_calculations",
+        "column": "expected_profit",
+        "nullable": "NO",
+        "position": 8
+      },
+      {
+        "type": "numeric",
+        "table": "parlay_calculations",
+        "column": "potential_payout",
+        "nullable": "NO",
+        "position": 9
+      },
+      {
+        "type": "numeric",
+        "table": "parlay_calculations",
+        "column": "break_even_probability",
+        "nullable": "NO",
+        "position": 10
+      },
+      {
+        "type": "numeric",
+        "table": "parlay_calculations",
+        "column": "kelly_criterion",
+        "nullable": "YES",
+        "position": 11
+      },
+      {
+        "type": "character varying",
+        "table": "parlay_calculations",
+        "column": "risk_level",
+        "nullable": "NO",
+        "position": 12
+      },
+      {
+        "type": "text",
+        "table": "parlay_calculations",
+        "column": "recommendation",
+        "nullable": "NO",
+        "position": 13
+      },
+      {
+        "type": "jsonb",
+        "table": "parlay_calculations",
+        "column": "calculation_data",
+        "nullable": "NO",
+        "position": 14
+      },
+      {
+        "type": "timestamp without time zone",
+        "table": "parlay_calculations",
+        "column": "created_at",
+        "nullable": "NO",
+        "position": 15
+      },
+      {
+        "type": "uuid",
+        "table": "parlay_correlation_warnings",
+        "column": "id",
+        "nullable": "NO",
+        "position": 1
+      },
+      {
+        "type": "uuid",
+        "table": "parlay_correlation_warnings",
+        "column": "parlay_id",
+        "nullable": "NO",
+        "position": 2
+      },
+      {
+        "type": "uuid",
+        "table": "parlay_correlation_warnings",
+        "column": "leg_a_id",
+        "nullable": "NO",
+        "position": 3
+      },
+      {
+        "type": "uuid",
+        "table": "parlay_correlation_warnings",
+        "column": "leg_b_id",
+        "nullable": "NO",
+        "position": 4
+      },
+      {
+        "type": "character varying",
+        "table": "parlay_correlation_warnings",
+        "column": "severity",
+        "nullable": "NO",
+        "position": 5
+      },
+      {
+        "type": "text",
+        "table": "parlay_correlation_warnings",
+        "column": "reason",
+        "nullable": "NO",
+        "position": 6
+      },
+      {
+        "type": "timestamp without time zone",
+        "table": "parlay_correlation_warnings",
+        "column": "created_at",
+        "nullable": "NO",
+        "position": 7
+      },
+      {
+        "type": "uuid",
+        "table": "parlay_legs",
+        "column": "id",
+        "nullable": "NO",
+        "position": 1
+      },
+      {
+        "type": "uuid",
+        "table": "parlay_legs",
+        "column": "parlay_id",
+        "nullable": "NO",
+        "position": 2
+      },
+      {
+        "type": "uuid",
+        "table": "parlay_legs",
+        "column": "event_id",
+        "nullable": "NO",
+        "position": 3
+      },
+      {
+        "type": "character varying",
+        "table": "parlay_legs",
+        "column": "team_name",
+        "nullable": "NO",
+        "position": 4
+      },
+      {
+        "type": "character varying",
+        "table": "parlay_legs",
+        "column": "bet_type",
+        "nullable": "NO",
+        "position": 5
+      },
+      {
+        "type": "character varying",
+        "table": "parlay_legs",
+        "column": "selection",
+        "nullable": "NO",
+        "position": 6
+      },
+      {
+        "type": "numeric",
+        "table": "parlay_legs",
+        "column": "odds",
+        "nullable": "NO",
+        "position": 7
+      },
+      {
+        "type": "numeric",
+        "table": "parlay_legs",
+        "column": "win_probability",
+        "nullable": "YES",
+        "position": 8
+      },
+      {
+        "type": "integer",
+        "table": "parlay_legs",
+        "column": "leg_order",
+        "nullable": "NO",
+        "position": 9
+      },
+      {
+        "type": "timestamp without time zone",
+        "table": "parlay_legs",
+        "column": "created_at",
+        "nullable": "NO",
+        "position": 10
+      },
+      {
+        "type": "uuid",
+        "table": "parlay_system_results",
+        "column": "id",
+        "nullable": "NO",
+        "position": 1
+      },
+      {
+        "type": "uuid",
+        "table": "parlay_system_results",
+        "column": "parlay_id",
+        "nullable": "NO",
+        "position": 2
+      },
+      {
+        "type": "integer",
+        "table": "parlay_system_results",
+        "column": "combination_number",
+        "nullable": "NO",
+        "position": 3
+      },
+      {
+        "type": "ARRAY",
+        "table": "parlay_system_results",
+        "column": "leg_ids",
+        "nullable": "NO",
+        "position": 4
+      },
+      {
+        "type": "numeric",
+        "table": "parlay_system_results",
+        "column": "combined_odds",
+        "nullable": "NO",
+        "position": 5
+      },
+      {
+        "type": "numeric",
+        "table": "parlay_system_results",
+        "column": "combined_probability",
+        "nullable": "YES",
+        "position": 6
+      },
+      {
+        "type": "numeric",
+        "table": "parlay_system_results",
+        "column": "potential_payout",
+        "nullable": "YES",
+        "position": 7
+      },
+      {
+        "type": "boolean",
+        "table": "parlay_system_results",
+        "column": "is_winning",
+        "nullable": "YES",
+        "position": 8
+      },
+      {
+        "type": "timestamp without time zone",
+        "table": "parlay_system_results",
+        "column": "created_at",
+        "nullable": "NO",
+        "position": 9
+      },
+      {
+        "type": "uuid",
+        "table": "parlays",
+        "column": "id",
+        "nullable": "NO",
+        "position": 1
+      },
+      {
+        "type": "uuid",
+        "table": "parlays",
+        "column": "user_id",
+        "nullable": "NO",
+        "position": 2
+      },
+      {
+        "type": "character varying",
+        "table": "parlays",
+        "column": "name",
+        "nullable": "YES",
+        "position": 3
+      },
+      {
+        "type": "numeric",
+        "table": "parlays",
+        "column": "total_stake",
+        "nullable": "NO",
+        "position": 4
+      },
+      {
+        "type": "numeric",
+        "table": "parlays",
+        "column": "combined_odds",
+        "nullable": "NO",
+        "position": 5
+      },
+      {
+        "type": "numeric",
+        "table": "parlays",
+        "column": "combined_probability",
+        "nullable": "NO",
+        "position": 6
+      },
+      {
+        "type": "numeric",
+        "table": "parlays",
+        "column": "expected_value",
+        "nullable": "NO",
+        "position": 7
+      },
+      {
+        "type": "numeric",
+        "table": "parlays",
+        "column": "potential_payout",
+        "nullable": "NO",
+        "position": 8
+      },
+      {
+        "type": "character varying",
+        "table": "parlays",
+        "column": "risk_level",
+        "nullable": "NO",
+        "position": 9
+      },
+      {
+        "type": "character varying",
+        "table": "parlays",
+        "column": "status",
+        "nullable": "YES",
+        "position": 10
+      },
+      {
+        "type": "timestamp without time zone",
+        "table": "parlays",
+        "column": "created_at",
+        "nullable": "NO",
+        "position": 11
+      },
+      {
+        "type": "timestamp without time zone",
+        "table": "parlays",
+        "column": "updated_at",
+        "nullable": "NO",
+        "position": 12
+      },
+      {
+        "type": "character varying",
+        "table": "parlays",
+        "column": "parlay_type",
+        "nullable": "YES",
+        "position": 13
+      },
+      {
+        "type": "integer",
+        "table": "parlays",
+        "column": "system_min_legs",
+        "nullable": "YES",
+        "position": 14
+      },
+      {
+        "type": "integer",
+        "table": "parlays",
+        "column": "total_combinations",
+        "nullable": "YES",
+        "position": 15
+      },
+      {
+        "type": "numeric",
+        "table": "parlays",
+        "column": "combined_edge",
+        "nullable": "YES",
+        "position": 16
+      },
+      {
+        "type": "numeric",
+        "table": "parlays",
+        "column": "correlation_score",
+        "nullable": "YES",
+        "position": 17
+      },
+      {
+        "type": "uuid",
+        "table": "platform_metrics",
+        "column": "id",
+        "nullable": "NO",
+        "position": 1
+      },
+      {
+        "type": "date",
+        "table": "platform_metrics",
+        "column": "date",
+        "nullable": "NO",
+        "position": 2
+      },
+      {
+        "type": "integer",
+        "table": "platform_metrics",
+        "column": "total_users",
+        "nullable": "YES",
+        "position": 3
+      },
+      {
+        "type": "integer",
+        "table": "platform_metrics",
+        "column": "new_users",
+        "nullable": "YES",
+        "position": 4
+      },
+      {
+        "type": "integer",
+        "table": "platform_metrics",
+        "column": "active_users",
+        "nullable": "YES",
+        "position": 5
+      },
+      {
+        "type": "integer",
+        "table": "platform_metrics",
+        "column": "total_bets",
+        "nullable": "YES",
+        "position": 6
+      },
+      {
+        "type": "numeric",
+        "table": "platform_metrics",
+        "column": "total_bet_amount",
+        "nullable": "YES",
+        "position": 7
+      },
+      {
+        "type": "numeric",
+        "table": "platform_metrics",
+        "column": "total_payouts",
+        "nullable": "YES",
+        "position": 8
+      },
+      {
+        "type": "numeric",
+        "table": "platform_metrics",
+        "column": "platform_revenue",
+        "nullable": "YES",
+        "position": 9
+      },
+      {
+        "type": "numeric",
+        "table": "platform_metrics",
+        "column": "total_deposits",
+        "nullable": "YES",
+        "position": 10
+      },
+      {
+        "type": "numeric",
+        "table": "platform_metrics",
+        "column": "total_withdrawals",
+        "nullable": "YES",
+        "position": 11
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "platform_metrics",
+        "column": "created_at",
+        "nullable": "YES",
+        "position": 12
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "platform_metrics",
+        "column": "updated_at",
+        "nullable": "YES",
+        "position": 13
+      },
+      {
+        "type": "uuid",
+        "table": "player_props",
+        "column": "id",
+        "nullable": "NO",
+        "position": 1
+      },
+      {
+        "type": "uuid",
+        "table": "player_props",
+        "column": "event_id",
+        "nullable": "NO",
+        "position": 2
+      },
+      {
+        "type": "character varying",
+        "table": "player_props",
+        "column": "sport",
+        "nullable": "NO",
+        "position": 3
+      },
+      {
+        "type": "character varying",
+        "table": "player_props",
+        "column": "league",
+        "nullable": "NO",
+        "position": 4
+      },
+      {
+        "type": "character varying",
+        "table": "player_props",
+        "column": "player_name",
+        "nullable": "NO",
+        "position": 5
+      },
+      {
+        "type": "character varying",
+        "table": "player_props",
+        "column": "team",
+        "nullable": "YES",
+        "position": 6
+      },
+      {
+        "type": "character varying",
+        "table": "player_props",
+        "column": "market",
+        "nullable": "NO",
+        "position": 7
+      },
+      {
+        "type": "numeric",
+        "table": "player_props",
+        "column": "line",
+        "nullable": "NO",
+        "position": 8
+      },
+      {
+        "type": "numeric",
+        "table": "player_props",
+        "column": "over_odds",
+        "nullable": "YES",
+        "position": 9
+      },
+      {
+        "type": "numeric",
+        "table": "player_props",
+        "column": "under_odds",
+        "nullable": "YES",
+        "position": 10
+      },
+      {
+        "type": "character varying",
+        "table": "player_props",
+        "column": "source",
+        "nullable": "YES",
+        "position": 11
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "player_props",
+        "column": "source_updated_at",
+        "nullable": "YES",
+        "position": 12
+      },
+      {
+        "type": "boolean",
+        "table": "player_props",
+        "column": "is_active",
+        "nullable": "YES",
+        "position": 13
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "player_props",
+        "column": "created_at",
+        "nullable": "YES",
+        "position": 14
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "player_props",
+        "column": "updated_at",
+        "nullable": "YES",
+        "position": 15
+      },
+      {
+        "type": "uuid",
+        "table": "provider_events",
+        "column": "id",
+        "nullable": "NO",
+        "position": 1
+      },
+      {
+        "type": "text",
+        "table": "provider_events",
+        "column": "provider",
+        "nullable": "NO",
+        "position": 2
+      },
+      {
+        "type": "text",
+        "table": "provider_events",
+        "column": "provider_event_id",
+        "nullable": "NO",
+        "position": 3
+      },
+      {
+        "type": "character varying",
+        "table": "provider_events",
+        "column": "sport",
+        "nullable": "YES",
+        "position": 4
+      },
+      {
+        "type": "character varying",
+        "table": "provider_events",
+        "column": "league",
+        "nullable": "YES",
+        "position": 5
+      },
+      {
+        "type": "text",
+        "table": "provider_events",
+        "column": "home_team",
+        "nullable": "YES",
+        "position": 6
+      },
+      {
+        "type": "text",
+        "table": "provider_events",
+        "column": "away_team",
+        "nullable": "YES",
+        "position": 7
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "provider_events",
+        "column": "commence_time",
+        "nullable": "YES",
+        "position": 8
+      },
+      {
+        "type": "uuid",
+        "table": "provider_events",
+        "column": "event_id",
+        "nullable": "YES",
+        "position": 9
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "provider_events",
+        "column": "source_updated_at",
+        "nullable": "YES",
+        "position": 10
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "provider_events",
+        "column": "created_at",
+        "nullable": "NO",
+        "position": 11
+      },
+      {
+        "type": "text",
+        "table": "role_feature_rules",
+        "column": "role",
+        "nullable": "NO",
+        "position": 1
+      },
+      {
+        "type": "text",
+        "table": "role_feature_rules",
+        "column": "feature_key",
+        "nullable": "NO",
+        "position": 2
+      },
+      {
+        "type": "boolean",
+        "table": "role_feature_rules",
+        "column": "enabled",
+        "nullable": "NO",
+        "position": 3
+      },
+      {
+        "type": "text",
+        "table": "sportsbook_registry",
+        "column": "book_key",
+        "nullable": "NO",
+        "position": 1
+      },
+      {
+        "type": "text",
+        "table": "sportsbook_registry",
+        "column": "display_name",
+        "nullable": "NO",
+        "position": 2
+      },
+      {
+        "type": "text",
+        "table": "sportsbook_registry",
+        "column": "provider",
+        "nullable": "NO",
+        "position": 3
+      },
+      {
+        "type": "text",
+        "table": "sportsbook_registry",
+        "column": "provider_book_key",
+        "nullable": "NO",
+        "position": 4
+      },
+      {
+        "type": "text",
+        "table": "sportsbook_registry",
+        "column": "region",
+        "nullable": "NO",
+        "position": 5
+      },
+      {
+        "type": "boolean",
+        "table": "sportsbook_registry",
+        "column": "enabled",
+        "nullable": "NO",
+        "position": 6
+      },
+      {
+        "type": "jsonb",
+        "table": "sportsbook_registry",
+        "column": "supports_sports",
+        "nullable": "NO",
+        "position": 7
+      },
+      {
+        "type": "jsonb",
+        "table": "sportsbook_registry",
+        "column": "supports_markets",
+        "nullable": "NO",
+        "position": 8
+      },
+      {
+        "type": "boolean",
+        "table": "sportsbook_registry",
+        "column": "is_sharp_reference",
+        "nullable": "NO",
+        "position": 9
+      },
+      {
+        "type": "integer",
+        "table": "sportsbook_registry",
+        "column": "priority",
+        "nullable": "NO",
+        "position": 10
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "sportsbook_registry",
+        "column": "created_at",
+        "nullable": "NO",
+        "position": 11
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "sportsbook_registry",
+        "column": "updated_at",
+        "nullable": "NO",
+        "position": 12
+      },
+      {
+        "type": "integer",
+        "table": "team_elo_ratings",
+        "column": "id",
+        "nullable": "NO",
+        "position": 1
+      },
+      {
+        "type": "character varying",
+        "table": "team_elo_ratings",
+        "column": "team_name",
+        "nullable": "NO",
+        "position": 2
+      },
+      {
+        "type": "double precision",
+        "table": "team_elo_ratings",
+        "column": "elo",
+        "nullable": "NO",
+        "position": 3
+      },
+      {
+        "type": "double precision",
+        "table": "team_elo_ratings",
+        "column": "form_score",
+        "nullable": "YES",
+        "position": 4
+      },
+      {
+        "type": "integer",
+        "table": "team_elo_ratings",
+        "column": "games_played",
+        "nullable": "YES",
+        "position": 5
+      },
+      {
+        "type": "character varying",
+        "table": "team_elo_ratings",
+        "column": "recent_results",
+        "nullable": "YES",
+        "position": 6
+      },
+      {
+        "type": "timestamp without time zone",
+        "table": "team_elo_ratings",
+        "column": "updated_at",
+        "nullable": "YES",
+        "position": 7
+      },
+      {
+        "type": "uuid",
+        "table": "transactions",
+        "column": "id",
+        "nullable": "NO",
+        "position": 1
+      },
+      {
+        "type": "uuid",
+        "table": "transactions",
+        "column": "user_id",
+        "nullable": "NO",
+        "position": 2
+      },
+      {
+        "type": "uuid",
+        "table": "transactions",
+        "column": "wallet_id",
+        "nullable": "NO",
+        "position": 3
+      },
+      {
+        "type": "character varying",
+        "table": "transactions",
+        "column": "transaction_type",
+        "nullable": "NO",
+        "position": 4
+      },
+      {
+        "type": "numeric",
+        "table": "transactions",
+        "column": "amount",
+        "nullable": "NO",
+        "position": 5
+      },
+      {
+        "type": "numeric",
+        "table": "transactions",
+        "column": "balance_before",
+        "nullable": "NO",
+        "position": 6
+      },
+      {
+        "type": "numeric",
+        "table": "transactions",
+        "column": "balance_after",
+        "nullable": "NO",
+        "position": 7
+      },
+      {
+        "type": "text",
+        "table": "transactions",
+        "column": "description",
+        "nullable": "YES",
+        "position": 8
+      },
+      {
+        "type": "jsonb",
+        "table": "transactions",
+        "column": "metadata",
+        "nullable": "YES",
+        "position": 9
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "transactions",
+        "column": "created_at",
+        "nullable": "YES",
+        "position": 10
+      },
+      {
+        "type": "boolean",
+        "table": "transactions",
+        "column": "is_fraud_flagged",
+        "nullable": "YES",
+        "position": 11
+      },
+      {
+        "type": "character varying",
+        "table": "transactions",
+        "column": "status",
+        "nullable": "NO",
+        "position": 12
+      },
+      {
+        "type": "uuid",
+        "table": "user_activity",
+        "column": "id",
+        "nullable": "NO",
+        "position": 1
+      },
+      {
+        "type": "uuid",
+        "table": "user_activity",
+        "column": "user_id",
+        "nullable": "NO",
+        "position": 2
+      },
+      {
+        "type": "character varying",
+        "table": "user_activity",
+        "column": "activity_type",
+        "nullable": "NO",
+        "position": 3
+      },
+      {
+        "type": "inet",
+        "table": "user_activity",
+        "column": "ip_address",
+        "nullable": "YES",
+        "position": 4
+      },
+      {
+        "type": "text",
+        "table": "user_activity",
+        "column": "user_agent",
+        "nullable": "YES",
+        "position": 5
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "user_activity",
+        "column": "timestamp",
+        "nullable": "YES",
+        "position": 6
+      },
+      {
+        "type": "jsonb",
+        "table": "user_activity",
+        "column": "metadata",
+        "nullable": "YES",
+        "position": 7
+      },
+      {
+        "type": "boolean",
+        "table": "user_activity",
+        "column": "is_suspicious",
+        "nullable": "YES",
+        "position": 8
+      },
+      {
+        "type": "uuid",
+        "table": "user_feature_overrides",
+        "column": "user_id",
+        "nullable": "NO",
+        "position": 1
+      },
+      {
+        "type": "text",
+        "table": "user_feature_overrides",
+        "column": "feature_key",
+        "nullable": "NO",
+        "position": 2
+      },
+      {
+        "type": "boolean",
+        "table": "user_feature_overrides",
+        "column": "enabled",
+        "nullable": "NO",
+        "position": 3
+      },
+      {
+        "type": "uuid",
+        "table": "users",
+        "column": "id",
+        "nullable": "NO",
+        "position": 1
+      },
+      {
+        "type": "character varying",
+        "table": "users",
+        "column": "email",
+        "nullable": "NO",
+        "position": 2
+      },
+      {
+        "type": "character varying",
+        "table": "users",
+        "column": "password_hash",
+        "nullable": "NO",
+        "position": 3
+      },
+      {
+        "type": "character varying",
+        "table": "users",
+        "column": "first_name",
+        "nullable": "NO",
+        "position": 4
+      },
+      {
+        "type": "character varying",
+        "table": "users",
+        "column": "last_name",
+        "nullable": "NO",
+        "position": 5
+      },
+      {
+        "type": "date",
+        "table": "users",
+        "column": "date_of_birth",
+        "nullable": "NO",
+        "position": 6
+      },
+      {
+        "type": "character varying",
+        "table": "users",
+        "column": "phone",
+        "nullable": "YES",
+        "position": 7
+      },
+      {
+        "type": "text",
+        "table": "users",
+        "column": "address",
+        "nullable": "YES",
+        "position": 8
+      },
+      {
+        "type": "boolean",
+        "table": "users",
+        "column": "is_verified",
+        "nullable": "YES",
+        "position": 9
+      },
+      {
+        "type": "boolean",
+        "table": "users",
+        "column": "is_active",
+        "nullable": "YES",
+        "position": 10
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "users",
+        "column": "created_at",
+        "nullable": "YES",
+        "position": 11
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "users",
+        "column": "updated_at",
+        "nullable": "YES",
+        "position": 12
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "users",
+        "column": "last_login",
+        "nullable": "YES",
+        "position": 13
+      },
+      {
+        "type": "integer",
+        "table": "users",
+        "column": "login_count",
+        "nullable": "YES",
+        "position": 14
+      },
+      {
+        "type": "integer",
+        "table": "users",
+        "column": "failed_login_attempts",
+        "nullable": "YES",
+        "position": 15
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "users",
+        "column": "locked_until",
+        "nullable": "YES",
+        "position": 16
+      },
+      {
+        "type": "character varying",
+        "table": "users",
+        "column": "role",
+        "nullable": "YES",
+        "position": 17
+      },
+      {
+        "type": "uuid",
+        "table": "wallets",
+        "column": "id",
+        "nullable": "NO",
+        "position": 1
+      },
+      {
+        "type": "uuid",
+        "table": "wallets",
+        "column": "user_id",
+        "nullable": "NO",
+        "position": 2
+      },
+      {
+        "type": "text",
+        "table": "wallets",
+        "column": "encrypted_balance",
+        "nullable": "NO",
+        "position": 3
+      },
+      {
+        "type": "text",
+        "table": "wallets",
+        "column": "encryption_iv",
+        "nullable": "NO",
+        "position": 4
+      },
+      {
+        "type": "numeric",
+        "table": "wallets",
+        "column": "total_deposits",
+        "nullable": "YES",
+        "position": 5
+      },
+      {
+        "type": "numeric",
+        "table": "wallets",
+        "column": "total_withdrawals",
+        "nullable": "YES",
+        "position": 6
+      },
+      {
+        "type": "numeric",
+        "table": "wallets",
+        "column": "total_winnings",
+        "nullable": "YES",
+        "position": 7
+      },
+      {
+        "type": "numeric",
+        "table": "wallets",
+        "column": "total_losses",
+        "nullable": "YES",
+        "position": 8
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "wallets",
+        "column": "created_at",
+        "nullable": "YES",
+        "position": 9
+      },
+      {
+        "type": "timestamp with time zone",
+        "table": "wallets",
+        "column": "updated_at",
+        "nullable": "YES",
+        "position": 10
+      }
+    ],
+    "indexes": [
+      {
+        "name": "_sqlx_migrations_pkey",
+        "table": "_sqlx_migrations",
+        "definition": "CREATE UNIQUE INDEX _sqlx_migrations_pkey ON public._sqlx_migrations USING btree (version)"
+      },
+      {
+        "name": "admin_logs_pkey",
+        "table": "admin_logs",
+        "definition": "CREATE UNIQUE INDEX admin_logs_pkey ON public.admin_logs USING btree (id)"
+      },
+      {
+        "name": "idx_admin_logs_action",
+        "table": "admin_logs",
+        "definition": "CREATE INDEX idx_admin_logs_action ON public.admin_logs USING btree (action)"
+      },
+      {
+        "name": "idx_admin_logs_admin_id",
+        "table": "admin_logs",
+        "definition": "CREATE INDEX idx_admin_logs_admin_id ON public.admin_logs USING btree (admin_id)"
+      },
+      {
+        "name": "idx_admin_logs_created_at",
+        "table": "admin_logs",
+        "definition": "CREATE INDEX idx_admin_logs_created_at ON public.admin_logs USING btree (created_at DESC)"
+      },
+      {
+        "name": "idx_admin_logs_target",
+        "table": "admin_logs",
+        "definition": "CREATE INDEX idx_admin_logs_target ON public.admin_logs USING btree (target_type, target_id)"
+      },
+      {
+        "name": "ai_chat_requests_pkey",
+        "table": "ai_chat_requests",
+        "definition": "CREATE UNIQUE INDEX ai_chat_requests_pkey ON public.ai_chat_requests USING btree (user_id, id)"
+      },
+      {
+        "name": "ai_conversations_pkey",
+        "table": "ai_conversations",
+        "definition": "CREATE UNIQUE INDEX ai_conversations_pkey ON public.ai_conversations USING btree (id)"
+      },
+      {
+        "name": "idx_ai_conversations_user_updated",
+        "table": "ai_conversations",
+        "definition": "CREATE INDEX idx_ai_conversations_user_updated ON public.ai_conversations USING btree (user_id, updated_at DESC)"
+      },
+      {
+        "name": "ai_messages_pkey",
+        "table": "ai_messages",
+        "definition": "CREATE UNIQUE INDEX ai_messages_pkey ON public.ai_messages USING btree (id)"
+      },
+      {
+        "name": "idx_ai_messages_conversation_created",
+        "table": "ai_messages",
+        "definition": "CREATE INDEX idx_ai_messages_conversation_created ON public.ai_messages USING btree (conversation_id, created_at)"
+      },
+      {
+        "name": "idx_ai_messages_sequence",
+        "table": "ai_messages",
+        "definition": "CREATE INDEX idx_ai_messages_sequence ON public.ai_messages USING btree (conversation_id, sequence)"
+      },
+      {
+        "name": "ai_pick_runs_pkey",
+        "table": "ai_pick_runs",
+        "definition": "CREATE UNIQUE INDEX ai_pick_runs_pkey ON public.ai_pick_runs USING btree (id)"
+      },
+      {
+        "name": "idx_ai_pick_runs_user_created",
+        "table": "ai_pick_runs",
+        "definition": "CREATE INDEX idx_ai_pick_runs_user_created ON public.ai_pick_runs USING btree (user_id, created_at DESC)"
+      },
+      {
+        "name": "ai_rag_documents_pkey",
+        "table": "ai_rag_documents",
+        "definition": "CREATE UNIQUE INDEX ai_rag_documents_pkey ON public.ai_rag_documents USING btree (source_id)"
+      },
+      {
+        "name": "idx_ai_rag_documents_search",
+        "table": "ai_rag_documents",
+        "definition": "CREATE INDEX idx_ai_rag_documents_search ON public.ai_rag_documents USING gin (search_vector)"
+      },
+      {
+        "name": "arbitrage_pkey",
+        "table": "arbitrage",
+        "definition": "CREATE UNIQUE INDEX arbitrage_pkey ON public.arbitrage USING btree (id)"
+      },
+      {
+        "name": "idx_arbitrage_created_at",
+        "table": "arbitrage",
+        "definition": "CREATE INDEX idx_arbitrage_created_at ON public.arbitrage USING btree (created_at DESC)"
+      },
+      {
+        "name": "idx_arbitrage_edge",
+        "table": "arbitrage",
+        "definition": "CREATE INDEX idx_arbitrage_edge ON public.arbitrage USING btree (arb_percentage DESC)"
+      },
+      {
+        "name": "idx_arbitrage_event_id",
+        "table": "arbitrage",
+        "definition": "CREATE INDEX idx_arbitrage_event_id ON public.arbitrage USING btree (event_id)"
+      },
+      {
+        "name": "idx_arbitrage_market",
+        "table": "arbitrage",
+        "definition": "CREATE INDEX idx_arbitrage_market ON public.arbitrage USING btree (market)"
+      },
+      {
+        "name": "idx_arbitrage_pipeline_match_id",
+        "table": "arbitrage",
+        "definition": "CREATE INDEX idx_arbitrage_pipeline_match_id ON public.arbitrage USING btree (pipeline_match_id)"
+      },
+      {
+        "name": "uq_arbitrage_snapshot",
+        "table": "arbitrage",
+        "definition": "CREATE UNIQUE INDEX uq_arbitrage_snapshot ON public.arbitrage USING btree (pipeline_match_id, market, selection_a, selection_b, book_a, book_b, odds_a, odds_b, total_stake, source_updated_at)"
+      },
+      {
+        "name": "backtest_results_pkey",
+        "table": "backtest_results",
+        "definition": "CREATE UNIQUE INDEX backtest_results_pkey ON public.backtest_results USING btree (id)"
+      },
+      {
+        "name": "bets_pkey",
+        "table": "bets",
+        "definition": "CREATE UNIQUE INDEX bets_pkey ON public.bets USING btree (id)"
+      },
+      {
+        "name": "idx_bets_created_at",
+        "table": "bets",
+        "definition": "CREATE INDEX idx_bets_created_at ON public.bets USING btree (created_at)"
+      },
+      {
+        "name": "idx_bets_event_id",
+        "table": "bets",
+        "definition": "CREATE INDEX idx_bets_event_id ON public.bets USING btree (event_id)"
+      },
+      {
+        "name": "idx_bets_status",
+        "table": "bets",
+        "definition": "CREATE INDEX idx_bets_status ON public.bets USING btree (status)"
+      },
+      {
+        "name": "idx_bets_user_id",
+        "table": "bets",
+        "definition": "CREATE INDEX idx_bets_user_id ON public.bets USING btree (user_id)"
+      },
+      {
+        "name": "betting_patterns_pkey",
+        "table": "betting_patterns",
+        "definition": "CREATE UNIQUE INDEX betting_patterns_pkey ON public.betting_patterns USING btree (id)"
+      },
+      {
+        "name": "devigged_odds_pkey",
+        "table": "devigged_odds",
+        "definition": "CREATE UNIQUE INDEX devigged_odds_pkey ON public.devigged_odds USING btree (id)"
+      },
+      {
+        "name": "idx_devigged_odds_book_market",
+        "table": "devigged_odds",
+        "definition": "CREATE INDEX idx_devigged_odds_book_market ON public.devigged_odds USING btree (bookmaker, market)"
+      },
+      {
+        "name": "idx_devigged_odds_created_at",
+        "table": "devigged_odds",
+        "definition": "CREATE INDEX idx_devigged_odds_created_at ON public.devigged_odds USING btree (created_at DESC)"
+      },
+      {
+        "name": "idx_devigged_odds_event_id",
+        "table": "devigged_odds",
+        "definition": "CREATE INDEX idx_devigged_odds_event_id ON public.devigged_odds USING btree (event_id)"
+      },
+      {
+        "name": "idx_devigged_odds_pipeline_match_id",
+        "table": "devigged_odds",
+        "definition": "CREATE INDEX idx_devigged_odds_pipeline_match_id ON public.devigged_odds USING btree (pipeline_match_id)"
+      },
+      {
+        "name": "uq_devigged_odds_snapshot",
+        "table": "devigged_odds",
+        "definition": "CREATE UNIQUE INDEX uq_devigged_odds_snapshot ON public.devigged_odds USING btree (pipeline_match_id, bookmaker, market, outcome_a, outcome_b, odds_a, odds_b, source_updated_at)"
+      },
+      {
+        "name": "devigged_odds_archive_pkey",
+        "table": "devigged_odds_archive",
+        "definition": "CREATE UNIQUE INDEX devigged_odds_archive_pkey ON public.devigged_odds_archive USING btree (id)"
+      },
+      {
+        "name": "idx_devigged_archive_archived_at",
+        "table": "devigged_odds_archive",
+        "definition": "CREATE INDEX idx_devigged_archive_archived_at ON public.devigged_odds_archive USING btree (archived_at DESC)"
+      },
+      {
+        "name": "idx_devigged_archive_bookmaker",
+        "table": "devigged_odds_archive",
+        "definition": "CREATE INDEX idx_devigged_archive_bookmaker ON public.devigged_odds_archive USING btree (bookmaker)"
+      },
+      {
+        "name": "idx_devigged_archive_event_id",
+        "table": "devigged_odds_archive",
+        "definition": "CREATE INDEX idx_devigged_archive_event_id ON public.devigged_odds_archive USING btree (event_id)"
+      },
+      {
+        "name": "idx_devigged_archive_pipeline_match_id",
+        "table": "devigged_odds_archive",
+        "definition": "CREATE INDEX idx_devigged_archive_pipeline_match_id ON public.devigged_odds_archive USING btree (pipeline_match_id)"
+      },
+      {
+        "name": "idx_devigged_archive_source_updated",
+        "table": "devigged_odds_archive",
+        "definition": "CREATE INDEX idx_devigged_archive_source_updated ON public.devigged_odds_archive USING btree (source_updated_at)"
+      },
+      {
+        "name": "ev_bets_pkey",
+        "table": "ev_bets",
+        "definition": "CREATE UNIQUE INDEX ev_bets_pkey ON public.ev_bets USING btree (id)"
+      },
+      {
+        "name": "idx_ev_bets_created_at",
+        "table": "ev_bets",
+        "definition": "CREATE INDEX idx_ev_bets_created_at ON public.ev_bets USING btree (created_at DESC)"
+      },
+      {
+        "name": "idx_ev_bets_ev_pct",
+        "table": "ev_bets",
+        "definition": "CREATE INDEX idx_ev_bets_ev_pct ON public.ev_bets USING btree (expected_value_pct DESC)"
+      },
+      {
+        "name": "idx_ev_bets_event_id",
+        "table": "ev_bets",
+        "definition": "CREATE INDEX idx_ev_bets_event_id ON public.ev_bets USING btree (event_id)"
+      },
+      {
+        "name": "idx_ev_bets_market",
+        "table": "ev_bets",
+        "definition": "CREATE INDEX idx_ev_bets_market ON public.ev_bets USING btree (market)"
+      },
+      {
+        "name": "idx_ev_bets_pipeline_match_id",
+        "table": "ev_bets",
+        "definition": "CREATE INDEX idx_ev_bets_pipeline_match_id ON public.ev_bets USING btree (pipeline_match_id)"
+      },
+      {
+        "name": "uq_ev_bets_snapshot",
+        "table": "ev_bets",
+        "definition": "CREATE UNIQUE INDEX uq_ev_bets_snapshot ON public.ev_bets USING btree (pipeline_match_id, bookmaker, market, selection, odds, stake, true_probability, source_updated_at)"
+      },
+      {
+        "name": "events_pkey",
+        "table": "events",
+        "definition": "CREATE UNIQUE INDEX events_pkey ON public.events USING btree (id)"
+      },
+      {
+        "name": "idx_events_date",
+        "table": "events",
+        "definition": "CREATE INDEX idx_events_date ON public.events USING btree (event_date)"
+      },
+      {
+        "name": "idx_events_event_date",
+        "table": "events",
+        "definition": "CREATE INDEX idx_events_event_date ON public.events USING btree (event_date DESC)"
+      },
+      {
+        "name": "idx_events_external",
+        "table": "events",
+        "definition": "CREATE UNIQUE INDEX idx_events_external ON public.events USING btree (external_id, external_source) WHERE ((external_id IS NOT NULL) AND (external_source IS NOT NULL))"
+      },
+      {
+        "name": "idx_events_league_date",
+        "table": "events",
+        "definition": "CREATE INDEX idx_events_league_date ON public.events USING btree (league, event_date)"
+      },
+      {
+        "name": "idx_events_sport",
+        "table": "events",
+        "definition": "CREATE INDEX idx_events_sport ON public.events USING btree (sport)"
+      },
+      {
+        "name": "idx_events_sport_event_date",
+        "table": "events",
+        "definition": "CREATE INDEX idx_events_sport_event_date ON public.events USING btree (sport, event_date DESC)"
+      },
+      {
+        "name": "idx_events_sport_league",
+        "table": "events",
+        "definition": "CREATE INDEX idx_events_sport_league ON public.events USING btree (sport, league)"
+      },
+      {
+        "name": "idx_events_status",
+        "table": "events",
+        "definition": "CREATE INDEX idx_events_status ON public.events USING btree (status)"
+      },
+      {
+        "name": "idx_events_status_event_date",
+        "table": "events",
+        "definition": "CREATE INDEX idx_events_status_event_date ON public.events USING btree (status, event_date DESC)"
+      },
+      {
+        "name": "feature_audit_logs_created",
+        "table": "feature_audit_logs",
+        "definition": "CREATE INDEX feature_audit_logs_created ON public.feature_audit_logs USING btree (created_at DESC, id DESC)"
+      },
+      {
+        "name": "feature_audit_logs_pkey",
+        "table": "feature_audit_logs",
+        "definition": "CREATE UNIQUE INDEX feature_audit_logs_pkey ON public.feature_audit_logs USING btree (id)"
+      },
+      {
+        "name": "feature_flags_pkey",
+        "table": "feature_flags",
+        "definition": "CREATE UNIQUE INDEX feature_flags_pkey ON public.feature_flags USING btree (key)"
+      },
+      {
+        "name": "fraud_alerts_pkey",
+        "table": "fraud_alerts",
+        "definition": "CREATE UNIQUE INDEX fraud_alerts_pkey ON public.fraud_alerts USING btree (id)"
+      },
+      {
+        "name": "idx_fraud_alerts_created_at",
+        "table": "fraud_alerts",
+        "definition": "CREATE INDEX idx_fraud_alerts_created_at ON public.fraud_alerts USING btree (created_at DESC)"
+      },
+      {
+        "name": "idx_fraud_alerts_severity",
+        "table": "fraud_alerts",
+        "definition": "CREATE INDEX idx_fraud_alerts_severity ON public.fraud_alerts USING btree (severity)"
+      },
+      {
+        "name": "idx_fraud_alerts_status",
+        "table": "fraud_alerts",
+        "definition": "CREATE INDEX idx_fraud_alerts_status ON public.fraud_alerts USING btree (status)"
+      },
+      {
+        "name": "idx_fraud_alerts_user_id",
+        "table": "fraud_alerts",
+        "definition": "CREATE INDEX idx_fraud_alerts_user_id ON public.fraud_alerts USING btree (user_id)"
+      },
+      {
+        "name": "gambling_limits_pkey",
+        "table": "gambling_limits",
+        "definition": "CREATE UNIQUE INDEX gambling_limits_pkey ON public.gambling_limits USING btree (id)"
+      },
+      {
+        "name": "idx_gambling_limits_user_id",
+        "table": "gambling_limits",
+        "definition": "CREATE INDEX idx_gambling_limits_user_id ON public.gambling_limits USING btree (user_id)"
+      },
+      {
+        "name": "idx_odds_offers_book_market",
+        "table": "odds_offers",
+        "definition": "CREATE INDEX idx_odds_offers_book_market ON public.odds_offers USING btree (book_key, market)"
+      },
+      {
+        "name": "idx_odds_offers_created_at",
+        "table": "odds_offers",
+        "definition": "CREATE INDEX idx_odds_offers_created_at ON public.odds_offers USING btree (created_at DESC)"
+      },
+      {
+        "name": "idx_odds_offers_event_id",
+        "table": "odds_offers",
+        "definition": "CREATE INDEX idx_odds_offers_event_id ON public.odds_offers USING btree (event_id)"
+      },
+      {
+        "name": "idx_odds_offers_provider_event",
+        "table": "odds_offers",
+        "definition": "CREATE INDEX idx_odds_offers_provider_event ON public.odds_offers USING btree (provider, provider_event_id)"
+      },
+      {
+        "name": "odds_offers_pkey",
+        "table": "odds_offers",
+        "definition": "CREATE UNIQUE INDEX odds_offers_pkey ON public.odds_offers USING btree (id)"
+      },
+      {
+        "name": "uq_odds_offers_snapshot",
+        "table": "odds_offers",
+        "definition": "CREATE UNIQUE INDEX uq_odds_offers_snapshot ON public.odds_offers USING btree (provider, provider_event_id, book_key, market, selection, line, participant, source_updated_at, odds_decimal)"
+      },
+      {
+        "name": "idx_parlay_calculations_created_at",
+        "table": "parlay_calculations",
+        "definition": "CREATE INDEX idx_parlay_calculations_created_at ON public.parlay_calculations USING btree (created_at DESC)"
+      },
+      {
+        "name": "idx_parlay_calculations_user_id",
+        "table": "parlay_calculations",
+        "definition": "CREATE INDEX idx_parlay_calculations_user_id ON public.parlay_calculations USING btree (user_id)"
+      },
+      {
+        "name": "parlay_calculations_pkey",
+        "table": "parlay_calculations",
+        "definition": "CREATE UNIQUE INDEX parlay_calculations_pkey ON public.parlay_calculations USING btree (id)"
+      },
+      {
+        "name": "idx_parlay_correlation_parlay",
+        "table": "parlay_correlation_warnings",
+        "definition": "CREATE INDEX idx_parlay_correlation_parlay ON public.parlay_correlation_warnings USING btree (parlay_id)"
+      },
+      {
+        "name": "parlay_correlation_warnings_pkey",
+        "table": "parlay_correlation_warnings",
+        "definition": "CREATE UNIQUE INDEX parlay_correlation_warnings_pkey ON public.parlay_correlation_warnings USING btree (id)"
+      },
+      {
+        "name": "idx_parlay_legs_event_id",
+        "table": "parlay_legs",
+        "definition": "CREATE INDEX idx_parlay_legs_event_id ON public.parlay_legs USING btree (event_id)"
+      },
+      {
+        "name": "idx_parlay_legs_parlay_id",
+        "table": "parlay_legs",
+        "definition": "CREATE INDEX idx_parlay_legs_parlay_id ON public.parlay_legs USING btree (parlay_id)"
+      },
+      {
+        "name": "parlay_legs_pkey",
+        "table": "parlay_legs",
+        "definition": "CREATE UNIQUE INDEX parlay_legs_pkey ON public.parlay_legs USING btree (id)"
+      },
+      {
+        "name": "idx_parlay_system_parlay",
+        "table": "parlay_system_results",
+        "definition": "CREATE INDEX idx_parlay_system_parlay ON public.parlay_system_results USING btree (parlay_id)"
+      },
+      {
+        "name": "parlay_system_results_pkey",
+        "table": "parlay_system_results",
+        "definition": "CREATE UNIQUE INDEX parlay_system_results_pkey ON public.parlay_system_results USING btree (id)"
+      },
+      {
+        "name": "idx_parlays_created_at",
+        "table": "parlays",
+        "definition": "CREATE INDEX idx_parlays_created_at ON public.parlays USING btree (created_at DESC)"
+      },
+      {
+        "name": "idx_parlays_status",
+        "table": "parlays",
+        "definition": "CREATE INDEX idx_parlays_status ON public.parlays USING btree (status)"
+      },
+      {
+        "name": "idx_parlays_user_id",
+        "table": "parlays",
+        "definition": "CREATE INDEX idx_parlays_user_id ON public.parlays USING btree (user_id)"
+      },
+      {
+        "name": "parlays_pkey",
+        "table": "parlays",
+        "definition": "CREATE UNIQUE INDEX parlays_pkey ON public.parlays USING btree (id)"
+      },
+      {
+        "name": "idx_platform_metrics_date",
+        "table": "platform_metrics",
+        "definition": "CREATE INDEX idx_platform_metrics_date ON public.platform_metrics USING btree (date DESC)"
+      },
+      {
+        "name": "platform_metrics_date_key",
+        "table": "platform_metrics",
+        "definition": "CREATE UNIQUE INDEX platform_metrics_date_key ON public.platform_metrics USING btree (date)"
+      },
+      {
+        "name": "platform_metrics_pkey",
+        "table": "platform_metrics",
+        "definition": "CREATE UNIQUE INDEX platform_metrics_pkey ON public.platform_metrics USING btree (id)"
+      },
+      {
+        "name": "idx_player_props_active",
+        "table": "player_props",
+        "definition": "CREATE INDEX idx_player_props_active ON public.player_props USING btree (event_id, is_active) WHERE (is_active = true)"
+      },
+      {
+        "name": "idx_player_props_event",
+        "table": "player_props",
+        "definition": "CREATE INDEX idx_player_props_event ON public.player_props USING btree (event_id)"
+      },
+      {
+        "name": "idx_player_props_market",
+        "table": "player_props",
+        "definition": "CREATE INDEX idx_player_props_market ON public.player_props USING btree (sport, market)"
+      },
+      {
+        "name": "idx_player_props_player",
+        "table": "player_props",
+        "definition": "CREATE INDEX idx_player_props_player ON public.player_props USING btree (player_name)"
+      },
+      {
+        "name": "player_props_pkey",
+        "table": "player_props",
+        "definition": "CREATE UNIQUE INDEX player_props_pkey ON public.player_props USING btree (id)"
+      },
+      {
+        "name": "idx_provider_events_commence_time",
+        "table": "provider_events",
+        "definition": "CREATE INDEX idx_provider_events_commence_time ON public.provider_events USING btree (commence_time)"
+      },
+      {
+        "name": "idx_provider_events_event_id",
+        "table": "provider_events",
+        "definition": "CREATE INDEX idx_provider_events_event_id ON public.provider_events USING btree (event_id)"
+      },
+      {
+        "name": "provider_events_pkey",
+        "table": "provider_events",
+        "definition": "CREATE UNIQUE INDEX provider_events_pkey ON public.provider_events USING btree (id)"
+      },
+      {
+        "name": "uq_provider_events",
+        "table": "provider_events",
+        "definition": "CREATE UNIQUE INDEX uq_provider_events ON public.provider_events USING btree (provider, provider_event_id)"
+      },
+      {
+        "name": "role_feature_rules_pkey",
+        "table": "role_feature_rules",
+        "definition": "CREATE UNIQUE INDEX role_feature_rules_pkey ON public.role_feature_rules USING btree (role, feature_key)"
+      },
+      {
+        "name": "idx_sportsbook_registry_enabled_region",
+        "table": "sportsbook_registry",
+        "definition": "CREATE INDEX idx_sportsbook_registry_enabled_region ON public.sportsbook_registry USING btree (enabled, region)"
+      },
+      {
+        "name": "idx_sportsbook_registry_priority",
+        "table": "sportsbook_registry",
+        "definition": "CREATE INDEX idx_sportsbook_registry_priority ON public.sportsbook_registry USING btree (priority)"
+      },
+      {
+        "name": "idx_sportsbook_registry_provider",
+        "table": "sportsbook_registry",
+        "definition": "CREATE INDEX idx_sportsbook_registry_provider ON public.sportsbook_registry USING btree (provider, provider_book_key)"
+      },
+      {
+        "name": "sportsbook_registry_pkey",
+        "table": "sportsbook_registry",
+        "definition": "CREATE UNIQUE INDEX sportsbook_registry_pkey ON public.sportsbook_registry USING btree (book_key)"
+      },
+      {
+        "name": "team_elo_ratings_pkey",
+        "table": "team_elo_ratings",
+        "definition": "CREATE UNIQUE INDEX team_elo_ratings_pkey ON public.team_elo_ratings USING btree (id)"
+      },
+      {
+        "name": "team_elo_ratings_team_name_key",
+        "table": "team_elo_ratings",
+        "definition": "CREATE UNIQUE INDEX team_elo_ratings_team_name_key ON public.team_elo_ratings USING btree (team_name)"
+      },
+      {
+        "name": "idx_transactions_created_at",
+        "table": "transactions",
+        "definition": "CREATE INDEX idx_transactions_created_at ON public.transactions USING btree (created_at)"
+      },
+      {
+        "name": "idx_transactions_type",
+        "table": "transactions",
+        "definition": "CREATE INDEX idx_transactions_type ON public.transactions USING btree (transaction_type)"
+      },
+      {
+        "name": "idx_transactions_user_id",
+        "table": "transactions",
+        "definition": "CREATE INDEX idx_transactions_user_id ON public.transactions USING btree (user_id)"
+      },
+      {
+        "name": "transactions_pkey",
+        "table": "transactions",
+        "definition": "CREATE UNIQUE INDEX transactions_pkey ON public.transactions USING btree (id)"
+      },
+      {
+        "name": "idx_user_activity_ip",
+        "table": "user_activity",
+        "definition": "CREATE INDEX idx_user_activity_ip ON public.user_activity USING btree (ip_address)"
+      },
+      {
+        "name": "idx_user_activity_timestamp",
+        "table": "user_activity",
+        "definition": "CREATE INDEX idx_user_activity_timestamp ON public.user_activity USING btree (\"timestamp\")"
+      },
+      {
+        "name": "idx_user_activity_user_id",
+        "table": "user_activity",
+        "definition": "CREATE INDEX idx_user_activity_user_id ON public.user_activity USING btree (user_id)"
+      },
+      {
+        "name": "user_activity_pkey",
+        "table": "user_activity",
+        "definition": "CREATE UNIQUE INDEX user_activity_pkey ON public.user_activity USING btree (id)"
+      },
+      {
+        "name": "user_feature_overrides_pkey",
+        "table": "user_feature_overrides",
+        "definition": "CREATE UNIQUE INDEX user_feature_overrides_pkey ON public.user_feature_overrides USING btree (user_id, feature_key)"
+      },
+      {
+        "name": "idx_users_created_at",
+        "table": "users",
+        "definition": "CREATE INDEX idx_users_created_at ON public.users USING btree (created_at)"
+      },
+      {
+        "name": "idx_users_email",
+        "table": "users",
+        "definition": "CREATE INDEX idx_users_email ON public.users USING btree (email)"
+      },
+      {
+        "name": "idx_users_role",
+        "table": "users",
+        "definition": "CREATE INDEX idx_users_role ON public.users USING btree (role)"
+      },
+      {
+        "name": "users_email_key",
+        "table": "users",
+        "definition": "CREATE UNIQUE INDEX users_email_key ON public.users USING btree (email)"
+      },
+      {
+        "name": "users_pkey",
+        "table": "users",
+        "definition": "CREATE UNIQUE INDEX users_pkey ON public.users USING btree (id)"
+      },
+      {
+        "name": "idx_wallets_user_id",
+        "table": "wallets",
+        "definition": "CREATE INDEX idx_wallets_user_id ON public.wallets USING btree (user_id)"
+      },
+      {
+        "name": "wallets_pkey",
+        "table": "wallets",
+        "definition": "CREATE UNIQUE INDEX wallets_pkey ON public.wallets USING btree (id)"
+      },
+      {
+        "name": "wallets_unique_user_id",
+        "table": "wallets",
+        "definition": "CREATE UNIQUE INDEX wallets_unique_user_id ON public.wallets USING btree (user_id)"
+      }
+    ],
+    "constraints": [
+      {
+        "name": "_sqlx_migrations_pkey",
+        "type": "p",
+        "table": "_sqlx_migrations",
+        "definition": "PRIMARY KEY (version)"
+      },
+      {
+        "name": "admin_logs_admin_id_fkey",
+        "type": "f",
+        "table": "admin_logs",
+        "definition": "FOREIGN KEY (admin_id) REFERENCES users(id) ON DELETE CASCADE"
+      },
+      {
+        "name": "admin_logs_pkey",
+        "type": "p",
+        "table": "admin_logs",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "name": "ai_chat_requests_conversation_id_fkey",
+        "type": "f",
+        "table": "ai_chat_requests",
+        "definition": "FOREIGN KEY (conversation_id) REFERENCES ai_conversations(id) ON DELETE CASCADE"
+      },
+      {
+        "name": "ai_chat_requests_pkey",
+        "type": "p",
+        "table": "ai_chat_requests",
+        "definition": "PRIMARY KEY (user_id, id)"
+      },
+      {
+        "name": "ai_chat_requests_user_id_fkey",
+        "type": "f",
+        "table": "ai_chat_requests",
+        "definition": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+      },
+      {
+        "name": "ai_conversations_pkey",
+        "type": "p",
+        "table": "ai_conversations",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "name": "ai_conversations_user_id_fkey",
+        "type": "f",
+        "table": "ai_conversations",
+        "definition": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+      },
+      {
+        "name": "ai_messages_content_check",
+        "type": "c",
+        "table": "ai_messages",
+        "definition": "CHECK (((char_length(content) >= 1) AND (char_length(content) <= 4000)))"
+      },
+      {
+        "name": "ai_messages_conversation_id_fkey",
+        "type": "f",
+        "table": "ai_messages",
+        "definition": "FOREIGN KEY (conversation_id) REFERENCES ai_conversations(id) ON DELETE CASCADE"
+      },
+      {
+        "name": "ai_messages_pkey",
+        "type": "p",
+        "table": "ai_messages",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "name": "ai_messages_role_check",
+        "type": "c",
+        "table": "ai_messages",
+        "definition": "CHECK (((role)::text = ANY (ARRAY[('user'::character varying)::text, ('assistant'::character varying)::text, ('system'::character varying)::text])))"
+      },
+      {
+        "name": "ai_messages_user_id_fkey",
+        "type": "f",
+        "table": "ai_messages",
+        "definition": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+      },
+      {
+        "name": "ai_pick_runs_pkey",
+        "type": "p",
+        "table": "ai_pick_runs",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "name": "ai_pick_runs_user_id_fkey",
+        "type": "f",
+        "table": "ai_pick_runs",
+        "definition": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+      },
+      {
+        "name": "ai_rag_documents_pkey",
+        "type": "p",
+        "table": "ai_rag_documents",
+        "definition": "PRIMARY KEY (source_id)"
+      },
+      {
+        "name": "arbitrage_event_id_fkey",
+        "type": "f",
+        "table": "arbitrage",
+        "definition": "FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE"
+      },
+      {
+        "name": "arbitrage_pkey",
+        "type": "p",
+        "table": "arbitrage",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "name": "arbitrage_stake_a_check",
+        "type": "c",
+        "table": "arbitrage",
+        "definition": "CHECK ((stake_a > (0)::numeric))"
+      },
+      {
+        "name": "arbitrage_stake_b_check",
+        "type": "c",
+        "table": "arbitrage",
+        "definition": "CHECK ((stake_b > (0)::numeric))"
+      },
+      {
+        "name": "arbitrage_total_stake_check",
+        "type": "c",
+        "table": "arbitrage",
+        "definition": "CHECK ((total_stake > (0)::numeric))"
+      },
+      {
+        "name": "backtest_results_pkey",
+        "type": "p",
+        "table": "backtest_results",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "name": "bets_amount_check",
+        "type": "c",
+        "table": "bets",
+        "definition": "CHECK ((amount > (0)::numeric))"
+      },
+      {
+        "name": "bets_bet_type_check",
+        "type": "c",
+        "table": "bets",
+        "definition": "CHECK (((bet_type)::text = ANY (ARRAY[('MONEYLINE'::character varying)::text, ('SPREAD'::character varying)::text, ('TOTAL'::character varying)::text])))"
+      },
+      {
+        "name": "bets_event_id_fkey",
+        "type": "f",
+        "table": "bets",
+        "definition": "FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE"
+      },
+      {
+        "name": "bets_pkey",
+        "type": "p",
+        "table": "bets",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "name": "bets_selection_check",
+        "type": "c",
+        "table": "bets",
+        "definition": "CHECK (((selection)::text = ANY (ARRAY[('HOME'::character varying)::text, ('AWAY'::character varying)::text, ('OVER'::character varying)::text, ('UNDER'::character varying)::text])))"
+      },
+      {
+        "name": "bets_settled_by_fkey",
+        "type": "f",
+        "table": "bets",
+        "definition": "FOREIGN KEY (settled_by) REFERENCES users(id)"
+      },
+      {
+        "name": "bets_status_check",
+        "type": "c",
+        "table": "bets",
+        "definition": "CHECK (((status)::text = ANY (ARRAY[('PENDING'::character varying)::text, ('WON'::character varying)::text, ('LOST'::character varying)::text, ('PUSH'::character varying)::text, ('CANCELLED'::character varying)::text])))"
+      },
+      {
+        "name": "bets_user_id_fkey",
+        "type": "f",
+        "table": "bets",
+        "definition": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+      },
+      {
+        "name": "betting_patterns_pkey",
+        "type": "p",
+        "table": "betting_patterns",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "name": "betting_patterns_reviewed_by_fkey",
+        "type": "f",
+        "table": "betting_patterns",
+        "definition": "FOREIGN KEY (reviewed_by) REFERENCES users(id)"
+      },
+      {
+        "name": "betting_patterns_user_id_fkey",
+        "type": "f",
+        "table": "betting_patterns",
+        "definition": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+      },
+      {
+        "name": "devigged_odds_event_id_fkey",
+        "type": "f",
+        "table": "devigged_odds",
+        "definition": "FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE"
+      },
+      {
+        "name": "devigged_odds_fair_prob_a_check",
+        "type": "c",
+        "table": "devigged_odds",
+        "definition": "CHECK (((fair_prob_a >= (0)::double precision) AND (fair_prob_a <= (1)::double precision)))"
+      },
+      {
+        "name": "devigged_odds_fair_prob_b_check",
+        "type": "c",
+        "table": "devigged_odds",
+        "definition": "CHECK (((fair_prob_b >= (0)::double precision) AND (fair_prob_b <= (1)::double precision)))"
+      },
+      {
+        "name": "devigged_odds_pkey",
+        "type": "p",
+        "table": "devigged_odds",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "name": "devigged_odds_archive_pkey",
+        "type": "p",
+        "table": "devigged_odds_archive",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "name": "ev_bets_event_id_fkey",
+        "type": "f",
+        "table": "ev_bets",
+        "definition": "FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE"
+      },
+      {
+        "name": "ev_bets_pkey",
+        "type": "p",
+        "table": "ev_bets",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "name": "ev_bets_stake_check",
+        "type": "c",
+        "table": "ev_bets",
+        "definition": "CHECK ((stake > (0)::numeric))"
+      },
+      {
+        "name": "ev_bets_true_probability_check",
+        "type": "c",
+        "table": "ev_bets",
+        "definition": "CHECK (((true_probability >= (0)::double precision) AND (true_probability <= (1)::double precision)))"
+      },
+      {
+        "name": "events_created_by_fkey",
+        "type": "f",
+        "table": "events",
+        "definition": "FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE SET NULL"
+      },
+      {
+        "name": "events_pkey",
+        "type": "p",
+        "table": "events",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "name": "events_settled_by_fkey",
+        "type": "f",
+        "table": "events",
+        "definition": "FOREIGN KEY (settled_by) REFERENCES users(id) ON DELETE SET NULL"
+      },
+      {
+        "name": "events_status_check",
+        "type": "c",
+        "table": "events",
+        "definition": "CHECK (((status)::text = ANY (ARRAY[('UPCOMING'::character varying)::text, ('LIVE'::character varying)::text, ('FINISHED'::character varying)::text, ('CANCELLED'::character varying)::text])))"
+      },
+      {
+        "name": "events_updated_by_fkey",
+        "type": "f",
+        "table": "events",
+        "definition": "FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE SET NULL"
+      },
+      {
+        "name": "feature_audit_logs_pkey",
+        "type": "p",
+        "table": "feature_audit_logs",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "name": "feature_flags_pkey",
+        "type": "p",
+        "table": "feature_flags",
+        "definition": "PRIMARY KEY (key)"
+      },
+      {
+        "name": "fraud_alerts_pkey",
+        "type": "p",
+        "table": "fraud_alerts",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "name": "fraud_alerts_reviewed_by_fkey",
+        "type": "f",
+        "table": "fraud_alerts",
+        "definition": "FOREIGN KEY (reviewed_by) REFERENCES users(id) ON DELETE SET NULL"
+      },
+      {
+        "name": "fraud_alerts_severity_check",
+        "type": "c",
+        "table": "fraud_alerts",
+        "definition": "CHECK (((severity)::text = ANY (ARRAY[('low'::character varying)::text, ('medium'::character varying)::text, ('high'::character varying)::text, ('critical'::character varying)::text])))"
+      },
+      {
+        "name": "fraud_alerts_status_check",
+        "type": "c",
+        "table": "fraud_alerts",
+        "definition": "CHECK (((status)::text = ANY (ARRAY[('pending'::character varying)::text, ('investigating'::character varying)::text, ('resolved'::character varying)::text, ('false_positive'::character varying)::text])))"
+      },
+      {
+        "name": "fraud_alerts_user_id_fkey",
+        "type": "f",
+        "table": "fraud_alerts",
+        "definition": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL"
+      },
+      {
+        "name": "gambling_limits_pkey",
+        "type": "p",
+        "table": "gambling_limits",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "name": "gambling_limits_user_id_fkey",
+        "type": "f",
+        "table": "gambling_limits",
+        "definition": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+      },
+      {
+        "name": "odds_offers_book_key_fkey",
+        "type": "f",
+        "table": "odds_offers",
+        "definition": "FOREIGN KEY (book_key) REFERENCES sportsbook_registry(book_key) ON DELETE RESTRICT"
+      },
+      {
+        "name": "odds_offers_event_id_fkey",
+        "type": "f",
+        "table": "odds_offers",
+        "definition": "FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE SET NULL"
+      },
+      {
+        "name": "odds_offers_odds_decimal_check",
+        "type": "c",
+        "table": "odds_offers",
+        "definition": "CHECK ((odds_decimal > (1.0)::double precision))"
+      },
+      {
+        "name": "odds_offers_pkey",
+        "type": "p",
+        "table": "odds_offers",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "name": "parlay_calculations_num_legs_check",
+        "type": "c",
+        "table": "parlay_calculations",
+        "definition": "CHECK ((num_legs > 0))"
+      },
+      {
+        "name": "parlay_calculations_pkey",
+        "type": "p",
+        "table": "parlay_calculations",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "name": "parlay_calculations_user_id_fkey",
+        "type": "f",
+        "table": "parlay_calculations",
+        "definition": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+      },
+      {
+        "name": "parlay_correlation_warnings_leg_a_id_fkey",
+        "type": "f",
+        "table": "parlay_correlation_warnings",
+        "definition": "FOREIGN KEY (leg_a_id) REFERENCES parlay_legs(id) ON DELETE CASCADE"
+      },
+      {
+        "name": "parlay_correlation_warnings_leg_b_id_fkey",
+        "type": "f",
+        "table": "parlay_correlation_warnings",
+        "definition": "FOREIGN KEY (leg_b_id) REFERENCES parlay_legs(id) ON DELETE CASCADE"
+      },
+      {
+        "name": "parlay_correlation_warnings_parlay_id_fkey",
+        "type": "f",
+        "table": "parlay_correlation_warnings",
+        "definition": "FOREIGN KEY (parlay_id) REFERENCES parlays(id) ON DELETE CASCADE"
+      },
+      {
+        "name": "parlay_correlation_warnings_pkey",
+        "type": "p",
+        "table": "parlay_correlation_warnings",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "name": "parlay_correlation_warnings_severity_check",
+        "type": "c",
+        "table": "parlay_correlation_warnings",
+        "definition": "CHECK (((severity)::text = ANY (ARRAY[('LOW'::character varying)::text, ('MEDIUM'::character varying)::text, ('HIGH'::character varying)::text])))"
+      },
+      {
+        "name": "parlay_legs_bet_type_check",
+        "type": "c",
+        "table": "parlay_legs",
+        "definition": "CHECK (((bet_type)::text = ANY (ARRAY[('MONEYLINE'::character varying)::text, ('SPREAD'::character varying)::text, ('TOTAL'::character varying)::text])))"
+      },
+      {
+        "name": "parlay_legs_event_id_fkey",
+        "type": "f",
+        "table": "parlay_legs",
+        "definition": "FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE"
+      },
+      {
+        "name": "parlay_legs_parlay_id_fkey",
+        "type": "f",
+        "table": "parlay_legs",
+        "definition": "FOREIGN KEY (parlay_id) REFERENCES parlays(id) ON DELETE CASCADE"
+      },
+      {
+        "name": "parlay_legs_pkey",
+        "type": "p",
+        "table": "parlay_legs",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "name": "parlay_legs_selection_check",
+        "type": "c",
+        "table": "parlay_legs",
+        "definition": "CHECK (((selection)::text = ANY (ARRAY[('HOME'::character varying)::text, ('AWAY'::character varying)::text, ('OVER'::character varying)::text, ('UNDER'::character varying)::text])))"
+      },
+      {
+        "name": "parlay_legs_win_probability_check",
+        "type": "c",
+        "table": "parlay_legs",
+        "definition": "CHECK (((win_probability >= (0)::numeric) AND (win_probability <= (1)::numeric)))"
+      },
+      {
+        "name": "parlay_system_results_parlay_id_fkey",
+        "type": "f",
+        "table": "parlay_system_results",
+        "definition": "FOREIGN KEY (parlay_id) REFERENCES parlays(id) ON DELETE CASCADE"
+      },
+      {
+        "name": "parlay_system_results_pkey",
+        "type": "p",
+        "table": "parlay_system_results",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "name": "parlays_combined_probability_check",
+        "type": "c",
+        "table": "parlays",
+        "definition": "CHECK (((combined_probability >= (0)::numeric) AND (combined_probability <= (1)::numeric)))"
+      },
+      {
+        "name": "parlays_parlay_type_check",
+        "type": "c",
+        "table": "parlays",
+        "definition": "CHECK (((parlay_type)::text = ANY (ARRAY[('STANDARD'::character varying)::text, ('SYSTEM_2_3'::character varying)::text, ('SYSTEM_3_4'::character varying)::text, ('SYSTEM_2_4'::character varying)::text, ('SYSTEM_3_5'::character varying)::text, ('TEASER'::character varying)::text, ('PLEASER'::character varying)::text])))"
+      },
+      {
+        "name": "parlays_pkey",
+        "type": "p",
+        "table": "parlays",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "name": "parlays_risk_level_check",
+        "type": "c",
+        "table": "parlays",
+        "definition": "CHECK (((risk_level)::text = ANY (ARRAY[('LOW'::character varying)::text, ('MEDIUM'::character varying)::text, ('HIGH'::character varying)::text, ('VERY_HIGH'::character varying)::text])))"
+      },
+      {
+        "name": "parlays_status_check",
+        "type": "c",
+        "table": "parlays",
+        "definition": "CHECK (((status)::text = ANY (ARRAY[('DRAFT'::character varying)::text, ('ACTIVE'::character varying)::text, ('WON'::character varying)::text, ('LOST'::character varying)::text, ('PUSH'::character varying)::text, ('CANCELLED'::character varying)::text])))"
+      },
+      {
+        "name": "parlays_system_min_legs_check",
+        "type": "c",
+        "table": "parlays",
+        "definition": "CHECK (((system_min_legs IS NULL) OR (system_min_legs > 0)))"
+      },
+      {
+        "name": "parlays_total_stake_check",
+        "type": "c",
+        "table": "parlays",
+        "definition": "CHECK ((total_stake > (0)::numeric))"
+      },
+      {
+        "name": "parlays_user_id_fkey",
+        "type": "f",
+        "table": "parlays",
+        "definition": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+      },
+      {
+        "name": "platform_metrics_date_key",
+        "type": "u",
+        "table": "platform_metrics",
+        "definition": "UNIQUE (date)"
+      },
+      {
+        "name": "platform_metrics_pkey",
+        "type": "p",
+        "table": "platform_metrics",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "name": "player_props_event_id_fkey",
+        "type": "f",
+        "table": "player_props",
+        "definition": "FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE"
+      },
+      {
+        "name": "player_props_pkey",
+        "type": "p",
+        "table": "player_props",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "name": "provider_events_event_id_fkey",
+        "type": "f",
+        "table": "provider_events",
+        "definition": "FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE SET NULL"
+      },
+      {
+        "name": "provider_events_pkey",
+        "type": "p",
+        "table": "provider_events",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "name": "role_feature_rules_feature_key_fkey",
+        "type": "f",
+        "table": "role_feature_rules",
+        "definition": "FOREIGN KEY (feature_key) REFERENCES feature_flags(key)"
+      },
+      {
+        "name": "role_feature_rules_pkey",
+        "type": "p",
+        "table": "role_feature_rules",
+        "definition": "PRIMARY KEY (role, feature_key)"
+      },
+      {
+        "name": "role_feature_rules_role_check",
+        "type": "c",
+        "table": "role_feature_rules",
+        "definition": "CHECK ((role = ANY (ARRAY['guest'::text, 'user'::text, 'admin'::text, 'superadmin'::text])))"
+      },
+      {
+        "name": "sportsbook_registry_pkey",
+        "type": "p",
+        "table": "sportsbook_registry",
+        "definition": "PRIMARY KEY (book_key)"
+      },
+      {
+        "name": "sportsbook_registry_region_check",
+        "type": "c",
+        "table": "sportsbook_registry",
+        "definition": "CHECK ((region = ANY (ARRAY['us'::text, 'eu'::text, 'uk'::text, 'au'::text, 'global'::text])))"
+      },
+      {
+        "name": "team_elo_ratings_pkey",
+        "type": "p",
+        "table": "team_elo_ratings",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "name": "team_elo_ratings_team_name_key",
+        "type": "u",
+        "table": "team_elo_ratings",
+        "definition": "UNIQUE (team_name)"
+      },
+      {
+        "name": "transactions_amount_check",
+        "type": "c",
+        "table": "transactions",
+        "definition": "CHECK ((amount > (0)::numeric))"
+      },
+      {
+        "name": "transactions_pkey",
+        "type": "p",
+        "table": "transactions",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "name": "transactions_status_check",
+        "type": "c",
+        "table": "transactions",
+        "definition": "CHECK (((status)::text = ANY (ARRAY[('pending'::character varying)::text, ('completed'::character varying)::text, ('failed'::character varying)::text, ('cancelled'::character varying)::text])))"
+      },
+      {
+        "name": "transactions_transaction_type_check",
+        "type": "c",
+        "table": "transactions",
+        "definition": "CHECK (((transaction_type)::text = ANY (ARRAY[('DEPOSIT'::character varying)::text, ('WITHDRAWAL'::character varying)::text, ('BET_PLACED'::character varying)::text, ('BET_WON'::character varying)::text, ('BET_LOST'::character varying)::text])))"
+      },
+      {
+        "name": "transactions_user_id_fkey",
+        "type": "f",
+        "table": "transactions",
+        "definition": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+      },
+      {
+        "name": "transactions_wallet_id_fkey",
+        "type": "f",
+        "table": "transactions",
+        "definition": "FOREIGN KEY (wallet_id) REFERENCES wallets(id) ON DELETE CASCADE"
+      },
+      {
+        "name": "user_activity_pkey",
+        "type": "p",
+        "table": "user_activity",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "name": "user_activity_user_id_fkey",
+        "type": "f",
+        "table": "user_activity",
+        "definition": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+      },
+      {
+        "name": "user_feature_overrides_feature_key_fkey",
+        "type": "f",
+        "table": "user_feature_overrides",
+        "definition": "FOREIGN KEY (feature_key) REFERENCES feature_flags(key)"
+      },
+      {
+        "name": "user_feature_overrides_pkey",
+        "type": "p",
+        "table": "user_feature_overrides",
+        "definition": "PRIMARY KEY (user_id, feature_key)"
+      },
+      {
+        "name": "user_feature_overrides_user_id_fkey",
+        "type": "f",
+        "table": "user_feature_overrides",
+        "definition": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+      },
+      {
+        "name": "check_age",
+        "type": "c",
+        "table": "users",
+        "definition": "CHECK ((EXTRACT(year FROM age((CURRENT_DATE)::timestamp with time zone, (date_of_birth)::timestamp with time zone)) >= (21)::numeric))"
+      },
+      {
+        "name": "users_email_key",
+        "type": "u",
+        "table": "users",
+        "definition": "UNIQUE (email)"
+      },
+      {
+        "name": "users_pkey",
+        "type": "p",
+        "table": "users",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "name": "users_role_check",
+        "type": "c",
+        "table": "users",
+        "definition": "CHECK (((role)::text = ANY (ARRAY[('user'::character varying)::text, ('admin'::character varying)::text, ('superadmin'::character varying)::text])))"
+      },
+      {
+        "name": "check_encrypted_balance_not_empty",
+        "type": "c",
+        "table": "wallets",
+        "definition": "CHECK (((encrypted_balance IS NOT NULL) AND (encrypted_balance <> ''::text)))"
+      },
+      {
+        "name": "wallets_pkey",
+        "type": "p",
+        "table": "wallets",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "name": "wallets_user_id_fkey",
+        "type": "f",
+        "table": "wallets",
+        "definition": "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"
+      }
+    ]
+  }
+}
