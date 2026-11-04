@@ -79,6 +79,6 @@ jobs:
         run: python -m compileall -q pipeline
       - name: Install model test dependencies
         run: python -m pip install -r pipeline/requirements-model-tests.txt
-      - name: Verify fixture identity and causal model features
+      - name: Verify fixture identity and research safeguards
         working-directory: pipeline
-        run: python -m unittest discover -s tests -v
+        run: python -m pytest -q tests
