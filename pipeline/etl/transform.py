@@ -29,6 +29,7 @@ from etl.utils import (
     get_timestamp_str,
 )
 from models.data import canonical_matches, historical_frames, merge_prematch_odds
+from etl.identities import latest_fixtures
 
 logger = setup_logger(__name__, LOG_LEVEL)
 
@@ -45,7 +46,7 @@ def normalize_football_data_org_matches(json_files: List[Path]) -> pd.DataFrame:
     """
     all_matches = []
     
-    for json_file in json_files:
+    for json_file in sorted(json_files):
         try:
             data = load_json(json_file)
             matches = data.get("matches", [])
@@ -53,6 +54,7 @@ def normalize_football_data_org_matches(json_files: List[Path]) -> pd.DataFrame:
             for match in matches:
                 normalized = {
                     "match_id": match.get("id"),
+                    "last_update": match.get("lastUpdated"),
                     "competition": match.get("competition", {}).get("name"),
                     "season": match.get("season", {}).get("startDate"),
                     "date": match.get("utcDate"),
@@ -84,7 +86,7 @@ def normalize_football_data_org_matches(json_files: List[Path]) -> pd.DataFrame:
     
     df = pd.DataFrame(all_matches)
     logger.info(f"Normalized {len(df)} matches from football-data.org")
-    return df
+    return latest_fixtures(df, "match_id")
 
 
 def normalize_the_odds_api_odds(json_files: List[Path]) -> pd.DataFrame:

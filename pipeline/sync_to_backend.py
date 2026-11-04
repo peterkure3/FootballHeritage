@@ -63,11 +63,11 @@ def standardize_sport_name(sport: str) -> str:
         return 'SOCCER'  # Default to SOCCER if not specified
         
     sport_lower = sport.strip().lower()
+    if any(kw in sport_lower for kw in ['americanfootball', 'american football', 'nfl', 'ncaaf', 'ncaa football', 'college football']):
+        return 'NFL'
     
     # Basketball variations
     if any(kw in sport_lower for kw in ['basketball', 'nba', 'wnba', 'euroleague', 'euro cup']):
-        if 'nba_cup' in sport_lower or 'in-season' in sport_lower:
-            return 'NBA_CUP'
         return 'BASKETBALL'
         
     # Football variations

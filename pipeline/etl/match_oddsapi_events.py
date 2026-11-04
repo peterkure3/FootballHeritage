@@ -215,7 +215,7 @@ def link_oddsapi_events(time_window_minutes: int = 90, limit: int = 5000) -> Dic
                                     sport, league, home_team, away_team, event_date, status,
                                     external_id, external_source
                                 ) VALUES (
-                                    'basketball', :league, :home_team, :away_team, :event_date, 'UPCOMING',
+                                    'BASKETBALL', :league, :home_team, :away_team, :event_date, 'UPCOMING',
                                     :external_id, 'oddsapi'
                                 )
                                 RETURNING id
@@ -311,7 +311,7 @@ def link_oddsapi_events(time_window_minutes: int = 90, limit: int = 5000) -> Dic
                                     sport, league, home_team, away_team, event_date, status,
                                     external_id, external_source
                                 ) VALUES (
-                                    'football', :league, :home_team, :away_team, :event_date, 'UPCOMING',
+                                    'SOCCER', :league, :home_team, :away_team, :event_date, 'UPCOMING',
                                     :external_id, 'oddsapi'
                                 )
                                 RETURNING id

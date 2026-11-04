@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import List, Dict, Any, Optional
 import pandas as pd
 import numpy as np
+from etl.identities import latest_fixtures
 
 from config import (
     NBA_DATA_DIR,
@@ -99,7 +100,7 @@ def normalize_nba_scores(scores_files: List[Path]) -> pd.DataFrame:
     """
     all_scores = []
     
-    for file_path in scores_files:
+    for file_path in sorted(scores_files):
         try:
             data = load_json(file_path)
             
@@ -133,7 +134,7 @@ def normalize_nba_scores(scores_files: List[Path]) -> pd.DataFrame:
     if 'last_update' in df.columns:
         df['last_update'] = pd.to_datetime(df['last_update'])
     
-    return df
+    return latest_fixtures(df, "game_id")
 
 def transform_nba_data():
     """Main function to transform NBA data."""
