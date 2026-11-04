@@ -12,6 +12,7 @@ from etl.fetch_soccer_events import DEFAULT_ROOT, file_hash
 from etl.soccer_event_dataset import load_match
 from models.soccer_players import player_distributions, roster_scenario
 from models.soccer_possessions import PossessionModel, STAT_NAMES, event_stats, summarize
+from models.simulation_metrics import empirical_crps, paired_score_metrics
 
 
 def chronological_split(items: list[dict]) -> dict[str, list[dict]]:
@@ -38,9 +39,7 @@ def actual_stats(record: dict) -> np.ndarray:
 
 
 def count_crps(samples: np.ndarray, observed: float) -> float:
-    values = np.sort(np.asarray(samples, dtype=float))
-    n = len(values)
-    return float(np.mean(abs(values - observed)) - np.dot(2 * np.arange(n) - n + 1, values) / n ** 2)
+    return empirical_crps(samples, observed)
 
 
 def outcome_metrics(samples: np.ndarray, observed: np.ndarray) -> dict:
@@ -106,6 +105,9 @@ def evaluate(model: PossessionModel, dataset: Path, items: list[dict], baseline:
                                crps=count_crps(draws, observed), covered_90=bool(low <= observed <= high),
                                interval_90=[float(low), float(high)])
         rows.append(dict(match_id=item['match_id'], kickoff=item['date'], runs=runs,
+                         paired_final_scores=sample[:, :, 0].tolist(),
+                         score_distributions=paired_score_metrics(sample[:, :, 0], actual[:, 0]),
+                         baseline_score_distributions=paired_score_metrics(reference, actual[:, 0]),
                          actual_goals=actual[:, 0].tolist(), outcome=outcome, stats=stats,
                          goal_baseline=dict(rates=rates.tolist(), probabilities=probs.tolist(),
                              log_loss=float(-np.log(max(1e-15, probs[label]))),
@@ -120,6 +122,13 @@ def aggregate(rows: list[dict]) -> dict:
     if not rows:
         return {'matches': 0}
     return dict(matches=len(rows),
+                score_distributions={name: dict(
+                    samples=len(rows),
+                    crps=float(np.mean([r['score_distributions']['distributions'][name]['crps'] for r in rows])),
+                    baseline_crps=float(np.mean([r['baseline_score_distributions']['distributions'][name]['crps'] for r in rows])),
+                    interval_coverage={level: float(np.mean([
+                        r['score_distributions']['distributions'][name]['intervals'][level]['covered'] for r in rows]))
+                        for level in ['0.8', '0.9', '0.95']}) for name in ['margin', 'total']},
                 outcome={key: float(np.mean([r['outcome'][key] for r in rows]))
                          for key in ['log_loss', 'brier', 'correct']},
                 goal_baseline={key: float(np.mean([r['goal_baseline'][key] for r in rows]))
@@ -214,7 +223,7 @@ def run(dataset: Path, output: Path, competitions: list[str], runs: int, demo_ru
             model = PossessionModel.fit(load_match(dataset, m) for m in split['train'])
             save_model(model, path, metadata)
         baseline = fit_goal_baseline(load_match(dataset, m) for m in split['train'])
-        config = dict(model_sha256=file_hash(path), runs=runs, seed=seed, evaluation_version=1)
+        config = dict(model_sha256=file_hash(path), runs=runs, seed=seed, evaluation_version=2)
         evaluation_path = output / f'{competition}-evaluation.json'
         if resume and evaluation_path.exists():
             cached = json.loads(evaluation_path.read_text())

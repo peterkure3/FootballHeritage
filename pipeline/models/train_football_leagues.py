@@ -60,6 +60,12 @@ def train_league(code: str, history, directory: Path, threads: int = 2, trees: i
         'splits': {key: {'games': len(indices), 'start': fixtures.iloc[indices].date.min().isoformat(),
                          'end': fixtures.iloc[indices].date.max().isoformat()} for key, indices in splits.items()}}
     directory.mkdir(parents=True, exist_ok=False)
+    # Provider identifiers are opaque metadata; sources mix numeric and text IDs.
+    # Use one physical type so parquet writers can preserve both sources.
+    if 'provider_match_id' in fixtures:
+        fixtures = fixtures.copy()
+        fixtures['provider_match_id'] = fixtures['provider_match_id'].map(
+            lambda value: str(value) if value is not None and value == value else None)
     fixtures.to_parquet(directory/'dataset.parquet', index=False)
     joblib.dump(model, directory/'model.pkl')
     for filename in ['dataset.parquet', 'model.pkl']:
