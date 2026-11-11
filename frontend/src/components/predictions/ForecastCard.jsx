@@ -10,17 +10,19 @@ const date = (value) =>
       })
     : "Not recorded";
 const statuses = {
+  candidate_preview: 'Experimental candidate',
   current: "Active model",
   stale: "Stale prediction",
   invalid: "Invalid prediction",
 };
 
-function Outcomes({ prediction, labels }) {
+function Outcomes({ prediction, labels, unavailable }) {
   if (!prediction?.probabilities)
     return (
       <p className="pd-notice">
         {prediction
           ? "The stored probabilities could not be validated."
+          : unavailable ? "Prediction unavailable. No eligible forecast is available for this fixture."
           : "The active model has not generated a prediction for this fixture."}
       </p>
     );
@@ -56,7 +58,7 @@ function MarketNotice({ market, status }) {
   };
   const message =
     messages[market.state] ||
-    (status !== "current"
+    (!['current', 'candidate_preview'].includes(status)
       ? "Current quotes are available. A fresh prediction is required to estimate value."
       : "");
   if (!message) return null;
@@ -143,7 +145,7 @@ function modelStatus(model) {
   return statuses[model.status] || "Prediction pending";
 }
 
-function Provenance({ prediction, market, labels }) {
+function Provenance({ prediction, market, labels, settlementRule, freshnessPolicy, marketNote }) {
   const model = prediction || {};
   return (
     <details className="pd-details">
@@ -157,14 +159,12 @@ function Provenance({ prediction, market, labels }) {
         <dd>{date(model.feature_cutoff)}</dd>
         <ModelEvidence prediction={model} />
         <dt>Market settlement</dt>
-        <dd>Regulation time · home / draw / away</dd>
+        <dd>{settlementRule || 'Regulation time · home / draw / away'}</dd>
         <dt>Freshness policy</dt>
-        <dd>Prediction and complete bookmaker quotes within 24 hours</dd>
+        <dd>{freshnessPolicy || 'Prediction and complete bookmaker quotes within 24 hours'}</dd>
       </dl>
       <p className="pd-muted">
-        Market fair probabilities remove margin within each bookmaker, then
-        average equally across current books. EV uses the actual price shown.
-        Neither proves bookmaker advantage.
+        {marketNote || 'Market fair probabilities remove margin within each bookmaker, then average equally across current books. EV uses the actual price shown. Neither proves bookmaker advantage.'}
       </p>
       {market.quotes.map((quote) => (
         <p className="pd-muted" key={quote.bookmaker}>
@@ -194,7 +194,7 @@ export default function ForecastCard({ fixture }) {
         <span
           className={`pd-badge ${model.status === "current" ? "pd-badge-green" : ""}`}
         >
-          {modelStatus(model)}
+          {fixture.prediction_unavailable ? 'Prediction unavailable' : modelStatus(model)}
         </span>
       </header>
       <h2>
@@ -206,9 +206,9 @@ export default function ForecastCard({ fixture }) {
         <Clock3 size={14} />
         {date(fixture.kickoff)} · local time
       </p>
-      <Outcomes prediction={prediction} labels={labels} />
+      <Outcomes prediction={prediction} labels={labels} unavailable={fixture.prediction_unavailable} />
       <Market market={market} labels={labels} status={model.status} />
-      <Provenance prediction={prediction} market={market} labels={labels} />
+      <Provenance prediction={prediction} market={market} labels={labels} settlementRule={fixture.settlement_rule} freshnessPolicy={fixture.freshness_policy} marketNote={fixture.market_note} />
     </article>
   );
 }

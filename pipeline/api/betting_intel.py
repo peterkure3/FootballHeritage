@@ -171,6 +171,7 @@ def build_intelligence(sport, fixtures, now=None):
         raise ValueError('Unsupported sport')
     now = now or datetime.now(timezone.utc)
     output = {key: [] for key in SECTIONS}
+    scheduled = []
     considered = 0
     eligible = []
     for fixture in fixtures:
@@ -186,6 +187,9 @@ def build_intelligence(sport, fixtures, now=None):
         fixture = {**fixture, 'kickoff': kickoff.isoformat()}
         outcomes = ('home_win','draw','away_win') if sport == 'football' else ('home_win','away_win')
         prediction = prediction_for(fixture, outcomes, now)
+        scheduled.append({**{key: fixture[key] for key in ('fixture_id', 'sport', 'competition', 'home_team', 'away_team', 'kickoff', 'settlement_rule')},
+                          'status': 'SCHEDULED', 'prediction': prediction,
+                          'prediction_status': 'available' if prediction else 'unavailable'})
         if prediction:
             output['predictions'].append({**prediction, **{key: fixture[key] for key in ('fixture_id','sport','competition','home_team','away_team','kickoff','settlement_rule')}})
         groups = defaultdict(list)
@@ -220,7 +224,8 @@ def build_intelligence(sport, fixtures, now=None):
     output['arbitrage'].sort(key=lambda row: row['gross_roi'], reverse=True)
     output['ai_picks'].sort(key=lambda row: (row['ev_pct'] is not None, row['ev_pct'] or row['probability']), reverse=True)
     return {'sport': sport, 'label': SPORTS[sport]['label'], 'generated_at': now.isoformat(),
-            'summary': {'fixtures': considered, **{key:len(output[key]) for key in SECTIONS}}, **output,
+            'summary': {'fixtures': considered, **{key:len(output[key]) for key in SECTIONS}},
+            'fixtures': sorted(scheduled, key=lambda row: (row['kickoff'], row['fixture_id'])), **output,
             'policy': {'quote_max_age_seconds': MAX_QUOTE_AGE, 'quote_max_skew_seconds': MAX_QUOTE_SKEW,
                        'prediction_max_age_seconds': MAX_PREDICTION_AGE, 'execution_verified': False,
                        'ev_is_gross_estimate': True, 'consensus_excludes_target_book': True}}

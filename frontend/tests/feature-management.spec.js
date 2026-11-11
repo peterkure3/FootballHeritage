@@ -50,13 +50,12 @@ test("disabled feature hides navigation and blocks the direct route", async ({
   await expect(
     page.getByRole("heading", { name: "Feature unavailable" }),
   ).toBeVisible();
-  await page.getByRole("button", { name: "AI Picks", exact: true }).click();
   await expect(
     page.getByRole("link", { name: "Chat", exact: true }),
   ).toHaveCount(0);
   await expect(
-    page.getByRole("link", { name: "Best picks", exact: true }),
-  ).toBeVisible();
+    page.locator('.fh-nav-actions').getByRole("link", { name: "Chat", exact: true }),
+  ).toHaveCount(0);
 });
 
 test("failed policy requests deny feature routes while login remains available", async ({
@@ -70,7 +69,7 @@ test("failed policy requests deny feature routes while login remains available",
   );
   await page.goto("/ai-picks/chat", { waitUntil: "domcontentloaded" });
   await expect(
-    page.getByText("We could not verify access. Please try again."),
+    page.getByRole("heading", { name: "Connection interrupted", exact: true }),
   ).toBeVisible();
   await page.goto("/login", { waitUntil: "domcontentloaded" });
   await expect(

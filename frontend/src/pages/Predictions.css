@@ -379,6 +379,10 @@
 .pd-history-filters {
   margin: 24px 0;
 }
+.pd-history-filters label {
+  min-width: 160px;
+  max-width: 100%;
+}
 .pd-stat-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);

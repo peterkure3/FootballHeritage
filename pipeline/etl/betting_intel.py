@@ -220,6 +220,8 @@ def refresh(path=SNAPSHOT_PATH, include_candidates=True):
             temporary = stream.name
             json.dump(payload,stream,default=lambda value:value.isoformat() if isinstance(value,datetime) else float(value),allow_nan=False)
         os.replace(temporary,path)
+        from api.sport_performance import retain
+        retain(payload, path.parent / 'forecast_archive')
     finally:
         if temporary and os.path.exists(temporary):
             os.unlink(temporary)

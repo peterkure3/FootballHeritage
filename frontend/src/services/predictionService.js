@@ -27,6 +27,9 @@ async function request(path, params = {}, options = {}) {
   return response.json();
 }
 export const predictionService = {
+  getSportPerformance(sport, filters, signal) {
+    return request(`/betting-intel/${encodeURIComponent(sport)}/settled-performance`, filters, { signal });
+  },
   getBettingIntel(sport, signal) {
     return request(`/betting-intel${sport ? `/${encodeURIComponent(sport)}` : ''}`, {}, { signal });
   },

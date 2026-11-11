@@ -77,7 +77,7 @@ function HistoryTable({ data }) {
           <td>
             H {metric(row.home_prob * 100, "%")}
             <small>
-              D {metric(row.draw_prob * 100, "%")} · A{" "}
+              {row.draw_prob != null && <>D {metric(row.draw_prob * 100, "%")} · </>}A{" "}
               {metric(row.away_prob * 100, "%")}
             </small>
           </td>
@@ -209,7 +209,7 @@ function HistoryResults({ data, paging, setPaging, busy }) {
   );
 }
 
-export default function PredictionResults() {
+function FootballPredictionResults() {
   const [filters, setFilters] = useState({
     league: "",
     days: 30,
@@ -307,4 +307,37 @@ export default function PredictionResults() {
       </QueryState>
     </section>
   );
+}
+
+function SportPredictionResults({ sport }) {
+  const slug = sport.toLowerCase();
+  const [filters, setFilters] = useState({league: '', days: 30, start_date: '', end_date: '', model_version: ''});
+  const [paging, setPaging] = useState({page: 1, result_filter: 'all'});
+  const feed = useQuery({
+    queryKey: ['sport-settled-performance', slug, filters, paging],
+    ...publicSnapshot(['sport-settled-performance', slug, filters, paging], async ({signal}) => {
+      const data = await predictionService.getSportPerformance(slug, {...filters, ...paging, page_size: 10}, signal);
+      if (data.sport !== slug) throw new Error(`The source did not return ${sport} performance.`);
+      return data;
+    }),
+    retry: 1,
+  });
+  return <section aria-label="Settled prediction performance">
+    <div className="pd-section-heading"><h2>{sport} measured performance.</h2><p>One retained pre-tipoff forecast per fixture. Finals include overtime; pending and ambiguous results never count as losses.</p></div>
+    <HistoryFilters filters={filters} setFilters={setFilters} setPaging={setPaging}
+      versions={feed.data?.versions ?? []} competitions={feed.data?.competitions ?? [sport]} />
+    <QueryState query={feed} loading={`Loading ${sport} settled performance…`} failure="Performance unavailable" showRefresh>{data => <>
+      <PerformanceSummary data={data.summary} />
+      <p className="pd-muted">Pending or unverified finals: {data.summary.excluded.pending}. Ambiguous results: {data.summary.excluded.ambiguous_result}. Invalid forecasts: {data.summary.excluded.invalid_forecast}.</p>
+      <div className="pd-toolbar"><h3>Settled history · {sport}</h3><label className="pd-filter-label">Result<select value={paging.result_filter} onChange={event => setPaging({page:1,result_filter:event.target.value})}>
+        <option value="all">All results</option><option value="correct">Correct only</option><option value="incorrect">Incorrect only</option>
+      </select></label><button className="pd-button pd-button-outline" disabled={feed.isFetching} onClick={() => void feed.refetch()}>Refresh performance</button></div>
+      <p className="pd-muted">Experimental candidates and research shadow forecasts remain inactive. Model IDs identify the retained source; no promotion or profitability is implied.</p>
+      <HistoryResults data={data.history} paging={paging} setPaging={setPaging} busy={feed.isFetching} />
+    </>}</QueryState>
+  </section>;
+}
+
+export default function PredictionResults({sport = 'Football'} = {}) {
+  return sport === 'Football' ? <FootballPredictionResults /> : <SportPredictionResults key={sport} sport={sport} />;
 }

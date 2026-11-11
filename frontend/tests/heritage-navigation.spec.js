@@ -277,14 +277,12 @@ test("guest and authenticated account menus use real store state", async ({
     .click();
   await expect(page).toHaveURL("/login");
 });
-test("AI Picks menu opens by focus and routes directly", async ({ page }) => {
+test("Chat is a direct navigation link", async ({ page }) => {
   await page.goto("/app");
-  const ai = page.getByRole("button", { name: "AI Picks", exact: true });
-  await ai.focus();
-  await page
-    .locator("#menu-ai")
-    .getByRole("link", { name: "Chat", exact: true })
-    .click();
+  const chat = page.locator('.fh-nav-actions').getByRole('link', { name: 'Chat', exact: true });
+  await expect(chat).not.toHaveAttribute('aria-expanded');
+  await expect(chat.locator('svg.lucide-chevron-down')).toHaveCount(0);
+  await chat.click();
   await expect(page).toHaveURL("/ai-picks/chat");
   await page.reload();
   await expect(
@@ -312,12 +310,8 @@ test("mobile accordions provide sports, AI and account routes", async ({
   await expect(page).toHaveURL("/sport/football/schedule");
   await expect(mobile).toHaveCount(0);
   await page.getByRole("button", { name: "Open navigation" }).click();
-  await mobile
-    .locator("summary")
-    .filter({ hasText: /^AI Picks$/ })
-    .click();
-  await mobile.getByRole("link", { name: "Best picks", exact: true }).click();
-  await expect(page).toHaveURL("/ai-picks");
+  await mobile.getByRole("link", { name: "Chat", exact: true }).click();
+  await expect(page).toHaveURL("/ai-picks/chat");
   await page.getByRole("button", { name: "Open navigation" }).click();
   await mobile
     .locator("summary")
@@ -581,9 +575,9 @@ for (const viewport of [
     }));
     expect(layout.scroll).toBeLessThanOrEqual(layout.width);
     expect(layout.background).toBe("rgb(20, 27, 23)");
-    if (viewport.width > 1000)
-      await expect(page.locator(".fh-left-sidebar")).toBeVisible();
-    else await expect(page.locator(".fh-left-sidebar")).toBeHidden();
+    await expect(page.locator('.fh-left-sidebar, .fh-right-sidebar')).toHaveCount(0);
+    await expect(page.locator('.fh-subnav')).toHaveCount(0);
+    await expect(page.getByText('Find your edge with data and insight.', {exact:true})).toBeVisible();
     await page.screenshot({
       path: testInfo.outputPath(`homepage-${viewport.width}.png`),
       fullPage: true,

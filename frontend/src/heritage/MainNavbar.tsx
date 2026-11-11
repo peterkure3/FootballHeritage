@@ -100,7 +100,7 @@ function MenuGroup({
         <div
           id={`menu-${name}`}
           className={
-            name === "account" || name === "ai" || name === "fantasy"
+            name === "account" || name === "fantasy"
               ? "fh-dropdown"
               : "fh-mega"
           }
@@ -169,6 +169,7 @@ export default function MainNavbar() {
   const mobileTrigger = useRef<HTMLButtonElement>(null);
   const selected =
     (location.pathname === "/college/bracket" ? "NCAAB" : undefined) ||
+    sports.find((sport) => location.pathname.startsWith('/ai-picks/intelligence/') && location.pathname.split('/')[3] === slug(sport)) ||
     sports.find(
       (sport) =>
         location.pathname.split("/")[1] === "sport" &&
@@ -177,7 +178,15 @@ export default function MainNavbar() {
   const section =
     location.pathname === "/college/bracket"
       ? "bracket"
-      : location.pathname.split("/")[3] || "home";
+      : location.pathname.startsWith('/ai-picks/intelligence/')
+        ? ['predictions', 'best-picks'].includes(location.pathname.split('/')[4])
+          ? location.pathname.split('/')[4]
+          : 'insights'
+        : location.pathname.split("/")[3] || "home";
+  const subnav = useRef<HTMLElement>(null);
+  useEffect(() => {
+    subnav.current?.querySelector('[aria-current="page"]')?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  }, [location.pathname, featureAccess.data]);
   const isFantasy = location.pathname === "/fpl-advisor";
   const fantasyLink = (
     <Link to="/fpl-advisor" aria-current={isFantasy ? "page" : undefined}>
@@ -268,7 +277,7 @@ export default function MainNavbar() {
               <MenuGroup
                 key={sport}
                 name={slug(sport)}
-                destination={sportPath(sport)}
+                destination={sportPath(sport, section === 'best-picks' || section === 'predictions' ? section : 'home')}
                 label={
                   <span className={selected === sport ? "active" : ""}>
                     {sport}
@@ -327,23 +336,9 @@ export default function MainNavbar() {
             </MenuGroup></FeatureVisible>
           </nav>
           <div className="fh-nav-actions">
-            <MenuGroup
-              name="ai"
-              label={
-                <>
-                  <Sparkles size={14} />
-                  AI Picks
-                </>
-              }
-              open={open}
-              setOpen={setOpen}
-            >
-              <Link to="/ai-picks">Best picks</Link>
-              <Link to="/ai-picks/intelligence">Intelligence</Link>
-              <Link to="/ai-picks/intelligence/nba">NBA intelligence</Link>
-              <Link to="/predictions">Predictions</Link>
-              <Link to="/ai-picks/chat">Chat</Link>
-            </MenuGroup>
+            <Link className="fh-chat-link" to="/ai-picks/chat">
+              <Sparkles size={14} /> Chat
+            </Link>
             <MenuGroup
               name="account"
               label={
@@ -387,7 +382,7 @@ export default function MainNavbar() {
             {sports.filter(() => !featureAccess.isError && featureAccess.data?.features?.sports === true).map((sport) => (
               <details key={sport}>
                 <summary>{sport}</summary>
-                <Link to={sportPath(sport)}>Visit {sport}</Link>
+                <Link to={sportPath(sport, section === 'best-picks' || section === 'predictions' ? section : 'home')}>Visit {sport}</Link>
                 {sport === "NCAAB" && (
                   <Link to="/college/bracket">March Madness</Link>
                 )}
@@ -410,14 +405,7 @@ export default function MainNavbar() {
               <summary>Fantasy Sports</summary>
               {fantasyLink}
             </details></FeatureVisible>
-            <details>
-              <summary>AI Picks</summary>
-              <Link to="/ai-picks">Best picks</Link>
-              <Link to="/ai-picks/intelligence">Intelligence</Link>
-              <Link to="/ai-picks/intelligence/nba">NBA intelligence</Link>
-              <Link to="/predictions">Predictions</Link>
-              <Link to="/ai-picks/chat">Chat</Link>
-            </details>
+            <Link to="/ai-picks/chat">Chat</Link>
             <details>
               <summary>Account</summary>
               {accountLinks}
@@ -426,27 +414,19 @@ export default function MainNavbar() {
         )}
       </header>
       {selected && (
-        <nav className="fh-subnav" aria-label={`${selected} navigation`}>
+        <nav ref={subnav} className="fh-subnav" aria-label={`${selected} navigation`}>
           <span>{selected.toUpperCase()}</span>
-          {selected === "NCAAB" && (
-            <Link
-              to="/college/bracket"
-              className={section === "bracket" ? "selected" : ""}
-              aria-current={section === "bracket" ? "page" : undefined}
-            >
-              March Madness
-            </Link>
-          )}
           {sections.map((item) => (
             <Link
               key={item}
-              className={section === item.toLowerCase() ? "selected" : ""}
-              aria-current={section === item.toLowerCase() ? "page" : undefined}
+              className={section === slug(item) ? "selected" : ""}
+              aria-current={section === slug(item) ? "page" : undefined}
               to={sportPath(selected, item.toLowerCase())}
             >
               {item}
             </Link>
           ))}
+          {selected === "NCAAB" && <Link to="/college/bracket" className={section === 'bracket' ? 'selected' : ''} aria-current={section === 'bracket' ? 'page' : undefined}>March Madness</Link>}
         </nav>
       )}
       {wallet && (

@@ -29,6 +29,13 @@
   },
   {
     "method": "GET",
+    "path": "betting-intel/{sport}/settled-performance",
+    "admin": false,
+    "side_effect": false,
+    "ttl_seconds": 300
+  },
+  {
+    "method": "GET",
     "path": "fpl/advice",
     "admin": false,
     "side_effect": false,

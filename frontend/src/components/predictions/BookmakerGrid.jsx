@@ -2,8 +2,6 @@ import { useState } from "react";
 import { Grid3X3, ShieldCheck } from "lucide-react";
 import "./BookmakerGrid.css";
 
-const outcomes = ["home_win", "draw", "away_win"];
-const labels = ["1", "X", "2"];
 const validProbability = (value) =>
   Number.isFinite(value) && value >= 0 && value <= 1;
 const timestamp = (value) =>
@@ -24,7 +22,7 @@ function marketProbability(quote, outcome) {
 
 function modelProbability(fixture, outcome) {
   const prediction = fixture.prediction;
-  if (!prediction || prediction.status !== "current") return null;
+  if (!prediction || !['current', 'candidate_preview'].includes(prediction.status)) return null;
   return probabilityOrNull(prediction.probabilities?.[outcome]);
 }
 
@@ -97,11 +95,11 @@ function bookmakerLabel(book) {
   return `${names[name] ?? name}${region ? ` · ${region}` : ""}`;
 }
 
-function FixtureRow({ fixture, books, mode }) {
+function FixtureRow({ fixture, books, mode, outcomes }) {
   return (
     <tr>
       <th scope="row" className="bc-fixture">
-        <span>{fixture.competition} · 1X2</span>
+        <span>{fixture.competition} · {outcomes.includes('draw') ? '1X2' : 'Home / away'}</span>
         <strong>
           {fixture.home_team} <i>vs</i> {fixture.away_team}
         </strong>
@@ -134,7 +132,9 @@ function FixtureRow({ fixture, books, mode }) {
   );
 }
 
-export default function BookmakerGrid({ fixtures, bookmakers = [] }) {
+export default function BookmakerGrid({ fixtures, bookmakers = [], twoWay = false, freshnessPolicy = '24-hour dashboard policy' }) {
+  const outcomes = twoWay ? ['home_win', 'away_win'] : ['home_win', 'draw', 'away_win'];
+  const labels = twoWay ? ['1', '2'] : ['1', 'X', '2'];
   const [mode, setMode] = useState("probability");
   const currentBooks = new Set(
     fixtures.flatMap((fixture) =>
@@ -175,7 +175,7 @@ export default function BookmakerGrid({ fixtures, bookmakers = [] }) {
       caption:
         "FootballHeritage model probabilities and margin-removed bookmaker implied probabilities",
       explanation:
-        "Bookmaker probabilities remove the margin from each complete 1X2 market: (1 / outcome odds) divided by the sum of all three implied probabilities.",
+        "Bookmaker probabilities remove the margin from each complete market: (1 / outcome odds) divided by the sum of its implied probabilities.",
     },
     ev: {
       label: "Estimated EV",
@@ -224,7 +224,7 @@ export default function BookmakerGrid({ fixtures, bookmakers = [] }) {
             <b className="bc-swatch bc-swatch-negative" /> Negative estimated EV
           </span>
         )}
-        <span>1 Home · X Draw · 2 Away</span>
+        <span>{twoWay ? '1 Home · 2 Away' : '1 Home · X Draw · 2 Away'}</span>
       </div>
       <div
         className="bc-scroll"
@@ -241,15 +241,15 @@ export default function BookmakerGrid({ fixtures, bookmakers = [] }) {
                 scope="col"
                 className="bc-head bc-fixture bc-corner"
               >
-                Fixture <small>Regulation time · local kickoff</small>
+                Fixture <small>{twoWay ? 'Source settlement · local kickoff' : 'Regulation time · local kickoff'}</small>
               </th>
-              <th colSpan={3} scope="colgroup" className="bc-head bc-brand">
+              <th colSpan={outcomes.length} scope="colgroup" className="bc-head bc-brand">
                 <span>FH</span> FootballHeritage<small>Model probability</small>
               </th>
               {books.map((book) => (
                 <th
                   key={book}
-                  colSpan={3}
+                  colSpan={outcomes.length}
                   scope="colgroup"
                   className="bc-head bc-book"
                 >
@@ -284,6 +284,7 @@ export default function BookmakerGrid({ fixtures, bookmakers = [] }) {
                 fixture={fixture}
                 books={books}
                 mode={mode}
+                outcomes={outcomes}
               />
             ))}
           </tbody>
@@ -298,7 +299,7 @@ export default function BookmakerGrid({ fixtures, bookmakers = [] }) {
         </p>
         <p>
           — means a current prediction or fresh complete market is unavailable.
-          Freshness follows the 24-hour dashboard policy. Hover over a cell for
+          Freshness follows the {freshnessPolicy}. Hover over a cell for
           its price and source time.
         </p>
         {books.length === 0 && (

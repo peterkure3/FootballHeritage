@@ -10,6 +10,7 @@ import ModelPreview from "../components/predictions/ModelPreview";
 import PaperTrial from "../components/predictions/PaperTrial";
 import Pagination from "../components/predictions/Pagination";
 import QueryState from "../components/predictions/QueryState";
+import SportPredictionFeed from '../components/predictions/SportPredictionFeed';
 import "./Predictions.css";
 
 function FixtureToolbar({ filters, setFilters, feed }) {
@@ -126,7 +127,9 @@ function Fixtures({ comparison = false }) {
   );
 }
 
-export default function Predictions() {
+export default function Predictions({ sport = 'Football' }) {
+  const football = sport === 'Football';
+  const modelSport = {NBA: 'basketball', NFL: 'nfl', WNBA: 'wnba', NCAAB: 'ncaab', 'College Football': 'ncaaf'}[sport];
   const [searchParams, setSearchParams] = useSearchParams();
   const requestedTab = searchParams.get("view");
   const tab = [
@@ -139,18 +142,18 @@ export default function Predictions() {
     ? requestedTab
     : "fixtures";
   const views = {
-    fixtures: <Fixtures />,
-    comparisons: <Fixtures key="comparisons" comparison />,
-    history: <PredictionResults />,
-    models: <ModelPreview />,
-    trials: <PaperTrial />,
+    fixtures: football ? <Fixtures /> : <SportPredictionFeed sport={sport} />,
+    comparisons: football ? <Fixtures key="comparisons" comparison /> : <SportPredictionFeed key="comparisons" sport={sport} comparison />,
+    history: football || ['NBA', 'NCAAB'].includes(sport) ? <PredictionResults key={sport} sport={sport} /> : <section className="pd-empty"><h2>{sport} settled performance unavailable.</h2><p>A sport-scoped settled-performance feed is not connected. Football results are not substituted.</p></section>,
+    models: <ModelPreview sport={modelSport} />,
+    trials: football ? <PaperTrial /> : <section className="pd-empty"><h2>No {sport} paper trials connected.</h2><p>The existing paper-trial dashboard covers Football. No trial results from another sport are shown here.</p></section>,
   };
   return (
     <main className="pd-page">
       <header className="pd-hero">
         <div>
           <p className="pd-eyebrow">
-            <Activity size={15} /> PREDICTION INTELLIGENCE
+            <Activity size={15} /> {sport} · PREDICTION INTELLIGENCE
           </p>
           <h1>
             See the probabilities.
@@ -166,8 +169,7 @@ export default function Predictions() {
           <Layers3 size={25} />
           <strong>Models, with context.</strong>
           <p>
-            Fixtures show evaluated league forecasts where available, alongside
-            the active soccer model. Explore sport candidates in the model lab.
+            {football ? 'Fixtures show evaluated league forecasts where available, alongside the active soccer model. Explore sport candidates in the model lab.' : `${sport} forecasts retain their model and source details. Explore available ${sport} candidates in the model lab.`}
           </p>
         </div>
       </header>

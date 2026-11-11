@@ -198,15 +198,15 @@ function PreviewForm({ choices }) {
     </>
   );
 }
-function CatalogContent({ data }) {
-  const choices = modelChoices(data.runs);
+function CatalogContent({ data, sport }) {
+  const choices = modelChoices(data.runs).filter(choice => !sport || choice.sport === sport);
   if (choices.length === 0)
     return (
       <p className="pd-empty">No trained sport candidates are available.</p>
     );
   return <PreviewForm choices={choices} />;
 }
-export default function ModelPreview() {
+export default function ModelPreview({ sport = '' } = {}) {
   const catalog = useQuery({
     queryKey: ["sport-model-catalog"],
     queryFn: ({ signal }) => predictionService.getSportModels(signal),
@@ -230,7 +230,7 @@ export default function ModelPreview() {
         loading="Loading model catalog…"
         failure="Model catalog unavailable"
       >
-        {(data) => <CatalogContent data={data} />}
+        {(data) => <CatalogContent key={sport} data={data} sport={sport} />}
       </QueryState>
     </section>
   );

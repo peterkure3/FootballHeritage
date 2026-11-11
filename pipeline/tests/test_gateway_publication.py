@@ -7,6 +7,12 @@ from sync.gateway import contract, fresh_until
 
 
 class GatewayPublicationTests(unittest.TestCase):
+    def test_settled_history_uses_normal_publication_ttl(self):
+        now = datetime(2026, 11, 8, tzinfo=UTC)
+        self.assertEqual(fresh_until('betting-intel/nba/settled-performance',
+                                    {'generated_at': (now - timedelta(days=1) + timedelta(seconds=2)).isoformat()}, now, 300),
+                         now + timedelta(seconds=300))
+
     def test_packaged_route_manifests_are_identical(self):
         from pathlib import Path
 

@@ -32,6 +32,8 @@ PREWARM = [
     ("predictions/versions", []),
     ("sport-models", []),
     ("betting-intel", []),
+    ("betting-intel/nba/settled-performance", [["days", "30"], ["page", "1"], ["page_size", "10"]]),
+    ("betting-intel/ncaab/settled-performance", [["days", "30"], ["page", "1"], ["page_size", "10"]]),
     ("fpl/advice", []),
     ("ncaab/games", [["limit", "50"]]),
     ("suggested-parlays", []),
@@ -42,6 +44,8 @@ PREWARM = [
 def fresh_until(path, payload, evaluated_at, ttl_seconds):
     """Expire ranking views before any visible kickoff or evidence-age boundary."""
     deadline = evaluated_at + timedelta(seconds=ttl_seconds)
+    if path.endswith('/settled-performance'):
+        return deadline
     market_view = path.startswith(
         (
             "betting-intel",

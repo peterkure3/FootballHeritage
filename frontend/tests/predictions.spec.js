@@ -173,6 +173,20 @@ test("complete probabilities, decimal quotes, missing market, and pagination", a
   await expect(page.locator(".pd-forecast")).toHaveCount(1);
 });
 
+test('sport Football predictions reuse the full original workspace', async ({page}) => {
+  await page.goto('/ai-picks/intelligence/football/predictions');
+  await expect(page.locator('.pd-forecast').first()).toContainText('25.0%');
+  await expect(page.locator('.pd-forecast').first()).toContainText('+0.200');
+  const tabs = page.getByRole('navigation',{name:'Prediction views'});
+  await expect(tabs.getByRole('button')).toHaveText(['Upcoming fixtures','Bookmaker grid','Settled performance','Model lab','Paper trials']);
+  await tabs.getByRole('button',{name:'Bookmaker grid',exact:true}).click();
+  await expect(page.locator('.bc-table')).toBeVisible();
+  await page.reload();
+  await expect(tabs.getByRole('button',{name:'Bookmaker grid',exact:true})).toHaveAttribute('aria-current','page');
+  await page.goBack();
+  await expect(page.locator('.pd-forecast').first()).toBeVisible();
+});
+
 test("La Liga uses its database key and league options survive empty filters", async ({ page }) => {
   await page.route("**/prediction-dashboard/fixtures?*", (route) => route.fulfill({ json: {
     items: [], competitions: ["Bundesliga", "Primera Division", "Serie A"],

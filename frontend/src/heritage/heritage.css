@@ -231,6 +231,14 @@ img {
   gap: 24px;
   height: 100%;
 }
+.fh-chat-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 8px;
+  color: #b4d79d;
+  font-size: 12px;
+}
 .fh-nav-actions .fh-menu-group {
   position: relative;
 }
@@ -374,6 +382,7 @@ img {
   margin-right: 10px;
 }
 .fh-subnav > a {
+  flex-shrink: 0;
   font-size: 11px;
   height: 100%;
   display: flex;
@@ -435,7 +444,7 @@ img {
 }
 .fh-layout {
   display: grid;
-  grid-template-columns: 210px minmax(0, 1fr) 294px;
+  grid-template-columns: minmax(0, 1fr);
   gap: 22px;
   align-items: start;
 }
@@ -682,6 +691,8 @@ img {
   position: relative;
 }
 .fh-story-card img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -1197,7 +1208,7 @@ img {
     font-size: 48px;
   }
   .fh-layout {
-    grid-template-columns: 220px minmax(0, 1fr) 300px;
+    grid-template-columns: minmax(0, 1fr);
     gap: 25px;
   }
 }
@@ -1216,7 +1227,7 @@ img {
     display: none;
   }
   .fh-layout {
-    grid-template-columns: 180px minmax(0, 1fr) 255px;
+    grid-template-columns: minmax(0, 1fr);
     gap: 16px;
   }
   .fh-hero {
@@ -1241,7 +1252,7 @@ img {
 }
 @media (max-width: 1000px) {
   .fh-layout {
-    grid-template-columns: minmax(0, 1fr) 270px;
+    grid-template-columns: minmax(0, 1fr);
   }
   .fh-left-sidebar {
     display: none;
@@ -1260,7 +1271,12 @@ img {
     gap: 13px;
   }
   .fh-intro-note {
-    display: none;
+    white-space: normal;
+  }
+  .fh-intro {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
   }
   .fh-hero {
     height: 490px;

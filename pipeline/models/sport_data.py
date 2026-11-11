@@ -150,6 +150,8 @@ def load_games(sport: str, root: Path = RAW_DATA_DIR) -> pd.DataFrame:
                 rows.append({"date": date, "league": league, "home_team": event["home_team"], "away_team": event["away_team"],
                     "home_score": scores[event["home_team"]], "away_score": scores[event["away_team"]], "completed": True,
                     "result_available_at": available, "source_file": str(path), "provider_event_id": event["id"], "date_precision": "TIMESTAMP"})
+    from etl.update_sport_results import load_recent_results
+    rows.extend(load_recent_results(spec['leagues'], root))
     # Older repeated score captures contain contradictory finals. Quarantine the
     # entire fixture instead of picking a score or silently training on a correction.
     raw = pd.DataFrame(rows)

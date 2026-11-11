@@ -41,6 +41,21 @@ pub fn route(method: &str, path: &str) -> Option<Route> {
         })
 }
 
+#[cfg(test)]
+mod settled_tests {
+    #[test]
+    fn settled_performance_route_is_read_only() {
+        for sport in ["nba", "ncaab"] {
+            let path = format!("betting-intel/{sport}/settled-performance");
+            let contract = super::route("GET", &path).expect("settled feed must be published");
+            assert!(!contract.admin);
+            assert!(!contract.side_effect);
+            assert_eq!(contract.ttl_seconds, 300);
+            assert!(super::route("POST", &path).is_none());
+        }
+    }
+}
+
 #[derive(sqlx::FromRow)]
 struct Job {
     id: Uuid,

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { lazy, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link, NavLink, useParams } from 'react-router-dom';
 import { ArrowUpRight, RefreshCw, Sparkles } from 'lucide-react';
@@ -10,11 +10,13 @@ import type { Sport } from './data';
 import MarketTable, { ModelLabel } from './BettingIntelTable';
 import { percent as pct, selectionName as selection, metric } from './bettingIntelFormat';
 import './betting-intel.css';
+const Predictions = lazy(() => import('../pages/Predictions'));
 
 const sportLabels: Record<string, Sport> = {
   football: 'Football', nba: 'NBA', nfl: 'NFL', wnba: 'WNBA', ncaab: 'NCAAB', 'college-football': 'College Football',
 };
 const views: Record<string, { title: string; key: string; description: string }> = {
+  'best-picks': { title: 'Best Picks', key: 'ai_picks', description: 'Ranked selections for this sport from the existing intelligence snapshot.' },
   summary: { title: 'Summary', key: 'ai_picks', description: 'Your sport’s model picks, predictions and market signals in one place.' },
   predictions: { title: 'Predictions', key: 'predictions', description: 'Model probabilities for upcoming games. Candidate forecasts are experimental.' },
   'devigged-odds': { title: 'De-vigged odds', key: 'devigged_odds', description: 'Bookmaker implied probabilities with the margin removed proportionally. These are market estimates.' },
@@ -101,13 +103,15 @@ function SportWorkspace({ sport, view }: { sport: string; view: string }) {
   const [page, setPage] = useState(1);
   const query = useQuery({ queryKey: ['betting-intel', sport], queryFn: ({ signal }) => predictionService.getBettingIntel(sport, signal), refetchInterval: 60000 });
   const data = record(query.data), summary = record(data.summary);
-  const rows = array(data[views[view].key]).map(record).filter(row => matchesSearch(row,search));
+  const rows = text(data.sport) === sport
+    ? array(data[views[view].key]).map(record).filter(row => matchesSearch(row,search))
+    : [];
   const pages = Math.max(1,Math.ceil(rows.length/20));
   const currentPage = Math.min(page,pages);
   return <AppShell sport={sportLabels[sport]} title={`${sportLabels[sport]} betting intelligence.`} eyebrow="AI PICKS / INTELLIGENCE">
     <section className="fh-card fh-section bi-workspace">
       <div className="bi-toolbar"><Link to="/ai-picks/intelligence">← All sports</Link><RefreshButton busy={query.isFetching} refresh={query.refetch} /></div>
-      <nav className="bi-sport-nav" aria-label="Intelligence sport">{Object.entries(sportLabels).map(([key,label]) => <NavLink key={key} to={`/ai-picks/intelligence/${key}`} aria-current={key === sport ? 'page' : undefined}>{label}</NavLink>)}</nav>
+      <nav className="bi-sport-nav" aria-label="Intelligence sport">{Object.entries(sportLabels).map(([key,label]) => <NavLink key={key} to={`/ai-picks/intelligence/${key}/${view}`} aria-current={key === sport ? 'page' : undefined}>{label}</NavLink>)}</nav>
       <nav className="bi-view-nav" aria-label="Intelligence tools">{Object.entries(views).map(([key,item]) => <Link key={key} to={`/ai-picks/intelligence/${sport}${key === 'summary' ? '' : `/${key}`}`} aria-current={view === key ? 'page' : undefined}>{item.title}</Link>)}</nav>
       <h2>{viewTitle(sport,view)}</h2><p className="fh-muted">{views[view].description}</p>
       <QueryState query={query} />
@@ -125,5 +129,6 @@ export default function BettingIntel() {
   const { sport, view = 'summary' } = useParams();
   if (!sport) return <Hub />;
   if (!Object.hasOwn(sportLabels,sport) || !Object.hasOwn(views,view)) return <AppShell title="Intelligence view unavailable."><Link to="/ai-picks/intelligence">Choose a supported sport and tool →</Link></AppShell>;
+  if (view === 'predictions') return <Predictions key={sport} sport={sportLabels[sport]} />;
   return <SportWorkspace key={`${sport}/${view}`} sport={sport} view={view} />;
 }

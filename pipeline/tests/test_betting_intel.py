@@ -37,6 +37,22 @@ def prediction(item):
 
 
 class IntelligenceTests(unittest.TestCase):
+    def test_schedules_survive_missing_or_invalid_predictions_without_becoming_picks(self):
+        for sport in ('ncaab', 'nfl', 'college-football'):
+            with self.subTest(sport=sport):
+                item = fixture(sport)
+                other = fixture('nba')
+                result = build_intelligence(sport, [item, other], NOW)
+                self.assertEqual(len(result['fixtures']), 1)
+                self.assertIsNone(result['fixtures'][0]['prediction'])
+                self.assertEqual(result['fixtures'][0]['prediction_status'], 'unavailable')
+                self.assertEqual(result['predictions'], [])
+                self.assertEqual(result['ai_picks'], [])
+                item['prediction'] = {**prediction(item), 'generated_at': (NOW - timedelta(days=2)).isoformat()}
+                self.assertIsNone(build_intelligence(sport, [item], NOW)['fixtures'][0]['prediction'])
+                item['status'] = 'CANCELLED'
+                self.assertEqual(build_intelligence(sport, [item], NOW)['fixtures'], [])
+
     def test_league_identity_never_mixes_nba_wnba_or_college(self):
         self.assertEqual(sport_key('basketball','NBA'),'nba')
         self.assertEqual(sport_key('basketball','basketball_wnba'),'wnba')
@@ -62,6 +78,7 @@ class IntelligenceTests(unittest.TestCase):
         self.assertEqual(bet['model_status'],'candidate_preview')
         self.assertEqual(output['ai_picks'][0]['pick_type'],'model_value')
         self.assertEqual(output['predictions'][0]['sport'],'nba')
+        self.assertEqual(output['fixtures'][0]['prediction']['probabilities'], output['predictions'][0]['probabilities'])
 
     def test_ambiguous_quote_timezone_and_conflicting_snapshots_rejected(self):
         item=fixture(); item['offers']=quote()

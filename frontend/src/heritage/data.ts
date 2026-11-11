@@ -8,8 +8,12 @@ export const sports = [
 ] as const;
 export type Sport = (typeof sports)[number];
 export const slug = (sport: string) => sport.toLowerCase().replaceAll(" ", "-");
-export const sportPath = (sport: string, section = "home") =>
-  `/sport/${slug(sport)}${section === "home" ? "" : `/${section}`}`;
+export const sportPath = (sport: string, section = "home") => {
+  const tab = slug(section);
+  if (tab === "predictions" || tab === "best-picks")
+    return `/ai-picks/intelligence/${slug(sport)}/${tab}`;
+  return `/sport/${slug(sport)}${tab === "home" ? "" : `/${tab}`}`;
+};
 export const sections = [
   "Home",
   "Scores",
@@ -17,6 +21,8 @@ export const sections = [
   "Standings",
   "Teams",
   "Insights",
+  "Predictions",
+  "Best Picks",
 ];
 // Navigation directory from the supplied template, not a claim of data/model coverage.
 export const leagues: Record<Sport, Record<string, string[]>> = {
