@@ -7,6 +7,7 @@ import { useFixtures, formatDate, type Fixture } from "./services";
 import { DataState, Dialog } from "./ui";
 import { usePreferences } from "./preferences";
 import { useState } from "react";
+import SportSchedule from './SportSchedule';
 export function MatchCard({ match }: { match: Fixture }) {
   return (
     <Link
@@ -235,6 +236,7 @@ export default function SportPage() {
       </AppShell>
     );
   if (section === "home") return <HomePage sport={sport} />;
+  if (section === "schedule") return <SportSchedule key={sport} sport={sport} />;
   if (section === "scores" || section === "schedule")
     return <FixturesPage sport={sport} section={section} />;
   if (section === "teams") return <TeamsPage key={sport} sport={sport} />;

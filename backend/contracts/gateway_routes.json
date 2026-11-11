@@ -1,6 +1,13 @@
 [
   {
     "method": "GET",
+    "path": "sport-schedule/{sport}",
+    "admin": false,
+    "side_effect": false,
+    "ttl_seconds": 300
+  },
+  {
+    "method": "GET",
     "path": "ai-picks",
     "admin": false,
     "side_effect": false,

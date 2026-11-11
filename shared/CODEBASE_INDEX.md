@@ -1,5 +1,15 @@
 # Football Heritage - Codebase Index
 
+## Sport match centres and schedule pages - 2026-11-11
+
+Sports home pages now use a bento of predictions, upcoming fixtures and verified
+finals. Schedule pages provide date navigation, UTC date/team/competition filters,
+daily matchup tables and centred match dialogs. Non-football schedules use the
+read-only sports-gated `sport-schedule/{sport}` gateway contract; Football retains
+the matches API. New components reuse the existing theme's fonts, colours and
+card/control radii. Implementation and evidence:
+`stages/03-build/output/sport-centre-design-20261111.md`.
+
 ## NBA bookmaker grid duplicate protection - 2026-11-11
 
 NBA intelligence reads now coalesce exact game identities across provider IDs,

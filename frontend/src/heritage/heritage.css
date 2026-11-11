@@ -11,11 +11,19 @@
   --fh-ink: #202723;
   --fh-muted: #69746c;
   --fh-border: #e1e6dd;
+  --fh-font-body: Arial, Helvetica, sans-serif;
+  --fh-font-display: Georgia, "Times New Roman", serif;
+  --fh-radius-card: 9px;
+  --fh-radius-control: 5px;
+  --fh-panel-space: 24px;
+  --fh-accent-soft: #e4eee1;
+  --fh-on-dark: #fff;
+  --fh-muted-on-dark: #c8d8c4;
   --card: #fff;
   --surface: #f0f2ef;
   --text: #202723;
   --muted: #69746c;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--fh-font-body);
   color: var(--fh-ink);
   background: var(--color-surface);
   font-synthesis: none;
@@ -45,7 +53,7 @@ button:disabled {
 h1,
 h2,
 h3 {
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: var(--fh-font-display);
   font-weight: 400;
 }
 input,
@@ -59,7 +67,7 @@ summary:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-  outline: 3px solid #52ad7c;
+  outline: 3px solid var(--fh-green);
   outline-offset: 3px;
 }
 img {
@@ -450,8 +458,8 @@ img {
 }
 .fh-card {
   border: 1px solid var(--fh-border);
-  background: white;
-  border-radius: 9px;
+  background: var(--color-card);
+  border-radius: var(--fh-radius-card);
   overflow: hidden;
 }
 .fh-left-sidebar,
@@ -483,7 +491,7 @@ img {
   gap: 8px;
   background: #177c4c;
   border: 1px solid #177c4c;
-  border-radius: 5px;
+  border-radius: var(--fh-radius-control);
   padding: 11px 15px;
   color: white;
   font-size: 12px;
@@ -1023,6 +1031,10 @@ img {
   color: var(--fh-ink);
   box-shadow: 0 15px 80px #0004;
   position: fixed;
+  inset: 0;
+  margin: auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 .fh-dialog::backdrop {
   background: #0c1e16bc;

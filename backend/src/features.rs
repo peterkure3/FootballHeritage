@@ -225,6 +225,7 @@ pub fn route_features(path: &str) -> Vec<&'static str> {
         ("/fpl", "fpl"),
         ("/ncaab", "college"),
         ("/sports", "sports"),
+        ("/sport-schedule", "sports"),
         ("/predictions", "predictions"),
         ("/prediction-dashboard", "predictions"),
         ("/sport-models", "predictions"),

@@ -21,6 +21,7 @@ from .neon_client import connect
 
 ROUTES = json.loads(Path(__file__).with_name("gateway_routes.json").read_text())
 PREWARM = [
+    *((f"sport-schedule/{sport}", []) for sport in ("nba", "ncaab", "nfl", "wnba", "college-football")),
     ("intelligence/devigged-odds", []),
     ("intelligence/ev-bets", []),
     ("intelligence/arbitrage", []),

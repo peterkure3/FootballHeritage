@@ -1,7 +1,7 @@
 .bi-intro > p { max-width: 62ch; color: var(--color-muted, #69746c); line-height: 1.7; }
 .bi-sport-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
 .bi-sport-card { display: flex; flex-direction: column; gap: 10px; }
-.bi-sport-card > a, .bi-summary-links a, .bi-inline-summary a { display: inline-flex; align-items: center; gap: 6px; color: #275840; }
+.bi-sport-card > a, .bi-summary-links a, .bi-inline-summary:not(.sc-home) a { display: inline-flex; align-items: center; gap: 6px; color: #275840; }
 .bi-sport-card > a { margin-top: auto; }
 .bi-sport-card h2 { margin: 0; }
 .bi-mini-metrics { display: flex; flex-wrap: wrap; gap: 12px 24px; padding: 18px 0; }

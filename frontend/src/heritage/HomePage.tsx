@@ -5,7 +5,7 @@ import AppShell from "./AppShell";
 import { stories, type Story, type Sport } from "./data";
 import { StoryImage } from "./ui";
 import { usePreferences } from "./preferences";
-import { SportIntelSummary } from './BettingIntel';
+import SportHomeBento from './SportHomeBento';
 function SaveButton({ story }: { story: Story }) {
   const saved = usePreferences("stories");
   if (!saved.authenticated)
@@ -73,6 +73,7 @@ export default function HomePage({
       (!sport || story.sport === sport) &&
       (!savedOnly || saved.values.includes(story.id)),
   );
+  if (sport && !savedOnly) return <AppShell sport={sport} title={`${sport} match centre.`} eyebrow="THE GAMES. THE RESULTS. THE NUMBERS."><SportHomeBento sport={sport} /></AppShell>;
   return (
     <AppShell
       sport={sport}
@@ -84,7 +85,6 @@ export default function HomePage({
             : "A world of sport. A deeper perspective."
       }
     >
-      {!savedOnly && sport && <SportIntelSummary sport={sport} />}
       {!savedOnly && (
         <div className="fh-tabs" aria-label="Story feed">
           <button

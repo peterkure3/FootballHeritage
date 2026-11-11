@@ -44,6 +44,17 @@ pub fn route(method: &str, path: &str) -> Option<Route> {
 #[cfg(test)]
 mod settled_tests {
     #[test]
+    fn sport_schedule_route_is_read_only_and_sports_gated() {
+        let path = "sport-schedule/nba";
+        let contract = super::route("GET", path).expect("sport schedule must be published");
+        assert!(!contract.admin);
+        assert!(!contract.side_effect);
+        assert_eq!(contract.ttl_seconds, 300);
+        assert!(super::route("POST", path).is_none());
+        assert_eq!(crate::features::route_features("/api/v1/pipeline/sport-schedule/nba"), vec!["sports"]);
+    }
+
+    #[test]
     fn settled_performance_route_is_read_only() {
         for sport in ["nba", "ncaab"] {
             let path = format!("betting-intel/{sport}/settled-performance");
