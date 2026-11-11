@@ -140,17 +140,48 @@ def analyze_market(fixture, market, offers, now, prediction=None):
     return devig, ev, arbs
 
 
+def merge_fixtures(fixtures, now=None):
+    """Coalesce exact game identities across providers, retaining all offer evidence."""
+    from etl.nba_public_parsers import team as nba_team
+
+    merged = {}
+    for fixture in fixtures:
+        if fixture['sport'] == 'nba':
+            fixture = {**fixture,
+                       'home_team': nba_team(fixture['home_team']) or fixture['home_team'],
+                       'away_team': nba_team(fixture['away_team']) or fixture['away_team']}
+        key = (fixture['sport'], fixture['home_team'].strip().casefold(),
+               fixture['away_team'].strip().casefold(), timestamp(fixture['kickoff']),
+               fixture['settlement_rule'])
+        if key not in merged:
+            merged[key] = {**fixture, 'offers': list(fixture.get('offers', []))}
+        else:
+            merged[key]['offers'].extend(fixture.get('offers', []))
+        if now is not None:
+            outcomes = ('home_win', 'draw', 'away_win') if fixture['sport'] == 'football' else ('home_win', 'away_win')
+            incoming = prediction_for(fixture, outcomes, now)
+            current = prediction_for(merged[key], outcomes, now)
+            if incoming and (not current or timestamp(incoming['generated_at']) > timestamp(current['generated_at'])):
+                merged[key]['prediction'] = incoming
+    return sorted(merged.values(), key=lambda fixture: timestamp(fixture['kickoff']))
+
+
 def build_intelligence(sport, fixtures, now=None):
     if sport not in SPORTS:
         raise ValueError('Unsupported sport')
     now = now or datetime.now(timezone.utc)
     output = {key: [] for key in SECTIONS}
     considered = 0
+    eligible = []
     for fixture in fixtures:
         kickoff = timestamp(fixture.get('kickoff'))
         if fixture.get('sport') != sport or kickoff is None or kickoff <= now or str(fixture.get('status','')).upper() in (
                 'LIVE','IN_PLAY','PAUSED','FINISHED','COMPLETED','CANCELLED','CANCELED','POSTPONED'):
             continue
+        eligible.append(fixture)
+    # Recheck saved NBA snapshots too; refresh-time merging alone cannot protect reads.
+    for fixture in merge_fixtures(eligible, now) if sport == 'nba' else eligible:
+        kickoff = timestamp(fixture['kickoff'])
         considered += 1
         fixture = {**fixture, 'kickoff': kickoff.isoformat()}
         outcomes = ('home_win','draw','away_win') if sport == 'football' else ('home_win','away_win')

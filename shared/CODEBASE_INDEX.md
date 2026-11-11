@@ -1,5 +1,14 @@
 # Football Heritage - Codebase Index
 
+## NBA bookmaker grid duplicate protection - 2026-11-11
+
+NBA intelligence reads now coalesce exact game identities across provider IDs,
+using reviewed team aliases, UTC kickoff, home/away orientation and settlement
+rules. The refresh job reuses the same merger. All bookmaker evidence is retained
+for existing freshness and conflict checks, and the latest valid forecast survives.
+The observed local feed had 10 unique games and 29 unique game/bookmaker quotes.
+Regression evidence: `stages/03-build/output/nba-grid-duplicates-20261111.md`.
+
 ## Champions League odds, training and Monte Carlo — 2026-11-04
 
 Official CL history refreshed and a new isolated global candidate trained on

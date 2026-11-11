@@ -7,7 +7,7 @@ import tempfile
 
 from sqlalchemy import text
 
-from api.betting_intel import SPORTS, build_intelligence, sport_key
+from api.betting_intel import SPORTS, build_intelligence, merge_fixtures, sport_key
 from api.db import get_db_connection, get_heritage_db_connection
 from config import MODEL_VERSION, PROCESSED_DATA_DIR, RAW_DATA_DIR
 
@@ -56,23 +56,6 @@ def load_raw(now):
             if fixture:
                 fixtures.append(fixture)
     return fixtures
-
-
-def merge_fixtures(fixtures):
-    from api.betting_intel import timestamp
-    from etl.nba_public_parsers import team as nba_team
-    merged = {}
-    for fixture in fixtures:
-        if fixture['sport']=='nba':
-            fixture={**fixture,'home_team':nba_team(fixture['home_team']) or fixture['home_team'],
-                     'away_team':nba_team(fixture['away_team']) or fixture['away_team']}
-        key = (fixture['sport'],fixture['home_team'].strip().casefold(),fixture['away_team'].strip().casefold(),
-               timestamp(fixture['kickoff']).isoformat())
-        if key not in merged:
-            merged[key] = {**fixture,'offers':list(fixture.get('offers',[]))}
-        else:
-            merged[key]['offers'].extend(fixture.get('offers',[]))
-    return sorted(merged.values(),key=lambda f:timestamp(f['kickoff']))
 
 
 def load_heritage(now):
