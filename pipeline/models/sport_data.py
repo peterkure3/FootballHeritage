@@ -103,8 +103,8 @@ def load_games(sport: str, root: Path = RAW_DATA_DIR) -> pd.DataFrame:
     if sport == "basketball":
         for path in sorted((root / "historical/nba/games").glob("nba_games_*.json")):
             events, _ = events_from(path)
-            for event in events:
-                date = pd.to_datetime(event["date"], utc=True, errors="coerce")
+            dates = pd.to_datetime([event["date"] for event in events], utc=True, format="mixed", errors="coerce")
+            for event, date in zip(events, dates):
                 if pd.isna(date) or date >= now or pd.isna(event.get("home_pts")) or pd.isna(event.get("visitor_pts")):
                     continue
                 rows.append({"date": date, "league": "basketball_nba", "home_team": event["home"], "away_team": event["visitor"],
@@ -124,18 +124,22 @@ def load_games(sport: str, root: Path = RAW_DATA_DIR) -> pd.DataFrame:
         rows = [row for row in rows if row["provider_event_id"] not in all_stars]
     if sport in {"ncaab", "ncaabw"} and any(row.get("collection_scope") == "SEASON_RELEASE" for row in rows):
         directories = []
-    rows = [row for row in rows if pd.to_datetime(row["date"], utc=True) < now and pd.to_datetime(row["result_available_at"], utc=True) <= now]
+    dates = pd.to_datetime([row["date"] for row in rows], utc=True, format="mixed")
+    rows = [row for row, past in zip(rows, dates < now) if past]
+    available = pd.to_datetime([row["result_available_at"] for row in rows], utc=True, format="mixed")
+    rows = [row for row, observed in zip(rows, available <= now) if observed]
     for directory in directories:
         paths = sorted({p for league in spec["leagues"] for p in directory.glob(f"scores_{league}_*.json")})
         if directory.name == "nba":
             paths = sorted(directory.glob("nba_scores_*.json"))
         for path in paths:
             events, metadata = events_from(path)
-            for event in events:
+            events = [event for event in events if event.get("sport_key", "basketball_nba" if directory.name == "nba" else "")
+                      in spec["leagues"] and event.get("completed") is True]
+            dates = pd.to_datetime([event["commence_time"] for event in events], utc=True, format="mixed")
+            observations = {}
+            for event, date in zip(events, dates):
                 league = event.get("sport_key", "basketball_nba" if directory.name == "nba" else "")
-                if league not in spec["leagues"] or event.get("completed") is not True:
-                    continue
-                date = pd.to_datetime(event["commence_time"], utc=True)
                 scores = {score["name"]: score["score"] for score in event.get("scores") or []}
                 if date >= now or not {event["home_team"], event["away_team"]}.issubset(scores):
                     continue
@@ -144,7 +148,9 @@ def load_games(sport: str, root: Path = RAW_DATA_DIR) -> pd.DataFrame:
                 available = metadata.get("fetched_at") or event.get("last_update")
                 if not available:
                     continue
-                available = max(capture_time(available), date.normalize() + pd.Timedelta(days=1))
+                if available not in observations:
+                    observations[available] = capture_time(available)
+                available = max(observations[available], date.normalize() + pd.Timedelta(days=1))
                 if available > now:
                     continue
                 rows.append({"date": date, "league": league, "home_team": event["home_team"], "away_team": event["away_team"],

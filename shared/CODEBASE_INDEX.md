@@ -1,5 +1,14 @@
 # Football Heritage - Codebase Index
 
+## NBA settled-performance timestamp batching - 2026-11-12
+
+`models/sport_data.py` batches historical date/availability parsing and reuses
+observation timestamps within each score capture. A real NBA read fell from
+23.7 to 6.0 seconds; all 71 settled fixtures, the complete response and quality
+metadata matched the frozen baseline. Concurrent gateway reads and the actual
+frontend correctness filter returned 200. Evidence:
+`stages/03-build/output/nba-performance-latency-20261112.md`.
+
 ## Sport match centres and schedule pages - 2026-11-11
 
 Sports home pages now use a bento of predictions, upcoming fixtures and verified
